@@ -740,7 +740,6 @@
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_theory.html">Opacity Theory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../arnett.html">Arnett Engines</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -912,6 +911,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.angular_shape.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.angular_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_callable.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_callable</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.disk_half_opening_angle.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.disk_half_opening_angle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.eval.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.eval</a></li>
@@ -1096,38 +1097,31 @@ related thermal-radiation utilities.  It follows the standard two-level API patt
 used throughout Trilobite: private <code class="docutils literal notranslate"><span class="pre">_*_cgs</span></code> kernels operate on plain NumPy arrays
 with no unit overhead (suitable for MCMC hot loops), and public wrappers accept and
 return <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> objects for interactive use.</p>
-<p>The module also provides a <strong>UV-suppressed (modified) blackbody</strong>, in which the flux below a cutoff wavelength is
-suppressed. This is the standard description of the spectra of superluminous supernovae, and is documented below in
-<a class="reference internal" href="#blackbody-cutoff"><span class="std std-ref">UV-Suppressed (Modified) Blackbody</span></a>.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#quick-start" id="id3">Quick Start</a></p></li>
-<li><p><a class="reference internal" href="#theory" id="id4">Theory</a></p>
+<li><p><a class="reference internal" href="#quick-start" id="id1">Quick Start</a></p></li>
+<li><p><a class="reference internal" href="#theory" id="id2">Theory</a></p>
 <ul>
-<li><p><a class="reference internal" href="#planck-function" id="id5">Planck Function</a></p></li>
-<li><p><a class="reference internal" href="#wien-displacement-law" id="id6">Wien Displacement Law</a></p></li>
-<li><p><a class="reference internal" href="#stefan-boltzmann-law" id="id7">Stefan-Boltzmann Law</a></p></li>
-<li><p><a class="reference internal" href="#uv-suppressed-modified-blackbody" id="id8">UV-Suppressed (Modified) Blackbody</a></p></li>
+<li><p><a class="reference internal" href="#planck-function" id="id3">Planck Function</a></p></li>
+<li><p><a class="reference internal" href="#wien-displacement-law" id="id4">Wien Displacement Law</a></p></li>
+<li><p><a class="reference internal" href="#stefan-boltzmann-law" id="id5">Stefan-Boltzmann Law</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#usage-guide" id="id9">Usage Guide</a></p>
+<li><p><a class="reference internal" href="#usage-guide" id="id6">Usage Guide</a></p>
 <ul>
-<li><p><a class="reference internal" href="#per-frequency-specific-intensity" id="id10">Per-Frequency Specific Intensity</a></p></li>
-<li><p><a class="reference internal" href="#per-wavelength-specific-intensity" id="id11">Per-Wavelength Specific Intensity</a></p></li>
-<li><p><a class="reference internal" href="#wien-peak" id="id12">Wien Peak</a></p></li>
-<li><p><a class="reference internal" href="#bolometric-flux" id="id13">Bolometric Flux</a></p></li>
-<li><p><a class="reference internal" href="#observed-flux-and-luminosity-of-a-spherical-source" id="id14">Observed Flux and Luminosity of a Spherical Source</a></p></li>
-<li><p><a class="reference internal" href="#surviving-fraction" id="id15">Surviving Fraction</a></p></li>
-<li><p><a class="reference internal" href="#cgs-kernels" id="id16">CGS Kernels</a></p></li>
-<li><p><a class="reference internal" href="#using-cgs-kernels-directly" id="id17">Using CGS Kernels Directly</a></p></li>
+<li><p><a class="reference internal" href="#per-frequency-specific-intensity" id="id7">Per-Frequency Specific Intensity</a></p></li>
+<li><p><a class="reference internal" href="#per-wavelength-specific-intensity" id="id8">Per-Wavelength Specific Intensity</a></p></li>
+<li><p><a class="reference internal" href="#wien-peak" id="id9">Wien Peak</a></p></li>
+<li><p><a class="reference internal" href="#bolometric-flux" id="id10">Bolometric Flux</a></p></li>
+<li><p><a class="reference internal" href="#using-cgs-kernels-directly" id="id11">Using CGS Kernels Directly</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#api-reference" id="id18">API Reference</a></p></li>
+<li><p><a class="reference internal" href="#api-reference" id="id12">API Reference</a></p></li>
 </ul>
 </nav>
 <hr class="docutils" />
 <section id="quick-start">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Quick Start</a><a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Quick Start</a><a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
 <p>The example below plots <span class="math notranslate nohighlight">\(B_\nu\)</span> for three representative temperatures and marks
 the Wien peak of each.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -1162,9 +1156,9 @@ the Wien peak of each.</p>
 <hr class="docutils" />
 </section>
 <section id="theory">
-<span id="blackbody-theory"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">Theory</a><a class="headerlink" href="#theory" title="Link to this heading">#</a></h2>
+<span id="blackbody-theory"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Theory</a><a class="headerlink" href="#theory" title="Link to this heading">#</a></h2>
 <section id="planck-function">
-<h3><a class="toc-backref" href="#id5" role="doc-backlink">Planck Function</a><a class="headerlink" href="#planck-function" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Planck Function</a><a class="headerlink" href="#planck-function" title="Link to this heading">#</a></h3>
 <p>The Planck function gives the specific intensity (spectral radiance) of a blackbody
 in thermal equilibrium at temperature <span class="math notranslate nohighlight">\(T\)</span>:</p>
 <div class="math notranslate nohighlight">
@@ -1182,7 +1176,7 @@ expression per unit wavelength is:</p>
 (<span class="math notranslate nohighlight">\(x \ll 1\)</span>).</p>
 </section>
 <section id="wien-displacement-law">
-<h3><a class="toc-backref" href="#id6" role="doc-backlink">Wien Displacement Law</a><a class="headerlink" href="#wien-displacement-law" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Wien Displacement Law</a><a class="headerlink" href="#wien-displacement-law" title="Link to this heading">#</a></h3>
 <p>Differentiating <span class="math notranslate nohighlight">\(B_\nu\)</span> with respect to <span class="math notranslate nohighlight">\(\nu\)</span> and setting the result to
 zero yields the transcendental equation <span class="math notranslate nohighlight">\(x_{\rm peak} = 3(1 - e^{-x_{\rm peak}})\)</span>,
 whose solution is <span class="math notranslate nohighlight">\(x_{\rm peak} \approx 2.8214\)</span>.  The peak frequency is therefore:</p>
@@ -1198,7 +1192,7 @@ whose solution is <span class="math notranslate nohighlight">\(x_{\rm peak} \app
 spectrum.</p>
 </section>
 <section id="stefan-boltzmann-law">
-<h3><a class="toc-backref" href="#id7" role="doc-backlink">Stefan-Boltzmann Law</a><a class="headerlink" href="#stefan-boltzmann-law" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Stefan-Boltzmann Law</a><a class="headerlink" href="#stefan-boltzmann-law" title="Link to this heading">#</a></h3>
 <p>Integrating the Planck function over all frequencies and the outgoing hemisphere gives
 the bolometric radiative flux from a blackbody surface:</p>
 <div class="math notranslate nohighlight">
@@ -1206,50 +1200,13 @@ the bolometric radiative flux from a blackbody surface:</p>
 \qquad \sigma_{\rm SB} \approx 5.670 \times 10^{-5}
 \;\mathrm{erg\,s^{-1}\,cm^{-2}\,K^{-4}}\]</div>
 </section>
-<section id="uv-suppressed-modified-blackbody">
-<span id="blackbody-cutoff"></span><h3><a class="toc-backref" href="#id8" role="doc-backlink">UV-Suppressed (Modified) Blackbody</a><a class="headerlink" href="#uv-suppressed-modified-blackbody" title="Link to this heading">#</a></h3>
-<p>The optical and near-infrared colors of many supernovae are well described by a blackbody, but their ultraviolet
-spectra are fainter than a blackbody would be, because of blended absorption lines and metal-line blanketing. For
-superluminous supernovae the deficit is large and well characterized. A simple description, used by
-Nicholl <em>et al.</em><a class="footnote-reference brackets" href="#footcite-nicholl-2017" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> in the MOSFiT code, multiplies the blackbody by a transmission that falls linearly below a
-cutoff wavelength <span class="math notranslate nohighlight">\(\lambda_{\rm cut}\)</span> (about 3000 Angstrom for superluminous supernovae):</p>
-<div class="math notranslate nohighlight">
-\[F_\lambda \propto B_\lambda(T)\,\min\left(1, \frac{\lambda}{\lambda_{\rm cut}}\right).\]</div>
-<p>The transmission is 100% at the cutoff and zero at <span class="math notranslate nohighlight">\(\lambda = 0\)</span>. Here <span class="math notranslate nohighlight">\(\lambda\)</span> is the <strong>rest-frame</strong>
-wavelength. The suppressed flux is not lost: the spectrum is renormalised so that it carries the same bolometric flux as
-the blackbody, <span class="math notranslate nohighlight">\(L = 4\pi R^2 \sigma_{\rm SB} T^4\)</span>, which means that the flux at longer wavelengths is
-raised. The renormalisation is <span class="math notranslate nohighlight">\(1/f(T)\)</span>, where</p>
-<div class="math notranslate nohighlight">
-\[f(T) = \frac{\int B_\lambda \min(1, \lambda/\lambda_{\rm cut})\,d\lambda}{\int B_\lambda\,d\lambda}
-= 1 - \frac{15}{\pi^4}\sum_{n=1}^{\infty} e^{-n x_c}
-\left(\frac{x_c^2}{n^2} + \frac{4 x_c}{n^3} + \frac{6}{n^4}\right),
-\qquad x_c = \frac{h c}{\lambda_{\rm cut} k_{\rm B} T},\]</div>
-<p>is the fraction of the blackbody flux that survives. The series is exact, converges geometrically, and is evaluated
-with 256 terms, which is accurate to <span class="math notranslate nohighlight">\(10^{-14}\)</span> for <span class="math notranslate nohighlight">\(T \lesssim 3\times10^5\)</span> K at a cutoff of 3000 Angstrom. The
-spectrum of the modified blackbody is therefore</p>
-<div class="math notranslate nohighlight">
-\[F_\lambda = B_\lambda(T)\,\frac{\min(1, \lambda/\lambda_{\rm cut})}{f(T)}.\]</div>
-<p>Three properties are useful to know:</p>
-<ul class="simple">
-<li><p><strong>The effect grows with temperature.</strong> At 8000 K the surviving fraction is <span class="math notranslate nohighlight">\(f = 0.97\)</span>, and the modified
-blackbody differs little from a blackbody; at 15000 K it is 0.82, and at 30000 K it is 0.52.</p></li>
-<li><p><strong>Only the far UV is dimmer.</strong> Because of the renormalisation, the spectrum is <em>brighter</em> than the blackbody wherever
-<span class="math notranslate nohighlight">\(\lambda/\lambda_{\rm cut} &gt; f(T)\)</span>, which includes the whole range around and above the cutoff, by the factor
-<span class="math notranslate nohighlight">\(1/f\)</span> at and above the cutoff wavelength.</p></li>
-<li><p><strong>The photosphere is unchanged.</strong> The temperature and radius are still those of the Stefan-Boltzmann law. Only the
-spectrum emitted at them differs.</p></li>
-</ul>
-<p>With a redshift, the suppression is applied at the rest-frame wavelength, <span class="math notranslate nohighlight">\(\lambda' = \lambda_{\rm obs}/(1+z)\)</span>, and the
-observed flux density is that of the blackbody, with the same factors, times <span class="math notranslate nohighlight">\((1+z)\)</span> in frequency or
-<span class="math notranslate nohighlight">\(1/(1+z)\)</span> in wavelength, which conserves the bolometric flux, <span class="math notranslate nohighlight">\(L/4\pi D_L^2\)</span>.</p>
-</section>
 </section>
 <hr class="docutils" />
 <section id="usage-guide">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink">Usage Guide</a><a class="headerlink" href="#usage-guide" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Usage Guide</a><a class="headerlink" href="#usage-guide" title="Link to this heading">#</a></h2>
 <section id="per-frequency-specific-intensity">
-<h3><a class="toc-backref" href="#id10" role="doc-backlink">Per-Frequency Specific Intensity</a><a class="headerlink" href="#per-frequency-specific-intensity" title="Link to this heading">#</a></h3>
-<p>Use <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.planck_B.html#trilobite.radiation.blackbody.planck_B" title="trilobite.radiation.blackbody.planck_B"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_B()</span></code></a> to evaluate <span class="math notranslate nohighlight">\(B_\nu\)</span>
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Per-Frequency Specific Intensity</a><a class="headerlink" href="#per-frequency-specific-intensity" title="Link to this heading">#</a></h3>
+<p>Use <a class="reference internal" href="#trilobite.radiation.blackbody.planck_B" title="trilobite.radiation.blackbody.planck_B"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_B()</span></code></a> to evaluate <span class="math notranslate nohighlight">\(B_\nu\)</span>
 at an array of frequencies:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
@@ -1262,8 +1219,8 @@ at an array of frequencies:</p>
 </div>
 </section>
 <section id="per-wavelength-specific-intensity">
-<h3><a class="toc-backref" href="#id11" role="doc-backlink">Per-Wavelength Specific Intensity</a><a class="headerlink" href="#per-wavelength-specific-intensity" title="Link to this heading">#</a></h3>
-<p>Use <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.planck_B.html#trilobite.radiation.blackbody.planck_B" title="trilobite.radiation.blackbody.planck_B"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_B()</span></code></a> with the <code class="docutils literal notranslate"><span class="pre">lam</span></code> keyword to evaluate <span class="math notranslate nohighlight">\(B_\lambda\)</span>:</p>
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Per-Wavelength Specific Intensity</a><a class="headerlink" href="#per-wavelength-specific-intensity" title="Link to this heading">#</a></h3>
+<p>Use <a class="reference internal" href="#trilobite.radiation.blackbody.planck_B" title="trilobite.radiation.blackbody.planck_B"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_B()</span></code></a> with the <code class="docutils literal notranslate"><span class="pre">lam</span></code> keyword to evaluate <span class="math notranslate nohighlight">\(B_\lambda\)</span>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">planck_B</span>
@@ -1275,9 +1232,9 @@ at an array of frequencies:</p>
 </div>
 </section>
 <section id="wien-peak">
-<h3><a class="toc-backref" href="#id12" role="doc-backlink">Wien Peak</a><a class="headerlink" href="#wien-peak" title="Link to this heading">#</a></h3>
-<p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.wien_peak_frequency.html#trilobite.radiation.blackbody.wien_peak_frequency" title="trilobite.radiation.blackbody.wien_peak_frequency"><code class="xref py py-func docutils literal notranslate"><span class="pre">wien_peak_frequency()</span></code></a> and
-<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.wien_peak_wavelength.html#trilobite.radiation.blackbody.wien_peak_wavelength" title="trilobite.radiation.blackbody.wien_peak_wavelength"><code class="xref py py-func docutils literal notranslate"><span class="pre">wien_peak_wavelength()</span></code></a> return the peak
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Wien Peak</a><a class="headerlink" href="#wien-peak" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="#trilobite.radiation.blackbody.wien_peak_frequency" title="trilobite.radiation.blackbody.wien_peak_frequency"><code class="xref py py-func docutils literal notranslate"><span class="pre">wien_peak_frequency()</span></code></a> and
+<a class="reference internal" href="#trilobite.radiation.blackbody.wien_peak_wavelength" title="trilobite.radiation.blackbody.wien_peak_wavelength"><code class="xref py py-func docutils literal notranslate"><span class="pre">wien_peak_wavelength()</span></code></a> return the peak
 of <span class="math notranslate nohighlight">\(B_\nu\)</span> and <span class="math notranslate nohighlight">\(B_\lambda\)</span>, respectively:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">wien_peak_frequency</span><span class="p">,</span> <span class="n">wien_peak_wavelength</span>
@@ -1289,8 +1246,8 @@ of <span class="math notranslate nohighlight">\(B_\nu\)</span> and <span class="
 </div>
 </section>
 <section id="bolometric-flux">
-<h3><a class="toc-backref" href="#id13" role="doc-backlink">Bolometric Flux</a><a class="headerlink" href="#bolometric-flux" title="Link to this heading">#</a></h3>
-<p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.stefan_boltzmann_flux.html#trilobite.radiation.blackbody.stefan_boltzmann_flux" title="trilobite.radiation.blackbody.stefan_boltzmann_flux"><code class="xref py py-func docutils literal notranslate"><span class="pre">stefan_boltzmann_flux()</span></code></a> returns
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Bolometric Flux</a><a class="headerlink" href="#bolometric-flux" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="#trilobite.radiation.blackbody.stefan_boltzmann_flux" title="trilobite.radiation.blackbody.stefan_boltzmann_flux"><code class="xref py py-func docutils literal notranslate"><span class="pre">stefan_boltzmann_flux()</span></code></a> returns
 <span class="math notranslate nohighlight">\(F = \sigma_{\rm SB} T^4\)</span>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">stefan_boltzmann_flux</span>
@@ -1300,87 +1257,8 @@ of <span class="math notranslate nohighlight">\(B_\nu\)</span> and <span class="
 </pre></div>
 </div>
 </section>
-<section id="observed-flux-and-luminosity-of-a-spherical-source">
-<span id="blackbody-cutoff-usage"></span><h3><a class="toc-backref" href="#id14" role="doc-backlink">Observed Flux and Luminosity of a Spherical Source</a><a class="headerlink" href="#observed-flux-and-luminosity-of-a-spherical-source" title="Link to this heading">#</a></h3>
-<p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.planck_flux.html#trilobite.radiation.blackbody.planck_flux" title="trilobite.radiation.blackbody.planck_flux"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_flux()</span></code></a> gives the flux density observed from a spherical blackbody of
-radius <span class="math notranslate nohighlight">\(R\)</span>, and <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.planck_luminosity.html#trilobite.radiation.blackbody.planck_luminosity" title="trilobite.radiation.blackbody.planck_luminosity"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_luminosity()</span></code></a> its specific luminosity. Both take
-the keyword <code class="docutils literal notranslate"><span class="pre">lambda_cut</span></code> to use the modified blackbody instead. It is the rest-frame cutoff wavelength; when it is
-omitted, the spectrum is a plain blackbody.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">planck_flux</span><span class="p">,</span> <span class="n">planck_luminosity</span>
-
-<span class="n">T</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="mi">15000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="mf">5e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
-<span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">3e14</span><span class="p">,</span> <span class="mf">3e15</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span>       <span class="c1"># observer frame</span>
-
-<span class="c1"># Observed flux density, with and without the UV suppression</span>
-<span class="n">plain</span> <span class="o">=</span> <span class="n">planck_flux</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">nu</span><span class="p">,</span> <span class="n">redshift</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="n">modified</span> <span class="o">=</span> <span class="n">planck_flux</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">nu</span><span class="p">,</span> <span class="n">redshift</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="o">=</span><span class="mi">3000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">AA</span><span class="p">)</span>
-
-<span class="c1"># The specific luminosity of the source, in the rest frame</span>
-<span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">AA</span>
-<span class="n">L_lam</span> <span class="o">=</span> <span class="n">planck_luminosity</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="o">=</span><span class="mi">3000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">AA</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Both functions conserve the bolometric flux, so that integrating either spectrum over frequency gives the same
-<span class="math notranslate nohighlight">\(L/4\pi D_L^2\)</span> (and <span class="math notranslate nohighlight">\(L = 4\pi R^2 \sigma_{\rm SB} T^4\)</span> for the luminosity).</p>
-<p>The figure compares the two spectra of a 15000 K source.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">planck_luminosity</span><span class="p">,</span> <span class="n">planck_cutoff_fraction</span>
-
-<span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">cut</span> <span class="o">=</span> <span class="mi">15000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="mf">5e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span> <span class="mi">3000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">AA</span>
-<span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">12000</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">AA</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lam</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">planck_luminosity</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"blackbody"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lam</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">planck_luminosity</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="o">=</span><span class="n">cut</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"UV-suppressed"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">cut</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"Rest-frame wavelength [$\AA$]"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$L_\lambda$ [erg s$^{-1}$ cm$^{-1}$]"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Surviving fraction f = </span><span class="si">{</span><span class="n">planck_cutoff_fraction</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">cut</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>(<a class="reference download internal" download="" href="../../../../_downloads/db7f4ebb40c6c0c1458935f1501740af/blackbody-2.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/100e9e44e3d957595273d35fed308ac0/blackbody-2.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/36480d67ed7ed461ac859e81d9d29f43/blackbody-2.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/6093c25e746577c9838c6ae88efea0b1/blackbody-2.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
-<figure class="align-default">
-<img alt="../../../../_images/blackbody-2.png" class="plot-directive" src="../../../../_images/blackbody-2.png" />
-</figure>
-</section>
-<section id="surviving-fraction">
-<h3><a class="toc-backref" href="#id15" role="doc-backlink">Surviving Fraction</a><a class="headerlink" href="#surviving-fraction" title="Link to this heading">#</a></h3>
-<p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.planck_cutoff_fraction.html#trilobite.radiation.blackbody.planck_cutoff_fraction" title="trilobite.radiation.blackbody.planck_cutoff_fraction"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_cutoff_fraction()</span></code></a> returns the fraction <span class="math notranslate nohighlight">\(f(T)\)</span> of the blackbody flux that
-survives the suppression, which tells you how different the modified spectrum is from a blackbody:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">planck_cutoff_fraction</span>
-
-<span class="n">planck_cutoff_fraction</span><span class="p">([</span><span class="mi">8000</span><span class="p">,</span> <span class="mi">15000</span><span class="p">,</span> <span class="mi">30000</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="mi">3000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">AA</span><span class="p">)</span>
-<span class="c1"># array([0.9747, 0.8162, 0.5223])</span>
-</pre></div>
-</div>
-</section>
-<section id="cgs-kernels">
-<h3><a class="toc-backref" href="#id16" role="doc-backlink">CGS Kernels</a><a class="headerlink" href="#cgs-kernels" title="Link to this heading">#</a></h3>
-<p>The CGS kernels take the cutoff as the keyword <code class="docutils literal notranslate"><span class="pre">lambda_cut</span></code>, in <strong>cm</strong>, with 0 meaning no suppression:
-<code class="xref py py-func docutils literal notranslate"><span class="pre">_log_specific_flux_fnu_cgs()</span></code>,
-<code class="xref py py-func docutils literal notranslate"><span class="pre">_log_specific_flux_flambda_cgs()</span></code>,
-<code class="xref py py-func docutils literal notranslate"><span class="pre">_log_specific_luminosity_fnu_cgs()</span></code> and
-<code class="xref py py-func docutils literal notranslate"><span class="pre">_log_specific_luminosity_flambda_cgs()</span></code>. This is what the optical supernova models of
-<a class="reference internal" href="../arnett.html#arnett"><span class="std std-ref">Arnett Engines</span></a> call.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">_log_specific_flux_fnu_cgs</span>
-
-<span class="n">log_nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">3e14</span><span class="p">,</span> <span class="mf">3e15</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>     <span class="c1"># observer frame, Hz</span>
-<span class="n">log_fnu</span> <span class="o">=</span> <span class="n">_log_specific_flux_fnu_cgs</span><span class="p">(</span>
-    <span class="n">log_nu</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.5e4</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">5e15</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e27</span><span class="p">),</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="o">=</span><span class="mf">3.0e-5</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
 <section id="using-cgs-kernels-directly">
-<h3><a class="toc-backref" href="#id17" role="doc-backlink">Using CGS Kernels Directly</a><a class="headerlink" href="#using-cgs-kernels-directly" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Using CGS Kernels Directly</a><a class="headerlink" href="#using-cgs-kernels-directly" title="Link to this heading">#</a></h3>
 <p>For performance-critical code (e.g. inside an MCMC loop), import the private CGS
 functions directly and pass plain NumPy arrays:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -1402,10 +1280,10 @@ performed — it is the caller’s responsibility to pass values in CGS.</p>
 </section>
 <hr class="docutils" />
 <section id="api-reference">
-<h2><a class="toc-backref" href="#id18" role="doc-backlink">API Reference</a><a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">API Reference</a><a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_B"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.planck_B">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_B"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.planck_B" title="Link to this definition">#</a></dt>
 <dd><p>Planck spectral radiance <span class="math notranslate nohighlight">\(B_\nu\)</span> or <span class="math notranslate nohighlight">\(B_\lambda\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1426,8 +1304,8 @@ or <span class="math notranslate nohighlight">\(B_\lambda\)</span> in <span clas
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_surface_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_surface_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.planck_surface_flux">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_surface_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_surface_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.planck_surface_flux" title="Link to this definition">#</a></dt>
 <dd><p>Outward specific flux <span class="math notranslate nohighlight">\(\pi B_\nu\)</span> or <span class="math notranslate nohighlight">\(\pi B_\lambda\)</span> per unit area of a blackbody surface.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1448,11 +1326,9 @@ or <span class="math notranslate nohighlight">\(F_\lambda\)</span> in <span clas
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luminosity_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_diameter_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proper_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.cosmology.Cosmology.html#astropy.cosmology.Cosmology" title="(in Astropy v8.0)"><span class="pre">Cosmology</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_cut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingScalarLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.planck_flux">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luminosity_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_diameter_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proper_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.cosmology.Cosmology.html#astropy.cosmology.Cosmology" title="(in Astropy v8.0)"><span class="pre">Cosmology</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.planck_flux" title="Link to this definition">#</a></dt>
 <dd><p>Observed specific flux density <span class="math notranslate nohighlight">\(f_\nu\)</span> or <span class="math notranslate nohighlight">\(f_\lambda\)</span> from a spherical blackbody.</p>
-<p>With <code class="docutils literal notranslate"><span class="pre">lambda_cut</span></code> the blackbody has a suppressed UV (see <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.planck_cutoff_fraction.html#trilobite.radiation.blackbody.planck_cutoff_fraction" title="trilobite.radiation.blackbody.planck_cutoff_fraction"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_cutoff_fraction()</span></code></a> and
-<a class="reference internal" href="#blackbody-cutoff"><span class="std std-ref">UV-Suppressed (Modified) Blackbody</span></a>); the bolometric flux is the same as that of the plain blackbody.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1466,9 +1342,6 @@ or <span class="math notranslate nohighlight">\(F_\lambda\)</span> in <span clas
 <li><p><strong>proper_distance</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Proper (comoving radial) distance to the source.</p></li>
 <li><p><strong>cosmology</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.cosmology.Cosmology.html#astropy.cosmology.Cosmology" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmology</span></code></a>, <em>optional</em>) – Cosmology used to convert between redshift and distance measures.
 If not provided, the configured default cosmology is used.</p></li>
-<li><p><strong>lambda_cut</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – <strong>Rest-frame</strong> wavelength below which the spectrum is suppressed linearly, as
-<span class="math notranslate nohighlight">\(\min(1, \lambda/\lambda_{\rm cut})\)</span>, and then renormalised to conserve the luminosity. Convertible to cm.
-If not provided (default), the spectrum is a plain blackbody.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1485,75 +1358,8 @@ or <span class="math notranslate nohighlight">\(f_\lambda\)</span> in <span clas
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_luminosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_cut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingScalarLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_luminosity"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Specific luminosity <span class="math notranslate nohighlight">\(L_\nu = 4\pi^2 R^2 B_\nu\)</span> or <span class="math notranslate nohighlight">\(L_\lambda = 4\pi^2 R^2 B_\lambda\)</span>.</p>
-<p>With <code class="docutils literal notranslate"><span class="pre">lambda_cut</span></code> the blackbody has a suppressed UV (see <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.planck_cutoff_fraction.html#trilobite.radiation.blackbody.planck_cutoff_fraction" title="trilobite.radiation.blackbody.planck_cutoff_fraction"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_cutoff_fraction()</span></code></a> and
-<a class="reference internal" href="#blackbody-cutoff"><span class="std std-ref">UV-Suppressed (Modified) Blackbody</span></a>); the bolometric luminosity is <span class="math notranslate nohighlight">\(4\pi R^2 \sigma_{\rm SB} T^4\)</span> either way.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Temperature.  Convertible to K.</p></li>
-<li><p><strong>R</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Source radius.  Convertible to cm.</p></li>
-<li><p><strong>nu</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Frequency.  Convertible to Hz.  Mutually exclusive with <em>lam</em>.</p></li>
-<li><p><strong>lam</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Wavelength.  Convertible to cm.  Mutually exclusive with <em>nu</em>.</p></li>
-<li><p><strong>lambda_cut</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Wavelength below which the spectrum is suppressed linearly, as <span class="math notranslate nohighlight">\(\min(1, \lambda/\lambda_{\rm cut})\)</span>, and
-then renormalised to conserve the luminosity. Convertible to cm. If not provided (default), the spectrum is a
-plain blackbody.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="math notranslate nohighlight">\(L_\nu\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,Hz^{-1}}\)</span> when <em>nu</em> is given,
-or <span class="math notranslate nohighlight">\(L_\lambda\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-1}}\)</span> when <em>lam</em> is given.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_cutoff_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_cut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingScalarLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_cutoff_fraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Fraction of a blackbody’s bolometric flux that survives a linear UV suppression.</p>
-<p>The suppression multiplies the spectrum by <span class="math notranslate nohighlight">\(\min(1, \lambda/\lambda_{\rm cut})\)</span>: it is 100% at
-the cutoff wavelength and falls linearly to zero at <span class="math notranslate nohighlight">\(\lambda = 0\)</span>. The surviving fraction</p>
-<div class="math notranslate nohighlight">
-\[f(T) = \frac{\int B_\lambda \min(1, \lambda/\lambda_{\rm cut})\,d\lambda}{\int B_\lambda\,d\lambda}\]</div>
-<p>is evaluated exactly (see <a class="reference internal" href="#blackbody-cutoff"><span class="std std-ref">UV-Suppressed (Modified) Blackbody</span></a>). A spectrum that has been renormalised to conserve the
-luminosity is the suppressed spectrum divided by this fraction.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Blackbody temperature.  Convertible to K.</p></li>
-<li><p><strong>lambda_cut</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Cutoff wavelength.  Convertible to cm. Zero (or less) means no suppression.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The surviving fraction, between 0 and 1. It falls from 1 as the temperature rises: the hotter the
-blackbody, the more of its flux is in the suppressed UV. It is accurate to <span class="math notranslate nohighlight">\(10^{-14}\)</span> for
-<span class="math notranslate nohighlight">\(T \lesssim 3\times10^5\)</span> K at <span class="math notranslate nohighlight">\(\lambda_{\rm cut} = 3000\)</span> Angstrom.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-<span class="gp">... </span>    <span class="n">planck_cutoff_fraction</span><span class="p">,</span>
-<span class="gp">... </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">planck_cutoff_fraction</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="p">[</span><span class="mi">8000</span><span class="p">,</span> <span class="mi">15000</span><span class="p">,</span> <span class="mi">30000</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="mi">3000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">AA</span>
-<span class="gp">... </span><span class="p">)</span>
-<span class="go">array([0.97..., 0.81..., 0.52...])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">wien_peak_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#wien_peak_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.wien_peak_frequency">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">wien_peak_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#wien_peak_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.wien_peak_frequency" title="Link to this definition">#</a></dt>
 <dd><p>Peak frequency <span class="math notranslate nohighlight">\(\nu_\mathrm{peak}\)</span> from Wien’s displacement law.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1569,8 +1375,8 @@ blackbody, the more of its flux is in the suppressed UV. It is accurate to <span
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">wien_peak_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#wien_peak_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.wien_peak_wavelength">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">wien_peak_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#wien_peak_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.wien_peak_wavelength" title="Link to this definition">#</a></dt>
 <dd><p>Peak wavelength <span class="math notranslate nohighlight">\(\lambda_\mathrm{peak}\)</span> from Wien’s displacement law.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1586,8 +1392,8 @@ blackbody, the more of its flux is in the suppressed UV. It is accurate to <span
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">stefan_boltzmann_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#stefan_boltzmann_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.stefan_boltzmann_flux">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">stefan_boltzmann_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#stefan_boltzmann_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.stefan_boltzmann_flux" title="Link to this definition">#</a></dt>
 <dd><p>Bolometric radiative flux <span class="math notranslate nohighlight">\(F = \sigma_\mathrm{SB} T^4\)</span> per unit area of a blackbody surface.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1602,15 +1408,6 @@ blackbody, the more of its flux is in the suppressed UV. It is accurate to <span
 </dl>
 </dd></dl>
 
-<hr class="docutils" />
-<div class="docutils container" id="id2">
-<aside class="footnote-list brackets">
-<aside class="footnote brackets" id="footcite-nicholl-2017" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
-<p>Matt Nicholl, James Guillochon, and Edo Berger. The magnetar model for type i superluminous supernovae. i. bayesian analysis of the full multicolor light-curve sample with mosfit. <em>The Astrophysical Journal</em>, 850(1):55, November 2017. URL: <a class="reference external" href="http://dx.doi.org/10.3847/1538-4357/aa9334">http://dx.doi.org/10.3847/1538-4357/aa9334</a>, <a class="reference external" href="https://doi.org/10.3847/1538-4357/aa9334">doi:10.3847/1538-4357/aa9334</a>.</p>
-</aside>
-</aside>
-</div>
 </section>
 </section>
 
@@ -1666,7 +1463,6 @@ blackbody, the more of its flux is in the suppressed UV. It is accurate to <span
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planck-function">Planck Function</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wien-displacement-law">Wien Displacement Law</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stefan-boltzmann-law">Stefan-Boltzmann Law</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-suppressed-modified-blackbody">UV-Suppressed (Modified) Blackbody</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-guide">Usage Guide</a><ul class="nav section-nav flex-column">
@@ -1674,13 +1470,18 @@ blackbody, the more of its flux is in the suppressed UV. It is accurate to <span
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#per-wavelength-specific-intensity">Per-Wavelength Specific Intensity</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wien-peak">Wien Peak</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bolometric-flux">Bolometric Flux</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#observed-flux-and-luminosity-of-a-spherical-source">Observed Flux and Luminosity of a Spherical Source</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#surviving-fraction">Surviving Fraction</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cgs-kernels">CGS Kernels</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-cgs-kernels-directly">Using CGS Kernels Directly</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API Reference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API Reference</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.planck_B"><code class="docutils literal notranslate"><span class="pre">planck_B()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.planck_surface_flux"><code class="docutils literal notranslate"><span class="pre">planck_surface_flux()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.planck_flux"><code class="docutils literal notranslate"><span class="pre">planck_flux()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.wien_peak_frequency"><code class="docutils literal notranslate"><span class="pre">wien_peak_frequency()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.wien_peak_wavelength"><code class="docutils literal notranslate"><span class="pre">wien_peak_wavelength()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.stefan_boltzmann_flux"><code class="docutils literal notranslate"><span class="pre">stefan_boltzmann_flux()</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

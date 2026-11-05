@@ -740,7 +740,6 @@
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/physics/radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/physics/radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../reference/physics/radiation/arnett.html">Arnett Engines</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../reference/physics/disks/index.html">Accretion Disks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -912,6 +911,8 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.angular_shape.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.angular_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_callable.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_callable</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.disk_half_opening_angle.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.disk_half_opening_angle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.eval.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.eval</a></li>
@@ -1325,7 +1326,7 @@ spirals in from the outer disk to the inner truncation radius:</p>
 viscous dissipation.  In radiatively efficient models (no
 advection) essentially all of this power escapes as radiation, so
 <span class="math notranslate nohighlight">\(L_{\rm acc} \approx L_{\rm rad}\)</span>.  In advection-dominated
-models (e.g. <a class="reference internal" href="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a>)
+models (e.g. <a class="reference internal" href="trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a>)
 a fraction of the dissipated energy is advected inward rather than
 radiated, giving <span class="math notranslate nohighlight">\(L_{\rm rad} &lt; L_{\rm acc}\)</span>.  Use
 <a class="reference internal" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.compute_radiative_luminosity" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.compute_radiative_luminosity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_radiative_luminosity()</span></code></a> to obtain the

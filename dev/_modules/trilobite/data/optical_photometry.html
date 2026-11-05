@@ -468,7 +468,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ab_mag_to_flux</span><span class="p">,</span> <span class="n">flux_to_ab_mag</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataContainer</span><span class="p">,</span> <span class="n">InferenceData</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">band_variable_name</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>  <span class="c1"># noqa: F401</span>
@@ -1087,8 +1086,8 @@
 <span class="sd">            Override the default variable mapping.  By default:</span>
 
 <span class="sd">            - ``"time"`` → ``time`` column (converted to model units)</span>
-<span class="sd">            - ``"band_index"`` (or ``"band_idx"``, whichever the model declares) → resolved</span>
-<span class="sd">              from ``band_name`` via ``model.bundle.filter_names``</span>
+<span class="sd">            - ``"band_idx"`` → resolved from ``band_name`` via</span>
+<span class="sd">              ``model.bundle.filter_names``</span>
 
 <span class="sd">        observables : dict, optional</span>
 <span class="sd">            Override the default observable mapping.  By default, the single</span>
@@ -1182,7 +1181,7 @@
         <span class="c1"># ------------------------------------------------------------------</span>
         <span class="n">x</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">"time"</span><span class="p">:</span> <span class="n">t_vals</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
-            <span class="n">band_variable_name</span><span class="p">(</span><span class="n">model</span><span class="p">):</span> <span class="n">idx_vals</span><span class="p">,</span>
+            <span class="s2">"band_idx"</span><span class="p">:</span> <span class="n">idx_vals</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">y</span> <span class="o">=</span> <span class="p">{</span><span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">flux_vals</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg/(s cm2 Hz)"</span><span class="p">)}</span>
         <span class="n">y_err</span> <span class="o">=</span> <span class="p">{</span><span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">flux_err_vals</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg/(s cm2 Hz)"</span><span class="p">)}</span>
@@ -1433,7 +1432,7 @@
 
 <span class="sd">        Default mapping:</span>
 
-<span class="sd">        - ``variables``: ``{"band_index": &lt;resolved integer indices&gt;}`` (``band_idx`` for models that declare it)</span>
+<span class="sd">        - ``variables``: ``{"band_idx": &lt;resolved integer indices&gt;}``</span>
 <span class="sd">        - ``observables``: the single model output mapped to flux columns</span>
 
 <span class="sd">        Parameters</span>
@@ -1510,7 +1509,7 @@
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="n">band_variable_name</span><span class="p">(</span><span class="n">model</span><span class="p">):</span> <span class="n">idx_vals</span><span class="p">}</span>
+            <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"band_idx"</span><span class="p">:</span> <span class="n">idx_vals</span><span class="p">}</span>
 
         <span class="k">if</span> <span class="n">observables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>

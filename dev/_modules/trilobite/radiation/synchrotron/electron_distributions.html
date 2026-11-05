@@ -461,7 +461,7 @@
 <span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
@@ -635,6 +635,11 @@
 <span class="c1"># and provides some common methods that can be used by all distributions.</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_f8</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Convert each value to a ``float64`` array (0-d for scalars); used by the validated public wrappers."""</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="ElectronDistribution">
 <a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.ElectronDistribution.html#trilobite.radiation.synchrotron.electron_distributions.ElectronDistribution">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ElectronDistribution</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
@@ -650,6 +655,12 @@
 <span class="sd">    The interface is **stateless**: call class methods directly, passing</span>
 <span class="sd">    distribution parameters as keyword arguments each time.</span>
 
+<span class="sd">    Distribution parameters may be scalars or arrays. Public methods validate their inputs and then</span>
+<span class="sd">    dispatch to private ``_opt_*`` backends, which skip validation and broadcast over array parameters</span>
+<span class="sd">    using standard NumPy rules. The exceptions are quantities defined by a numerical integral</span>
+<span class="sd">    (the Maxwell-Jüttner CDF and truncated moments, and moments above order two), which are</span>
+<span class="sd">    evaluated one temperature at a time.</span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    PowerLaw : Truncated power-law distribution.</span>
@@ -663,7 +674,7 @@
 <span class="sd">    Evaluate the power-law shape at a single Lorentz factor:</span>
 
 <span class="sd">    &gt;&gt;&gt; PowerLaw.pdf(10.0, p=2.0)</span>
-<span class="sd">    array(0.01)</span>
+<span class="sd">    0.01</span>
 
 <span class="sd">    Compute the zeroth and second raw moments analytically:</span>
 
@@ -677,8 +688,34 @@
 
 <span class="sd">    &gt;&gt;&gt; f = PowerLaw.as_callable(norm=1.0, p=2.0)</span>
 <span class="sd">    &gt;&gt;&gt; f(100.0)</span>
-<span class="sd">    array(0.0001)</span>
+<span class="sd">    0.0001</span>
 <span class="sd">    """</span>
+
+    <span class="c1"># ---------------------------------------------- #</span>
+    <span class="c1"># Parameter processing and backends              #</span>
+    <span class="c1"># ---------------------------------------------- #</span>
+    <span class="c1"># Every concrete distribution follows the two-level pattern used throughout trilobite:</span>
+    <span class="c1">#</span>
+    <span class="c1">#   * public methods (``pdf``, ``moment``, ``cdf``, ``normalize_from_*``, ...) validate their inputs with</span>
+    <span class="c1">#     ``_validate_and_process_parameters``, which also converts them to ``float64`` arrays, and then</span>
+    <span class="c1">#   * dispatch to private ``_opt_*`` backends, which do no validation or coercion and broadcast over array</span>
+    <span class="c1">#     parameters using standard NumPy rules.</span>
+    <span class="c1">#</span>
+    <span class="c1"># The private ``_normalize_*`` and ``_bol_emiss_*`` methods are built on the backends and so are likewise</span>
+    <span class="c1"># unguarded: callers must supply parameters that have already been validated.</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_and_process_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Validate distribution parameters and return them as ``float64`` arrays.</span>
+
+<span class="sd">        The default implementation returns ``params`` unchanged; concrete distributions override it.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">params</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Unvalidated raw moment; falls back to :meth:`moment`, and analytic distributions override it."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="c1"># ---------------------------------------------- #</span>
     <span class="c1"># Utility Methods                                #</span>
@@ -713,7 +750,7 @@
 <span class="sd">        ...     norm=1.0, p=3.0, gamma_min=1.0</span>
 <span class="sd">        ... )</span>
 <span class="sd">        &gt;&gt;&gt; pdf(10.0)</span>
-<span class="sd">        array(0.001)</span>
+<span class="sd">        0.001</span>
 <span class="sd">        """</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">norm</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
 
@@ -1501,20 +1538,20 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_n_total</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">n_total</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">n_total</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">n_total</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_n_eff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">n_eff</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">n_eff</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">n_eff</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_magnetic_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">u_B</span> <span class="o">=</span> <span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">))</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_energy_density</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">u_therm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">epsilon_E</span> <span class="o">*</span> <span class="n">u_therm</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">epsilon_E</span> <span class="o">*</span> <span class="n">u_therm</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">))</span>
 
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="c1"># Normalization (Public)                                             #</span>
@@ -1539,6 +1576,7 @@
 <span class="sd">            Distribution amplitude :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.</span>
 <span class="sd">        """</span>
         <span class="n">n_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_total</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_normalize_from_n_total</span><span class="p">(</span><span class="n">n_cgs</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span></div>
 
 
@@ -1562,6 +1600,7 @@
 <span class="sd">            Distribution amplitude :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.</span>
 <span class="sd">        """</span>
         <span class="n">n_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_eff</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_normalize_from_n_eff</span><span class="p">(</span><span class="n">n_cgs</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span></div>
 
 
@@ -1599,6 +1638,7 @@
 <span class="sd">            Power-law normalization :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.</span>
 <span class="sd">        """</span>
         <span class="n">B_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_normalize_from_magnetic_field</span><span class="p">(</span><span class="n">B_cgs</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span></div>
 
 
@@ -1633,6 +1673,7 @@
 <span class="sd">            Distribution amplitude :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.</span>
 <span class="sd">        """</span>
         <span class="n">u_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">u_therm</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_normalize_from_energy_density</span><span class="p">(</span><span class="n">u_cgs</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span></div>
 
 
@@ -1641,12 +1682,14 @@
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_integral_power_law</span><span class="p">(</span>
-        <span class="n">exponent</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">lower</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">exponent</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
+        <span class="n">lower</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
+        <span class="n">upper</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        Evaluate a scalar definite power-law integral.</span>
+<span class="sd">        Evaluate a definite power-law integral, broadcasting over array inputs.</span>
+
+<span class="sd">        This is an unvalidated backend: inputs must already be floats or ``float64`` arrays.</span>
 
 <span class="sd">        Computes</span>
 
@@ -1672,20 +1715,22 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        integral : float</span>
-<span class="sd">            Returns ``0.0`` if ``upper &lt;= lower``.</span>
+<span class="sd">        integral : float or ~numpy.ndarray</span>
+<span class="sd">            Broadcast shape of the inputs. Elements with ``upper &lt;= lower`` are ``0.0``.</span>
 <span class="sd">        """</span>
-        <span class="n">exponent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span>
-        <span class="n">lower</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lower</span><span class="p">)</span>
-        <span class="n">upper</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">upper</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Common case (scalar index): pick the form once in Python and skip the masking machinery.</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-14</span><span class="p">:</span>
+                <span class="n">integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">upper</span> <span class="o">/</span> <span class="n">lower</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">integral</span> <span class="o">=</span> <span class="p">(</span><span class="n">upper</span><span class="o">**</span><span class="n">exponent</span> <span class="o">-</span> <span class="n">lower</span><span class="o">**</span><span class="n">exponent</span><span class="p">)</span> <span class="o">/</span> <span class="n">exponent</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">lower</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">integral</span><span class="p">)[()]</span>
 
-        <span class="k">if</span> <span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">lower</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">0.0</span>
-
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">exponent</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">upper</span> <span class="o">/</span> <span class="n">lower</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="nb">float</span><span class="p">((</span><span class="n">upper</span><span class="o">**</span><span class="n">exponent</span> <span class="o">-</span> <span class="n">lower</span><span class="o">**</span><span class="n">exponent</span><span class="p">)</span> <span class="o">/</span> <span class="n">exponent</span><span class="p">)</span>
+        <span class="n">is_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-14</span>  <span class="c1"># == isclose(exponent, 0, rtol=0, atol=1e-14), without its overhead</span>
+        <span class="n">safe_exponent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">is_log</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>  <span class="c1"># avoid 0/0 in the unused branch</span>
+        <span class="n">power_form</span> <span class="o">=</span> <span class="p">(</span><span class="n">upper</span><span class="o">**</span><span class="n">safe_exponent</span> <span class="o">-</span> <span class="n">lower</span><span class="o">**</span><span class="n">safe_exponent</span><span class="p">)</span> <span class="o">/</span> <span class="n">safe_exponent</span>
+        <span class="n">log_form</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">upper</span> <span class="o">/</span> <span class="n">lower</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">lower</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">is_log</span><span class="p">,</span> <span class="n">log_form</span><span class="p">,</span> <span class="n">power_form</span><span class="p">))[()]</span>
 
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="c1"># Bolometric emissivity (Private)                                    #</span>
@@ -1695,7 +1740,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_bol_emiss_from_magnetic_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_normalize_from_magnetic_field</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="n">U_B</span> <span class="o">=</span> <span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma_T_cgs</span> <span class="o">*</span> <span class="n">c_cgs</span> <span class="o">*</span> <span class="n">U_B</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">n_eff</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma_T_cgs</span> <span class="o">*</span> <span class="n">c_cgs</span> <span class="o">*</span> <span class="n">U_B</span> <span class="o">*</span> <span class="n">norm</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_bol_emiss_from_energy_density</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">u_therm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1741,6 +1786,7 @@
 <span class="sd">            :math:`\mathrm{erg\,s^{-1}\,cm^{-3}}`.</span>
 <span class="sd">        """</span>
         <span class="n">B_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_bol_emiss_from_magnetic_field</span><span class="p">(</span><span class="n">B_cgs</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span></div>
 
 
@@ -1774,6 +1820,7 @@
 <span class="sd">            :math:`\mathrm{erg\,s^{-1}\,cm^{-3}}`.</span>
 <span class="sd">        """</span>
         <span class="n">u_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">u_therm</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_bol_emiss_from_energy_density</span><span class="p">(</span><span class="n">u_cgs</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span></div>
 </div>
 
@@ -1875,7 +1922,7 @@
 <span class="sd">    Evaluate the shape function at a single Lorentz factor:</span>
 
 <span class="sd">    &gt;&gt;&gt; PowerLaw.pdf(10.0, p=2.0)</span>
-<span class="sd">    array(0.01)</span>
+<span class="sd">    0.01</span>
 
 <span class="sd">    Evaluate at an array of Lorentz factors with a finite upper cutoff:</span>
 
@@ -1914,7 +1961,7 @@
         <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        Validate scalar power-law parameters.</span>
+<span class="sd">        Validate power-law parameters.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1931,21 +1978,50 @@
 <span class="sd">            If the power-law index is non-finite or non-positive, if</span>
 <span class="sd">            ``gamma_min &lt; 1``, or if ``gamma_max &lt;= gamma_min``.</span>
 <span class="sd">        """</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="n">gamma_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">)</span>
-        <span class="n">gamma_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">p</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Power-law index `p` must be finite."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">p</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Power-law index `p` must be positive."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">gamma_min</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gamma_min</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_min` must be greater than or equal to 1."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">gamma_max</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gamma_max</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_max` must be greater than `gamma_min`."</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_and_process_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Validate the power-law parameters and return them as ``float64`` arrays."""</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"p"</span><span class="p">:</span> <span class="n">p</span><span class="p">,</span> <span class="s2">"gamma_min"</span><span class="p">:</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="s2">"gamma_max"</span><span class="p">:</span> <span class="n">gamma_max</span><span class="p">}</span>
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Unvalidated backends                                               #</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># No validation or coercion; floats or float64 arrays, broadcast with standard NumPy rules.</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_pdf</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="n">inside_support</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&gt;=</span> <span class="n">gamma_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&lt;=</span> <span class="n">gamma_max</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">inside_support</span><span class="p">,</span> <span class="n">norm</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)[()]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_integral_power_law</span><span class="p">(</span><span class="n">order</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment_between</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">)</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">over</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>  <span class="c1"># masked-out empty intervals</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_integral_power_law</span><span class="p">(</span><span class="n">order</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_cdf</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">norm</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment_between</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="c1"># Distribution Interface                                             #</span>
@@ -1998,22 +2074,9 @@
 <span class="sd">        N_gamma : float or ~numpy.ndarray</span>
 <span class="sd">            Distribution evaluated at ``gamma``.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
-
-        <span class="n">gamma_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="n">gamma_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">)</span>
-        <span class="n">gamma_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">)</span>
-
-        <span class="n">inside_support</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma_array</span> <span class="o">&gt;=</span> <span class="n">gamma_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma_array</span> <span class="o">&lt;=</span> <span class="n">gamma_max</span><span class="p">)</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="n">inside_support</span><span class="p">,</span>
-            <span class="n">norm</span> <span class="o">*</span> <span class="n">gamma_array</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p</span><span class="p">),</span>
-            <span class="mf">0.0</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(())</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">result</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PowerLaw.support">
@@ -2043,16 +2106,15 @@
 <span class="sd">        gamma_min, gamma_max : tuple of float</span>
 <span class="sd">            Lower and upper Lorentz-factor bounds.</span>
 <span class="sd">        """</span>
-        <span class="n">gamma_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">)</span>
-        <span class="n">gamma_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">gamma_min</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gamma_min</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_min` must be greater than or equal to 1."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">gamma_max</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gamma_max</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_max` must be greater than `gamma_min`."</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span></div>
+        <span class="k">return</span> <span class="n">gamma_min</span><span class="p">[()],</span> <span class="n">gamma_max</span><span class="p">[()]</span></div>
 
 
 <div class="viewcode-block" id="PowerLaw.moment">
@@ -2096,10 +2158,8 @@
 <span class="sd">        M_k : float</span>
 <span class="sd">            Raw moment of the shape function.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
-
-        <span class="n">exponent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_integral_power_law</span><span class="p">(</span><span class="n">exponent</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">),</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PowerLaw.moment_between">
@@ -2153,16 +2213,9 @@
 <span class="sd">            Truncated raw moment over the clipped interval. Returns ``0.0`` if</span>
 <span class="sd">            the requested interval does not overlap the support.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
-
-        <span class="n">lower</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">))</span>
-        <span class="n">upper</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">lower</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">0.0</span>
-
-        <span class="n">exponent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_integral_power_law</span><span class="p">(</span><span class="n">exponent</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment_between</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">),</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PowerLaw.cdf">
@@ -2215,31 +2268,9 @@
 <span class="sd">        F_gamma : float or ~numpy.ndarray</span>
 <span class="sd">            Cumulative distribution evaluated at ``gamma``.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
-
-        <span class="n">gamma_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
-        <span class="n">scalar_input</span> <span class="o">=</span> <span class="n">gamma_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span>
-
-        <span class="n">p</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="n">gamma_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">)</span>
-        <span class="n">gamma_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">)</span>
-        <span class="n">norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span>
-
-        <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">gamma_array</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
-        <span class="n">exponent</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span>
-
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">exponent</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">):</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">upper</span> <span class="o">/</span> <span class="n">gamma_min</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">upper</span><span class="o">**</span><span class="n">exponent</span> <span class="o">-</span> <span class="n">gamma_min</span><span class="o">**</span><span class="n">exponent</span><span class="p">)</span> <span class="o">/</span> <span class="n">exponent</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">*</span> <span class="n">result</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">gamma_array</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">scalar_input</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(())[()]</span>
-
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_cdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 </div>
 
 
@@ -2337,15 +2368,15 @@
 <span class="sd">    Evaluate below and above the spectral break at :math:`\gamma_c = 10`:</span>
 
 <span class="sd">    &gt;&gt;&gt; BrokenPowerLaw.pdf(5.0, p1=2.0, p2=3.0, gamma_c=10.0)</span>
-<span class="sd">    array(4.)</span>
+<span class="sd">    4.0</span>
 <span class="sd">    &gt;&gt;&gt; BrokenPowerLaw.pdf(20.0, p1=2.0, p2=3.0, gamma_c=10.0)</span>
-<span class="sd">    array(0.125)</span>
+<span class="sd">    0.125</span>
 
 <span class="sd">    The distribution is continuous at :math:`\gamma_c` (both branches</span>
 <span class="sd">    evaluate to :math:`N_0` at the break):</span>
 
 <span class="sd">    &gt;&gt;&gt; BrokenPowerLaw.pdf(10.0, p1=2.0, p2=3.0, gamma_c=10.0)</span>
-<span class="sd">    array(1.)</span>
+<span class="sd">    1.0</span>
 
 <span class="sd">    Evaluate on an array spanning the break:</span>
 
@@ -2375,7 +2406,10 @@
         <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        Validate scalar broken-power-law parameters.</span>
+<span class="sd">        Validate broken-power-law parameters.</span>
+
+<span class="sd">        All arguments may be scalars or arrays; array inputs are broadcast against one another and the</span>
+<span class="sd">        checks must hold for every element.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2395,35 +2429,42 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If any parameter is outside the supported physical range.</span>
 <span class="sd">        """</span>
-        <span class="n">p1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
-        <span class="n">p2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
-        <span class="n">gamma_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">)</span>
-        <span class="n">gamma_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">)</span>
-        <span class="n">gamma_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
+        <span class="n">p2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
+        <span class="n">gamma_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
+        <span class="n">gamma_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
+        <span class="n">gamma_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">p1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">p1</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Lower power-law index `p1` must be finite."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">p2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">p2</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Upper power-law index `p2` must be finite."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">p1</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">p1</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Lower power-law index `p1` must be positive."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">p2</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">p2</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Upper power-law index `p2` must be positive."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">gamma_min</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gamma_min</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_min` must be greater than or equal to 1."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">gamma_max</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gamma_max</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_max` must be greater than `gamma_min`."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">gamma_c</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gamma_c</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_c` must be greater than `gamma_min`."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">gamma_c</span> <span class="o">&gt;=</span> <span class="n">gamma_max</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gamma_c</span> <span class="o">&gt;=</span> <span class="n">gamma_max</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_c` must be less than `gamma_max`."</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_and_process_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Validate the broken power-law parameters and return them as ``float64`` arrays."""</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"p1"</span><span class="p">:</span> <span class="n">p1</span><span class="p">,</span> <span class="s2">"p2"</span><span class="p">:</span> <span class="n">p2</span><span class="p">,</span> <span class="s2">"gamma_c"</span><span class="p">:</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="s2">"gamma_min"</span><span class="p">:</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="s2">"gamma_max"</span><span class="p">:</span> <span class="n">gamma_max</span><span class="p">}</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_branch_moment</span><span class="p">(</span>
@@ -2435,7 +2476,10 @@
         <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        Compute a scalar moment contribution from one broken-power-law branch.</span>
+<span class="sd">        Compute the moment contribution from one broken-power-law branch.</span>
+
+<span class="sd">        Array-valued ``p``, ``gamma_c``, ``lower`` and ``upper`` are broadcast against one another. This is an</span>
+<span class="sd">        unvalidated backend; see :meth:`moment` for the validated public interface.</span>
 
 <span class="sd">        The branch shape is</span>
 
@@ -2454,12 +2498,8 @@
 <span class="sd">            \gamma_c^{p_i}</span>
 <span class="sd">            \int_a^b \gamma^{k-p_i}\,d\gamma.</span>
 <span class="sd">        """</span>
-        <span class="n">exponent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">gamma_c</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_integral_power_law</span><span class="p">(</span>
-            <span class="n">exponent</span><span class="p">,</span>
-            <span class="n">lower</span><span class="p">,</span>
-            <span class="n">upper</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">exponent</span> <span class="o">=</span> <span class="n">order</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span>
+        <span class="k">return</span> <span class="n">gamma_c</span><span class="o">**</span><span class="n">p</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_integral_power_law</span><span class="p">(</span><span class="n">exponent</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="c1"># Distribution Interface                                             #</span>
@@ -2503,17 +2543,17 @@
 <span class="sd">        gamma : float or array-like</span>
 <span class="sd">            Lorentz factor or Lorentz factors at which to evaluate the</span>
 <span class="sd">            distribution.</span>
-<span class="sd">        norm : float, optional</span>
+<span class="sd">        norm : float or array-like, optional</span>
 <span class="sd">            Distribution amplitude :math:`N_0`. Default is ``1.0``.</span>
-<span class="sd">        p1 : float</span>
+<span class="sd">        p1 : float or array-like</span>
 <span class="sd">            Power-law index below the break.</span>
-<span class="sd">        p2 : float</span>
+<span class="sd">        p2 : float or array-like</span>
 <span class="sd">            Power-law index above the break.</span>
-<span class="sd">        gamma_c : float</span>
+<span class="sd">        gamma_c : float or array-like</span>
 <span class="sd">            Break Lorentz factor.</span>
-<span class="sd">        gamma_min : float, optional</span>
+<span class="sd">        gamma_min : float or array-like, optional</span>
 <span class="sd">            Minimum Lorentz factor. Default is ``1.0``.</span>
-<span class="sd">        gamma_max : float, optional</span>
+<span class="sd">        gamma_max : float or array-like, optional</span>
 <span class="sd">            Maximum Lorentz factor. Default is ``numpy.inf``.</span>
 <span class="sd">        **_</span>
 <span class="sd">            Ignored keyword arguments, accepted for API compatibility.</span>
@@ -2521,142 +2561,16 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        N_gamma : float or ~numpy.ndarray</span>
-<span class="sd">            Distribution evaluated at ``gamma``.</span>
+<span class="sd">            Distribution evaluated at ``gamma``. Array-valued arguments follow standard NumPy broadcasting, so</span>
+<span class="sd">            for example ``gamma[np.newaxis, :]`` with ``gamma_c[:, np.newaxis]`` gives a ``(len(gamma_c), len(gamma))``</span>
+<span class="sd">            result.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span>
-            <span class="n">p1</span><span class="p">,</span>
-            <span class="n">p2</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-            <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
-            <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span>
+            <span class="n">p1</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="o">=</span><span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span>
         <span class="p">)</span>
+        <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
-        <span class="n">gamma_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
-        <span class="n">scalar_input</span> <span class="o">=</span> <span class="n">gamma_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="n">gamma_flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">gamma_array</span><span class="p">)</span>
-
-        <span class="n">p1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
-        <span class="n">p2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
-        <span class="n">gamma_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">)</span>
-        <span class="n">gamma_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">)</span>
-        <span class="n">gamma_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">)</span>
-
-        <span class="n">below</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma_flat</span> <span class="o">&gt;=</span> <span class="n">gamma_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma_flat</span> <span class="o">&lt;</span> <span class="n">gamma_c</span><span class="p">)</span>
-        <span class="n">above</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma_flat</span> <span class="o">&gt;=</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma_flat</span> <span class="o">&lt;=</span> <span class="n">gamma_max</span><span class="p">)</span>
-        <span class="n">gamma_safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">gamma_flat</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">)</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="n">below</span><span class="p">,</span>
-            <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma_safe</span> <span class="o">/</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p1</span><span class="p">),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">above</span><span class="p">,</span> <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma_safe</span> <span class="o">/</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">),</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">scalar_input</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(())[()]</span>
-        <span class="k">return</span> <span class="n">result</span></div>
-
-
-    <span class="c1"># ------------------------------------------------------------------ #</span>
-    <span class="c1"># Batched evaluation over many break Lorentz factors (Private)       #</span>
-    <span class="c1"># ------------------------------------------------------------------ #</span>
-    <span class="c1"># Inference evaluates the same shape with a different cooling break at every epoch. These helpers evaluate</span>
-    <span class="c1"># a whole array of breaks in one vectorized pass. They match the scalar interface (`moment`, `pdf`) to</span>
-    <span class="c1"># floating-point round-off but skip parameter validation, which the caller must guarantee</span>
-    <span class="c1"># (``gamma_min &lt; gamma_c &lt; gamma_max`` and positive indices).</span>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_first_moment_batch</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">gamma_c</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">p1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">p2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        First moment :math:`\int\gamma f(\gamma)\,d\gamma` of the unit-amplitude shape for an array of breaks.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        gamma_c : numpy.ndarray</span>
-<span class="sd">            Break Lorentz factors, shape ``(K,)``.</span>
-<span class="sd">        p1, p2, gamma_min, gamma_max : float</span>
-<span class="sd">            Shape parameters, as in :meth:`pdf`.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
-<span class="sd">            The first moment at each break, shape ``(K,)``.</span>
-<span class="sd">        """</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">_branch</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
-            <span class="n">exponent</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>  <span class="c1"># order + 1 - p with order = 1</span>
-            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-14</span><span class="p">:</span>
-                <span class="n">integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">upper</span> <span class="o">/</span> <span class="n">lower</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">integral</span> <span class="o">=</span> <span class="p">(</span><span class="n">upper</span><span class="o">**</span><span class="n">exponent</span> <span class="o">-</span> <span class="n">lower</span><span class="o">**</span><span class="n">exponent</span><span class="p">)</span> <span class="o">/</span> <span class="n">exponent</span>
-            <span class="k">return</span> <span class="n">gamma_c</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">integral</span>
-
-        <span class="k">return</span> <span class="n">_branch</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">+</span> <span class="n">_branch</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_normalize_from_magnetic_field_batch</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">B</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">gamma_c</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">params</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Batched :meth:`_normalize_from_magnetic_field` for arrays ``B`` and ``gamma_c`` of shape ``(K,)``."""</span>
-        <span class="n">u_B</span> <span class="o">=</span> <span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-        <span class="n">moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_first_moment_batch</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="n">moment</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_log_pdf_batch</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">gamma</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">norm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">gamma_c</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">p1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">p2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        Natural log of :meth:`pdf` for an array of amplitudes and breaks.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        gamma : numpy.ndarray</span>
-<span class="sd">            Lorentz-factor grid, shape ``(G,)``.</span>
-<span class="sd">        norm, gamma_c : numpy.ndarray</span>
-<span class="sd">            Amplitudes and break Lorentz factors, each of shape ``(K,)``.</span>
-<span class="sd">        p1, p2, gamma_min, gamma_max : float</span>
-<span class="sd">            Shape parameters, as in :meth:`pdf`.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
-<span class="sd">            :math:`\ln N(\gamma)`, shape ``(K, G)``, equal to ``-inf`` outside the support.</span>
-<span class="sd">        """</span>
-        <span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">norm</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-        <span class="n">gamma_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-
-        <span class="n">below</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&gt;=</span> <span class="n">gamma_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&lt;</span> <span class="n">gamma_c</span><span class="p">)</span>
-        <span class="n">above</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&gt;=</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&lt;=</span> <span class="n">gamma_max</span><span class="p">)</span>
-        <span class="n">gamma_safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">)</span>
-
-        <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="n">below</span><span class="p">,</span>
-            <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma_safe</span> <span class="o">/</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p1</span><span class="p">),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">above</span><span class="p">,</span> <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma_safe</span> <span class="o">/</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BrokenPowerLaw.support">
 <a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.support.html#trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.support">[docs]</a>
@@ -2685,16 +2599,15 @@
 <span class="sd">        gamma_min, gamma_max : tuple of float</span>
 <span class="sd">            Lower and upper Lorentz-factor bounds.</span>
 <span class="sd">        """</span>
-        <span class="n">gamma_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">)</span>
-        <span class="n">gamma_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">gamma_min</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gamma_min</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_min` must be greater than or equal to 1."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">gamma_max</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gamma_max</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_max` must be greater than `gamma_min`."</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span></div>
+        <span class="k">return</span> <span class="n">gamma_min</span><span class="p">[()],</span> <span class="n">gamma_max</span><span class="p">[()]</span></div>
 
 
 <div class="viewcode-block" id="BrokenPowerLaw.moment">
@@ -2729,51 +2642,73 @@
 <span class="sd">        ----------</span>
 <span class="sd">        order : float</span>
 <span class="sd">            Moment order :math:`k`.</span>
-<span class="sd">        p1 : float</span>
+<span class="sd">        p1 : float or array-like</span>
 <span class="sd">            Power-law index below the break.</span>
-<span class="sd">        p2 : float</span>
+<span class="sd">        p2 : float or array-like</span>
 <span class="sd">            Power-law index above the break.</span>
-<span class="sd">        gamma_c : float</span>
+<span class="sd">        gamma_c : float or array-like</span>
 <span class="sd">            Break Lorentz factor.</span>
-<span class="sd">        gamma_min : float, optional</span>
+<span class="sd">        gamma_min : float or array-like, optional</span>
 <span class="sd">            Minimum Lorentz factor. Default is ``1.0``.</span>
-<span class="sd">        gamma_max : float, optional</span>
+<span class="sd">        gamma_max : float or array-like, optional</span>
 <span class="sd">            Maximum Lorentz factor. Default is ``numpy.inf``.</span>
 <span class="sd">        **_</span>
 <span class="sd">            Ignored keyword arguments, accepted for API compatibility.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        M_k : float</span>
-<span class="sd">            Raw moment of the shape function.</span>
+<span class="sd">        M_k : float or ~numpy.ndarray</span>
+<span class="sd">            Raw moment of the shape function. Array-valued parameters are broadcast against one</span>
+<span class="sd">            another and the result has the broadcast shape.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span>
-            <span class="n">p1</span><span class="p">,</span>
-            <span class="n">p2</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-            <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
-            <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span>
+            <span class="n">p1</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="o">=</span><span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">),</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Unvalidated backends                                               #</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># No validation or coercion: parameters must satisfy ``1 &lt;= gamma_min &lt; gamma_c &lt; gamma_max`` with positive</span>
+    <span class="c1"># indices. All arguments may be floats or ``float64`` arrays and are broadcast with standard NumPy rules.</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_pdf</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="c1"># To evaluate K breaks on a grid of G Lorentz factors, pass ``gamma[None, :]``, ``norm[:, None]`` and</span>
+        <span class="c1"># ``gamma_c[:, None]`` to obtain a (K, G) result.</span>
+        <span class="n">below</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&gt;=</span> <span class="n">gamma_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&lt;</span> <span class="n">gamma_c</span><span class="p">)</span>
+        <span class="n">above</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&gt;=</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&lt;=</span> <span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">gamma_safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="n">below</span><span class="p">,</span>
+            <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma_safe</span> <span class="o">/</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p1</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">above</span><span class="p">,</span> <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma_safe</span> <span class="o">/</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">)[()]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_branch_moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_branch_moment</span><span class="p">(</span>
+            <span class="n">order</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_max</span>
         <span class="p">)</span>
 
-        <span class="n">gamma_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment_between</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="c1"># Empty intervals (upper &lt;= lower) contribute exactly zero from both branches, so no early return is needed.</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">)</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
 
-        <span class="n">lower_branch</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_branch_moment</span><span class="p">(</span>
-            <span class="n">order</span><span class="p">,</span>
-            <span class="n">p1</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-            <span class="n">gamma_min</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">over</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>  <span class="c1"># masked-out empty intervals</span>
+            <span class="n">lower_branch</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_branch_moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">upper</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">))</span>
+            <span class="n">upper_branch</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_branch_moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">),</span> <span class="n">upper</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">lower_branch</span> <span class="o">+</span> <span class="n">upper_branch</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_cdf</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">norm</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment_between</span><span class="p">(</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="o">=</span><span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span>
         <span class="p">)</span>
-        <span class="n">upper_branch</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_branch_moment</span><span class="p">(</span>
-            <span class="n">order</span><span class="p">,</span>
-            <span class="n">p2</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-            <span class="n">gamma_max</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">lower_branch</span> <span class="o">+</span> <span class="n">upper_branch</span></div>
-
 
 <div class="viewcode-block" id="BrokenPowerLaw.moment_between">
 <a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.moment_between.html#trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.moment_between">[docs]</a>
@@ -2833,37 +2768,11 @@
 <span class="sd">            Truncated raw moment over the clipped interval. Returns ``0.0`` if</span>
 <span class="sd">            the requested interval does not overlap the support.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span>
-            <span class="n">p1</span><span class="p">,</span>
-            <span class="n">p2</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-            <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
-            <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span>
+            <span class="n">p1</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="o">=</span><span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span>
         <span class="p">)</span>
-
-        <span class="n">lower</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">))</span>
-        <span class="n">upper</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">))</span>
-        <span class="n">gamma_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">lower</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">0.0</span>
-
-        <span class="n">lower_branch</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_branch_moment</span><span class="p">(</span>
-            <span class="n">order</span><span class="p">,</span>
-            <span class="n">p1</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-            <span class="n">lower</span><span class="p">,</span>
-            <span class="nb">min</span><span class="p">(</span><span class="n">upper</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">upper_branch</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_branch_moment</span><span class="p">(</span>
-            <span class="n">order</span><span class="p">,</span>
-            <span class="n">p2</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-            <span class="nb">max</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">),</span>
-            <span class="n">upper</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">lower_branch</span> <span class="o">+</span> <span class="n">upper_branch</span></div>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment_between</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">),</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BrokenPowerLaw.cdf">
@@ -2922,69 +2831,11 @@
 <span class="sd">        F_gamma : float or ~numpy.ndarray</span>
 <span class="sd">            Cumulative distribution evaluated at ``gamma``.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span>
-            <span class="n">p1</span><span class="p">,</span>
-            <span class="n">p2</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-            <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
-            <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span>
+            <span class="n">p1</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="o">=</span><span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span>
         <span class="p">)</span>
-
-        <span class="n">gamma_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
-        <span class="n">scalar_input</span> <span class="o">=</span> <span class="n">gamma_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="n">gamma_flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">gamma_array</span><span class="p">)</span>
-
-        <span class="n">gamma_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">)</span>
-        <span class="n">gamma_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">)</span>
-        <span class="n">gamma_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">)</span>
-        <span class="n">norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span>
-
-        <span class="n">gamma_clipped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">gamma_flat</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
-
-        <span class="n">lower_total</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_branch_moment</span><span class="p">(</span>
-            <span class="mi">0</span><span class="p">,</span>
-            <span class="n">p1</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-            <span class="n">gamma_min</span><span class="p">,</span>
-            <span class="n">gamma_c</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">gamma_clipped</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
-
-        <span class="n">below_break</span> <span class="o">=</span> <span class="n">gamma_clipped</span> <span class="o">&lt;</span> <span class="n">gamma_c</span>
-        <span class="n">above_break</span> <span class="o">=</span> <span class="o">~</span><span class="n">below_break</span>
-
-        <span class="c1"># CDF values below the break.</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">below_break</span><span class="p">):</span>
-            <span class="n">exponent1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
-            <span class="n">lower</span> <span class="o">=</span> <span class="n">gamma_min</span>
-            <span class="n">upper</span> <span class="o">=</span> <span class="n">gamma_clipped</span><span class="p">[</span><span class="n">below_break</span><span class="p">]</span>
-
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">exponent1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">):</span>
-                <span class="n">result</span><span class="p">[</span><span class="n">below_break</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma_c</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">upper</span> <span class="o">/</span> <span class="n">lower</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">result</span><span class="p">[</span><span class="n">below_break</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma_c</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper</span><span class="o">**</span><span class="n">exponent1</span> <span class="o">-</span> <span class="n">lower</span><span class="o">**</span><span class="n">exponent1</span><span class="p">)</span> <span class="o">/</span> <span class="n">exponent1</span>
-
-        <span class="c1"># CDF values above the break.</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">above_break</span><span class="p">):</span>
-            <span class="n">exponent2</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
-            <span class="n">lower</span> <span class="o">=</span> <span class="n">gamma_c</span>
-            <span class="n">upper</span> <span class="o">=</span> <span class="n">gamma_clipped</span><span class="p">[</span><span class="n">above_break</span><span class="p">]</span>
-
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">exponent2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">):</span>
-                <span class="n">upper_contrib</span> <span class="o">=</span> <span class="n">gamma_c</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">upper</span> <span class="o">/</span> <span class="n">lower</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">upper_contrib</span> <span class="o">=</span> <span class="n">gamma_c</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper</span><span class="o">**</span><span class="n">exponent2</span> <span class="o">-</span> <span class="n">lower</span><span class="o">**</span><span class="n">exponent2</span><span class="p">)</span> <span class="o">/</span> <span class="n">exponent2</span>
-
-            <span class="n">result</span><span class="p">[</span><span class="n">above_break</span><span class="p">]</span> <span class="o">=</span> <span class="n">lower_total</span> <span class="o">+</span> <span class="n">upper_contrib</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">*</span> <span class="n">result</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">gamma_flat</span> <span class="o">&lt;=</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">scalar_input</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(())[()]</span>
-
-        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">gamma_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+        <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_cdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 </div>
 
 
@@ -3117,7 +2968,7 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        Validate scalar Maxwell-Jüttner parameters.</span>
+<span class="sd">        Validate Maxwell-Jüttner parameters.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3129,13 +2980,71 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If ``Theta`` is non-finite or non-positive.</span>
 <span class="sd">        """</span>
-        <span class="n">Theta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
+        <span class="n">Theta</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">Theta</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">Theta</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">Theta</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Dimensionless temperature `Theta` must be finite."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">Theta</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Theta</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Dimensionless temperature `Theta` must be positive."</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_and_process_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">Theta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Validate the Maxwell-Juttner parameters and return them as ``float64`` arrays."""</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"Theta"</span><span class="p">:</span> <span class="n">_f8</span><span class="p">(</span><span class="n">Theta</span><span class="p">)[</span><span class="mi">0</span><span class="p">]}</span>
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Unvalidated backends                                               #</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># No validation or coercion; floats or float64 arrays, broadcast with standard NumPy rules.</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_pdf</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="n">inside_support</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">&gt;=</span> <span class="mf">1.0</span>
+
+        <span class="c1"># Clamp to 1.0 so sqrt(1 - gamma^{-2}) is defined for out-of-support elements;</span>
+        <span class="c1"># np.where selects 0.0 for those positions anyway.</span>
+        <span class="n">gamma_safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">gamma_safe</span><span class="o">**-</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Use exponentially scaled K_2 for numerical stability:</span>
+        <span class="c1">#</span>
+        <span class="c1">#   exp(-gamma/Theta) / K_2(1/Theta) = exp((1 - gamma)/Theta) / kve(2, 1/Theta).</span>
+        <span class="n">normalization</span> <span class="o">=</span> <span class="n">Theta</span> <span class="o">*</span> <span class="n">kve</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">Theta</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="n">inside_support</span><span class="p">,</span>
+            <span class="n">norm</span> <span class="o">*</span> <span class="n">gamma_safe</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">gamma_safe</span><span class="p">)</span> <span class="o">/</span> <span class="n">Theta</span><span class="p">)</span> <span class="o">/</span> <span class="n">normalization</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)[()]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="c1"># Closed forms for orders 0-2; higher orders use quadrature, looped over any array of temperatures.</span>
+        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">Theta</span><span class="p">)[()]</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">Theta</span>
+        <span class="n">k1_over_k2</span> <span class="o">=</span> <span class="n">kve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="n">kve</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">k1_over_k2</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">Theta</span>
+
+        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">Theta</span> <span class="o">*</span> <span class="n">k1_over_k2</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_quad</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">g</span><span class="o">**</span><span class="n">order</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">theta</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">_quad</span><span class="p">,</span> <span class="n">otypes</span><span class="o">=</span><span class="p">[</span><span class="s2">"f8"</span><span class="p">])(</span><span class="n">Theta</span><span class="p">)[()]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_approx_first_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mf">15.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">11.0</span> <span class="o">*</span> <span class="n">Theta</span> <span class="o">+</span> <span class="mf">4.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">Theta</span> <span class="o">+</span> <span class="mf">4.0</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_approx_first_kinetic_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Theta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">+</span> <span class="mf">15.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">+</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="p">)</span>
 
     <span class="c1"># ---------------------------------------------- #</span>
     <span class="c1"># Statistical Methods                            #</span>
@@ -3194,42 +3103,9 @@
 <span class="sd">        N_gamma : float or ~numpy.ndarray</span>
 <span class="sd">            Maxwell-Jüttner distribution evaluated at ``gamma``.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-
-        <span class="n">gamma_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
-        <span class="n">scalar_input</span> <span class="o">=</span> <span class="n">gamma_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span>
-
-        <span class="n">Theta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-
-        <span class="n">gamma_flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">gamma_array</span><span class="p">)</span>
-        <span class="n">inside_support</span> <span class="o">=</span> <span class="n">gamma_flat</span> <span class="o">&gt;=</span> <span class="mf">1.0</span>
-        <span class="c1"># Clamp to 1.0 so sqrt(1 - gamma^{-2}) is defined for out-of-support elements;</span>
-        <span class="c1"># np.where selects 0.0 for those positions anyway.</span>
-        <span class="n">gamma_safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">gamma_flat</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-        <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">gamma_safe</span><span class="o">**-</span><span class="mi">2</span><span class="p">)</span>
-
-        <span class="c1"># Use exponentially scaled K_2 for numerical stability:</span>
-        <span class="c1">#</span>
-        <span class="c1">#   K_2(1/Theta) = exp(-1/Theta) * kve(2, 1/Theta)</span>
-        <span class="c1">#</span>
-        <span class="c1"># Therefore</span>
-        <span class="c1">#</span>
-        <span class="c1">#   exp(-gamma/Theta) / K_2(1/Theta)</span>
-        <span class="c1">#   =</span>
-        <span class="c1">#   exp((1 - gamma)/Theta) / kve(2, 1/Theta).</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">Theta</span>
-        <span class="n">normalization</span> <span class="o">=</span> <span class="n">Theta</span> <span class="o">*</span> <span class="n">kve</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="n">inside_support</span><span class="p">,</span>
-            <span class="n">norm</span> <span class="o">*</span> <span class="n">gamma_safe</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">gamma_safe</span><span class="p">)</span> <span class="o">/</span> <span class="n">Theta</span><span class="p">)</span> <span class="o">/</span> <span class="n">normalization</span><span class="p">,</span>
-            <span class="mf">0.0</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">scalar_input</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(())[()]</span>
-
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">)</span>
+        <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MaxwellJuettner.support">
@@ -3317,27 +3193,8 @@
         <span class="k">if</span> <span class="n">order</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Moment order `order` must be non-negative."</span><span class="p">)</span>
 
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-
-        <span class="n">Theta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-        <span class="n">z</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">Theta</span>
-        <span class="n">k1_over_k2</span> <span class="o">=</span> <span class="n">kve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="n">kve</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">1.0</span>
-
-        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">k1_over_k2</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">Theta</span>
-
-        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">Theta</span> <span class="o">*</span> <span class="n">k1_over_k2</span>
-
-        <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">g</span><span class="o">**</span><span class="n">order</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">),</span>
-            <span class="mf">1.0</span><span class="p">,</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MaxwellJuettner.approx_first_moment">
@@ -3385,11 +3242,7 @@
 <span class="sd">        first_moment : float</span>
 <span class="sd">            Approximate first raw moment :math:`\langle\gamma\rangle`.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-
-        <span class="n">Theta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="p">(</span><span class="mf">15.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">11.0</span> <span class="o">*</span> <span class="n">Theta</span> <span class="o">+</span> <span class="mf">4.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">Theta</span> <span class="o">+</span> <span class="mf">4.0</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_approx_first_moment</span><span class="p">(</span><span class="o">**</span><span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="MaxwellJuettner.approx_first_kinetic_moment">
@@ -3475,11 +3328,7 @@
 <span class="sd">            Approximate first kinetic moment</span>
 <span class="sd">            :math:`\langle\gamma - 1\rangle`.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-
-        <span class="n">Theta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">Theta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">+</span> <span class="mf">15.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">+</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_approx_first_kinetic_moment</span><span class="p">(</span><span class="o">**</span><span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="MaxwellJuettner.cdf">
@@ -3522,7 +3371,9 @@
 <span class="sd">        F_gamma : float or ~numpy.ndarray</span>
 <span class="sd">            Cumulative distribution evaluated at ``gamma``.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
+        <span class="n">Theta</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">)[</span><span class="s2">"Theta"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Theta</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`MaxwellJuettner.cdf` shares one integration grid and requires a scalar `Theta`."</span><span class="p">)</span>
 
         <span class="n">gamma_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
         <span class="n">scalar_input</span> <span class="o">=</span> <span class="n">gamma_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span>
@@ -3538,7 +3389,7 @@
         <span class="c1"># Log-spaced grid is dense near gamma=1 (where the PDF rises steeply)</span>
         <span class="c1"># and sparser at high gamma (where the PDF is negligible)</span>
         <span class="n">g_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">g_upper</span><span class="p">),</span> <span class="mi">10_000</span><span class="p">))</span>
-        <span class="n">pdf_grid</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">g_grid</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">)</span>
+        <span class="n">pdf_grid</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">g_grid</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Theta</span><span class="p">)</span>
 
         <span class="c1"># Vectorized cumulative trapezoidal rule; no additional imports needed</span>
         <span class="n">dg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">g_grid</span><span class="p">)</span>
@@ -3568,13 +3419,13 @@
         <span class="k">return</span> <span class="n">n_total</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_magnetic_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_magnetic_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Theta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">u_B</span> <span class="o">=</span> <span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">approx_first_moment</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_approx_first_moment</span><span class="p">(</span><span class="n">Theta</span><span class="p">))</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_energy_density</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">u_therm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">epsilon_E</span> <span class="o">*</span> <span class="n">u_therm</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">approx_first_moment</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">))</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_energy_density</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">u_therm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Theta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">epsilon_E</span> <span class="o">*</span> <span class="n">u_therm</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_approx_first_moment</span><span class="p">(</span><span class="n">Theta</span><span class="p">))</span></div>
 
 
 
@@ -3661,12 +3512,12 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If ``delta`` is non-finite or outside the interval ``[0, 1]``.</span>
 <span class="sd">        """</span>
-        <span class="n">delta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">delta</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">delta</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">delta</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Mixture parameter `delta` must be finite."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">delta</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">delta</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Mixture parameter `delta` must satisfy 0 &lt;= delta &lt;= 1."</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -3685,21 +3536,58 @@
 <span class="sd">        This is used to normalize the non-thermal component before forming the</span>
 <span class="sd">        mixture.</span>
 <span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_and_process_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Validate the mixture and component parameters and return them, merged, as ``float64`` arrays.</span>
+
+<span class="sd">        Also checks that the non-thermal component is normalizable.</span>
+<span class="sd">        """</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_mixture_parameter</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_non_thermal_distribution</span><span class="p">()</span>
 
-        <span class="n">m0</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">thermal</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">non_thermal</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">m0</span><span class="p">):</span>
+        <span class="n">m0</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">non_thermal</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">m0</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">"The zeroth moment of the non-thermal component is not finite. "</span>
                 <span class="s2">"Use parameters that give a normalizable non-thermal shape, "</span>
                 <span class="s2">"for example a finite `gamma_max` or a sufficiently steep index."</span>
             <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">m0</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">m0</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The zeroth moment of the non-thermal component must be positive."</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">m0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">thermal</span><span class="p">,</span> <span class="o">**</span><span class="n">non_thermal</span><span class="p">,</span> <span class="s2">"delta"</span><span class="p">:</span> <span class="n">_f8</span><span class="p">(</span><span class="n">delta</span><span class="p">)[</span><span class="mi">0</span><span class="p">]}</span>
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Unvalidated backends                                               #</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># No validation or coercion; ``params`` is the merged dictionary from `_validate_and_process_parameters`.</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_pdf</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="n">thermal_pdf</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">non_thermal_pdf</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta</span> <span class="o">*</span> <span class="n">thermal_pdf</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">non_thermal_pdf</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+
+        <span class="n">thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">non_thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">thermal_moment</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">non_thermal_moment</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment_between</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="c1"># The Maxwell-Juttner truncated moment is a scalar numerical integral (base-class quadrature).</span>
+        <span class="n">thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">moment_between</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">non_thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_moment_between</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">thermal_moment</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">non_thermal_moment</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="c1"># Distribution Interface                                             #</span>
@@ -3756,30 +3644,9 @@
 <span class="sd">        N_gamma : float or ~numpy.ndarray</span>
 <span class="sd">            Mixed electron distribution evaluated at ``gamma``.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_mixture_parameter</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_non_thermal_distribution</span><span class="p">()</span>
-
-        <span class="n">delta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-
-        <span class="n">thermal_pdf</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
-            <span class="n">gamma</span><span class="p">,</span>
-            <span class="n">norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">params</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">non_thermal_m0</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="n">non_thermal_pdf</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
-                <span class="n">gamma</span><span class="p">,</span>
-                <span class="n">norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">params</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="o">/</span> <span class="n">non_thermal_m0</span>
-        <span class="p">)</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta</span> <span class="o">*</span> <span class="n">thermal_pdf</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">non_thermal_pdf</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MixedThermalNonThermal.support">
@@ -3863,23 +3730,8 @@
 <span class="sd">        M_k : float</span>
 <span class="sd">            Raw moment of the normalized mixture shape.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_mixture_parameter</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_non_thermal_distribution</span><span class="p">()</span>
-
-        <span class="n">delta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">1.0</span>
-
-        <span class="n">thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span>
-            <span class="n">order</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">params</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">non_thermal_m0</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="n">non_thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">/</span> <span class="n">non_thermal_m0</span>
-
-        <span class="k">return</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">thermal_moment</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">non_thermal_moment</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">),</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MixedThermalNonThermal.moment_between">
@@ -3928,30 +3780,9 @@
 <span class="sd">        M_k_between : float</span>
 <span class="sd">            Truncated raw moment over the requested interval.</span>
 <span class="sd">        """</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_mixture_parameter</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_non_thermal_distribution</span><span class="p">()</span>
-
-        <span class="n">delta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-
-        <span class="n">thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">moment_between</span><span class="p">(</span>
-            <span class="n">order</span><span class="p">,</span>
-            <span class="n">a</span><span class="p">,</span>
-            <span class="n">b</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">params</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">non_thermal_m0</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="n">non_thermal_moment</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">moment_between</span><span class="p">(</span>
-                <span class="n">order</span><span class="p">,</span>
-                <span class="n">a</span><span class="p">,</span>
-                <span class="n">b</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">params</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="o">/</span> <span class="n">non_thermal_m0</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">thermal_moment</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">non_thermal_moment</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment_between</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">),</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 </div>
 
 
