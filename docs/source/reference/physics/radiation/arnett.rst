@@ -446,8 +446,7 @@ The photosphere of all of them is that of MOSFiT (:footcite:p:`Nicholl_2017`): t
 the temperature follows from the Stefan-Boltzmann law, and the photosphere recedes into the ejecta once the temperature
 reaches a floor, ``T_floor``. The UV-suppressed spectrum is also theirs. The magnetar model that reproduces MOSFiT's
 ``slsn`` model is
-:class:`~trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel` with ``trapping_mode="emergence"``, as in
-:ref:`sphx_glr_auto_examples_inference_plot_slsn_magnetar_swift.py`.
+:class:`~trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel` with ``trapping_mode="emergence"``.
 
 The ``time`` variable is measured on the time axis of the data, and the parameter ``t_exp`` is the explosion epoch on that
 axis. If the explosion epoch is known, measure the time from it (with the ``time_start`` of the data containers, as for the
