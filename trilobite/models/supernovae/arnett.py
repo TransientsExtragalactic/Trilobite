@@ -22,10 +22,29 @@ The models differ only in what powers the ejecta:
    * - :class:`~trilobite.models.supernovae.arnett.MagnetarNickelArnettModel`
      - Both of the above
 
-Each is a subclass of :class:`~trilobite.models.supernovae.arnett.ArnettOpticalModel`, which supplies the
+Each of these radiates from a blackbody photosphere. Each also has a variant, with ``Cutoff`` in its name, that
+suppresses the ultraviolet below a cutoff wavelength, as observed in superluminous supernovae and as in MOSFiT
+(:footcite:t:`Nicholl_2017`):
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Model
+     - Differs from
+   * - :class:`~trilobite.models.supernovae.arnett.NickelCobaltArnettCutoffModel`
+     - :class:`~trilobite.models.supernovae.arnett.NickelCobaltArnettModel`
+   * - :class:`~trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel`
+     - :class:`~trilobite.models.supernovae.arnett.MagnetarArnettModel`
+   * - :class:`~trilobite.models.supernovae.arnett.MagnetarNickelArnettCutoffModel`
+     - :class:`~trilobite.models.supernovae.arnett.MagnetarNickelArnettModel`
+
+All of them are subclasses of :class:`~trilobite.models.supernovae.arnett.ArnettOpticalModel`, which supplies the
 photosphere and the spectrum and can be subclassed with any
 :class:`~trilobite.radiation.arnett.ArnettEngine` to build a new model. The physics of the engines is described in
 :ref:`arnett`.
+
+.. footbibliography::
 """
 
 from typing import TYPE_CHECKING, NamedTuple, Optional, Union
@@ -42,7 +61,7 @@ from trilobite.radiation.arnett import (
     MagnetarNickelArnettEngine,
     NickelCobaltArnettEngine,
 )
-from trilobite.radiation.blackbody import _log_planck_fnu_cgs
+from trilobite.radiation.blackbody import _log_specific_flux_fnu_cgs
 from trilobite.radiation.constants import sigma_sb_cgs
 from trilobite.utils.misc_utils import ensure_in_units
 
@@ -56,6 +75,9 @@ __all__ = [
     "NickelCobaltArnettModel",
     "MagnetarArnettModel",
     "MagnetarNickelArnettModel",
+    "NickelCobaltArnettCutoffModel",
+    "MagnetarArnettCutoffModel",
+    "MagnetarNickelArnettCutoffModel",
 ]
 
 _FOUR_PI_SIGMA = 4.0 * np.pi * sigma_sb_cgs
@@ -96,6 +118,13 @@ _COMMON_PARAMETERS = (
         description="Photospheric temperature floor.",
         latex=r"$T_{\rm floor}$",
         bounds=(0.0, None),
+    ),
+    ModelParameter(
+        "t_exp",
+        0.0,
+        base_units=u.s,
+        description="Explosion epoch on the time axis of the data (observer frame).",
+        latex=r"$t_{\rm exp}$",
     ),
 )
 
@@ -177,6 +206,17 @@ _MAGNETAR_PARAMETERS = (
 )
 
 
+_CUTOFF_PARAMETER = ModelParameter(
+    "lambda_cut",
+    3000.0,
+    base_units=u.AA,
+    description="Rest-frame wavelength below which the blackbody is suppressed.",
+    latex=r"$\lambda_{\rm cut}$",
+    bounds=(0.0, None),
+)
+_ANGSTROM_CM = 1.0e-8
+
+
 # =========================================================================== #
 # Result Container                                                            #
 # =========================================================================== #
@@ -184,7 +224,7 @@ class ArnettPhotosphere(NamedTuple):
     """The bolometric luminosity and blackbody photosphere of an Arnett model at the requested epochs."""
 
     time: u.Quantity
-    """Observer-frame epochs."""
+    """Observer-frame epochs, as given."""
     luminosity: u.Quantity
     """Source-frame bolometric luminosity :math:`L(t/(1+z))`."""
     temperature: u.Quantity
@@ -238,12 +278,34 @@ class ArnettOpticalModel(OpticalModel):
 
         T = \max(T_{\rm eff}, T_{\rm floor}), \qquad R = \sqrt{\frac{L}{4\pi\sigma_{\rm SB}T^4}}.
 
-    The bolometric luminosity is conserved by construction. Because the photosphere is a blackbody, these models
-    do not describe line blanketing, which suppresses the near-UV flux of real supernovae.
+    This is the ``temperature_floor`` photosphere of MOSFiT (:footcite:p:`Nicholl_2017`, Sec. III.6): a constant
+    expansion velocity, an effective temperature from the Stefan-Boltzmann law, and a recession at the floor. The one
+    difference is the velocity: MOSFiT takes the velocity of the photosphere as a parameter, whereas here it is
+    :math:`v_{\rm sc}`, the velocity that the ejecta kinetic energy implies for a uniform sphere, which is also the
+    velocity in the diffusion time. The bolometric luminosity is conserved by construction.
+
+    The spectrum of the photosphere is a blackbody. Real supernovae are fainter than a blackbody in the near UV,
+    because of line blanketing; the ``*CutoffModel`` subclasses (for example
+    :class:`~trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel`) suppress it.
+
+    **Trapping.** A leaky power source (the gamma rays of :math:`^{56}\mathrm{Ni}`, or the radiation of a magnetar)
+    thermalizes only the fraction :math:`1 - e^{-A/t^2}` of its power, with
+    :math:`A = 3\kappa_\gamma M_{\rm ej}/(4\pi v_{\rm sc}^2)`. The hyperparameter ``trapping_mode`` chooses where the
+    fraction is applied. With ``"deposition"`` (the default) it is the fraction at the time the power is deposited,
+    which lies inside the diffusion integral, so that energy that leaks out is gone for good. With ``"emergence"`` it
+    is the fraction at the time of observation, applied to the diffused luminosity, :math:`L(t) = (1 -
+    e^{-A/t^2})\,L_{\rm diffused}(t)`. This is how MOSFiT does it (:footcite:p:`Nicholl_2017`, Eq. 5). The two agree
+    when nothing leaks, and differ when the source leaks while it is still being diffused.
+
+    **Explosion epoch.** ``time`` is measured on whatever axis the data use, and the parameter ``t_exp`` is the
+    explosion epoch on that axis, so the model evaluates the luminosity at the time since explosion
+    :math:`t - t_{\rm exp}`. When the explosion epoch is known, measure ``time`` from it (as for the radio models, with
+    the ``time_start`` of the data containers) and leave ``t_exp`` at its default of zero. When it is not, fit
+    ``t_exp``; observations earlier than ``t_exp`` have no flux.
 
     **Redshift.** Redshift and distance are fixed configuration, never parameters. ``time`` is the
-    **observer-frame** time since explosion and the filters are in the observer frame. The luminosity is evaluated
-    at the source-frame time :math:`t/(1+z)`, and the observed flux density is
+    **observer-frame** time and the filters are in the observer frame. The luminosity is evaluated
+    at the source-frame time :math:`(t - t_{\rm exp})/(1+z)`, and the observed flux density is
 
     .. math::
 
@@ -258,6 +320,8 @@ class ArnettOpticalModel(OpticalModel):
     Serialization stores the filter curves, the resolved redshift (or the luminosity distance, if that is what was
     given), and the engine options, but not a custom ``cosmology`` object; a model rebuilt from its specification
     uses the configuration cosmology.
+
+    .. footbibliography::
     """
 
     ENGINE_CLASS: Optional[type] = None
@@ -299,7 +363,6 @@ class ArnettOpticalModel(OpticalModel):
             raise ValueError(
                 "The luminosity distance must be positive; give `luminosity_distance` for a nearby source."
             )
-        self._log1pz = float(np.log1p(self._z))
         self._log_D_L = float(np.log(self._D_L.value))
 
         # ---- Engine --------------------------------------------------------------------------------------------- #
@@ -335,9 +398,9 @@ class ArnettOpticalModel(OpticalModel):
     # Physics                                         #
     # =============================================== #
     def _compute_photosphere_cgs(self, t_obs: np.ndarray, parameters: "_ModelParametersInputRaw"):
-        """``(L, T, R)`` in CGS at the observer-frame times ``t_obs`` (s), all of shape ``(N_t,)``."""
+        """``(L, T, R)`` in CGS at the observer-frame times ``t_obs`` (s, on the data's time axis), all ``(N_t,)``."""
         t_obs = np.atleast_1d(np.asarray(t_obs, dtype=float))
-        t_rest = t_obs / (1.0 + self._z)
+        t_rest = (t_obs - parameters["t_exp"]) / (1.0 + self._z)
         M_ej, E_ej = parameters["M_ej"], parameters["E_ej"]
 
         L = self._engine._compute_luminosity_cgs(
@@ -370,15 +433,21 @@ class ArnettOpticalModel(OpticalModel):
         shining = (R > 0) | np.isnan(R)
         if not np.any(shining):
             return sed
-        log_nu_rest = np.log(nu_grid)[None, :] + self._log1pz
-        log_fnu = (
-            _log_planck_fnu_cgs(log_nu_rest, np.log(T[shining])[:, None])
-            + np.log(np.pi)
-            + 2.0 * (np.log(R[shining])[:, None] - self._log_D_L)
-            + self._log1pz
-        )
-        sed[shining] = np.exp(log_fnu)
+        sed[shining] = np.exp(self._compute_log_spectrum_cgs(nu_grid, T[shining], R[shining], parameters))
         return sed
+
+    def _compute_log_spectrum_cgs(
+        self, nu_grid: np.ndarray, T: np.ndarray, R: np.ndarray, parameters: "_ModelParametersInputRaw"
+    ) -> np.ndarray:
+        r"""
+        :math:`\ln F_\nu` observed on ``nu_grid`` (Hz) for photospheres of temperature ``T`` (K) and radius ``R`` (cm).
+
+        Returns shape ``(len(T), len(nu_grid))``. This is the hook that decides what the photosphere radiates: here
+        a blackbody, and a blackbody with a suppressed UV in the ``*CutoffModel`` subclasses.
+        """
+        return _log_specific_flux_fnu_cgs(
+            np.log(nu_grid)[None, :], np.log(T)[:, None], np.log(R)[:, None], self._log_D_L, self._z, 0.0
+        )
 
     # =============================================== #
     # Analysis                                        #
@@ -392,7 +461,8 @@ class ArnettOpticalModel(OpticalModel):
         Parameters
         ----------
         time : ~astropy.units.Quantity or float or ~numpy.ndarray
-            Observer-frame time(s) since explosion. Bare numbers are in s.
+            Observer-frame time(s), on the same axis as the ``time`` variable of the model (so measured from the
+            explosion when ``t_exp`` is zero). Bare numbers are in s.
         parameters : dict, optional
             Model parameters (``Quantity`` or bare numbers in base units). Missing parameters take their defaults.
 
@@ -400,7 +470,7 @@ class ArnettOpticalModel(OpticalModel):
         -------
         ArnettPhotosphere
             The epochs and the source-frame luminosity, temperature, and radius at each. The luminosity is
-            evaluated at the source-frame time :math:`t/(1+z)`.
+            evaluated at the source-frame time :math:`(t - t_{\rm exp})/(1+z)`.
         """
         raw = self.coerce_model_parameters({} if parameters is None else parameters)
         t = np.atleast_1d(ensure_in_units(time, u.s))
@@ -438,6 +508,9 @@ class NickelCobaltArnettModel(ArnettOpticalModel):
            * - ``T_floor``
              - :math:`T_{\rm floor}`
              - Photospheric temperature floor.
+           * - ``t_exp``
+             - :math:`t_{\rm exp}`
+             - Explosion epoch on the time axis of the data. Zero if ``time`` is measured from the explosion.
            * - ``M_Ni``
              - :math:`M_{\rm Ni}`
              - Initial mass of :math:`^{56}\mathrm{Ni}`.
@@ -472,6 +545,11 @@ class NickelCobaltArnettModel(ArnettOpticalModel):
            * - ``positron_trapping``
              - ``False``
              - Include incomplete trapping of the positrons.
+           * - ``trapping_mode``
+             - ``"deposition"``
+             - Where the incomplete trapping is applied: ``"deposition"`` to the power as it is deposited, or
+               ``"emergence"`` to the diffused luminosity at the time of observation, as MOSFiT does. See the Notes of
+               :class:`~trilobite.models.supernovae.arnett.ArnettOpticalModel`.
            * - ``beta``
              - ``13.8``
              - Arnett's constant :math:`\beta`.
@@ -493,7 +571,7 @@ class NickelCobaltArnettModel(ArnettOpticalModel):
              - Filter, as an index into the bundle or a band name.
            * - ``time``
              - :math:`t`
-             - Observer-frame time since explosion.
+             - Observer-frame time, measured from the explosion if ``t_exp`` is zero.
 
     Notes
     -----
@@ -533,6 +611,7 @@ class NickelCobaltArnettModel(ArnettOpticalModel):
         *,
         gamma_trapping: bool = True,
         positron_trapping: bool = False,
+        trapping_mode: str = "deposition",
         beta: float = 13.8,
         window_depth: float = 40.0,
     ) -> None:
@@ -543,6 +622,7 @@ class NickelCobaltArnettModel(ArnettOpticalModel):
             cosmology,
             gamma_trapping=gamma_trapping,
             positron_trapping=positron_trapping,
+            trapping_mode=trapping_mode,
             beta=beta,
             window_depth=window_depth,
         )
@@ -575,6 +655,9 @@ class MagnetarArnettModel(ArnettOpticalModel):
            * - ``T_floor``
              - :math:`T_{\rm floor}`
              - Photospheric temperature floor.
+           * - ``t_exp``
+             - :math:`t_{\rm exp}`
+             - Explosion epoch on the time axis of the data. Zero if ``time`` is measured from the explosion.
            * - ``P_spin``
              - :math:`P_{\rm spin}`
              - Initial spin period.
@@ -612,6 +695,11 @@ class MagnetarArnettModel(ArnettOpticalModel):
            * - ``gamma_trapping``
              - ``True``
              - Include incomplete trapping of the magnetar's radiation.
+           * - ``trapping_mode``
+             - ``"deposition"``
+             - Where the incomplete trapping is applied: ``"deposition"`` to the power as it is deposited, or
+               ``"emergence"`` to the diffused luminosity at the time of observation, as MOSFiT does. See the Notes of
+               :class:`~trilobite.models.supernovae.arnett.ArnettOpticalModel`.
            * - ``beta``
              - ``13.8``
              - Arnett's constant :math:`\beta`.
@@ -633,7 +721,7 @@ class MagnetarArnettModel(ArnettOpticalModel):
              - Filter, as an index into the bundle or a band name.
            * - ``time``
              - :math:`t`
-             - Observer-frame time since explosion.
+             - Observer-frame time, measured from the explosion if ``t_exp`` is zero.
 
     Notes
     -----
@@ -655,6 +743,7 @@ class MagnetarArnettModel(ArnettOpticalModel):
         cosmology=None,
         *,
         gamma_trapping: bool = True,
+        trapping_mode: str = "deposition",
         beta: float = 13.8,
         window_depth: float = 40.0,
     ) -> None:
@@ -664,6 +753,7 @@ class MagnetarArnettModel(ArnettOpticalModel):
             luminosity_distance,
             cosmology,
             gamma_trapping=gamma_trapping,
+            trapping_mode=trapping_mode,
             beta=beta,
             window_depth=window_depth,
         )
@@ -689,9 +779,9 @@ class MagnetarNickelArnettModel(ArnettOpticalModel):
            * - **Name**
              - **Symbol**
              - **Description**
-           * - ``M_ej``, ``E_ej``, ``kappa``, ``T_floor``
-             - :math:`M_{\rm ej}`, :math:`E_{\rm ej}`, :math:`\kappa`, :math:`T_{\rm floor}`
-             - Ejecta, opacity, and photosphere parameters.
+           * - ``M_ej``, ``E_ej``, ``kappa``, ``T_floor``, ``t_exp``
+             - :math:`M_{\rm ej}`, :math:`E_{\rm ej}`, :math:`\kappa`, :math:`T_{\rm floor}`, :math:`t_{\rm exp}`
+             - Ejecta, opacity, photosphere, and explosion-epoch parameters.
            * - ``M_Ni``, ``kappa_gamma``, ``kappa_positron``
              - :math:`M_{\rm Ni}`, :math:`\kappa_\gamma`, :math:`\kappa_{e^+}`
              - Nickel parameters.
@@ -721,6 +811,7 @@ class MagnetarNickelArnettModel(ArnettOpticalModel):
         *,
         gamma_trapping: bool = True,
         positron_trapping: bool = False,
+        trapping_mode: str = "deposition",
         beta: float = 13.8,
         window_depth: float = 40.0,
     ) -> None:
@@ -731,6 +822,178 @@ class MagnetarNickelArnettModel(ArnettOpticalModel):
             cosmology,
             gamma_trapping=gamma_trapping,
             positron_trapping=positron_trapping,
+            trapping_mode=trapping_mode,
             beta=beta,
             window_depth=window_depth,
         )
+
+
+# =========================================================================== #
+# UV-Suppressed (Modified) Blackbody Models                                   #
+# =========================================================================== #
+class _CutoffSpectrumMixin:
+    r"""
+    Replaces the blackbody of an :class:`ArnettOpticalModel` with a blackbody whose UV is suppressed.
+
+    The photosphere (the temperature and radius) is unchanged. Only the spectrum differs: the flux is multiplied by
+    :math:`\min(1, \lambda/\lambda_{\rm cut})`, where :math:`\lambda` is the rest-frame wavelength, so that the
+    transmission is 100% at :math:`\lambda_{\rm cut}` and falls linearly to zero at :math:`\lambda = 0`. The spectrum is
+    then renormalised so that it integrates to the bolometric luminosity, and the flux that is suppressed in the UV
+    reappears at longer wavelengths. This is the ``blackbody_cutoff`` SED of MOSFiT (Nicholl et al. 2017), which found
+    :math:`\lambda_{\rm cut} \simeq 3000` Angstrom to reproduce the UV spectra and the Swift photometry of SLSNe.
+    The correction is small for photospheres that are cooler than about 8000 K, and grows with temperature.
+    """
+
+    def _compute_log_spectrum_cgs(self, nu_grid, T, R, parameters):
+        return _log_specific_flux_fnu_cgs(
+            np.log(nu_grid)[None, :],
+            np.log(T)[:, None],
+            np.log(R)[:, None],
+            self._log_D_L,
+            self._z,
+            parameters["lambda_cut"] * _ANGSTROM_CM,
+        )
+
+
+class NickelCobaltArnettCutoffModel(_CutoffSpectrumMixin, NickelCobaltArnettModel):
+    r"""
+    :math:`^{56}\mathrm{Ni}`-powered optical light curves with a UV-suppressed blackbody.
+
+    This is :class:`~trilobite.models.supernovae.arnett.NickelCobaltArnettModel` with the spectrum changed. The
+    luminosity and the photosphere are the same, and so are the parameters, the hyperparameters, and the variables,
+    which are tabulated there; the spectrum is a blackbody whose flux is suppressed linearly below the rest-frame
+    cutoff wavelength :math:`\lambda_{\rm cut}` and renormalised to conserve the luminosity (see
+    :ref:`blackbody_cutoff`). There is one additional parameter.
+
+    .. dropdown:: Additional parameter
+
+        .. list-table::
+           :widths: 20 20 60
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``lambda_cut``
+             - :math:`\lambda_{\rm cut}`
+             - Rest-frame cutoff wavelength, in Angstrom. Default ``3000``. Fix it unless the data reach the far UV.
+               ``0`` gives the plain blackbody.
+
+    Notes
+    -----
+    Stripped-envelope supernovae are cooler than superluminous supernovae, and the correction is small for a
+    photosphere that is cooler than about 8000 K (the surviving fraction is 0.97), so that this model differs from
+    :class:`~trilobite.models.supernovae.arnett.NickelCobaltArnettModel` mainly near and before peak, and in the UV
+    filters. The spectrum is
+
+    .. math::
+
+        F_\lambda = B_\lambda(T)\,\frac{\min(1, \lambda/\lambda_{\rm cut})}{f(T)},
+
+    where :math:`f(T)` is the fraction of the blackbody flux that survives, which makes :math:`\int F_\lambda d\lambda
+    = L` (see :func:`~trilobite.radiation.blackbody.planck_cutoff_fraction`).
+    """
+
+    PARAMETERS = NickelCobaltArnettModel.PARAMETERS + (_CUTOFF_PARAMETER,)
+    DESCRIPTION = "56Ni-powered Arnett diffusion light curve with a UV-suppressed blackbody, through optical filters."
+    REFERENCE = "Arnett 1982; Nicholl et al. 2017."
+
+
+class MagnetarArnettCutoffModel(_CutoffSpectrumMixin, MagnetarArnettModel):
+    r"""
+    Magnetar-powered optical light curves with a UV-suppressed blackbody: the model of superluminous supernovae.
+
+    This is :class:`~trilobite.models.supernovae.arnett.MagnetarArnettModel` with the spectrum changed. The luminosity
+    and the photosphere are the same, and so are the parameters, the hyperparameters, and the variables, which are
+    tabulated there; the spectrum is a blackbody whose flux is suppressed linearly below the rest-frame cutoff
+    wavelength :math:`\lambda_{\rm cut}` and renormalised to conserve the luminosity (see :ref:`blackbody_cutoff`).
+    There is one additional parameter.
+
+    .. dropdown:: Additional parameter
+
+        .. list-table::
+           :widths: 20 20 60
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``lambda_cut``
+             - :math:`\lambda_{\rm cut}`
+             - Rest-frame cutoff wavelength, in Angstrom. Default ``3000``. Fix it unless the data reach the far UV.
+               ``0`` gives the plain blackbody.
+
+    Notes
+    -----
+    The spectrum is
+
+    .. math::
+
+        F_\lambda = B_\lambda(T)\,\frac{\min(1, \lambda/\lambda_{\rm cut})}{f(T)},
+
+    where :math:`f(T)` is the fraction of the blackbody flux that survives, which makes :math:`\int F_\lambda d\lambda
+    = L` (see :func:`~trilobite.radiation.blackbody.planck_cutoff_fraction`).
+
+    .. rubric:: Reproducing the MOSFiT ``slsn`` model
+
+    With ``trapping_mode="emergence"`` this is the magnetar model of MOSFiT (:footcite:p:`Nicholl_2017`): the same
+    engine, diffusion equation, leakage, temperature-floor photosphere, and UV-suppressed spectrum with a cutoff of
+    3000 Angstrom.
+
+    .. code-block:: python
+
+        model = MagnetarArnettCutoffModel(
+            bundle,
+            redshift=0.1,
+            trapping_mode="emergence",
+        )
+
+    The differences are in the parameters. MOSFiT takes the velocity of the photosphere, :math:`v_{\rm phot}`, as a
+    parameter, with a kinetic energy of :math:`\frac12 M_{\rm ej} v_{\rm phot}^2`; here the parameter is the kinetic
+    energy, and the velocity that follows from it for a uniform sphere is :math:`v_{\rm sc} = \sqrt{10E_{\rm
+    ej}/3M_{\rm ej}}`, which plays the role of :math:`v_{\rm phot}` in the diffusion time, the leakage, and the radius
+    of the photosphere. So compare :math:`v_{\rm sc}` with :math:`v_{\rm phot}`, and do not compare the kinetic
+    energies. MOSFiT's neutron star mass sets the moment of inertia, which is here the parameter ``I_ns``, and MOSFiT
+    also fits a host-galaxy extinction, which is not part of this model.
+
+    .. footbibliography::
+    """
+
+    PARAMETERS = MagnetarArnettModel.PARAMETERS + (_CUTOFF_PARAMETER,)
+    DESCRIPTION = (
+        "Magnetar-powered Arnett diffusion light curve with a UV-suppressed blackbody, through optical filters."
+    )
+    REFERENCE = "Arnett 1982; Kasen & Bildsten 2010; Nicholl et al. 2017; Omand & Sarin 2024."
+
+
+class MagnetarNickelArnettCutoffModel(_CutoffSpectrumMixin, MagnetarNickelArnettModel):
+    r"""
+    Optical light curves powered by a magnetar and :math:`^{56}\mathrm{Ni}`, with a UV-suppressed blackbody.
+
+    This is :class:`~trilobite.models.supernovae.arnett.MagnetarNickelArnettModel` with the spectrum changed. The
+    luminosity and the photosphere are the same, and so are the parameters, the hyperparameters, and the variables,
+    which are tabulated there; the spectrum is a blackbody whose flux is suppressed linearly below the rest-frame
+    cutoff wavelength :math:`\lambda_{\rm cut}` and renormalised to conserve the luminosity (see
+    :ref:`blackbody_cutoff` and :class:`~trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel`). There is one
+    additional parameter.
+
+    .. dropdown:: Additional parameter
+
+        .. list-table::
+           :widths: 20 20 60
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``lambda_cut``
+             - :math:`\lambda_{\rm cut}`
+             - Rest-frame cutoff wavelength, in Angstrom. Default ``3000``. Fix it unless the data reach the far UV.
+               ``0`` gives the plain blackbody.
+    """
+
+    PARAMETERS = MagnetarNickelArnettModel.PARAMETERS + (_CUTOFF_PARAMETER,)
+    DESCRIPTION = (
+        "Magnetar and 56Ni powered Arnett light curve with a UV-suppressed blackbody, through optical filters."
+    )
+    REFERENCE = "Arnett 1982; Kasen & Bildsten 2010; Nicholl et al. 2017; Omand & Sarin 2024."
