@@ -15,7 +15,7 @@ See Also
 """
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, ClassVar, Optional
+from typing import TYPE_CHECKING, ClassVar, Optional, Union
 
 import numpy as np
 from astropy import units as u
@@ -183,6 +183,11 @@ def equipartition_electron_energy(u_therm: "_UnitBearingArrayLike", epsilon_e: "
 # and provides some common methods that can be used by all distributions.
 
 
+def _f8(*values):
+    """Convert each value to a ``float64`` array (0-d for scalars); used by the validated public wrappers."""
+    return tuple(np.asarray(v, dtype="f8") for v in values)
+
+
 class ElectronDistribution(ABC):
     r"""
     Abstract base class for relativistic electron energy distributions.
@@ -195,6 +200,12 @@ class ElectronDistribution(ABC):
 
     The interface is **stateless**: call class methods directly, passing
     distribution parameters as keyword arguments each time.
+
+    Distribution parameters may be scalars or arrays. Public methods validate their inputs and then
+    dispatch to private ``_opt_*`` backends, which skip validation and broadcast over array parameters
+    using standard NumPy rules. The exceptions are quantities defined by a numerical integral
+    (the Maxwell-Jüttner CDF and truncated moments, and moments above order two), which are
+    evaluated one temperature at a time.
 
     See Also
     --------
@@ -209,7 +220,7 @@ class ElectronDistribution(ABC):
     Evaluate the power-law shape at a single Lorentz factor:
 
     >>> PowerLaw.pdf(10.0, p=2.0)
-    array(0.01)
+    0.01
 
     Compute the zeroth and second raw moments analytically:
 
@@ -223,8 +234,34 @@ class ElectronDistribution(ABC):
 
     >>> f = PowerLaw.as_callable(norm=1.0, p=2.0)
     >>> f(100.0)
-    array(0.0001)
+    0.0001
     """
+
+    # ---------------------------------------------- #
+    # Parameter processing and backends              #
+    # ---------------------------------------------- #
+    # Every concrete distribution follows the two-level pattern used throughout trilobite:
+    #
+    #   * public methods (``pdf``, ``moment``, ``cdf``, ``normalize_from_*``, ...) validate their inputs with
+    #     ``_validate_and_process_parameters``, which also converts them to ``float64`` arrays, and then
+    #   * dispatch to private ``_opt_*`` backends, which do no validation or coercion and broadcast over array
+    #     parameters using standard NumPy rules.
+    #
+    # The private ``_normalize_*`` and ``_bol_emiss_*`` methods are built on the backends and so are likewise
+    # unguarded: callers must supply parameters that have already been validated.
+    @classmethod
+    def _validate_and_process_parameters(cls, **params) -> dict:
+        r"""
+        Validate distribution parameters and return them as ``float64`` arrays.
+
+        The default implementation returns ``params`` unchanged; concrete distributions override it.
+        """
+        return params
+
+    @classmethod
+    def _opt_moment(cls, order: float, **params):
+        r"""Unvalidated raw moment; falls back to :meth:`moment`, and analytic distributions override it."""
+        return cls.moment(order, **params)
 
     # ---------------------------------------------- #
     # Utility Methods                                #
@@ -257,7 +294,7 @@ class ElectronDistribution(ABC):
         ...     norm=1.0, p=3.0, gamma_min=1.0
         ... )
         >>> pdf(10.0)
-        array(0.001)
+        0.001
         """
         norm = ensure_in_units(norm, u.cm**-3)
 
@@ -990,20 +1027,20 @@ class ElectronDistribution(ABC):
 
     @classmethod
     def _normalize_from_n_total(cls, n_total: float, **params) -> float:
-        return n_total / cls.moment(order=0, **params)
+        return n_total / cls._opt_moment(0.0, **params)
 
     @classmethod
     def _normalize_from_n_eff(cls, n_eff: float, **params) -> float:
-        return n_eff / cls.moment(order=2, **params)
+        return n_eff / cls._opt_moment(2.0, **params)
 
     @classmethod
     def _normalize_from_magnetic_field(cls, B: float, epsilon_B: float, epsilon_E: float, **params) -> float:
         u_B = B**2 / (8.0 * np.pi)
-        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * cls.moment(order=1, **params))
+        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * cls._opt_moment(1.0, **params))
 
     @classmethod
     def _normalize_from_energy_density(cls, u_therm: float, epsilon_E: float, **params) -> float:
-        return epsilon_E * u_therm / (electron_rest_energy_cgs * cls.moment(order=1, **params))
+        return epsilon_E * u_therm / (electron_rest_energy_cgs * cls._opt_moment(1.0, **params))
 
     # ------------------------------------------------------------------ #
     # Normalization (Public)                                             #
@@ -1026,6 +1063,7 @@ class ElectronDistribution(ABC):
             Distribution amplitude :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.
         """
         n_cgs = ensure_in_units(n_total, u.cm**-3)
+        params = cls._validate_and_process_parameters(**params)
         return cls._normalize_from_n_total(n_cgs, **params) * u.cm**-3
 
     @classmethod
@@ -1046,6 +1084,7 @@ class ElectronDistribution(ABC):
             Distribution amplitude :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.
         """
         n_cgs = ensure_in_units(n_eff, u.cm**-3)
+        params = cls._validate_and_process_parameters(**params)
         return cls._normalize_from_n_eff(n_cgs, **params) * u.cm**-3
 
     @classmethod
@@ -1080,6 +1119,7 @@ class ElectronDistribution(ABC):
             Power-law normalization :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.
         """
         B_cgs = ensure_in_units(B, u.G)
+        params = cls._validate_and_process_parameters(**params)
         return cls._normalize_from_magnetic_field(B_cgs, epsilon_B, epsilon_E, **params) * u.cm**-3
 
     @classmethod
@@ -1111,6 +1151,7 @@ class ElectronDistribution(ABC):
             Distribution amplitude :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.
         """
         u_cgs = ensure_in_units(u_therm, u.erg / u.cm**3)
+        params = cls._validate_and_process_parameters(**params)
         return cls._normalize_from_energy_density(u_cgs, epsilon_E, **params) * u.cm**-3
 
     # ------------------------------------------------------------------ #
@@ -1118,12 +1159,14 @@ class ElectronDistribution(ABC):
     # ------------------------------------------------------------------ #
     @staticmethod
     def _integral_power_law(
-        exponent: float,
-        lower: float,
-        upper: float,
-    ) -> float:
+        exponent: "_ArrayLike",
+        lower: "_ArrayLike",
+        upper: "_ArrayLike",
+    ) -> Union[float, np.ndarray]:
         r"""
-        Evaluate a scalar definite power-law integral.
+        Evaluate a definite power-law integral, broadcasting over array inputs.
+
+        This is an unvalidated backend: inputs must already be floats or ``float64`` arrays.
 
         Computes
 
@@ -1149,20 +1192,22 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        integral : float
-            Returns ``0.0`` if ``upper <= lower``.
+        integral : float or ~numpy.ndarray
+            Broadcast shape of the inputs. Elements with ``upper <= lower`` are ``0.0``.
         """
-        exponent = float(exponent)
-        lower = float(lower)
-        upper = float(upper)
+        if np.ndim(exponent) == 0:
+            # Common case (scalar index): pick the form once in Python and skip the masking machinery.
+            if abs(exponent) <= 1e-14:
+                integral = np.log(upper / lower)
+            else:
+                integral = (upper**exponent - lower**exponent) / exponent
+            return np.where(upper <= lower, 0.0, integral)[()]
 
-        if upper <= lower:
-            return 0.0
-
-        if np.isclose(exponent, 0.0, rtol=0.0, atol=1e-14):
-            return float(np.log(upper / lower))
-
-        return float((upper**exponent - lower**exponent) / exponent)
+        is_log = np.abs(exponent) <= 1e-14  # == isclose(exponent, 0, rtol=0, atol=1e-14), without its overhead
+        safe_exponent = np.where(is_log, 1.0, exponent)  # avoid 0/0 in the unused branch
+        power_form = (upper**safe_exponent - lower**safe_exponent) / safe_exponent
+        log_form = np.log(upper / lower)
+        return np.where(upper <= lower, 0.0, np.where(is_log, log_form, power_form))[()]
 
     # ------------------------------------------------------------------ #
     # Bolometric emissivity (Private)                                    #
@@ -1172,7 +1217,7 @@ class ElectronDistribution(ABC):
     def _bol_emiss_from_magnetic_field(cls, B: float, epsilon_B: float, epsilon_E: float, **params) -> float:
         norm = cls._normalize_from_magnetic_field(B, epsilon_B, epsilon_E, **params)
         U_B = B**2 / (8.0 * np.pi)
-        return (4.0 / 3.0) * sigma_T_cgs * c_cgs * U_B * cls.n_eff(norm=norm, **params)
+        return (4.0 / 3.0) * sigma_T_cgs * c_cgs * U_B * norm * cls._opt_moment(2.0, **params)
 
     @classmethod
     def _bol_emiss_from_energy_density(cls, u_therm: float, epsilon_B: float, epsilon_E: float, **params) -> float:
@@ -1216,6 +1261,7 @@ class ElectronDistribution(ABC):
             :math:`\mathrm{erg\,s^{-1}\,cm^{-3}}`.
         """
         B_cgs = ensure_in_units(B, u.G)
+        params = cls._validate_and_process_parameters(**params)
         return cls._bol_emiss_from_magnetic_field(B_cgs, epsilon_B, epsilon_E, **params) * (u.erg / u.s / u.cm**3)
 
     @classmethod
@@ -1246,6 +1292,7 @@ class ElectronDistribution(ABC):
             :math:`\mathrm{erg\,s^{-1}\,cm^{-3}}`.
         """
         u_cgs = ensure_in_units(u_therm, u.erg / u.cm**3)
+        params = cls._validate_and_process_parameters(**params)
         return cls._bol_emiss_from_energy_density(u_cgs, epsilon_B, epsilon_E, **params) * (u.erg / u.s / u.cm**3)
 
 
@@ -1343,7 +1390,7 @@ class PowerLaw(ElectronDistribution):
     Evaluate the shape function at a single Lorentz factor:
 
     >>> PowerLaw.pdf(10.0, p=2.0)
-    array(0.01)
+    0.01
 
     Evaluate at an array of Lorentz factors with a finite upper cutoff:
 
@@ -1382,7 +1429,7 @@ class PowerLaw(ElectronDistribution):
         gamma_max: float = np.inf,
     ) -> None:
         r"""
-        Validate scalar power-law parameters.
+        Validate power-law parameters.
 
         Parameters
         ----------
@@ -1399,21 +1446,50 @@ class PowerLaw(ElectronDistribution):
             If the power-law index is non-finite or non-positive, if
             ``gamma_min < 1``, or if ``gamma_max <= gamma_min``.
         """
-        p = float(p)
-        gamma_min = float(gamma_min)
-        gamma_max = float(gamma_max)
+        p, gamma_min, gamma_max = _f8(p, gamma_min, gamma_max)
 
-        if not np.isfinite(p):
+        if not np.all(np.isfinite(p)):
             raise ValueError("Power-law index `p` must be finite.")
 
-        if p <= 0.0:
+        if np.any(p <= 0.0):
             raise ValueError("Power-law index `p` must be positive.")
 
-        if gamma_min < 1.0:
+        if np.any(gamma_min < 1.0):
             raise ValueError("`gamma_min` must be greater than or equal to 1.")
 
-        if gamma_max <= gamma_min:
+        if np.any(gamma_max <= gamma_min):
             raise ValueError("`gamma_max` must be greater than `gamma_min`.")
+
+    @classmethod
+    def _validate_and_process_parameters(cls, *, p, gamma_min=1.0, gamma_max=np.inf, **_) -> dict:
+        r"""Validate the power-law parameters and return them as ``float64`` arrays."""
+        cls._validate_parameters(p, gamma_min=gamma_min, gamma_max=gamma_max)
+        p, gamma_min, gamma_max = _f8(p, gamma_min, gamma_max)
+        return {"p": p, "gamma_min": gamma_min, "gamma_max": gamma_max}
+
+    # ------------------------------------------------------------------ #
+    # Unvalidated backends                                               #
+    # ------------------------------------------------------------------ #
+    # No validation or coercion; floats or float64 arrays, broadcast with standard NumPy rules.
+    @classmethod
+    def _opt_pdf(cls, gamma, norm, p, gamma_min, gamma_max, **_):
+        inside_support = (gamma >= gamma_min) & (gamma <= gamma_max)
+        return np.where(inside_support, norm * gamma ** (-p), 0.0)[()]
+
+    @classmethod
+    def _opt_moment(cls, order, p, gamma_min, gamma_max, **_):
+        return cls._integral_power_law(order + 1.0 - p, gamma_min, gamma_max)
+
+    @classmethod
+    def _opt_moment_between(cls, order, a, b, p, gamma_min, gamma_max, **_):
+        lower = np.maximum(a, gamma_min)
+        upper = np.minimum(b, gamma_max)
+        with np.errstate(divide="ignore", invalid="ignore", over="ignore"):  # masked-out empty intervals
+            return cls._integral_power_law(order + 1.0 - p, lower, upper)
+
+    @classmethod
+    def _opt_cdf(cls, gamma, norm, p, gamma_min, gamma_max, **_):
+        return norm * cls._opt_moment_between(0.0, gamma_min, gamma, p=p, gamma_min=gamma_min, gamma_max=gamma_max)
 
     # ------------------------------------------------------------------ #
     # Distribution Interface                                             #
@@ -1464,22 +1540,9 @@ class PowerLaw(ElectronDistribution):
         N_gamma : float or ~numpy.ndarray
             Distribution evaluated at ``gamma``.
         """
-        cls._validate_parameters(p, gamma_min=gamma_min, gamma_max=gamma_max)
-
-        gamma_array = np.asarray(gamma, dtype="f8")
-        p = float(p)
-        gamma_min = float(gamma_min)
-        gamma_max = float(gamma_max)
-
-        inside_support = (gamma_array >= gamma_min) & (gamma_array <= gamma_max)
-
-        result = np.where(
-            inside_support,
-            norm * gamma_array ** (-p),
-            0.0,
-        )
-
-        return result.reshape(()) if result.ndim == 0 else result
+        params = cls._validate_and_process_parameters(p=p, gamma_min=gamma_min, gamma_max=gamma_max)
+        gamma, norm = _f8(gamma, norm)
+        return cls._opt_pdf(gamma, norm, **params)
 
     @classmethod
     def support(
@@ -1506,16 +1569,15 @@ class PowerLaw(ElectronDistribution):
         gamma_min, gamma_max : tuple of float
             Lower and upper Lorentz-factor bounds.
         """
-        gamma_min = float(gamma_min)
-        gamma_max = float(gamma_max)
+        gamma_min, gamma_max = _f8(gamma_min, gamma_max)
 
-        if gamma_min < 1.0:
+        if np.any(gamma_min < 1.0):
             raise ValueError("`gamma_min` must be greater than or equal to 1.")
 
-        if gamma_max <= gamma_min:
+        if np.any(gamma_max <= gamma_min):
             raise ValueError("`gamma_max` must be greater than `gamma_min`.")
 
-        return gamma_min, gamma_max
+        return gamma_min[()], gamma_max[()]
 
     @classmethod
     def moment(
@@ -1556,10 +1618,8 @@ class PowerLaw(ElectronDistribution):
         M_k : float
             Raw moment of the shape function.
         """
-        cls._validate_parameters(p, gamma_min=gamma_min, gamma_max=gamma_max)
-
-        exponent = float(order) + 1.0 - float(p)
-        return cls._integral_power_law(exponent, gamma_min, gamma_max)
+        params = cls._validate_and_process_parameters(p=p, gamma_min=gamma_min, gamma_max=gamma_max)
+        return cls._opt_moment(float(order), **params)
 
     @classmethod
     def moment_between(
@@ -1610,16 +1670,9 @@ class PowerLaw(ElectronDistribution):
             Truncated raw moment over the clipped interval. Returns ``0.0`` if
             the requested interval does not overlap the support.
         """
-        cls._validate_parameters(p, gamma_min=gamma_min, gamma_max=gamma_max)
-
-        lower = max(float(a), float(gamma_min))
-        upper = min(float(b), float(gamma_max))
-
-        if upper <= lower:
-            return 0.0
-
-        exponent = float(order) + 1.0 - float(p)
-        return cls._integral_power_law(exponent, lower, upper)
+        params = cls._validate_and_process_parameters(p=p, gamma_min=gamma_min, gamma_max=gamma_max)
+        a, b = _f8(a, b)
+        return cls._opt_moment_between(float(order), a, b, **params)
 
     @classmethod
     def cdf(
@@ -1669,31 +1722,9 @@ class PowerLaw(ElectronDistribution):
         F_gamma : float or ~numpy.ndarray
             Cumulative distribution evaluated at ``gamma``.
         """
-        cls._validate_parameters(p, gamma_min=gamma_min, gamma_max=gamma_max)
-
-        gamma_array = np.asarray(gamma, dtype="f8")
-        scalar_input = gamma_array.ndim == 0
-
-        p = float(p)
-        gamma_min = float(gamma_min)
-        gamma_max = float(gamma_max)
-        norm = float(norm)
-
-        upper = np.clip(gamma_array, gamma_min, gamma_max)
-        exponent = 1.0 - p
-
-        if np.isclose(exponent, 0.0, rtol=0.0, atol=1e-14):
-            result = np.log(upper / gamma_min)
-        else:
-            result = (upper**exponent - gamma_min**exponent) / exponent
-
-        result = norm * result
-        result = np.where(gamma_array <= gamma_min, 0.0, result)
-
-        if scalar_input:
-            return result.reshape(())[()]
-
-        return result
+        params = cls._validate_and_process_parameters(p=p, gamma_min=gamma_min, gamma_max=gamma_max)
+        gamma, norm = _f8(gamma, norm)
+        return cls._opt_cdf(gamma, norm, **params)
 
 
 class BrokenPowerLaw(ElectronDistribution):
@@ -1787,15 +1818,15 @@ class BrokenPowerLaw(ElectronDistribution):
     Evaluate below and above the spectral break at :math:`\gamma_c = 10`:
 
     >>> BrokenPowerLaw.pdf(5.0, p1=2.0, p2=3.0, gamma_c=10.0)
-    array(4.)
+    4.0
     >>> BrokenPowerLaw.pdf(20.0, p1=2.0, p2=3.0, gamma_c=10.0)
-    array(0.125)
+    0.125
 
     The distribution is continuous at :math:`\gamma_c` (both branches
     evaluate to :math:`N_0` at the break):
 
     >>> BrokenPowerLaw.pdf(10.0, p1=2.0, p2=3.0, gamma_c=10.0)
-    array(1.)
+    1.0
 
     Evaluate on an array spanning the break:
 
@@ -1825,7 +1856,10 @@ class BrokenPowerLaw(ElectronDistribution):
         gamma_max: float = np.inf,
     ) -> None:
         r"""
-        Validate scalar broken-power-law parameters.
+        Validate broken-power-law parameters.
+
+        All arguments may be scalars or arrays; array inputs are broadcast against one another and the
+        checks must hold for every element.
 
         Parameters
         ----------
@@ -1845,35 +1879,42 @@ class BrokenPowerLaw(ElectronDistribution):
         ValueError
             If any parameter is outside the supported physical range.
         """
-        p1 = float(p1)
-        p2 = float(p2)
-        gamma_c = float(gamma_c)
-        gamma_min = float(gamma_min)
-        gamma_max = float(gamma_max)
+        p1 = np.asarray(p1, dtype="f8")
+        p2 = np.asarray(p2, dtype="f8")
+        gamma_c = np.asarray(gamma_c, dtype="f8")
+        gamma_min = np.asarray(gamma_min, dtype="f8")
+        gamma_max = np.asarray(gamma_max, dtype="f8")
 
-        if not np.isfinite(p1):
+        if not np.all(np.isfinite(p1)):
             raise ValueError("Lower power-law index `p1` must be finite.")
 
-        if not np.isfinite(p2):
+        if not np.all(np.isfinite(p2)):
             raise ValueError("Upper power-law index `p2` must be finite.")
 
-        if p1 <= 0.0:
+        if np.any(p1 <= 0.0):
             raise ValueError("Lower power-law index `p1` must be positive.")
 
-        if p2 <= 0.0:
+        if np.any(p2 <= 0.0):
             raise ValueError("Upper power-law index `p2` must be positive.")
 
-        if gamma_min < 1.0:
+        if np.any(gamma_min < 1.0):
             raise ValueError("`gamma_min` must be greater than or equal to 1.")
 
-        if gamma_max <= gamma_min:
+        if np.any(gamma_max <= gamma_min):
             raise ValueError("`gamma_max` must be greater than `gamma_min`.")
 
-        if gamma_c <= gamma_min:
+        if np.any(gamma_c <= gamma_min):
             raise ValueError("`gamma_c` must be greater than `gamma_min`.")
 
-        if gamma_c >= gamma_max:
+        if np.any(gamma_c >= gamma_max):
             raise ValueError("`gamma_c` must be less than `gamma_max`.")
+
+    @classmethod
+    def _validate_and_process_parameters(cls, *, p1, p2, gamma_c, gamma_min=1.0, gamma_max=np.inf, **_) -> dict:
+        r"""Validate the broken power-law parameters and return them as ``float64`` arrays."""
+        cls._validate_parameters(p1, p2, gamma_c, gamma_min=gamma_min, gamma_max=gamma_max)
+        p1, p2, gamma_c, gamma_min, gamma_max = _f8(p1, p2, gamma_c, gamma_min, gamma_max)
+        return {"p1": p1, "p2": p2, "gamma_c": gamma_c, "gamma_min": gamma_min, "gamma_max": gamma_max}
 
     @classmethod
     def _branch_moment(
@@ -1885,7 +1926,10 @@ class BrokenPowerLaw(ElectronDistribution):
         upper: float,
     ) -> float:
         r"""
-        Compute a scalar moment contribution from one broken-power-law branch.
+        Compute the moment contribution from one broken-power-law branch.
+
+        Array-valued ``p``, ``gamma_c``, ``lower`` and ``upper`` are broadcast against one another. This is an
+        unvalidated backend; see :meth:`moment` for the validated public interface.
 
         The branch shape is
 
@@ -1904,12 +1948,8 @@ class BrokenPowerLaw(ElectronDistribution):
             \gamma_c^{p_i}
             \int_a^b \gamma^{k-p_i}\,d\gamma.
         """
-        exponent = float(order) + 1.0 - float(p)
-        return gamma_c ** float(p) * cls._integral_power_law(
-            exponent,
-            lower,
-            upper,
-        )
+        exponent = order + 1.0 - p
+        return gamma_c**p * cls._integral_power_law(exponent, lower, upper)
 
     # ------------------------------------------------------------------ #
     # Distribution Interface                                             #
@@ -1951,17 +1991,17 @@ class BrokenPowerLaw(ElectronDistribution):
         gamma : float or array-like
             Lorentz factor or Lorentz factors at which to evaluate the
             distribution.
-        norm : float, optional
+        norm : float or array-like, optional
             Distribution amplitude :math:`N_0`. Default is ``1.0``.
-        p1 : float
+        p1 : float or array-like
             Power-law index below the break.
-        p2 : float
+        p2 : float or array-like
             Power-law index above the break.
-        gamma_c : float
+        gamma_c : float or array-like
             Break Lorentz factor.
-        gamma_min : float, optional
+        gamma_min : float or array-like, optional
             Minimum Lorentz factor. Default is ``1.0``.
-        gamma_max : float, optional
+        gamma_max : float or array-like, optional
             Maximum Lorentz factor. Default is ``numpy.inf``.
         **_
             Ignored keyword arguments, accepted for API compatibility.
@@ -1969,141 +2009,15 @@ class BrokenPowerLaw(ElectronDistribution):
         Returns
         -------
         N_gamma : float or ~numpy.ndarray
-            Distribution evaluated at ``gamma``.
+            Distribution evaluated at ``gamma``. Array-valued arguments follow standard NumPy broadcasting, so
+            for example ``gamma[np.newaxis, :]`` with ``gamma_c[:, np.newaxis]`` gives a ``(len(gamma_c), len(gamma))``
+            result.
         """
-        cls._validate_parameters(
-            p1,
-            p2,
-            gamma_c,
-            gamma_min=gamma_min,
-            gamma_max=gamma_max,
+        params = cls._validate_and_process_parameters(
+            p1=p1, p2=p2, gamma_c=gamma_c, gamma_min=gamma_min, gamma_max=gamma_max
         )
-
-        gamma_array = np.asarray(gamma, dtype="f8")
-        scalar_input = gamma_array.ndim == 0
-        gamma_flat = np.atleast_1d(gamma_array)
-
-        p1 = float(p1)
-        p2 = float(p2)
-        gamma_c = float(gamma_c)
-        gamma_min = float(gamma_min)
-        gamma_max = float(gamma_max)
-
-        below = (gamma_flat >= gamma_min) & (gamma_flat < gamma_c)
-        above = (gamma_flat >= gamma_c) & (gamma_flat <= gamma_max)
-        gamma_safe = np.maximum(gamma_flat, gamma_min)
-
-        result = np.where(
-            below,
-            norm * (gamma_safe / gamma_c) ** (-p1),
-            np.where(above, norm * (gamma_safe / gamma_c) ** (-p2), 0.0),
-        )
-
-        if scalar_input:
-            return result.reshape(())[()]
-        return result
-
-    # ------------------------------------------------------------------ #
-    # Batched evaluation over many break Lorentz factors (Private)       #
-    # ------------------------------------------------------------------ #
-    # Inference evaluates the same shape with a different cooling break at every epoch. These helpers evaluate
-    # a whole array of breaks in one vectorized pass. They match the scalar interface (`moment`, `pdf`) to
-    # floating-point round-off but skip parameter validation, which the caller must guarantee
-    # (``gamma_min < gamma_c < gamma_max`` and positive indices).
-    @classmethod
-    def _opt_first_moment_batch(
-        cls,
-        gamma_c: np.ndarray,
-        *,
-        p1: float,
-        p2: float,
-        gamma_min: float,
-        gamma_max: float,
-    ) -> np.ndarray:
-        r"""
-        First moment :math:`\int\gamma f(\gamma)\,d\gamma` of the unit-amplitude shape for an array of breaks.
-
-        Parameters
-        ----------
-        gamma_c : numpy.ndarray
-            Break Lorentz factors, shape ``(K,)``.
-        p1, p2, gamma_min, gamma_max : float
-            Shape parameters, as in :meth:`pdf`.
-
-        Returns
-        -------
-        numpy.ndarray
-            The first moment at each break, shape ``(K,)``.
-        """
-
-        def _branch(p: float, lower, upper):
-            exponent = 2.0 - float(p)  # order + 1 - p with order = 1
-            if abs(exponent) <= 1e-14:
-                integral = np.log(upper / lower)
-            else:
-                integral = (upper**exponent - lower**exponent) / exponent
-            return gamma_c ** float(p) * integral
-
-        return _branch(p1, gamma_min, gamma_c) + _branch(p2, gamma_c, gamma_max)
-
-    @classmethod
-    def _opt_normalize_from_magnetic_field_batch(
-        cls,
-        B: np.ndarray,
-        epsilon_B: float,
-        epsilon_E: float,
-        gamma_c: np.ndarray,
-        **params,
-    ) -> np.ndarray:
-        """Batched :meth:`_normalize_from_magnetic_field` for arrays ``B`` and ``gamma_c`` of shape ``(K,)``."""
-        u_B = B**2 / (8.0 * np.pi)
-        moment = cls._opt_first_moment_batch(gamma_c, **params)
-        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * moment)
-
-    @classmethod
-    def _opt_log_pdf_batch(
-        cls,
-        gamma: np.ndarray,
-        norm: np.ndarray,
-        gamma_c: np.ndarray,
-        *,
-        p1: float,
-        p2: float,
-        gamma_min: float,
-        gamma_max: float,
-    ) -> np.ndarray:
-        r"""
-        Natural log of :meth:`pdf` for an array of amplitudes and breaks.
-
-        Parameters
-        ----------
-        gamma : numpy.ndarray
-            Lorentz-factor grid, shape ``(G,)``.
-        norm, gamma_c : numpy.ndarray
-            Amplitudes and break Lorentz factors, each of shape ``(K,)``.
-        p1, p2, gamma_min, gamma_max : float
-            Shape parameters, as in :meth:`pdf`.
-
-        Returns
-        -------
-        numpy.ndarray
-            :math:`\ln N(\gamma)`, shape ``(K, G)``, equal to ``-inf`` outside the support.
-        """
-        gamma = np.asarray(gamma, dtype="f8")[np.newaxis, :]
-        norm = np.asarray(norm, dtype="f8")[:, np.newaxis]
-        gamma_c = np.asarray(gamma_c, dtype="f8")[:, np.newaxis]
-
-        below = (gamma >= gamma_min) & (gamma < gamma_c)
-        above = (gamma >= gamma_c) & (gamma <= gamma_max)
-        gamma_safe = np.maximum(gamma, gamma_min)
-
-        N = np.where(
-            below,
-            norm * (gamma_safe / gamma_c) ** (-p1),
-            np.where(above, norm * (gamma_safe / gamma_c) ** (-p2), 0.0),
-        )
-        with np.errstate(divide="ignore"):
-            return np.log(N)
+        gamma, norm = _f8(gamma, norm)
+        return cls._opt_pdf(gamma, norm, **params)
 
     @classmethod
     def support(
@@ -2130,16 +2044,15 @@ class BrokenPowerLaw(ElectronDistribution):
         gamma_min, gamma_max : tuple of float
             Lower and upper Lorentz-factor bounds.
         """
-        gamma_min = float(gamma_min)
-        gamma_max = float(gamma_max)
+        gamma_min, gamma_max = _f8(gamma_min, gamma_max)
 
-        if gamma_min < 1.0:
+        if np.any(gamma_min < 1.0):
             raise ValueError("`gamma_min` must be greater than or equal to 1.")
 
-        if gamma_max <= gamma_min:
+        if np.any(gamma_max <= gamma_min):
             raise ValueError("`gamma_max` must be greater than `gamma_min`.")
 
-        return gamma_min, gamma_max
+        return gamma_min[()], gamma_max[()]
 
     @classmethod
     def moment(
@@ -2171,50 +2084,72 @@ class BrokenPowerLaw(ElectronDistribution):
         ----------
         order : float
             Moment order :math:`k`.
-        p1 : float
+        p1 : float or array-like
             Power-law index below the break.
-        p2 : float
+        p2 : float or array-like
             Power-law index above the break.
-        gamma_c : float
+        gamma_c : float or array-like
             Break Lorentz factor.
-        gamma_min : float, optional
+        gamma_min : float or array-like, optional
             Minimum Lorentz factor. Default is ``1.0``.
-        gamma_max : float, optional
+        gamma_max : float or array-like, optional
             Maximum Lorentz factor. Default is ``numpy.inf``.
         **_
             Ignored keyword arguments, accepted for API compatibility.
 
         Returns
         -------
-        M_k : float
-            Raw moment of the shape function.
+        M_k : float or ~numpy.ndarray
+            Raw moment of the shape function. Array-valued parameters are broadcast against one
+            another and the result has the broadcast shape.
         """
-        cls._validate_parameters(
-            p1,
-            p2,
-            gamma_c,
-            gamma_min=gamma_min,
-            gamma_max=gamma_max,
+        params = cls._validate_and_process_parameters(
+            p1=p1, p2=p2, gamma_c=gamma_c, gamma_min=gamma_min, gamma_max=gamma_max
+        )
+        return cls._opt_moment(float(order), **params)
+
+    # ------------------------------------------------------------------ #
+    # Unvalidated backends                                               #
+    # ------------------------------------------------------------------ #
+    # No validation or coercion: parameters must satisfy ``1 <= gamma_min < gamma_c < gamma_max`` with positive
+    # indices. All arguments may be floats or ``float64`` arrays and are broadcast with standard NumPy rules.
+    @classmethod
+    def _opt_pdf(cls, gamma, norm, p1, p2, gamma_c, gamma_min, gamma_max, **_):
+        # To evaluate K breaks on a grid of G Lorentz factors, pass ``gamma[None, :]``, ``norm[:, None]`` and
+        # ``gamma_c[:, None]`` to obtain a (K, G) result.
+        below = (gamma >= gamma_min) & (gamma < gamma_c)
+        above = (gamma >= gamma_c) & (gamma <= gamma_max)
+        gamma_safe = np.maximum(gamma, gamma_min)
+
+        return np.where(
+            below,
+            norm * (gamma_safe / gamma_c) ** (-p1),
+            np.where(above, norm * (gamma_safe / gamma_c) ** (-p2), 0.0),
+        )[()]
+
+    @classmethod
+    def _opt_moment(cls, order, p1, p2, gamma_c, gamma_min, gamma_max, **_):
+        return cls._branch_moment(order, p1, gamma_c, gamma_min, gamma_c) + cls._branch_moment(
+            order, p2, gamma_c, gamma_c, gamma_max
         )
 
-        gamma_c = float(gamma_c)
+    @classmethod
+    def _opt_moment_between(cls, order, a, b, p1, p2, gamma_c, gamma_min, gamma_max, **_):
+        # Empty intervals (upper <= lower) contribute exactly zero from both branches, so no early return is needed.
+        lower = np.maximum(a, gamma_min)
+        upper = np.minimum(b, gamma_max)
 
-        lower_branch = cls._branch_moment(
-            order,
-            p1,
-            gamma_c,
-            gamma_min,
-            gamma_c,
-        )
-        upper_branch = cls._branch_moment(
-            order,
-            p2,
-            gamma_c,
-            gamma_c,
-            gamma_max,
-        )
+        with np.errstate(divide="ignore", invalid="ignore", over="ignore"):  # masked-out empty intervals
+            lower_branch = cls._branch_moment(order, p1, gamma_c, lower, np.minimum(upper, gamma_c))
+            upper_branch = cls._branch_moment(order, p2, gamma_c, np.maximum(lower, gamma_c), upper)
 
         return lower_branch + upper_branch
+
+    @classmethod
+    def _opt_cdf(cls, gamma, norm, p1, p2, gamma_c, gamma_min, gamma_max, **_):
+        return norm * cls._opt_moment_between(
+            0.0, gamma_min, gamma, p1=p1, p2=p2, gamma_c=gamma_c, gamma_min=gamma_min, gamma_max=gamma_max
+        )
 
     @classmethod
     def moment_between(
@@ -2272,37 +2207,11 @@ class BrokenPowerLaw(ElectronDistribution):
             Truncated raw moment over the clipped interval. Returns ``0.0`` if
             the requested interval does not overlap the support.
         """
-        cls._validate_parameters(
-            p1,
-            p2,
-            gamma_c,
-            gamma_min=gamma_min,
-            gamma_max=gamma_max,
+        params = cls._validate_and_process_parameters(
+            p1=p1, p2=p2, gamma_c=gamma_c, gamma_min=gamma_min, gamma_max=gamma_max
         )
-
-        lower = max(float(a), float(gamma_min))
-        upper = min(float(b), float(gamma_max))
-        gamma_c = float(gamma_c)
-
-        if upper <= lower:
-            return 0.0
-
-        lower_branch = cls._branch_moment(
-            order,
-            p1,
-            gamma_c,
-            lower,
-            min(upper, gamma_c),
-        )
-        upper_branch = cls._branch_moment(
-            order,
-            p2,
-            gamma_c,
-            max(lower, gamma_c),
-            upper,
-        )
-
-        return lower_branch + upper_branch
+        a, b = _f8(a, b)
+        return cls._opt_moment_between(float(order), a, b, **params)
 
     @classmethod
     def cdf(
@@ -2358,69 +2267,11 @@ class BrokenPowerLaw(ElectronDistribution):
         F_gamma : float or ~numpy.ndarray
             Cumulative distribution evaluated at ``gamma``.
         """
-        cls._validate_parameters(
-            p1,
-            p2,
-            gamma_c,
-            gamma_min=gamma_min,
-            gamma_max=gamma_max,
+        params = cls._validate_and_process_parameters(
+            p1=p1, p2=p2, gamma_c=gamma_c, gamma_min=gamma_min, gamma_max=gamma_max
         )
-
-        gamma_array = np.asarray(gamma, dtype="f8")
-        scalar_input = gamma_array.ndim == 0
-        gamma_flat = np.atleast_1d(gamma_array)
-
-        gamma_c = float(gamma_c)
-        gamma_min = float(gamma_min)
-        gamma_max = float(gamma_max)
-        norm = float(norm)
-
-        gamma_clipped = np.clip(gamma_flat, gamma_min, gamma_max)
-
-        lower_total = cls._branch_moment(
-            0,
-            p1,
-            gamma_c,
-            gamma_min,
-            gamma_c,
-        )
-
-        result = np.empty_like(gamma_clipped, dtype="f8")
-
-        below_break = gamma_clipped < gamma_c
-        above_break = ~below_break
-
-        # CDF values below the break.
-        if np.any(below_break):
-            exponent1 = 1.0 - float(p1)
-            lower = gamma_min
-            upper = gamma_clipped[below_break]
-
-            if np.isclose(exponent1, 0.0, rtol=0.0, atol=1e-14):
-                result[below_break] = gamma_c ** float(p1) * np.log(upper / lower)
-            else:
-                result[below_break] = gamma_c ** float(p1) * (upper**exponent1 - lower**exponent1) / exponent1
-
-        # CDF values above the break.
-        if np.any(above_break):
-            exponent2 = 1.0 - float(p2)
-            lower = gamma_c
-            upper = gamma_clipped[above_break]
-
-            if np.isclose(exponent2, 0.0, rtol=0.0, atol=1e-14):
-                upper_contrib = gamma_c ** float(p2) * np.log(upper / lower)
-            else:
-                upper_contrib = gamma_c ** float(p2) * (upper**exponent2 - lower**exponent2) / exponent2
-
-            result[above_break] = lower_total + upper_contrib
-
-        result = norm * result
-        result = np.where(gamma_flat <= gamma_min, 0.0, result)
-
-        if scalar_input:
-            return result.reshape(())[()]
-
-        return result.reshape(gamma_array.shape)
+        gamma, norm = _f8(gamma, norm)
+        return cls._opt_cdf(gamma, norm, **params)
 
 
 class MaxwellJuettner(ElectronDistribution):
@@ -2549,7 +2400,7 @@ class MaxwellJuettner(ElectronDistribution):
     @staticmethod
     def _validate_parameters(Theta: float) -> None:
         r"""
-        Validate scalar Maxwell-Jüttner parameters.
+        Validate Maxwell-Jüttner parameters.
 
         Parameters
         ----------
@@ -2561,13 +2412,71 @@ class MaxwellJuettner(ElectronDistribution):
         ValueError
             If ``Theta`` is non-finite or non-positive.
         """
-        Theta = float(Theta)
+        Theta = _f8(Theta)[0]
 
-        if not np.isfinite(Theta):
+        if not np.all(np.isfinite(Theta)):
             raise ValueError("Dimensionless temperature `Theta` must be finite.")
 
-        if Theta <= 0.0:
+        if np.any(Theta <= 0.0):
             raise ValueError("Dimensionless temperature `Theta` must be positive.")
+
+    @classmethod
+    def _validate_and_process_parameters(cls, *, Theta=1.0, **_) -> dict:
+        r"""Validate the Maxwell-Juttner parameters and return them as ``float64`` arrays."""
+        cls._validate_parameters(Theta)
+        return {"Theta": _f8(Theta)[0]}
+
+    # ------------------------------------------------------------------ #
+    # Unvalidated backends                                               #
+    # ------------------------------------------------------------------ #
+    # No validation or coercion; floats or float64 arrays, broadcast with standard NumPy rules.
+    @classmethod
+    def _opt_pdf(cls, gamma, norm, Theta, **_):
+        inside_support = gamma >= 1.0
+
+        # Clamp to 1.0 so sqrt(1 - gamma^{-2}) is defined for out-of-support elements;
+        # np.where selects 0.0 for those positions anyway.
+        gamma_safe = np.maximum(gamma, 1.0)
+        beta = np.sqrt(1.0 - gamma_safe**-2)
+
+        # Use exponentially scaled K_2 for numerical stability:
+        #
+        #   exp(-gamma/Theta) / K_2(1/Theta) = exp((1 - gamma)/Theta) / kve(2, 1/Theta).
+        normalization = Theta * kve(2, 1.0 / Theta)
+
+        return np.where(
+            inside_support,
+            norm * gamma_safe**2 * beta * np.exp((1.0 - gamma_safe) / Theta) / normalization,
+            0.0,
+        )[()]
+
+    @classmethod
+    def _opt_moment(cls, order, Theta, **_):
+        # Closed forms for orders 0-2; higher orders use quadrature, looped over any array of temperatures.
+        if order == 0:
+            return np.ones_like(Theta)[()]
+
+        z = 1.0 / Theta
+        k1_over_k2 = kve(1, z) / kve(2, z)
+
+        if order == 1:
+            return k1_over_k2 + 3.0 * Theta
+
+        if order == 2:
+            return 1.0 + 12.0 * Theta**2 + 3.0 * Theta * k1_over_k2
+
+        def _quad(theta):
+            return quad(lambda g: g**order * cls._opt_pdf(g, 1.0, theta), 1.0, np.inf)[0]
+
+        return np.vectorize(_quad, otypes=["f8"])(Theta)[()]
+
+    @classmethod
+    def _opt_approx_first_moment(cls, Theta, **_):
+        return (15.0 * Theta**2 + 11.0 * Theta + 4.0) / (5.0 * Theta + 4.0)
+
+    @classmethod
+    def _opt_approx_first_kinetic_moment(cls, Theta, **_):
+        return Theta * (6.0 + 15.0 * Theta) / (4.0 + 5.0 * Theta)
 
     # ---------------------------------------------- #
     # Statistical Methods                            #
@@ -2624,42 +2533,9 @@ class MaxwellJuettner(ElectronDistribution):
         N_gamma : float or ~numpy.ndarray
             Maxwell-Jüttner distribution evaluated at ``gamma``.
         """
-        cls._validate_parameters(Theta)
-
-        gamma_array = np.asarray(gamma, dtype="f8")
-        scalar_input = gamma_array.ndim == 0
-
-        Theta = float(Theta)
-
-        gamma_flat = np.atleast_1d(gamma_array)
-        inside_support = gamma_flat >= 1.0
-        # Clamp to 1.0 so sqrt(1 - gamma^{-2}) is defined for out-of-support elements;
-        # np.where selects 0.0 for those positions anyway.
-        gamma_safe = np.maximum(gamma_flat, 1.0)
-        beta = np.sqrt(1.0 - gamma_safe**-2)
-
-        # Use exponentially scaled K_2 for numerical stability:
-        #
-        #   K_2(1/Theta) = exp(-1/Theta) * kve(2, 1/Theta)
-        #
-        # Therefore
-        #
-        #   exp(-gamma/Theta) / K_2(1/Theta)
-        #   =
-        #   exp((1 - gamma)/Theta) / kve(2, 1/Theta).
-        x = 1.0 / Theta
-        normalization = Theta * kve(2, x)
-
-        result = np.where(
-            inside_support,
-            norm * gamma_safe**2 * beta * np.exp((1.0 - gamma_safe) / Theta) / normalization,
-            0.0,
-        )
-
-        if scalar_input:
-            return result.reshape(())[()]
-
-        return result
+        params = cls._validate_and_process_parameters(Theta=Theta)
+        gamma, norm = _f8(gamma, norm)
+        return cls._opt_pdf(gamma, norm, **params)
 
     @classmethod
     def support(cls, **_) -> tuple:
@@ -2741,27 +2617,8 @@ class MaxwellJuettner(ElectronDistribution):
         if order < 0:
             raise ValueError("Moment order `order` must be non-negative.")
 
-        cls._validate_parameters(Theta)
-
-        Theta = float(Theta)
-        z = 1.0 / Theta
-        k1_over_k2 = kve(1, z) / kve(2, z)
-
-        if order == 0:
-            return 1.0
-
-        if order == 1:
-            return k1_over_k2 + 3.0 * Theta
-
-        if order == 2:
-            return 1.0 + 12.0 * Theta**2 + 3.0 * Theta * k1_over_k2
-
-        result, _ = quad(
-            lambda g: g**order * cls.pdf(g, norm=1.0, Theta=Theta),
-            1.0,
-            np.inf,
-        )
-        return result
+        params = cls._validate_and_process_parameters(Theta=Theta)
+        return cls._opt_moment(order, **params)
 
     @classmethod
     def approx_first_moment(cls, Theta: float = 1.0, **_) -> float:
@@ -2806,11 +2663,7 @@ class MaxwellJuettner(ElectronDistribution):
         first_moment : float
             Approximate first raw moment :math:`\langle\gamma\rangle`.
         """
-        cls._validate_parameters(Theta)
-
-        Theta = float(Theta)
-
-        return (15.0 * Theta**2 + 11.0 * Theta + 4.0) / (5.0 * Theta + 4.0)
+        return cls._opt_approx_first_moment(**cls._validate_and_process_parameters(Theta=Theta))
 
     @classmethod
     def approx_first_kinetic_moment(cls, Theta: float = 1.0, **_) -> float:
@@ -2893,11 +2746,7 @@ class MaxwellJuettner(ElectronDistribution):
             Approximate first kinetic moment
             :math:`\langle\gamma - 1\rangle`.
         """
-        cls._validate_parameters(Theta)
-
-        Theta = float(Theta)
-
-        return Theta * (6.0 + 15.0 * Theta) / (4.0 + 5.0 * Theta)
+        return cls._opt_approx_first_kinetic_moment(**cls._validate_and_process_parameters(Theta=Theta))
 
     @classmethod
     def cdf(
@@ -2937,7 +2786,9 @@ class MaxwellJuettner(ElectronDistribution):
         F_gamma : float or ~numpy.ndarray
             Cumulative distribution evaluated at ``gamma``.
         """
-        cls._validate_parameters(Theta)
+        Theta = cls._validate_and_process_parameters(Theta=Theta)["Theta"]
+        if Theta.ndim != 0:
+            raise ValueError("`MaxwellJuettner.cdf` shares one integration grid and requires a scalar `Theta`.")
 
         gamma_array = np.asarray(gamma, dtype="f8")
         scalar_input = gamma_array.ndim == 0
@@ -2953,7 +2804,7 @@ class MaxwellJuettner(ElectronDistribution):
         # Log-spaced grid is dense near gamma=1 (where the PDF rises steeply)
         # and sparser at high gamma (where the PDF is negligible)
         g_grid = np.exp(np.linspace(0.0, np.log(g_upper), 10_000))
-        pdf_grid = cls.pdf(g_grid, norm=1.0, Theta=Theta)
+        pdf_grid = cls._opt_pdf(g_grid, 1.0, Theta)
 
         # Vectorized cumulative trapezoidal rule; no additional imports needed
         dg = np.diff(g_grid)
@@ -2982,13 +2833,13 @@ class MaxwellJuettner(ElectronDistribution):
         return n_total
 
     @classmethod
-    def _normalize_from_magnetic_field(cls, B: float, epsilon_B: float, epsilon_E: float, **params) -> float:
+    def _normalize_from_magnetic_field(cls, B: float, epsilon_B: float, epsilon_E: float, Theta=1.0, **_) -> float:
         u_B = B**2 / (8.0 * np.pi)
-        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * cls.approx_first_moment(**params))
+        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * cls._opt_approx_first_moment(Theta))
 
     @classmethod
-    def _normalize_from_energy_density(cls, u_therm: float, epsilon_E: float, **params) -> float:
-        return epsilon_E * u_therm / (electron_rest_energy_cgs * cls.approx_first_moment(**params))
+    def _normalize_from_energy_density(cls, u_therm: float, epsilon_E: float, Theta=1.0, **_) -> float:
+        return epsilon_E * u_therm / (electron_rest_energy_cgs * cls._opt_approx_first_moment(Theta))
 
 
 # =========================================================================== #
@@ -3072,12 +2923,12 @@ class MixedThermalNonThermal(ElectronDistribution):
         ValueError
             If ``delta`` is non-finite or outside the interval ``[0, 1]``.
         """
-        delta = float(delta)
+        delta = _f8(delta)[0]
 
-        if not np.isfinite(delta):
+        if not np.all(np.isfinite(delta)):
             raise ValueError("Mixture parameter `delta` must be finite.")
 
-        if delta < 0.0 or delta > 1.0:
+        if np.any(delta < 0.0) or np.any(delta > 1.0):
             raise ValueError("Mixture parameter `delta` must satisfy 0 <= delta <= 1.")
 
     @classmethod
@@ -3096,21 +2947,58 @@ class MixedThermalNonThermal(ElectronDistribution):
         This is used to normalize the non-thermal component before forming the
         mixture.
         """
+        return cls.NON_THERMAL_DISTRIBUTION._opt_moment(0.0, **params)
+
+    @classmethod
+    def _validate_and_process_parameters(cls, *, delta, **params) -> dict:
+        r"""
+        Validate the mixture and component parameters and return them, merged, as ``float64`` arrays.
+
+        Also checks that the non-thermal component is normalizable.
+        """
+        cls._validate_mixture_parameter(delta)
         cls._validate_non_thermal_distribution()
 
-        m0 = cls.NON_THERMAL_DISTRIBUTION.moment(0, **params)
+        thermal = cls.THERMAL_DISTRIBUTION._validate_and_process_parameters(**params)
+        non_thermal = cls.NON_THERMAL_DISTRIBUTION._validate_and_process_parameters(**params)
 
-        if not np.isfinite(m0):
+        m0 = cls._non_thermal_m0(**non_thermal)
+        if not np.all(np.isfinite(m0)):
             raise ValueError(
                 "The zeroth moment of the non-thermal component is not finite. "
                 "Use parameters that give a normalizable non-thermal shape, "
                 "for example a finite `gamma_max` or a sufficiently steep index."
             )
-
-        if m0 <= 0.0:
+        if np.any(m0 <= 0.0):
             raise ValueError("The zeroth moment of the non-thermal component must be positive.")
 
-        return float(m0)
+        return {**thermal, **non_thermal, "delta": _f8(delta)[0]}
+
+    # ------------------------------------------------------------------ #
+    # Unvalidated backends                                               #
+    # ------------------------------------------------------------------ #
+    # No validation or coercion; ``params`` is the merged dictionary from `_validate_and_process_parameters`.
+    @classmethod
+    def _opt_pdf(cls, gamma, norm, delta, **params):
+        thermal_pdf = cls.THERMAL_DISTRIBUTION._opt_pdf(gamma, 1.0, **params)
+        non_thermal_pdf = cls.NON_THERMAL_DISTRIBUTION._opt_pdf(gamma, 1.0, **params) / cls._non_thermal_m0(**params)
+        return norm * (delta * thermal_pdf + (1.0 - delta) * non_thermal_pdf)
+
+    @classmethod
+    def _opt_moment(cls, order, delta, **params):
+        if order == 0:
+            return 1.0
+
+        thermal_moment = cls.THERMAL_DISTRIBUTION._opt_moment(order, **params)
+        non_thermal_moment = cls.NON_THERMAL_DISTRIBUTION._opt_moment(order, **params) / cls._non_thermal_m0(**params)
+        return delta * thermal_moment + (1.0 - delta) * non_thermal_moment
+
+    @classmethod
+    def _opt_moment_between(cls, order, a, b, delta, **params):
+        # The Maxwell-Juttner truncated moment is a scalar numerical integral (base-class quadrature).
+        thermal_moment = cls.THERMAL_DISTRIBUTION.moment_between(order, a, b, **params)
+        non_thermal_moment = cls.NON_THERMAL_DISTRIBUTION._opt_moment_between(order, a, b, **params)
+        return delta * thermal_moment + (1.0 - delta) * non_thermal_moment / cls._non_thermal_m0(**params)
 
     # ------------------------------------------------------------------ #
     # Distribution Interface                                             #
@@ -3165,30 +3053,9 @@ class MixedThermalNonThermal(ElectronDistribution):
         N_gamma : float or ~numpy.ndarray
             Mixed electron distribution evaluated at ``gamma``.
         """
-        cls._validate_mixture_parameter(delta)
-        cls._validate_non_thermal_distribution()
-
-        delta = float(delta)
-
-        thermal_pdf = cls.THERMAL_DISTRIBUTION.pdf(
-            gamma,
-            norm=1.0,
-            **params,
-        )
-
-        non_thermal_m0 = cls._non_thermal_m0(**params)
-        non_thermal_pdf = (
-            cls.NON_THERMAL_DISTRIBUTION.pdf(
-                gamma,
-                norm=1.0,
-                **params,
-            )
-            / non_thermal_m0
-        )
-
-        result = norm * (delta * thermal_pdf + (1.0 - delta) * non_thermal_pdf)
-
-        return result
+        params = cls._validate_and_process_parameters(delta=delta, **params)
+        gamma, norm = _f8(gamma, norm)
+        return cls._opt_pdf(gamma, norm, **params)
 
     @classmethod
     def support(cls, **params) -> tuple[float, float]:
@@ -3266,23 +3133,8 @@ class MixedThermalNonThermal(ElectronDistribution):
         M_k : float
             Raw moment of the normalized mixture shape.
         """
-        cls._validate_mixture_parameter(delta)
-        cls._validate_non_thermal_distribution()
-
-        delta = float(delta)
-
-        if order == 0:
-            return 1.0
-
-        thermal_moment = cls.THERMAL_DISTRIBUTION.moment(
-            order,
-            **params,
-        )
-
-        non_thermal_m0 = cls._non_thermal_m0(**params)
-        non_thermal_moment = cls.NON_THERMAL_DISTRIBUTION.moment(order, **params) / non_thermal_m0
-
-        return delta * thermal_moment + (1.0 - delta) * non_thermal_moment
+        params = cls._validate_and_process_parameters(delta=delta, **params)
+        return cls._opt_moment(float(order), **params)
 
     @classmethod
     def moment_between(
@@ -3328,30 +3180,9 @@ class MixedThermalNonThermal(ElectronDistribution):
         M_k_between : float
             Truncated raw moment over the requested interval.
         """
-        cls._validate_mixture_parameter(delta)
-        cls._validate_non_thermal_distribution()
-
-        delta = float(delta)
-
-        thermal_moment = cls.THERMAL_DISTRIBUTION.moment_between(
-            order,
-            a,
-            b,
-            **params,
-        )
-
-        non_thermal_m0 = cls._non_thermal_m0(**params)
-        non_thermal_moment = (
-            cls.NON_THERMAL_DISTRIBUTION.moment_between(
-                order,
-                a,
-                b,
-                **params,
-            )
-            / non_thermal_m0
-        )
-
-        return delta * thermal_moment + (1.0 - delta) * non_thermal_moment
+        params = cls._validate_and_process_parameters(delta=delta, **params)
+        a, b = _f8(a, b)
+        return cls._opt_moment_between(float(order), a, b, **params)
 
 
 class MaxwellJuettnerPowerLaw(MixedThermalNonThermal):

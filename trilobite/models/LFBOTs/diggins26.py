@@ -1131,10 +1131,9 @@ class Diggins26_TwoComponentModel(Model):
             "gamma_min": p["gamma_min"],
             "gamma_max": p["gamma_max"],
         }
-        N0 = BrokenPowerLaw._opt_normalize_from_magnetic_field_batch(
-            B, p["epsilon_B"], p["epsilon_e"], gamma_c, **shape
-        )
-        log_N = BrokenPowerLaw._opt_log_pdf_batch(gamma, N0, gamma_c, **shape)  # -inf outside the support
+        N0 = BrokenPowerLaw._normalize_from_magnetic_field(B, p["epsilon_B"], p["epsilon_e"], gamma_c=gamma_c, **shape)
+        with np.errstate(divide="ignore"):  # ln(0) = -inf outside the support
+            log_N = np.log(BrokenPowerLaw._opt_pdf(gamma[None, :], N0[:, None], gamma_c=gamma_c[:, None], **shape))
         return B, gamma_c, N0, log_N
 
     # ----- Free-free ---------------------------------------------------------------------------------------------- #
