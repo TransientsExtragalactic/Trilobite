@@ -884,3 +884,50 @@ class TestAxisymmetricCSMDensityProfile(BaseTestCSMProfile):
             expected = AxisymmetricCSMDensityProfile._opt_eval(np.float64(0.0), 0.0, **processed)
             result = density(np.float64(0.0), 0.0)
         assert np.array_equal(result, expected, equal_nan=True)
+
+
+# =========================================================================== #
+# Axisymmetric profile: sector filling parameters                             #
+# =========================================================================== #
+class TestAxisymmetricFillingParameters:
+    _GRIDS = (np.array([0.5, 1.0, 2.0]), np.array([0.0, np.pi / 4, np.pi / 2]), np.array([0.2, 0.5, 0.8]))
+
+    @pytest.fixture(scope="class")
+    def table(self):
+        return AxisymmetricCSMDensityProfile.build_filling_parameter_table(*self._GRIDS, n_pix=80)
+
+    def test_table_shape_and_range(self, table):
+        assert table.shape == (2, 3, 3, 3)
+        assert np.all((table > 0.0) & (table <= 1.0))
+
+    def test_progress_bar_does_not_change_the_table(self, table):
+        shown = AxisymmetricCSMDensityProfile.build_filling_parameter_table(*self._GRIDS, n_pix=80, progress=True)
+        assert np.array_equal(shown, table)
+
+    def test_interpolation_reproduces_grid_points(self, table):
+        out = AxisymmetricCSMDensityProfile.compute_filling_parameters(0.5, np.pi / 4, 1.0, table=(*self._GRIDS, table))
+        assert out["polar"]["f_A"] == pytest.approx(table[0, 1, 1, 1], rel=1e-12)
+        assert out["equatorial"]["f_A"] == pytest.approx(table[1, 1, 1, 1], rel=1e-12)
+
+    def test_volume_fractions_partition_the_filling_factor(self):
+        out = AxisymmetricCSMDensityProfile.compute_filling_parameters([0.2, 0.6], 0.7, 1.3, n_pix=60)
+        assert np.allclose(out["polar"]["f_V"] + out["equatorial"]["f_V"], [0.2, 0.6], rtol=1e-12)
+
+    def test_path_length_is_volume_over_projected_area(self):
+        out = AxisymmetricCSMDensityProfile.compute_filling_parameters(0.4, 0.7, 1.3, n_pix=60)
+        for sector in out.values():
+            assert sector["ell_over_R"] == pytest.approx(4.0 / 3.0 * sector["f_V"] / sector["f_A"])
+
+    def test_inclination_is_folded_about_ninety_degrees(self):
+        a = AxisymmetricCSMDensityProfile.compute_filling_parameters(0.4, 0.6, 1.0, n_pix=60)
+        b = AxisymmetricCSMDensityProfile.compute_filling_parameters(0.4, np.pi - 0.6, 1.0, n_pix=60)
+        assert a["polar"]["f_A"] == pytest.approx(b["polar"]["f_A"], rel=1e-12)
+
+    @pytest.mark.parametrize("bad", [0.0, 1.0, -0.1])
+    def test_invalid_filling_factor_raises(self, bad):
+        with pytest.raises(ValueError, match="filling_factor"):
+            AxisymmetricCSMDensityProfile.compute_filling_parameters(bad, 0.5, 1.0)
+
+    def test_mismatched_table_raises(self, table):
+        with pytest.raises(ValueError, match="expected"):
+            AxisymmetricCSMDensityProfile.compute_filling_parameters(0.5, 0.5, 1.0, table=(*self._GRIDS, table[:, :2]))

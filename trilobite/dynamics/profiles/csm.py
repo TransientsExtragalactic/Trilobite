@@ -3341,3 +3341,324 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
         transition = expit(-np.log(r / r_trans) / delta_trans)
         shape = cls._unnormalized_angular_shape(theta, f_pole, aspect) / angular_norm
         return rho_ext * x ** (-alpha_ext) + rho_int * x ** (-alpha_int) * transition * shape
+
+    # ------------------------------------------------------------------ #
+    # Geometric Helpers                                                  #
+    # ------------------------------------------------------------------ #
+    # This CSM profile is used in the Diggins+26 LFBOT paper, for which we require the
+    # relevant filling factors for synchrotron calculations. These helpers are used to
+    # pre-tabulate this information.
+    #
+    # This is a bespoke feature of this CSM profile specific to the needs of that
+    # analysis.
+    @staticmethod
+    def _projected_area_fraction(kind: str, phi: float, inc: float, eta: float, n_pix: int = 200) -> float:
+        # Pixel centres across [-1, 1]. Both sectors are mirror-symmetric under x -> -x
+        # (reflection across the projected symmetry axis), so we keep only x > 0 and
+        # double the area at the end.
+        pixel_size = 2.0 / n_pix
+        centres = -1.0 + (np.arange(n_pix) + 0.5) * pixel_size
+        x_sky, y_sky = np.meshgrid(centres[centres > 0], centres)
+        x_sky, y_sky = x_sky.ravel(), y_sky.ravel()
+
+        # Only lines of sight inside the unit disk can meet the shell. The sector depends on
+        # x only through the projected radius, so we keep rho^2 = x^2 + y^2 and y.
+        rho_sq = x_sky**2 + y_sky**2
+        on_disk = rho_sq < 1.0
+        rho_sq, y_sky = rho_sq[on_disk], y_sky[on_disk]
+
+        # polar:      |cos theta| > cos(phi)  ->  cos^2 theta > cos^2 phi   (inside = above)
+        # equatorial: |cos theta| < sin(phi)  ->  cos^2 theta < sin^2 phi   (inside = below)
+        # Squaring removes the absolute value, which is what makes the polar sector bipolar.
+        sin_inc, cos_inc = np.sin(inc), np.cos(inc)
+        if kind == "polar":
+            threshold_sq, inside_above = np.cos(phi) ** 2, True
+        elif kind == "equatorial":
+            threshold_sq, inside_above = np.sin(phi) ** 2, False
+        else:
+            raise ValueError(f"`kind` must be 'polar' or 'equatorial', not {kind!r}.")
+
+        # Along a line of sight r^2 = rho^2 + z^2, so the shell occupies z_in < |z| < z_out.
+        # If the line misses the inner sphere, z_in = 0 and the shell is the single
+        # interval [-z_out, z_out].
+        z_out = np.sqrt(1.0 - rho_sq)
+        z_in = np.sqrt(np.clip((1.0 - eta) ** 2 - rho_sq, 0.0, None))
+
+        # Multiply the angular cut by r^2 to avoid square roots:
+        #     g(z) = Z^2 - threshold^2 r^2
+        #          = (y sin i + z cos i)^2 - threshold^2 (rho^2 + z^2)
+        #          = qa z^2 + qb z + qc,
+        # positive where cos^2(theta) exceeds the threshold. Its roots are where the line of
+        # sight enters or leaves the cone.
+        qa = cos_inc**2 - threshold_sq
+        qb = 2.0 * y_sky * sin_inc * cos_inc
+        qc = (y_sky * sin_inc) ** 2 - threshold_sq * rho_sq
+
+        with np.errstate(invalid="ignore", divide="ignore"):
+            if abs(qa) > 1e-14:
+                disc = qb * qb - 4.0 * qa * qc
+                sqrt_disc = np.sqrt(np.where(disc > 0.0, disc, np.nan))  # NaN: no crossing
+                cone_roots = ((-qb - sqrt_disc) / (2.0 * qa), (-qb + sqrt_disc) / (2.0 * qa))
+            else:
+                # Line of sight parallel to the cone surface: g(z) is linear, one crossing.
+                cone_roots = (-qc / qb, np.full_like(qb, np.nan))
+
+        # Move missing roots (NaN) and roots outside the sphere onto [-z_out, z_out]. A missing
+        # root lands on -z_out and only creates a zero-length piece, so every line of sight
+        # has exactly six breakpoints and the rest stays vectorised.
+        cone_roots = [np.clip(np.nan_to_num(z, nan=-2.0), -z_out, z_out) for z in cone_roots]
+
+        # Between consecutive breakpoints nothing changes sign, so the midpoint of a piece
+        # decides whether the whole piece is inside the sector.
+        breakpoints = np.sort(np.stack([-z_out, -z_in, z_in, z_out, *cone_roots], axis=1), axis=1)
+        z_lo, z_hi = breakpoints[:, :-1], breakpoints[:, 1:]
+        z_mid = 0.5 * (z_lo + z_hi)
+
+        r_mid_sq = rho_sq[:, None] + z_mid**2
+        in_shell = (r_mid_sq > (1.0 - eta) ** 2) & (r_mid_sq < 1.0)
+
+        g_mid = qa * z_mid**2 + qb[:, None] * z_mid + qc[:, None]
+        in_cone = (g_mid > 0.0) if inside_above else (g_mid < 0.0)
+
+        nonempty = z_hi > z_lo
+        line_hits_sector = (in_shell & in_cone & nonempty).any(axis=1)
+
+        # Hit pixels x pixel area x 2 (mirror half-plane) / pi (unit disk area).
+        return 2.0 * line_hits_sector.sum() * pixel_size**2 / np.pi
+
+    @classmethod
+    def build_filling_parameter_table(
+        cls, aspect, inclination, filling_factor, *, n_pix: int = 200, progress: bool = False
+    ) -> np.ndarray:
+        r"""
+        Tabulate the sky-projected area fractions of the polar and equatorial shock sectors.
+
+        At each grid point the shock is split at the disk half-maximum latitude
+        :math:`\phi_e = \arctan(b\ln 2)` (see :meth:`disk_half_opening_angle`), with
+        :math:`\phi_p = \pi/2 - \phi_e`, and each sector is a shell of fractional thickness
+        :math:`\eta = 1 - (1 - f)^{1/3}`. The area fraction
+        :math:`f_A = A_\perp / \pi R^2` of each sector is computed with
+        :meth:`_projected_area_fraction`.
+
+        Only :math:`f_A` is tabulated: the volume fractions and mean path lengths follow
+        analytically, :math:`f_{V,k} = f\,\Omega_k/4\pi` and
+        :math:`\ell_k/R_k = \tfrac{4}{3} f_{V,k}/f_{A,k}`.
+
+        Parameters
+        ----------
+        aspect : array-like
+            Grid of disk angular thicknesses :math:`b`. Must be positive. A logarithmic grid
+            (e.g. ``np.geomspace``) is recommended, since :math:`\phi_e` varies most rapidly at
+            small :math:`b`.
+        inclination : array-like or ~astropy.units.Quantity
+            Grid of inclinations of the symmetry axis to the line of sight. Bare values
+            interpreted as radians. Both sectors are symmetric under :math:`i \to \pi - i`, so
+            :math:`[0, \pi/2]` suffices.
+        filling_factor : array-like
+            Grid of shell volume filling factors :math:`f`. Must lie in :math:`(0, 1)`.
+        n_pix : int, optional
+            Sky pixels across the diameter. Default 200.
+        progress : bool, optional
+            Show a ``tqdm`` progress bar (one step per aspect-inclination pair) while the table is built. Default
+            ``False``.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Array of shape ``(2, len(aspect), len(inclination), len(filling_factor))``. Index 0
+            along the first axis is the polar sector, index 1 the equatorial sector:
+
+            .. code-block:: python
+
+                f_A_polar, f_A_equatorial = table
+
+        Notes
+        -----
+        The cost is ``2 * len(aspect) * len(inclination) * len(filling_factor)`` calls to
+        :meth:`_projected_area_fraction`, roughly 1-3 ms each at ``n_pix = 200``. Area errors
+        grow for sectors narrower than about :math:`5^\circ` (``aspect`` below ~0.13 or above
+        ~16), which cover only a few sky pixels.
+        """
+        aspect = np.atleast_1d(np.asarray(aspect, dtype=float))
+        inclination = np.atleast_1d(np.asarray(ensure_in_units(inclination, u.rad), dtype=float))
+        filling_factor = np.atleast_1d(np.asarray(filling_factor, dtype=float))
+
+        if np.any(aspect <= 0) or not np.all(np.isfinite(aspect)):
+            raise ValueError("`aspect` must be positive and finite.")
+        if np.any((filling_factor <= 0) | (filling_factor >= 1)):
+            raise ValueError("`filling_factor` must lie in (0, 1).")
+        if not np.all(np.isfinite(inclination)):
+            raise ValueError("`inclination` must be finite.")
+
+        # Map the profile parameters onto the sector geometry.
+        phi_equatorial = np.arctan(aspect * np.log(2.0))
+        phi_polar = 0.5 * np.pi - phi_equatorial
+        eta = 1.0 - (1.0 - filling_factor) ** (1.0 / 3.0)
+
+        table = np.empty((2, aspect.size, inclination.size, filling_factor.size))
+        bar = None
+        if progress:
+            try:
+                from tqdm.auto import tqdm
+
+                bar = tqdm(total=aspect.size * inclination.size, desc="Building filling-factor table")
+            except ImportError:
+                pass
+        for i, (phi_p, phi_e) in enumerate(zip(phi_polar, phi_equatorial)):
+            for j, inc in enumerate(inclination):
+                for k, et in enumerate(eta):
+                    table[0, i, j, k] = cls._projected_area_fraction("polar", phi_p, inc, et, n_pix)
+                    table[1, i, j, k] = cls._projected_area_fraction("equatorial", phi_e, inc, et, n_pix)
+                if bar is not None:
+                    bar.update(1)
+        if bar is not None:
+            bar.close()
+        return table
+
+    @classmethod
+    def compute_filling_parameters(
+        cls, filling_factor, inclination, aspect, *, table=None, n_pix: int = 200
+    ) -> dict[str, dict[str, np.ndarray]]:
+        r"""
+        Volume and area filling factors and mean path lengths of the two shock sectors.
+
+        The shock is split into a bipolar polar sector and an equatorial sector at the disk
+        half-maximum latitude :math:`\phi_e = \arctan(b\ln 2)` (see
+        :meth:`disk_half_opening_angle`), with :math:`\phi_p = \pi/2 - \phi_e`. Each sector is a
+        shell :math:`R_k(1 - \eta) < r < R_k` whose fractional thickness is set by the shared
+        filling factor, :math:`f = 1 - (1 - \eta)^3`.
+
+        All returned quantities are dimensionless and normalized to the sector's own radius
+        :math:`R_k`:
+
+        .. math::
+
+            V_k = f_{V,k}\,\tfrac{4\pi}{3}R_k^3, \qquad
+            A_{\perp,k} = f_{A,k}\,\pi R_k^2, \qquad
+            \ell_k = \frac{V_k}{A_{\perp,k}} = \frac{4}{3}\frac{f_{V,k}}{f_{A,k}}\,R_k.
+
+        Parameters
+        ----------
+        filling_factor : float or array-like
+            Shell volume filling factor :math:`f`, shared by both sectors. Must lie in
+            :math:`(0, 1)`.
+        inclination : float, array-like, or ~astropy.units.Quantity
+            Angle between the symmetry axis and the line of sight. Bare values interpreted as
+            radians.
+        aspect : float or array-like
+            Angular thickness :math:`b` of the CSM disk. Must be positive.
+        table : tuple, optional
+            Precomputed ``(aspect_grid, inclination_grid, filling_factor_grid, f_A_table)``,
+            where ``f_A_table`` is the output of :meth:`build_filling_parameter_table` on those
+            grids. If given, :math:`f_A` is interpolated (trilinear in
+            :math:`(\ln b,\ i,\ f)`, clamped to the grid edges). If omitted, :math:`f_A` is
+            computed directly with :meth:`_projected_area_fraction`.
+        n_pix : int, optional
+            Sky pixels across the diameter for direct computation. Ignored if ``table`` is
+            given. Default 200.
+
+        Returns
+        -------
+        dict
+            ``{"polar": {...}, "equatorial": {...}}``, each with keys ``f_V``, ``f_A`` and
+            ``ell_over_R``. The inputs are broadcast against each other and every value has the
+            broadcast shape (0-d for scalar inputs).
+
+        Raises
+        ------
+        ValueError
+            If ``filling_factor`` lies outside :math:`(0, 1)` or ``aspect`` is not positive.
+
+        Notes
+        -----
+        - :math:`f_{V,k} = f\,\Omega_k/4\pi` is analytic, so :math:`f_{V,p} + f_{V,e} = f`
+          exactly. Only :math:`f_A` is computed or interpolated.
+        - Both sectors are symmetric under :math:`i \to \pi - i`, so inclinations are folded
+          into :math:`[0, \pi/2]` before use.
+        - With ``table``, points outside the grid take the value at the nearest grid edge. This
+          keeps samplers from crashing at the prior boundary, but the result there is an
+          extrapolation: keep the prior inside the grid.
+        - Direct computation costs roughly 1-3 ms per point; interpolation is vectorized.
+        """
+        # ---------------------------------------------------------------- #
+        # Broadcast and validate inputs                                     #
+        # ---------------------------------------------------------------- #
+        f, inc, b = np.broadcast_arrays(
+            np.asarray(filling_factor, dtype=float),
+            np.asarray(ensure_in_units(inclination, u.rad), dtype=float),
+            np.asarray(aspect, dtype=float),
+        )
+        if np.any((f <= 0.0) | (f >= 1.0)):
+            raise ValueError("`filling_factor` must lie in (0, 1).")
+        if np.any(b <= 0.0) or not np.all(np.isfinite(b)):
+            raise ValueError("`aspect` must be positive and finite.")
+        if not np.all(np.isfinite(inc)):
+            raise ValueError("`inclination` must be finite.")
+
+        # Fold the inclination into [0, pi/2].
+        inc = np.mod(inc, np.pi)
+        inc = np.where(inc > 0.5 * np.pi, np.pi - inc, inc)
+
+        # Sector geometry and analytic volume fractions.
+        phi_e = np.arctan(b * np.log(2.0))
+        phi_p = 0.5 * np.pi - phi_e
+        f_V = {"polar": f * (1.0 - np.sin(phi_e)), "equatorial": f * np.sin(phi_e)}
+
+        # ---------------------------------------------------------------- #
+        # Area fractions: interpolate from the table, or compute directly   #
+        # ---------------------------------------------------------------- #
+        if table is not None:
+            aspect_grid, inc_grid, f_grid, f_A_table = table
+            axes = (
+                np.log(np.asarray(aspect_grid, dtype=float)),
+                np.asarray(ensure_in_units(inc_grid, u.rad), dtype=float),
+                np.asarray(f_grid, dtype=float),
+            )
+            f_A_table = np.asarray(f_A_table, dtype=float)
+            if f_A_table.shape != (2, *(ax.size for ax in axes)):
+                raise ValueError(
+                    f"`table` values have shape {f_A_table.shape}; expected "
+                    f"(2, {', '.join(str(ax.size) for ax in axes)}) to match the grids."
+                )
+            points = (np.log(b).ravel(), inc.ravel(), f.ravel())
+
+            # Clamped trilinear interpolation: locate each point's cell and clip its fractional
+            # position to [0, 1], so points beyond a grid edge take the edge value.
+            index, frac = [], []
+            for grid, x in zip(axes, points):
+                n = np.clip(np.searchsorted(grid, x) - 1, 0, grid.size - 2)
+                index.append(n)
+                frac.append(np.clip((x - grid[n]) / (grid[n + 1] - grid[n]), 0.0, 1.0))
+
+            f_A_flat = np.zeros((2, f.size))
+            for da in (0, 1):
+                wa = frac[0] if da else 1.0 - frac[0]
+                for di in (0, 1):
+                    wi = frac[1] if di else 1.0 - frac[1]
+                    for df in (0, 1):
+                        wf = frac[2] if df else 1.0 - frac[2]
+                        corner = f_A_table[:, index[0] + da, index[1] + di, index[2] + df]
+                        f_A_flat += wa * wi * wf * corner
+            f_A = {"polar": f_A_flat[0].reshape(f.shape), "equatorial": f_A_flat[1].reshape(f.shape)}
+
+        else:
+            eta = 1.0 - (1.0 - f) ** (1.0 / 3.0)
+            f_A = {"polar": np.empty(f.shape), "equatorial": np.empty(f.shape)}
+            for idx in np.ndindex(f.shape):
+                f_A["polar"][idx] = cls._projected_area_fraction("polar", phi_p[idx], inc[idx], eta[idx], n_pix)
+                f_A["equatorial"][idx] = cls._projected_area_fraction(
+                    "equatorial", phi_e[idx], inc[idx], eta[idx], n_pix
+                )
+
+        # ---------------------------------------------------------------- #
+        # Assemble                                                          #
+        # ---------------------------------------------------------------- #
+        # ``[()]`` turns 0-d arrays into scalars and leaves other shapes unchanged.
+        return {
+            kind: {
+                "f_V": f_V[kind][()],
+                "f_A": f_A[kind][()],
+                "ell_over_R": ((4.0 / 3.0) * f_V[kind] / f_A[kind])[()],
+            }
+            for kind in ("polar", "equatorial")
+        }

@@ -12,8 +12,12 @@ two sightlines, the equator and the pole, each of which stands in for its solid-
 2. The post-shock thermal energy density sets the magnetic field (:math:`\epsilon_B`) and the normalization of a
    cooled broken power-law electron distribution (:math:`\epsilon_e`).
 3. The numerical synchrotron engine computes each sector's spectrum.
-4. Free-free absorption by the CSM exterior to the shock attenuates each sector.
-5. The observed flux density is the sum of the attenuated sectors, weighted by their solid-angle fractions.
+4. The emitting geometry of each sector (sky-projected area, volume and mean path length) follows from the CSM
+   opening angle, the observer's inclination and a shell volume filling factor
+   (:meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters`).
+5. Free-free absorption by the CSM exterior to the shock attenuates each sector, integrated along the actual line of
+   sight from the sector to the observer.
+6. The observed flux density is the sum of the attenuated sectors.
 """
 
 from collections import namedtuple
@@ -63,11 +67,26 @@ _DAY = 86400.0
 _THETA_EQUATOR = np.pi / 2
 _THETA_POLE = 0.0
 
-# Half-width (in ln r) beyond which the emission-measure quadrature panels are subdivided, and the
-# minimum panel width regardless of how sharp the CSM transition is.
-_EM_MAX_PANEL = 0.4
+# Panels of the line-of-sight emission-measure quadrature are ``_EM_PANEL_PER_DELTA * delta_trans`` wide in the
+# quadrature variable, but never wider than ``_EM_MAX_PANEL`` or narrower than ``_EM_MIN_PANEL``. With 6-point
+# Gauss-Legendre panels this reproduces a converged integral to about 1e-4, far below the model's other errors.
+_EM_MAX_PANEL = 0.6
 _EM_MIN_PANEL = 0.02
-_GL_NODES, _GL_WEIGHTS = np.polynomial.legendre.leggauss(8)
+_EM_PANEL_PER_DELTA = 1.5
+_GL_NODES, _GL_WEIGHTS = np.polynomial.legendre.leggauss(6)
+
+# The line-of-sight emission-measure quadrature runs in x = ln(q / R + _LOS_EPSILON), where q is the path length
+# beyond the shock. The offset lets the grid start exactly at q = 0 while resolving the near-shock decade.
+_LOS_EPSILON = 1e-2
+# Cap on the number of quadrature nodes evaluated at once, which bounds the size of the work arrays.
+_LOS_MAX_NODES = 2_000_000
+
+# Grid of the sky-projected area-fraction table: (aspect, inclination [rad], volume filling factor). The aspect range
+# keeps both sectors wider than about 4 degrees; outside the grid the table is clamped to its edge values.
+_FILLING_GRID = (np.geomspace(0.1, 20.0, 20), np.linspace(0.0, 0.5 * np.pi, 16), np.linspace(0.02, 0.98, 7))
+_FILLING_N_PIX = 200
+# Tables already built in this process, shared between model instances.
+_FILLING_TABLE_CACHE: dict = {}
 
 # Maximum number of (epoch, frequency) pairs sent to the synchrotron engine at once; this bounds the size of its
 # (pairs x Lorentz-factor) work arrays on large tabulation grids.
@@ -139,9 +158,15 @@ class Diggins26SectorRadiation(NamedTuple):
     flux_density_attenuated: u.Quantity
     """Flux density after free-free absorption by the CSM exterior to the shock."""
     tau_ff: np.ndarray
-    """Free-free optical depth to the shock, evaluated at the source-frame frequency."""
+    """
+    Effective free-free optical depth, :math:`-\\ln\\langle e^{-\\tau}\\rangle` with the average taken over the
+    sector's sightlines, evaluated at the source-frame frequency.
+    """
     emission_measure: u.Quantity
-    """Emission measure of the CSM exterior to the shock, :math:`\\int n_e n_i\\,dr`, shape ``(n_t,)``."""
+    """
+    Emission measure along the line of sight through the CSM exterior to the shock, :math:`\\int n_e n_i\\,ds`,
+    averaged over the sector's sightlines, shape ``(n_t,)``.
+    """
     magnetic_field: u.Quantity
     """Post-shock magnetic field, shape ``(n_t,)``."""
     gamma_c: np.ndarray
@@ -149,7 +174,11 @@ class Diggins26SectorRadiation(NamedTuple):
     electron_normalization: u.Quantity
     """Electron distribution amplitude :math:`N_0`, shape ``(n_t,)``."""
     area_fraction: float
-    """The sector's solid-angle fraction, used as the area filling factor."""
+    """The sector's sky-projected area fraction :math:`f_A`, with :math:`A_\\perp = f_A \\pi R^2`."""
+    volume_fraction: float
+    """The sector's volume fraction :math:`f_V`, with :math:`V = f_V\\,4\\pi R^3/3`."""
+    path_length_ratio: float
+    """The sector's mean path length through the emitting shell in units of its radius, :math:`\\ell / R`."""
 
 
 class Diggins26Tabulation(NamedTuple):
@@ -190,12 +219,17 @@ class Diggins26_TwoComponentModel(Model):
     followed along two sightlines, the equator and the pole, each standing in for its solid-angle sector. Along each
     sightline a pressure-driven thin shell sets the post-shock thermal energy density, which is partitioned into a
     magnetic field and a cooled broken power-law electron population that radiates synchrotron emission. Free-free
-    absorption by the ionized CSM exterior to the shock attenuates each sector, and the observed flux density is
-    the sum of the sectors. The technical details are given in the Notes below.
+    absorption by the ionized CSM exterior to the shock attenuates each sector along its line of sight to the
+    observer, and the observed flux density is the sum of the sectors. The observer's inclination to the symmetry axis
+    sets the sectors' projected areas and the lines of sight. The technical details are given in the Notes below.
 
     .. important::
 
-        This model is **on-axis** with the polar region of the CSM.
+        The first evaluation builds a table of the sectors' sky-projected area fractions (a few seconds, with a
+        progress bar), which is then cached on the model and shared between instances. Call
+        :meth:`build_filling_table` beforehand when evaluating in parallel so that workers do not each repeat it.
+        Keep ``aspect`` within 0.1 to 20, and ``f_V`` within 0.02 to 0.98: outside the table's range the geometry is
+        held at its edge values.
 
     .. dropdown:: Parameters
 
@@ -238,9 +272,12 @@ class Diggins26_TwoComponentModel(Model):
            * - ``gamma_min``, ``gamma_max``
              - :math:`\gamma_{\min}`, :math:`\gamma_{\max}`
              - Electron Lorentz factor limits.
+           * - ``inclination``
+             - :math:`i`
+             - Angle between the CSM symmetry axis and the line of sight (0 is pole-on, :math:`\pi/2` is edge-on).
            * - ``f_V``
-             - :math:`f_V`
-             - Volume filling factor shared by both sectors.
+             - :math:`f`
+             - Volume filling factor of the emitting shell, shared by both sectors.
            * - ``T_e``
              - :math:`T_e`
              - Electron temperature of the ionized CSM.
@@ -284,6 +321,10 @@ class Diggins26_TwoComponentModel(Model):
            * - ``gamma_points_per_decade``
              - ``20``
              - Resolution of the electron Lorentz-factor grid.
+           * - ``n_azimuth``
+             - ``4``
+             - Number of azimuths at which the equatorial sector's line of sight is sampled when averaging the
+               free-free transmission (see the Notes).
            * - ``integrator_kw``
              - ``{"method": "LSODA", "rtol": 1e-7}``
              - Keyword arguments for the shock integration (:func:`scipy.integrate.solve_ivp`), such as ``method``,
@@ -335,10 +376,16 @@ class Diggins26_TwoComponentModel(Model):
 
     .. math::
 
-        A_{\rm eff} = \pi R^2 f_A, \qquad \ell_{\rm eff} = f_V^{1/3} R,
+        A_{\rm eff} = \pi R^2 f_A, \qquad \ell_{\rm eff} = \frac{4}{3}\frac{f_{V,k}}{f_A} R.
 
-    where :math:`f_A` is the sector's solid-angle fraction (derived from the CSM geometry, not a parameter) and
-    :math:`f_V` is a shared volume filling factor.
+    The two sectors are split at the disk half-maximum latitude :math:`\arctan(b\ln 2)`. Each is a shell of
+    fractional thickness :math:`\eta = 1 - (1-f)^{1/3}` set by the shared filling factor :math:`f` (``f_V``), so that
+    sector :math:`k` holds a fraction :math:`f_{V,k} = f\,\Omega_k/4\pi` of the full-sphere volume. The sky-projected
+    area fraction :math:`f_A` of each sector depends on the aspect :math:`b`, the inclination :math:`i` and
+    :math:`f`; it is interpolated from a table built with
+    :meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table`, and
+    :math:`\ell_{\rm eff}` is the mean path length :math:`V/A_\perp`. None of these are free parameters apart from
+    :math:`f`, :math:`b` and :math:`i`. The shock dynamics do not depend on the inclination.
 
     .. rubric:: Cooling
 
@@ -364,12 +411,26 @@ class Diggins26_TwoComponentModel(Model):
 
     .. rubric:: Free-free absorption
 
-    The CSM exterior to the shock (a fully ionized plasma at temperature :math:`T_e`) attenuates each sector by
-    :math:`e^{-\tau_{\rm ff}}`. The emission measure is
+    The CSM exterior to the shock (a fully ionized plasma at temperature :math:`T_e`) attenuates each sector. The
+    emission measure along a line of sight leaving the shock at radius :math:`R` is
 
     .. math::
 
-        \int n_e n_i\,dr = \frac{1}{\mu_e \mu_i m_p^2}\int\rho^2\,dr,
+        \int n_e n_i\,ds = \frac{1}{\mu_e \mu_i m_p^2}\int\rho^2(r(s), \theta(s))\,ds,
+
+    integrated along the straight path :math:`s` toward the observer, through the axisymmetric density, from where
+    the path leaves the shock sphere to :math:`R_{\rm ion}`. A sector is not a single line of sight, so the model
+    averages the transmission over a few representative ones,
+
+    .. math::
+
+        T_{\rm ff}(\nu) = \left\langle e^{-\tau_{\nu,j}} \right\rangle_j,
+
+    and not the optical depth. A sector that is transparent along some sightlines and opaque along others therefore
+    transmits the flux of the transparent ones. The equatorial sector is a ring and is sampled at ``n_azimuth``
+    azimuths; the polar sector is sampled along its near and far lobes. Both are weighted equally. The path
+    interior to the shock is not included: every sightline is treated as passing through the same CSM exterior to
+    the sector's own shock radius.
 
     where the mean molecular weights per electron and per ion :math:`\mu_e` and :math:`\mu_i` follow from the
     composition (see :mod:`~trilobite.physics_utils.composition`); the same composition sets the mean molecular
@@ -556,10 +617,18 @@ class Diggins26_TwoComponentModel(Model):
             bounds=(1, None),
         ),
         ModelParameter(
+            "inclination",
+            np.pi / 3,
+            base_units="rad",
+            description="Angle between the CSM symmetry axis and the line of sight (0 is pole-on).",
+            latex=r"i",
+            bounds=(0, np.pi / 2),
+        ),
+        ModelParameter(
             "f_V",
             0.5,
-            description="Volume filling factor of the emitting region, shared by both sectors.",
-            latex=r"f_V",
+            description="Volume filling factor of the emitting shell, shared by both sectors.",
+            latex=r"f",
             bounds=(0, 1),
         ),
         # --------------- Free-free --------------- #
@@ -618,6 +687,7 @@ class Diggins26_TwoComponentModel(Model):
         shock_start_time: Union[float, u.Quantity] = 0.3 * u.day,
         max_initial_beta: float = 0.8,
         gamma_points_per_decade: int = 20,
+        n_azimuth: int = 4,
         integrator_kw: Optional[dict] = None,
         seed_photon_luminosity: Optional[Callable] = None,
     ):
@@ -656,6 +726,10 @@ class Diggins26_TwoComponentModel(Model):
         gamma_points_per_decade : int, optional
             Electron Lorentz-factor grid resolution. About 20 per decade converges the flux to ~0.01 dex.
             Default ``20``.
+        n_azimuth : int, optional
+            Number of azimuths at which the equatorial ring's line of sight is sampled when averaging the free-free
+            transmission. The transmission is a smooth, periodic function of azimuth, so a few samples converge
+            quickly. Default ``4``.
         integrator_kw : dict, optional
             Keyword arguments forwarded to :func:`scipy.integrate.solve_ivp` for the shock integration. The model
             defaults to ``method="LSODA"`` and ``rtol=1e-7``, which keeps the log-likelihood within about
@@ -726,6 +800,8 @@ class Diggins26_TwoComponentModel(Model):
         self._t_0 = float(ensure_in_units(shock_start_time, u.s))
         self._max_initial_beta = float(max_initial_beta)
         self._gamma_points_per_decade = int(gamma_points_per_decade)
+        self._n_azimuth = int(n_azimuth)
+        self._filling_table = None  # built on first use; see `filling_table`
 
         # The model's defaults are applied first so that anything the user passes takes precedence.
         self._integrator_kw = {"method": "LSODA", "rtol": 1e-7, **(integrator_kw or {})}
@@ -746,6 +822,8 @@ class Diggins26_TwoComponentModel(Model):
             raise ValueError("`max_initial_beta` must lie in (0, 1).")
         if self._gamma_points_per_decade < 1:
             raise ValueError("`gamma_points_per_decade` must be a positive integer.")
+        if self._n_azimuth < 1:
+            raise ValueError("`n_azimuth` must be a positive integer.")
         if not self._integrator_kw["rtol"] > 0:
             raise ValueError("The integrator's `rtol` must be positive.")
 
@@ -771,6 +849,7 @@ class Diggins26_TwoComponentModel(Model):
             shock_start_time=self._t_0,
             max_initial_beta=self._max_initial_beta,
             gamma_points_per_decade=self._gamma_points_per_decade,
+            n_azimuth=self._n_azimuth,
             integrator_kw=dict(self._integrator_kw),
         )
 
@@ -950,10 +1029,49 @@ class Diggins26_TwoComponentModel(Model):
     # =============================================== #
     # Radiation                                       #
     # =============================================== #
-    def _area_fractions(self, aspect: float) -> tuple[float, float]:
-        """Solid-angle fractions ``(equatorial, polar)`` of the two sectors."""
-        eq = AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction(aspect)
-        return eq, 1.0 - eq
+    def build_filling_table(self, *, progress: bool = True) -> tuple:
+        """
+        Build (or fetch) the table of the sectors' sky-projected area fractions and store it on the model.
+
+        The table is computed once per process for a fixed grid in aspect, inclination and filling factor (a few
+        seconds) and shared by every model instance. It is built automatically on the first evaluation, but calling
+        this method beforehand keeps parallel workers from each repeating the computation.
+
+        Parameters
+        ----------
+        progress : bool, optional
+            Show a progress bar while the table is built. Default ``True``.
+
+        Returns
+        -------
+        tuple
+            ``(aspect_grid, inclination_grid, filling_factor_grid, table)``, as accepted by
+            :meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters`.
+        """
+        key = tuple(g.tobytes() for g in _FILLING_GRID) + (_FILLING_N_PIX,)
+        if key not in _FILLING_TABLE_CACHE:
+            table = AxisymmetricCSMDensityProfile.build_filling_parameter_table(
+                *_FILLING_GRID, n_pix=_FILLING_N_PIX, progress=progress
+            )
+            _FILLING_TABLE_CACHE[key] = (*_FILLING_GRID, table)
+        self._filling_table = _FILLING_TABLE_CACHE[key]
+        return self._filling_table
+
+    @property
+    def filling_table(self) -> tuple:
+        """The area-fraction table, built on first access (see :meth:`build_filling_table`)."""
+        if self._filling_table is None:
+            self.build_filling_table()
+        return self._filling_table
+
+    def _sector_geometry(self, p: dict) -> tuple[dict, dict]:
+        """``(equatorial, polar)`` dicts of ``f_V``, ``f_A`` and ``ell_over_R`` (floats) at the current parameters."""
+        # The filling factor is clipped just inside (0, 1), where the geometry is defined.
+        f = float(np.clip(p["f_V"], 1e-6, 1.0 - 1e-6))
+        geometry = AxisymmetricCSMDensityProfile.compute_filling_parameters(
+            f, p["inclination"], p["aspect"], table=self.filling_table
+        )
+        return tuple({k: float(v) for k, v in geometry[kind].items()} for kind in ("equatorial", "polar"))
 
     @staticmethod
     def _gamma_grid(p: dict, n_per_decade: int) -> np.ndarray:
@@ -1020,38 +1138,108 @@ class Diggins26_TwoComponentModel(Model):
         return B, gamma_c, N0, log_N
 
     # ----- Free-free ---------------------------------------------------------------------------------------------- #
-    def _emission_measure(self, p: dict, theta: float, radius: np.ndarray) -> np.ndarray:
+    def _sightlines(self, inclination: float) -> tuple:
         r"""
-        Emission measure :math:`\int_R^{R_{\rm ion}} n_e n_i\,dr` of the CSM exterior to the shock at each radius.
+        Return representative lines of sight of the two sectors as ``(cos_psi, z_hat)`` pairs ``(equatorial, polar)``.
 
-        The integral is evaluated in :math:`\ln r` by composite Gauss-Legendre quadrature whose panels are never wider
-        than the CSM transition, with panel edges placed on the shock radii so that all epochs share one cumulative sum.
+        A sightline leaves the sector's midpoint, which lies in the direction :math:`\hat p` from the center, along the
+        direction :math:`\hat n` to the observer. ``cos_psi`` is :math:`\hat p\cdot\hat n` and ``z_hat`` is the
+        component of :math:`\hat p` along the symmetry axis. The equatorial ring is sampled at ``n_azimuth``
+        azimuths (the transmission is even in azimuth, so the half circle suffices), the polar sector along its
+        near and far lobes.
         """
-        EM = np.zeros_like(radius)
+        phi = (np.arange(self._n_azimuth) + 0.5) * np.pi / self._n_azimuth
+        equatorial = (np.sin(inclination) * np.cos(phi), np.zeros_like(phi))
+        polar = (np.array([np.cos(inclination), -np.cos(inclination)]), np.array([1.0, -1.0]))
+        return equatorial, polar
 
-        # Only shocks inside the ionized region are absorbed by it.
-        outside = radius < p["R_ion"]
-        if not np.any(outside):
+    def _csm_profile_parameters(self, p: dict) -> dict:
+        """Return the processed CSM profile parameters, with the angle left to be set at evaluation."""
+        return AxisymmetricCSMDensityProfile._validate_and_process_parameters(theta=0.0, **self._csm_parameters(p))
+
+    def _line_of_sight_emission_measure(
+        self, p: dict, radius: np.ndarray, cos_psi: np.ndarray, z_hat: np.ndarray, csm: dict
+    ) -> np.ndarray:
+        r"""
+        Emission measure :math:`\int n_e n_i\,ds` along lines of sight from the shock to the observer.
+
+        A sightline starts at the shock radius :math:`R` in the direction :math:`\hat p` and runs along the direction
+        :math:`\hat n` to the observer, so that :math:`r^2 = R^2 + s^2 + 2Rs\cos\psi` and
+        :math:`\cos\theta = (R\hat p_z + s\cos i)/r`. Only the part of the path outside the shock sphere
+        :math:`r > R` is integrated, out to :math:`R_{\rm ion}`; a path that starts by running inward therefore
+        begins where it re-emerges, at :math:`s = -2R\cos\psi`. Outside that point :math:`r` increases
+        monotonically with :math:`s`.
+
+        The integral is evaluated by composite Gauss-Legendre quadrature in :math:`x = \ln(q/R + \epsilon)`, where
+        :math:`q` is the path length beyond the start. Panels are never wider than the CSM transition.
+
+        Parameters
+        ----------
+        p : dict
+            Model parameters (``inclination``, ``R_ion`` and the CSM parameters are used).
+        radius : numpy.ndarray
+            Shock radii, shape ``(n_t,)``, in cm.
+        cos_psi, z_hat : numpy.ndarray
+            Direction cosine between the sightline's start and the observer, and the start's axial component, one
+            per sightline, shape ``(n_s,)``.
+        csm : dict
+            Processed CSM profile parameters from :meth:`_csm_profile_parameters`.
+
+        Returns
+        -------
+        numpy.ndarray
+            The emission measure in cm^-5, shape ``(n_s, n_t)``. Zero for shocks beyond :math:`R_{\rm ion}`.
+        """
+        EM = np.zeros((cos_psi.size, radius.size))
+        inside = np.flatnonzero(radius < p["R_ion"])  # only shocks inside the ionized region are absorbed by it
+        if inside.size == 0:
             return EM
 
-        # Panel edges: a uniform grid fine enough to resolve the CSM transition, plus every shock radius.
-        ln_R = np.log(radius[outside])
-        ln_R_ion = np.log(p["R_ion"])
-        width = min(_EM_MAX_PANEL, max(p["delta_trans"], _EM_MIN_PANEL))
-        n_panels = max(int(np.ceil((ln_R_ion - ln_R.min()) / width)), 1)
-        edges = np.unique(np.concatenate([np.linspace(ln_R.min(), ln_R_ion, n_panels + 1), ln_R]))
+        cos_i, R_ion = np.cos(p["inclination"]), p["R_ion"]
+        width = min(_EM_MAX_PANEL, max(_EM_PANEL_PER_DELTA * p["delta_trans"], _EM_MIN_PANEL))
+        norm = 1.0 / (self._mu_e * self._mu_i * _M_P_CGS**2)
+        n_nodes = _GL_NODES.size
 
-        # Gauss-Legendre quadrature of rho^2 r on each panel, then a cumulative sum from the outer edge inward.
-        mid = 0.5 * (edges[1:] + edges[:-1])
-        half = 0.5 * (edges[1:] - edges[:-1])
-        r = np.exp(mid[:, None] + half[:, None] * _GL_NODES[None, :])
-        rho = self._sector_density(p, theta)(r, 0.0)
-        panel = half * np.sum(rho**2 * r * _GL_WEIGHTS[None, :], axis=1)
-        tail = np.concatenate([np.cumsum(panel[::-1])[::-1], [0.0]])  # integral from each edge outward
+        # Chunk the epochs so that the node arrays stay bounded when the transition is sharp.
+        x_lo = np.log(_LOS_EPSILON)
+        cp = cos_psi[:, None]
+        span = np.max(self._los_path(radius[inside][None, :], cp, R_ion)[1] - x_lo)
+        per_epoch = cos_psi.size * max(int(np.ceil(span / width)), 1) * n_nodes
+        size = max(_LOS_MAX_NODES // per_epoch, 1)
+        for chunk in (inside[lo : lo + size] for lo in range(0, inside.size, size)):
+            R = radius[chunk][None, :]  # (1, m)
 
-        # n_e n_i = rho^2 / (mu_e mu_i m_p^2)
-        EM[outside] = tail[np.searchsorted(edges, ln_R)] / (self._mu_e * self._mu_i * _M_P_CGS**2)
+            s0, x_hi = self._los_path(R, cp, R_ion)
+
+            n_panels = max(int(np.ceil(np.max(x_hi - x_lo) / width)), 1)
+            frac = np.linspace(0.0, 1.0, n_panels + 1)
+            edges = x_lo + (x_hi - x_lo)[..., None] * frac  # (n_s, m, n_panels + 1)
+            half = 0.5 * np.diff(edges, axis=-1)
+            mid = 0.5 * (edges[..., 1:] + edges[..., :-1])
+            x = (mid[..., None] + half[..., None] * _GL_NODES).reshape(*mid.shape[:2], -1)
+            w = (half[..., None] * _GL_WEIGHTS).reshape(x.shape)
+
+            Rb, s0b = R[..., None], s0[..., None]
+            s = s0b + Rb * (np.exp(x) - _LOS_EPSILON)
+            r = np.sqrt(Rb**2 + s**2 + 2.0 * Rb * s * cp[..., None])
+            cos_theta = np.clip((Rb * z_hat[:, None, None] + s * cos_i) / r, -1.0, 1.0)
+            rho = AxisymmetricCSMDensityProfile._opt_eval(r, None, **{**csm, "theta": np.arccos(cos_theta)})
+
+            # ds = R e^x dx
+            EM[:, chunk] = norm * np.sum(w * rho**2 * Rb * np.exp(x), axis=-1)
         return EM
+
+    @staticmethod
+    def _los_path(R: np.ndarray, cos_psi: np.ndarray, R_ion: float) -> tuple:
+        """Start ``s0`` of the path outside the shock sphere and the quadrature variable at its end ``R_ion``."""
+        s0 = np.maximum(0.0, -2.0 * R * cos_psi)
+        s_end = -R * cos_psi + np.sqrt(R_ion**2 - R**2 * (1.0 - cos_psi**2))
+        return s0, np.log((s_end - s0) / R + _LOS_EPSILON)
+
+    @staticmethod
+    def _transmission(EM: np.ndarray, tau_per_EM: list) -> list:
+        r"""Return the free-free transmission :math:`\langle e^{-\tau}\rangle` over sightlines, one array per epoch."""
+        return [np.mean(np.exp(-EM[:, i, None] * tau_per_EM[i][None, :]), axis=0) for i in range(len(tau_per_EM))]
 
     # ----- Spectra ------------------------------------------------------------------------------------------------ #
     def _free_free_opacity(self, p: dict, nu_groups: list) -> list:
@@ -1082,25 +1270,26 @@ class Diggins26_TwoComponentModel(Model):
         p: dict,
         state: _SectorState,
         micro: tuple,
-        EM: np.ndarray,
-        f_A: float,
+        geometry: dict,
         gamma: np.ndarray,
         nu_groups: list,
-        tau_per_EM: list,
     ):
         """
-        Intrinsic flux density and free-free optical depth of one sector.
+        Intrinsic flux density of one sector, before free-free absorption.
 
-        ``nu_groups[i]`` holds the observer-frame frequencies to evaluate at epoch ``i`` and ``tau_per_EM[i]`` the
-        free-free optical depth per unit emission measure at those frequencies. Returns lists of arrays (one per
-        epoch) in CGS flux units and dimensionless optical depth.
+        ``nu_groups[i]`` holds the observer-frame frequencies to evaluate at epoch ``i``. ``geometry`` holds the
+        sector's ``f_A`` and ``ell_over_R``. Returns a list of arrays (one per epoch) in CGS flux units.
         """
         B, _, _, log_N = micro
         log_gamma, log_weights = self._synchrotron_engine._build_gamma_grid(gamma)
 
+        # A sector with no projected area does not radiate.
+        if not geometry["f_A"] > 0.0:
+            return [np.zeros_like(nu) for nu in nu_groups]
+
         # Emitting geometry of the sector, per epoch.
-        log_ell = np.log(p["f_V"] ** (1.0 / 3.0) * state.radius)
-        log_area = np.log(np.pi * state.radius**2 * f_A)
+        log_ell = np.log(geometry["ell_over_R"] * state.radius)
+        log_area = np.log(np.pi * state.radius**2 * geometry["f_A"])
         log_B = np.log(B)
 
         # Flatten the (epoch, frequency) pairs so that the engine is called on whole batches rather than epoch by
@@ -1127,41 +1316,45 @@ class Diggins26_TwoComponentModel(Model):
                     paired=True,
                 )
 
-        flux = np.split(np.exp(log_F), np.cumsum(sizes)[:-1])
-        tau = [EM[i] * tau_per_EM[i] for i in range(len(nu_groups))]
-        return flux, tau
+        return np.split(np.exp(log_F), np.cumsum(sizes)[:-1])
 
     def _sector_radiation(
         self,
         p: dict,
-        theta: float,
         state: _SectorState,
-        f_A: float,
+        sightlines: tuple,
+        geometry: dict,
+        csm: dict,
         t_rest: np.ndarray,
         gamma: np.ndarray,
         nu_groups: list,
         tau_per_EM: list,
     ):
         """
-        Everything radiated by one sector: the electrons, the emission measure, and the spectra.
+        Microphysics, intrinsic spectrum and free-free transmission of one sector.
 
-        Returns ``(micro, EM, flux, tau)``, where ``micro`` is the output of :meth:`_microphysics`.
+        Returns ``(micro, EM, flux, transmission)``, where ``micro`` is the output of :meth:`_microphysics`, ``EM``
+        the emission measure along each of the sector's sightlines (shape ``(n_s, n_t)``), and ``flux`` and
+        ``transmission`` are lists of arrays, one per epoch, in CGS flux units and dimensionless.
         """
         micro = self._microphysics(p, state, t_rest, gamma)
-        EM = self._emission_measure(p, theta, state.radius)
-        flux, tau = self._sector_spectra(p, state, micro, EM, f_A, gamma, nu_groups, tau_per_EM)
-        return micro, EM, flux, tau
+        EM = self._line_of_sight_emission_measure(p, state.radius, *sightlines, csm)
+        flux = self._sector_spectra(p, state, micro, geometry, gamma, nu_groups)
+        return micro, EM, flux, self._transmission(EM, tau_per_EM)
 
     def _total_flux(self, p: dict, states: tuple, t_rest: np.ndarray, nu_groups: list):
         """Total attenuated flux density (CGS) per epoch group, summed over the two sectors."""
         gamma = self._gamma_grid(p, self._gamma_points_per_decade)
         tau_per_EM = self._free_free_opacity(p, nu_groups)  # shared by both sectors
+        csm = self._csm_profile_parameters(p)
         total = [np.zeros_like(nu) for nu in nu_groups]
 
-        for theta, state, f_A in zip((_THETA_EQUATOR, _THETA_POLE), states, self._area_fractions(p["aspect"])):
-            _, _, flux, tau = self._sector_radiation(p, theta, state, f_A, t_rest, gamma, nu_groups, tau_per_EM)
+        for state, sightlines, geometry in zip(states, self._sightlines(p["inclination"]), self._sector_geometry(p)):
+            _, _, flux, transmission = self._sector_radiation(
+                p, state, sightlines, geometry, csm, t_rest, gamma, nu_groups, tau_per_EM
+            )
             for i in range(len(nu_groups)):
-                total[i] += flux[i] * np.exp(-tau[i])
+                total[i] += flux[i] * transmission[i]
         return total
 
     # =============================================== #
@@ -1337,11 +1530,16 @@ class Diggins26_TwoComponentModel(Model):
         gamma = self._gamma_grid(p, self._gamma_points_per_decade)
         nu_groups = [nu_obs] * t_obs.size
         tau_per_EM = self._free_free_opacity(p, nu_groups)  # shared by both sectors
+        csm = self._csm_profile_parameters(p)
         results, total = [], 0.0
-        for theta, state, f_A in zip((_THETA_EQUATOR, _THETA_POLE), states, self._area_fractions(p["aspect"])):
-            micro, EM, flux, tau = self._sector_radiation(p, theta, state, f_A, t_rest, gamma, nu_groups, tau_per_EM)
-            flux, tau = np.array(flux), np.array(tau)
-            attenuated = flux * np.exp(-tau)
+        for state, sightlines, geometry in zip(states, self._sightlines(p["inclination"]), self._sector_geometry(p)):
+            micro, EM, flux, transmission = self._sector_radiation(
+                p, state, sightlines, geometry, csm, t_rest, gamma, nu_groups, tau_per_EM
+            )
+            flux, transmission = np.array(flux), np.array(transmission)
+            attenuated = flux * transmission
+            with np.errstate(divide="ignore"):
+                tau = -np.log(transmission)
             total = total + attenuated
             B, gamma_c, N0, _ = micro
             results.append(
@@ -1349,11 +1547,13 @@ class Diggins26_TwoComponentModel(Model):
                     flux_density=(1e23 * flux) * u.Jy,
                     flux_density_attenuated=(1e23 * attenuated) * u.Jy,
                     tau_ff=tau,
-                    emission_measure=EM * u.cm**-5,
+                    emission_measure=EM.mean(axis=0) * u.cm**-5,
                     magnetic_field=B * u.G,
                     gamma_c=gamma_c,
                     electron_normalization=N0 * u.cm**-3,
-                    area_fraction=f_A,
+                    area_fraction=geometry["f_A"],
+                    volume_fraction=geometry["f_V"],
+                    path_length_ratio=geometry["ell_over_R"],
                 )
             )
 

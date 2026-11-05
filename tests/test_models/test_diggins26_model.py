@@ -222,7 +222,7 @@ class TestRedshift:
 # =========================================================================== #
 # Free-free emission measure                                                  #
 # =========================================================================== #
-class TestEmissionMeasure:
+class TestLineOfSightEmissionMeasure:
     _P = {
         "rho_int": 2e-16,
         "rho_ext": 1e-18,
@@ -235,48 +235,202 @@ class TestEmissionMeasure:
         "R_ion": 1e19,
     }
 
-    def _direct(self, model, p, theta, radius):
-        """Reference int rho^2 dr by dense Simpson integration in ln r (independent of the model's quadrature)."""
-        csm = AxisymmetricCSMDensityProfile.as_optimized_callable(theta=theta, **model._csm_parameters(p))
+    @staticmethod
+    def _geometry(inc, p_hat):
+        """``(cos_psi, z_hat)`` of a sightline leaving along ``p_hat`` toward an observer at inclination ``inc``."""
+        n_hat = np.array([np.sin(inc), 0.0, np.cos(inc)])
+        return np.array([p_hat @ n_hat]), np.array([p_hat[2]])
+
+    def _em(self, model, p, radius, inc, p_hat):
+        p = model._coerce({**p, "inclination": inc})
+        cos_psi, z_hat = self._geometry(inc, np.asarray(p_hat, dtype=float))
+        return model._line_of_sight_emission_measure(p, radius, cos_psi, z_hat, model._csm_profile_parameters(p))[0]
+
+    def _direct(self, model, p, radius, inc, p_hat, composition=None, n=300001):
+        """
+        Reference int rho^2 ds from three-dimensional vectors by dense Simpson integration, independent of the model's
+        geometry and quadrature. The path starts where the sightline leaves the sphere of radius R and ends at R_ion.
+        """
+        p = model._coerce({**p, "inclination": inc})
+        csm = model._csm_profile_parameters(p)
+        n_hat = np.array([np.sin(inc), 0.0, np.cos(inc)])
+        p_hat = np.asarray(p_hat, dtype=float)
+        cos_psi = p_hat @ n_hat
         out = []
         for R in radius:
-            # QUADPACK's adaptive quad is unreliable for this steep integrand (errors up to ~1e-3 even with a
-            # breakpoint at the transition, with no warning), so a fixed dense grid is used instead.
-            x = np.linspace(np.log(R), np.log(p["R_ion"]), 200001)
-            out.append(simpson(csm(np.exp(x), 0.0) ** 2 * np.exp(x), x=x))
-        return np.array(out)
+            s0 = max(0.0, -2.0 * R * cos_psi)
+            s_end = -R * cos_psi + np.sqrt(p["R_ion"] ** 2 - R**2 * (1.0 - cos_psi**2))
+            eps = 1e-4
+            x = np.linspace(np.log(eps), np.log((s_end - s0) / R + eps), n)
+            s = s0 + R * (np.exp(x) - eps)
+            pos = R * p_hat[None, :] + s[:, None] * n_hat[None, :]
+            r = np.linalg.norm(pos, axis=1)
+            theta = np.arccos(np.clip(pos[:, 2] / r, -1.0, 1.0))
+            rho = AxisymmetricCSMDensityProfile._opt_eval(r, None, **{**csm, "theta": theta})
+            out.append(simpson(rho**2 * R * np.exp(x), x=x))
+        out = np.array(out)
+        return out * (composition if composition is not None else 1.0 / (model._mu_e * model._mu_i)) / M_P**2
 
-    @pytest.mark.parametrize("theta", [np.pi / 2, 0.0])
+    @pytest.mark.parametrize("inc", [0.0, 0.7, np.pi / 2])
+    @pytest.mark.parametrize(
+        "p_hat",
+        [(1, 0, 0), (0, 1, 0), (0.6, -0.8, 0), (0, 0, 1), (0, 0, -1)],
+        ids=["x", "y", "mixed", "north", "south"],
+    )
+    def test_matches_vector_reference(self, model, inc, p_hat):
+        radius = np.geomspace(3e14, 3e18, 7)
+        em = self._em(model, self._P, radius, inc, p_hat)
+        assert np.allclose(em, self._direct(model, self._P, radius, inc, p_hat), rtol=1e-3)
+
     @pytest.mark.parametrize("X", [1.0, 0.7, 0.0])
-    def test_matches_direct_quadrature(self, theta, X):
+    def test_composition_enters_as_n_e_n_i(self, X):
+        """For fully ionized H and He, n_e n_i = (1 + X)(1 + 3X) / 8 * rho^2 / m_p^2."""
         model = Diggins26_TwoComponentModel(redshift=0.01, hydrogen_mass_fraction=X)
-        p = self._P
-        radius = np.geomspace(1e14, 3e18, 9)
-        em = model._emission_measure(p, theta, radius)
+        radius = np.array([1e15, 4e16])
+        em = self._em(model, self._P, radius, 0.9, (1, 0, 0))
         composition = (1 + X) * (1 + 3 * X) / 8
-        assert np.allclose(em, composition * self._direct(model, p, theta, radius) / M_P**2, rtol=1e-8)
+        assert np.allclose(em, self._direct(model, self._P, radius, 0.9, (1, 0, 0), composition), rtol=1e-3)
 
-    def test_pure_hydrogen_is_n_squared(self):
-        """For X = 1 the plasma is n_e = n_i = rho / m_p, so EM = int n^2 dr."""
-        model = Diggins26_TwoComponentModel(redshift=0.01, hydrogen_mass_fraction=1.0)
-        radius = np.array([1e15])
-        em = model._emission_measure(self._P, np.pi / 2, radius)
-        assert em[0] == pytest.approx(self._direct(model, self._P, np.pi / 2, radius)[0] / M_P**2, rel=1e-8)
+    def test_pole_on_near_lobe_is_the_radial_integral(self, model):
+        """Looking down the axis from the near lobe, the sightline is the radius along theta = 0."""
+        radius = np.geomspace(1e14, 3e18, 7)
+        csm = AxisymmetricCSMDensityProfile.as_optimized_callable(theta=0.0, **model._csm_parameters(self._P))
+        radial = []
+        for R in radius:
+            x = np.linspace(np.log(R), np.log(self._P["R_ion"]), 200001)
+            radial.append(simpson(csm(np.exp(x), 0.0) ** 2 * np.exp(x), x=x))
+        radial = np.array(radial) / (model._mu_e * model._mu_i * M_P**2)
+        assert np.allclose(self._em(model, self._P, radius, 0.0, (0, 0, 1)), radial, rtol=1e-3)
 
-    def test_zero_beyond_the_ionized_radius(self, model):
-        em = model._emission_measure({**self._P, "R_ion": 1e16}, np.pi / 2, np.array([1e15, 2e16, 5e17]))
-        assert em[0] > 0 and em[1] == 0 and em[2] == 0
+    def test_pole_on_far_lobe_matches_near_lobe(self, model):
+        """Only the CSM exterior to the shock counts, so down the axis the far lobe sees what the near lobe sees."""
+        radius = np.geomspace(1e14, 3e18, 7)
+        near = self._em(model, self._P, radius, 0.0, (0, 0, 1))
+        far = self._em(model, self._P, radius, 0.0, (0, 0, -1))
+        assert np.allclose(far, near, rtol=1e-12)
 
-    def test_decreases_outward(self, model):
-        em = model._emission_measure(self._P, np.pi / 2, np.geomspace(1e14, 1e18, 20))
+    def test_spherical_csm_depends_only_on_the_angle_to_the_observer(self, model):
+        """With rho_int = 0 the integral depends only on the angle between the sightline and the observer."""
+        p = {**self._P, "rho_int": 0.0}
+        radius = np.array([1e15, 1e17])
+        a = self._em(model, p, radius, 0.0, (1, 0, 0))
+        b = self._em(model, p, radius, 0.0, (0, 1, 0))
+        assert np.allclose(a, b, rtol=1e-12)  # both perpendicular to the line of sight
+        assert np.allclose(a, self._em(model, p, radius, np.pi / 2, (0, 1, 0)), rtol=1e-12)
+
+    def test_shape_and_zero_beyond_the_ionized_radius(self, model):
+        p = model._coerce({**self._P, "R_ion": 1e16, "inclination": 0.8})
+        cos_psi, z_hat = np.array([0.1, -0.4, 0.8]), np.array([0.0, 1.0, -1.0])
+        em = model._line_of_sight_emission_measure(
+            p, np.array([1e15, 2e16, 5e17]), cos_psi, z_hat, model._csm_profile_parameters(p)
+        )
+        assert em.shape == (3, 3)
+        assert np.all(em[:, 0] > 0) and np.all(em[:, 1:] == 0)
+
+    def test_decreases_outward_along_the_axis(self, model):
+        em = self._em(model, self._P, np.geomspace(1e14, 1e18, 20), 0.0, (0, 0, 1))
         assert np.all(np.diff(em) < 0)
 
     def test_sharp_transition_is_resolved(self, model):
         p = {**self._P, "delta_trans": 0.02}
         radius = np.geomspace(1e14, 1e18, 6)
-        em = model._emission_measure(p, np.pi / 2, radius)
-        composition = (1 + 0.7) * (1 + 3 * 0.7) / 8
-        assert np.allclose(em, composition * self._direct(model, p, np.pi / 2, radius) / M_P**2, rtol=1e-6)
+        for p_hat in ((1, 0, 0), (0, 0, 1)):
+            em = self._em(model, p, radius, 0.9, p_hat)
+            assert np.allclose(em, self._direct(model, p, radius, 0.9, p_hat), rtol=1e-3)
+
+    def test_chunking_is_identical(self, model, monkeypatch):
+        import trilobite.models.LFBOTs.diggins26 as module
+
+        radius = np.geomspace(1e14, 1e18, 12)
+        whole = self._em(model, self._P, radius, 0.9, (1, 0, 0))
+        monkeypatch.setattr(module, "_LOS_MAX_NODES", 1)  # one epoch per chunk
+        assert np.allclose(self._em(model, self._P, radius, 0.9, (1, 0, 0)), whole, rtol=1e-12)
+
+
+class TestSightlinesAndTransmission:
+    def test_polar_lobes_are_symmetric(self, model):
+        _, (cos_psi, z_hat) = model._sightlines(0.6)
+        assert np.allclose(cos_psi, [np.cos(0.6), -np.cos(0.6)]) and np.allclose(z_hat, [1.0, -1.0])
+
+    @pytest.mark.parametrize("n_azimuth", [1, 4, 7])
+    def test_ring_sightlines_lie_in_the_plane(self, n_azimuth):
+        m = Diggins26_TwoComponentModel(redshift=0.01, n_azimuth=n_azimuth)
+        (cos_psi, z_hat), _ = m._sightlines(0.6)
+        assert cos_psi.shape == z_hat.shape == (n_azimuth,)
+        assert np.all(z_hat == 0.0) and np.all(np.abs(cos_psi) <= np.sin(0.6))
+        # the half-circle sample of cos(phi) is balanced about the ring's mid-azimuth
+        assert np.mean(cos_psi) == pytest.approx(0.0, abs=1e-12)
+
+    def test_pole_on_ring_is_perpendicular_to_the_line_of_sight(self, model):
+        (cos_psi, _), _ = model._sightlines(0.0)
+        assert np.all(cos_psi == 0.0)
+
+    def test_transmission_averages_e_to_the_minus_tau_not_tau(self, model):
+        """A transparent front and an opaque back transmit half the flux, not e^{-mean tau}."""
+        EM = np.array([[0.0], [1e40]])
+        (T,) = model._transmission(EM, [np.array([1.0])])
+        assert T[0] == pytest.approx(0.5)
+
+    def test_transmission_of_equal_sightlines_is_exponential(self, model):
+        EM = np.full((3, 2), 2.0)
+        tau_per_EM = [np.array([0.1, 0.5]), np.array([1.0, 2.0])]
+        for T, t in zip(model._transmission(EM, tau_per_EM), tau_per_EM):
+            assert np.allclose(T, np.exp(-2.0 * t))
+
+    def test_one_azimuth_is_the_single_sightline(self):
+        m = Diggins26_TwoComponentModel(redshift=0.01, n_azimuth=1)
+        (cos_psi, _), _ = m._sightlines(0.9)
+        assert cos_psi[0] == pytest.approx(np.sin(0.9) * np.cos(np.pi / 2))
+
+    def test_invalid_n_azimuth_raises(self):
+        with pytest.raises(ValueError, match="n_azimuth"):
+            Diggins26_TwoComponentModel(redshift=0.01, n_azimuth=0)
+
+
+# =========================================================================== #
+# Geometry and the area-fraction table                                        #
+# =========================================================================== #
+class TestGeometry:
+    def test_table_is_built_once_and_shared(self, model):
+        other = Diggins26_TwoComponentModel(redshift=0.02)
+        assert other.filling_table is model.filling_table
+        assert model.build_filling_table() is model.filling_table
+        aspect, inc, f, table = model.filling_table
+        assert table.shape == (2, aspect.size, inc.size, f.size)
+
+    def test_volume_fractions_partition_the_filling_factor(self, model):
+        eq, pol = model._sector_geometry(model._coerce({"f_V": 0.4, "aspect": 1.5}))
+        assert eq["f_V"] + pol["f_V"] == pytest.approx(0.4)
+
+    def test_path_length_is_volume_over_projected_area(self, model):
+        for geo in model._sector_geometry(model._coerce({"inclination": 0.5})):
+            assert geo["ell_over_R"] == pytest.approx(4.0 / 3.0 * geo["f_V"] / geo["f_A"])
+
+    def test_geometry_depends_on_inclination_not_dynamics(self, model):
+        a = model._sector_geometry(model._coerce({"inclination": 0.2}))
+        b = model._sector_geometry(model._coerce({"inclination": 1.3}))
+        assert a[0]["f_A"] != pytest.approx(b[0]["f_A"], rel=1e-3)
+        assert a[0]["f_V"] == pytest.approx(b[0]["f_V"], rel=1e-12)
+
+    def test_table_agrees_with_direct_computation(self, model):
+        p = model._coerce({"inclination": 0.8, "aspect": 1.4, "f_V": 0.35})
+        direct = AxisymmetricCSMDensityProfile.compute_filling_parameters(0.35, 0.8, 1.4)
+        for geo, kind in zip(model._sector_geometry(p), ("equatorial", "polar")):
+            assert geo["f_A"] == pytest.approx(float(direct[kind]["f_A"]), abs=0.03)
+
+    @pytest.mark.parametrize("f_V", [0.0, 1.0])
+    def test_filling_factor_limits_do_not_raise(self, model, f_V):
+        eq, pol = model._sector_geometry(model._coerce({"f_V": f_V}))
+        assert np.isfinite(eq["f_A"]) and np.isfinite(pol["f_A"])
+
+    def test_inclination_accepts_degrees(self, model):
+        a = model.forward_model({"time": 20 * DAY, "frequency": 1e10}, {"inclination": 30 * u.deg})
+        b = model.forward_model({"time": 20 * DAY, "frequency": 1e10}, {"inclination": np.pi / 6})
+        assert a.flux_density.value == pytest.approx(b.flux_density.value, rel=1e-12)
+
+    def test_inclination_bounds(self, model):
+        with pytest.raises(ValueError):
+            model.forward_model({"time": 20 * DAY, "frequency": 1e10}, {"inclination": 2.0})
 
 
 # =========================================================================== #
@@ -293,7 +447,10 @@ class TestTabulate:
             assert sector.tau_ff.shape == tab.flux_density.shape
             assert sector.emission_measure.shape == TIMES.shape
             assert sector.magnetic_field.shape == TIMES.shape
-        assert tab.equatorial.area_fraction + tab.polar.area_fraction == pytest.approx(1.0)
+        assert tab.equatorial.volume_fraction + tab.polar.volume_fraction == pytest.approx(0.5)  # default f_V
+        for sector in (tab.equatorial, tab.polar):
+            assert 0.0 < sector.area_fraction <= 1.0
+            assert sector.path_length_ratio == pytest.approx(4.0 / 3.0 * sector.volume_fraction / sector.area_fraction)
 
     def test_total_is_sum_of_attenuated_sectors(self, model):
         tab = model.tabulate(TIMES, FREQS, {})
@@ -333,13 +490,25 @@ class TestTabulate:
         with pytest.raises(ValueError, match="increasing"):
             model.tabulate(TIMES[::-1], FREQS, {})
 
-    def test_no_interior_makes_sectors_identical_per_unit_area(self, model):
-        """With rho_int = 0 the CSM is spherical, so both sectors radiate identically per unit solid angle."""
-        tab = model.tabulate(TIMES, FREQS, {"rho_int": 0.0})
-        eq = tab.equatorial.flux_density.value / tab.equatorial.area_fraction
-        pol = tab.polar.flux_density.value / tab.polar.area_fraction
-        assert np.allclose(eq, pol, rtol=1e-6)
-        assert np.allclose(tab.dynamics.equatorial.radius.value, tab.dynamics.polar.radius.value, rtol=1e-6)
+    def test_no_interior_makes_the_dynamics_identical(self, model):
+        """With rho_int = 0 the CSM is spherical, so the shock is the same along both sightlines."""
+        dyn = model.compute_dynamics({"rho_int": 0.0}, TIMES)
+        assert np.allclose(dyn.equatorial.radius.value, dyn.polar.radius.value, rtol=1e-6)
+
+    def test_dynamics_are_reusable_across_inclination(self, model):
+        """The inclination changes only the geometry and the sightlines, so one shock solution serves all of it."""
+        dyn = model.compute_dynamics({}, TIMES)
+        for inc in (0.2, 1.2):
+            reused = model.tabulate(TIMES, FREQS, {"inclination": inc}, dynamics=dyn)
+            fresh = model.tabulate(TIMES, FREQS, {"inclination": inc})
+            assert np.array_equal(reused.flux_density.value, fresh.flux_density.value)
+
+    def test_effective_tau_is_minus_log_of_mean_transmission(self, model):
+        tab = model.tabulate(TIMES, FREQS, {})
+        for sector in (tab.equatorial, tab.polar):
+            assert np.allclose(
+                sector.flux_density_attenuated.value, sector.flux_density.value * np.exp(-sector.tau_ff), rtol=1e-12
+            )
 
     def test_dense_equator_decelerates_the_shock(self, model):
         dyn = model.compute_dynamics({}, TIMES)
@@ -435,18 +604,16 @@ class TestVectorizedRadiation:
         p, t_rest, state, gamma = setup
         micro = model._microphysics(p, state, t_rest, gamma)
         B, _, _, log_N = micro
-        EM = model._emission_measure(p, np.pi / 2, state.radius)
-        f_A = model._area_fractions(p["aspect"])[0]
+        geometry = model._sector_geometry(p)[0]
 
         # a different number of frequencies at every epoch, including a single one
         rng = np.random.default_rng(0)
         nu_groups = [np.sort(rng.uniform(1e9, 3e11, size=1 + (i % 4))) for i in range(t_rest.size)]
-        tau_per_EM = model._free_free_opacity(p, nu_groups)
-        flux, tau = model._sector_spectra(p, state, micro, EM, f_A, gamma, nu_groups, tau_per_EM)
+        flux = model._sector_spectra(p, state, micro, geometry, gamma, nu_groups)
 
         log_gamma, log_weights = model._synchrotron_engine._build_gamma_grid(gamma)
-        ell = p["f_V"] ** (1.0 / 3.0) * state.radius
-        area = np.pi * state.radius**2 * f_A
+        ell = geometry["ell_over_R"] * state.radius
+        area = np.pi * state.radius**2 * geometry["f_A"]
         for i, nu in enumerate(nu_groups):
             with np.errstate(divide="ignore"):
                 expected = np.exp(
@@ -463,21 +630,18 @@ class TestVectorizedRadiation:
                     )
                 )
             assert np.allclose(flux[i], expected, rtol=1e-12, atol=0.0)
-            assert np.allclose(tau[i], EM[i] * tau_per_EM[i], rtol=1e-14)
 
     def test_chunked_evaluation_is_identical(self, model, setup, monkeypatch):
         import trilobite.models.LFBOTs.diggins26 as module
 
         p, t_rest, state, gamma = setup
         micro = model._microphysics(p, state, t_rest, gamma)
-        EM = model._emission_measure(p, np.pi / 2, state.radius)
         nu_groups = [np.array([1e9, 5e10, 2e11]) for _ in t_rest]
-        tau_per_EM = model._free_free_opacity(p, nu_groups)
-        args = (p, state, micro, EM, 0.5, gamma, nu_groups, tau_per_EM)
+        args = (p, state, micro, model._sector_geometry(p)[0], gamma, nu_groups)
 
-        whole, _ = model._sector_spectra(*args)
+        whole = model._sector_spectra(*args)
         monkeypatch.setattr(module, "_SPECTRUM_CHUNK", 5)  # forces several chunks that split epochs mid-way
-        chunked, _ = model._sector_spectra(*args)
+        chunked = model._sector_spectra(*args)
         assert all(np.array_equal(a, b) for a, b in zip(whole, chunked))
 
 
