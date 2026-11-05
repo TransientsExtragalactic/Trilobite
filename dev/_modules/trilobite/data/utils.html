@@ -479,6 +479,30 @@
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">flux_limit</span> <span class="o">/</span> <span class="n">sigma</span></div>
 
+
+
+<div class="viewcode-block" id="band_variable_name">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.utils.band_variable_name.html#trilobite.data.utils.band_variable_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">band_variable_name</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Return the name of a model's band-index variable.</span>
+
+<span class="sd">    Optical models built on :class:`~trilobite.models.core.optical.OpticalModel` declare the variable</span>
+<span class="sd">    ``band_index``; older models used ``band_idx``. The optical data containers use this to key the band indices</span>
+<span class="sd">    they hand to :class:`~trilobite.data.core.InferenceData`, so that they work with either.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : ~trilobite.models.core.base.Model</span>
+<span class="sd">        The optical model.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        ``"band_index"`` if the model declares it, otherwise ``"band_idx"``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="s2">"band_index"</span> <span class="k">if</span> <span class="s2">"band_index"</span> <span class="ow">in</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">"variable_names"</span><span class="p">,</span> <span class="p">()))</span> <span class="k">else</span> <span class="s2">"band_idx"</span></div>
+
 </pre></div>
 
                 </article>

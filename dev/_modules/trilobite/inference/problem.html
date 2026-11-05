@@ -464,7 +464,13 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.prior</span><span class="w"> </span><span class="kn">import</span> <span class="n">PRIOR_REGISTRY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.prior</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HalfNormalPrior</span><span class="p">,</span>
+    <span class="n">LogNormalPrior</span><span class="p">,</span>
+    <span class="n">LogUniformPrior</span><span class="p">,</span>
+    <span class="n">NormalPrior</span><span class="p">,</span>
+    <span class="n">UniformPrior</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1"># ============================================================= #</span>
 <span class="c1"># Package versioning and Type checking</span>
@@ -2128,7 +2134,28 @@
     <span class="c1"># These methods allow us to set up some basic priors quickly without</span>
     <span class="c1"># requiring the user to manually define prior callables. We can also do</span>
     <span class="c1"># some unit-handled priors this way, which is a nice feature.</span>
-    <span class="n">_PRIOR_REGISTRY</span> <span class="o">=</span> <span class="n">PRIOR_REGISTRY</span>
+    <span class="n">_PRIOR_REGISTRY</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"uniform"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"class"</span><span class="p">:</span> <span class="n">UniformPrior</span><span class="p">,</span>
+            <span class="s2">"unit_params"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"lower"</span><span class="p">,</span> <span class="s2">"upper"</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s2">"loguniform"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"class"</span><span class="p">:</span> <span class="n">LogUniformPrior</span><span class="p">,</span>
+            <span class="s2">"unit_params"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"lower"</span><span class="p">,</span> <span class="s2">"upper"</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s2">"normal"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"class"</span><span class="p">:</span> <span class="n">NormalPrior</span><span class="p">,</span>
+            <span class="s2">"unit_params"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"mean"</span><span class="p">,</span> <span class="s2">"sigma"</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s2">"lognormal"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"class"</span><span class="p">:</span> <span class="n">LogNormalPrior</span><span class="p">,</span>
+            <span class="s2">"unit_params"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"mean"</span><span class="p">,</span> <span class="s2">"sigma"</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s2">"halfnormal"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"class"</span><span class="p">:</span> <span class="n">HalfNormalPrior</span><span class="p">,</span>
+            <span class="s2">"unit_params"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"sigma"</span><span class="p">,),</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_to_base_units</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -2151,7 +2178,7 @@
 <div class="viewcode-block" id="InferenceProblem.set_prior">
 <a class="viewcode-back" href="../../../_as_gen/trilobite.inference.problem.InferenceProblem.set_prior.html#trilobite.inference.problem.InferenceProblem.set_prior">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prior_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Set a prior distribution on a parameter.</span>
 
 <span class="sd">        Parameters</span>
@@ -2159,24 +2186,9 @@
 <span class="sd">        parameter : str</span>
 <span class="sd">            Name of the model parameter.</span>
 <span class="sd">        prior_type : str</span>
-<span class="sd">            Type of prior. One of the keys of :data:`~trilobite.inference.prior.PRIOR_REGISTRY`:</span>
-<span class="sd">            ``'uniform'``, ``'loguniform'``, ``'normal'``, ``'lognormal'``, ``'halfnormal'``, ``'gamma'``,</span>
-<span class="sd">            ``'beta'`` or ``'truncatednormal'``.</span>
+<span class="sd">            Type of prior ('uniform', 'loguniform', 'normal', etc.).</span>
 <span class="sd">        parameters</span>
-<span class="sd">            Parameters defining the prior. Those that carry the parameter's units (e.g. ``lower`` and ``upper``</span>
-<span class="sd">            for ``'uniform'``) may be given as :class:`~astropy.units.Quantity`; a bare float is interpreted in</span>
-<span class="sd">            the parameter's base units. Dimensionless arguments (e.g. ``alpha`` and ``beta`` for ``'beta'``)</span>
-<span class="sd">            must be plain numbers.</span>
-
-<span class="sd">            For ``'lognormal'`` the median may be given instead of ``mean`` via ``median=``. Since</span>
-<span class="sd">            ``mean`` is :math:`\ln(x / x_{\rm ref})`, it depends on the reference unit, whereas the median</span>
-<span class="sd">            :math:`e^{\mu}` carries the parameter's units and converts like any other value.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If ``prior_type`` is unknown, if a unit-less argument is given a dimensional</span>
-<span class="sd">            :class:`~astropy.units.Quantity`, or if both ``mean`` and ``median`` are given for a log-normal prior.</span>
+<span class="sd">            Parameters defining the prior.</span>
 <span class="sd">        """</span>
         <span class="n">prior_type</span> <span class="o">=</span> <span class="n">prior_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
@@ -2191,29 +2203,6 @@
         <span class="n">prior_cls</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"class"</span><span class="p">]</span>
         <span class="n">unit_params</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"unit_params"</span><span class="p">]</span>
 
-        <span class="n">parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-
-        <span class="c1"># A log-normal is specified either by ``mean = ln(x / base_unit)`` or, with units, by its median.</span>
-        <span class="k">if</span> <span class="n">prior_type</span> <span class="o">==</span> <span class="s2">"lognormal"</span> <span class="ow">and</span> <span class="s2">"median"</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">"mean"</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Specify either `mean` or `median` for a lognormal prior, not both."</span><span class="p">)</span>
-            <span class="n">median</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coerce_to_base_units</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="p">{</span><span class="s2">"median"</span><span class="p">:</span> <span class="n">parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"median"</span><span class="p">)})[</span><span class="s2">"median"</span><span class="p">]</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">median</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The median of a lognormal prior must be positive, got </span><span class="si">{</span><span class="n">median</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
-            <span class="n">parameters</span><span class="p">[</span><span class="s2">"mean"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">median</span><span class="p">))</span>
-
-        <span class="c1"># Dimensionless arguments must not carry units: silently converting them would produce a meaningless</span>
-        <span class="c1"># number, so a dimensional Quantity is an error and a dimensionless one is reduced to a float.</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">unit_params</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
-                <span class="k">continue</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">u</span><span class="o">.</span><span class="n">UnitConversionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"Argument '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">' of a '</span><span class="si">{</span><span class="n">prior_type</span><span class="si">}</span><span class="s2">' prior is dimensionless, but was given </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">."</span>
-                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
-
         <span class="c1"># Split parameters into unit-bearing and unitless</span>
         <span class="n">unit_values</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">parameters</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">unit_params</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">}</span>
 
@@ -2226,75 +2215,6 @@
 
         <span class="c1"># Assign prior</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">prior_cls</span><span class="p">(</span><span class="o">**</span><span class="n">final_params</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="InferenceProblem.sample_prior">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.inference.problem.InferenceProblem.sample_prior.html#trilobite.inference.problem.InferenceProblem.sample_prior">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sample_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        Draw samples of the free parameters from their priors, in **sampling space**.</span>
-
-<span class="sd">        Each free parameter is drawn independently from its prior (via :meth:`~trilobite.inference.prior.Prior.sample`)</span>
-<span class="sd">        in physical space and then mapped through its transform, if any. The result is distributed according to</span>
-<span class="sd">        the prior part of the sampling-space target density, :math:`p(\theta(z))\,|d\theta/dz|`, so it can be</span>
-<span class="sd">        passed directly to :meth:`_log_free_posterior`, to :meth:`EmceeSampler.run</span>
-<span class="sd">        &lt;trilobite.inference.sampling.mcmc.EmceeSampler.run&gt;` as ``initial_state`` or to a pool.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        n : int</span>
-<span class="sd">            Number of draws.</span>
-<span class="sd">        rng : ~numpy.random.Generator, optional</span>
-<span class="sd">            Random number generator. Pass a seeded generator for reproducible draws.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
-<span class="sd">            Array of shape ``(n, n_free_parameters)`` with columns in the order of</span>
-<span class="sd">            :attr:`free_parameter_names`.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If ``n`` is not a positive integer.</span>
-<span class="sd">        RuntimeError</span>
-<span class="sd">            If a free parameter has no prior, if its prior cannot be sampled (e.g. a plain callable or a</span>
-<span class="sd">            :class:`~trilobite.inference.prior.CallablePrior`), or if a draw falls outside the domain of its</span>
-<span class="sd">            transform (e.g. a normal prior with a log transform).</span>
-<span class="sd">        """</span>
-        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"`n` must be a positive integer, got </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-        <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span> <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
-
-        <span class="n">draws</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_free_parameters</span><span class="p">))</span>
-
-        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No prior specified for free parameter '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span>
-
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-            <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"The prior of parameter '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">' (</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">prior</span><span class="si">!r}</span><span class="s2">) cannot be sampled. Use a "</span>
-                    <span class="sa">f</span><span class="s2">"`Prior` subclass that defines a sampler."</span>
-                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
-
-            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="c1"># Applied element-wise so that scalar-only custom transforms work too.</span>
-                <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
-                    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">x</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"Draws of parameter '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">' are non-finite after applying its transform "</span>
-                    <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">transform</span><span class="si">!r}</span><span class="s2">); the prior support lies outside the transform's domain."</span>
-                <span class="p">)</span>
-
-            <span class="n">draws</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
-
-        <span class="k">return</span> <span class="n">draws</span></div>
 
 
     <span class="c1"># ------------------------------------------------- #</span>
