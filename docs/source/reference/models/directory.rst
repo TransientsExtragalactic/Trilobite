@@ -200,6 +200,27 @@ radiation processes, and circumstellar interaction physics.
 
    chevalier_shock.ChevalierShockModel
 
+.. rubric:: Arnett Diffusion Models (Optical)
+
+One-zone diffusion models of the optical light curves of radioactively or centrally powered supernovae, built on the
+engines of :mod:`trilobite.radiation.arnett` (see :ref:`arnett`). They are
+:class:`~trilobite.models.core.optical.OpticalModel` subclasses: the bolometric luminosity heats a blackbody
+photosphere, and its spectrum is convolved with the filters of a
+:class:`~trilobite.utils.phot_utils.FilterBundle`. They take observer-frame times and include redshift. The models
+differ only in the power source: ``NickelCobaltArnettModel`` is powered by :math:`^{56}\mathrm{Ni}` decay
+(stripped-envelope supernovae), ``MagnetarArnettModel`` by magnetar spin-down (superluminous supernovae), and
+``MagnetarNickelArnettModel`` by both.
+
+.. currentmodule:: trilobite.models.supernovae.arnett
+
+.. autosummary::
+   :nosignatures:
+
+   ArnettOpticalModel
+   NickelCobaltArnettModel
+   MagnetarArnettModel
+   MagnetarNickelArnettModel
+
 ---------------------------------------------------------------------
 
 .. _lfbot_models:
@@ -277,6 +298,8 @@ See :ref:`optical_model_pattern` for a guide to implementing custom optical mode
 
    BlackbodyOpticalModel
    BlackbodyOpticalEpochModel
+
+The :ref:`Arnett diffusion models <supernova_models>` of the supernova section above are also optical models.
 
 ---------------------------------------------------------------------
 

@@ -22,6 +22,7 @@ from trilobite.utils.log import trilobite_logger
 from trilobite.utils.phot_utils import ab_mag_to_flux, flux_to_ab_mag
 
 from .core import DataContainer, InferenceData
+from .utils import band_variable_name
 
 if TYPE_CHECKING:
     from trilobite.models.core.base import Model  # noqa: F401
@@ -618,8 +619,8 @@ class OpticalPhotometryContainer(DataContainer):
             Override the default variable mapping.  By default:
 
             - ``"time"`` → ``time`` column (converted to model units)
-            - ``"band_idx"`` → resolved from ``band_name`` via
-              ``model.bundle.filter_names``
+            - ``"band_index"`` (or ``"band_idx"``, whichever the model declares) → resolved
+              from ``band_name`` via ``model.bundle.filter_names``
 
         observables : dict, optional
             Override the default observable mapping.  By default, the single
@@ -713,7 +714,7 @@ class OpticalPhotometryContainer(DataContainer):
         # ------------------------------------------------------------------
         x = {
             "time": t_vals * u.day,
-            "band_idx": idx_vals,
+            band_variable_name(model): idx_vals,
         }
         y = {model.output_names[0]: flux_vals * u.Unit("erg/(s cm2 Hz)")}
         y_err = {model.output_names[0]: flux_err_vals * u.Unit("erg/(s cm2 Hz)")}
@@ -955,7 +956,7 @@ class OpticalPhotometryEpoch(DataContainer):
 
         Default mapping:
 
-        - ``variables``: ``{"band_idx": <resolved integer indices>}``
+        - ``variables``: ``{"band_index": <resolved integer indices>}`` (``band_idx`` for models that declare it)
         - ``observables``: the single model output mapped to flux columns
 
         Parameters
@@ -1032,7 +1033,7 @@ class OpticalPhotometryEpoch(DataContainer):
             )
 
         if variables is None:
-            variables = {"band_idx": idx_vals}
+            variables = {band_variable_name(model): idx_vals}
 
         if observables is None:
             if len(model.output_names) != 1:
