@@ -740,7 +740,6 @@
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/arnett.html">Arnett Engines</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../physics/disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -912,6 +911,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.angular_shape.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.angular_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_callable.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_callable</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.disk_half_opening_angle.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.disk_half_opening_angle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.eval.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.eval</a></li>
@@ -1679,6 +1680,45 @@ with the parameter (e.g., units, bounds, etc.). For example:</p>
 <p>All priors are instances of <a class="reference internal" href="../../_as_gen/trilobite.inference.prior.Prior.html#trilobite.inference.prior.Prior" title="trilobite.inference.prior.Prior"><code class="xref py py-class docutils literal notranslate"><span class="pre">Prior</span></code></a>, and Trilobite provides a variety of
 built-in prior classes for common distributions (uniform, log-uniform, normal, etc.). It is also
 possible to define custom priors and to implement new prior classes; see <a class="reference internal" href="priors_dev.html#priors-dev"><span class="std std-ref">Prior Development Guide</span></a> for more details.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A log-normal prior is specified by the mean <span class="math notranslate nohighlight">\(\mu\)</span> and width <span class="math notranslate nohighlight">\(\sigma\)</span> of the <strong>natural</strong>
+logarithm of the parameter, <span class="math notranslate nohighlight">\(\ln(x / x_{\rm ref})\)</span>, where <span class="math notranslate nohighlight">\(x_{\rm ref}\)</span> is the reference unit in which
+<span class="math notranslate nohighlight">\(x\)</span> is expressed. Because <span class="math notranslate nohighlight">\(\mu\)</span> depends on that reference unit, it is not a unit-bearing quantity
+that can be converted. When using <a class="reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.set_prior.html#trilobite.inference.problem.InferenceProblem.set_prior" title="trilobite.inference.problem.InferenceProblem.set_prior"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_prior()</span></code></a>, give the
+<strong>median</strong> <span class="math notranslate nohighlight">\(e^{\mu}\)</span> instead, which does carry units:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">inf_prob</span><span class="o">.</span><span class="n">set_prior</span><span class="p">(</span><span class="s1">'B'</span><span class="p">,</span> <span class="s1">'lognormal'</span><span class="p">,</span> <span class="n">median</span><span class="o">=</span><span class="mf">0.3</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The width <code class="docutils literal notranslate"><span class="pre">sigma</span></code> is dimensionless and independent of the unit; a width of <span class="math notranslate nohighlight">\(\sigma_{\rm dex}\)</span> dex
+corresponds to <span class="math notranslate nohighlight">\(\sigma = \sigma_{\rm dex} \ln 10\)</span>.</p>
+</div>
+</section>
+<section id="drawing-from-the-priors">
+<h4>Drawing from the Priors<a class="headerlink" href="#drawing-from-the-priors" title="Link to this heading">#</a></h4>
+<p>Every built-in prior can be sampled with <a class="reference internal" href="../../_as_gen/trilobite.inference.prior.Prior.sample.html#trilobite.inference.prior.Prior.sample" title="trilobite.inference.prior.Prior.sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sample()</span></code></a>, which draws in physical
+parameter space:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">B_draws</span> <span class="o">=</span> <span class="n">inf_prob</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">'B'</span><span class="p">]</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To draw all of the free parameters at once, use <a class="reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.sample_prior.html#trilobite.inference.problem.InferenceProblem.sample_prior" title="trilobite.inference.problem.InferenceProblem.sample_prior"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sample_prior()</span></code></a>.
+It returns an array of shape <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">n_free_parameters)</span></code> in <strong>sampling space</strong>, i.e. after the parameters’ transforms
+have been applied, so the draws can be passed directly to the posterior or to a sampler:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">inf_prob</span><span class="o">.</span><span class="n">sample_prior</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+<span class="n">log_posterior</span> <span class="o">=</span> <span class="p">[</span><span class="n">inf_prob</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">z_i</span><span class="p">)</span> <span class="k">for</span> <span class="n">z_i</span> <span class="ow">in</span> <span class="n">z</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>When the priors are wide and the posterior is narrow, a poor starting point can leave walkers stranded far from the
+posterior bulk. In that case, start the walkers from the best of a set of prior draws:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sampler</span> <span class="o">=</span> <span class="n">EmceeSampler</span><span class="p">(</span><span class="n">inf_prob</span><span class="p">,</span> <span class="n">n_walkers</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">initial_state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">generate_initial_state</span><span class="p">(</span><span class="n">from_prior</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_candidates</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This keeps the <code class="docutils literal notranslate"><span class="pre">n_walkers</span></code> candidates with the highest log-posterior. It does not guarantee that they all lie in the
+same posterior mode, so it is worth checking the result for stranded walkers with
+<a class="reference internal" href="../../_as_gen/trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers.html#trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers" title="trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_stranded_walkers()</span></code></a>.</p>
 </section>
 <section id="freezing-and-free-parameters">
 <h4>Freezing and Free Parameters<a class="headerlink" href="#freezing-and-free-parameters" title="Link to this heading">#</a></h4>
@@ -1923,6 +1963,7 @@ Trilobite provides interfaces to several popular sampling libraries, including <
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-parameters">Accessing Parameters</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-initial-values">Setting Initial Values</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-priors">Setting Priors</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#drawing-from-the-priors">Drawing from the Priors</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#freezing-and-free-parameters">Freezing and Free Parameters</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-prior-and-posterior">Computing the Prior and Posterior</a></li>
 </ul>

@@ -53,7 +53,6 @@
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/models/directory';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
@@ -740,7 +739,6 @@
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/arnett.html">Arnett Engines</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../physics/disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -912,6 +910,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.angular_shape.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.angular_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_callable.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_callable</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.disk_half_opening_angle.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.disk_half_opening_angle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.eval.html">trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.eval</a></li>
@@ -1293,44 +1293,6 @@ radiation processes, and circumstellar interaction physics.</p>
 </tbody>
 </table>
 </div>
-<p class="rubric">Arnett Diffusion Models (Optical)</p>
-<p>One-zone diffusion models of the optical light curves of radioactively or centrally powered supernovae, built on the
-engines of <a class="reference internal" href="../../_as_gen/trilobite.radiation.arnett.html#module-trilobite.radiation.arnett" title="trilobite.radiation.arnett"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.arnett</span></code></a> (see <a class="reference internal" href="../physics/radiation/arnett.html#arnett"><span class="std std-ref">Arnett Engines</span></a>). They are
-<a class="reference internal" href="../../_as_gen/trilobite.models.core.optical.OpticalModel.html#trilobite.models.core.optical.OpticalModel" title="trilobite.models.core.optical.OpticalModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalModel</span></code></a> subclasses: the bolometric luminosity heats a blackbody
-photosphere, and its spectrum is convolved with the filters of a
-<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a>. They take observer-frame times and include redshift. The models
-differ in the power source: <code class="docutils literal notranslate"><span class="pre">NickelCobaltArnettModel</span></code> is powered by <span class="math notranslate nohighlight">\(^{56}\mathrm{Ni}\)</span> decay
-(stripped-envelope supernovae), <code class="docutils literal notranslate"><span class="pre">MagnetarArnettModel</span></code> by magnetar spin-down (superluminous supernovae), and
-<code class="docutils literal notranslate"><span class="pre">MagnetarNickelArnettModel</span></code> by both. Each also has a <code class="docutils literal notranslate"><span class="pre">Cutoff</span></code> version, whose photosphere radiates a blackbody with a
-suppressed UV (see <a class="reference internal" href="../physics/radiation/blackbody/blackbody.html#blackbody-cutoff"><span class="std std-ref">UV-Suppressed (Modified) Blackbody</span></a>), as is observed for superluminous supernovae and as is done in MOSFiT.
-The option <code class="docutils literal notranslate"><span class="pre">trapping_mode</span></code> of all of them chooses where incomplete trapping is applied, with <code class="docutils literal notranslate"><span class="pre">&quot;emergence&quot;</span></code> the choice
-of MOSFiT.</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_as_gen/trilobite.models.supernovae.arnett.ArnettOpticalModel.html#trilobite.models.supernovae.arnett.ArnettOpticalModel" title="trilobite.models.supernovae.arnett.ArnettOpticalModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ArnettOpticalModel</span></code></a></p></td>
-<td><p>Abstract base class for optical photometry models built on an Arnett diffusion engine.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../_as_gen/trilobite.models.supernovae.arnett.NickelCobaltArnettModel.html#trilobite.models.supernovae.arnett.NickelCobaltArnettModel" title="trilobite.models.supernovae.arnett.NickelCobaltArnettModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NickelCobaltArnettModel</span></code></a></p></td>
-<td><p>Optical light curves of <span class="math notranslate nohighlight">\(^{56}\mathrm{Ni}\)</span>-powered supernovae.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_as_gen/trilobite.models.supernovae.arnett.MagnetarArnettModel.html#trilobite.models.supernovae.arnett.MagnetarArnettModel" title="trilobite.models.supernovae.arnett.MagnetarArnettModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MagnetarArnettModel</span></code></a></p></td>
-<td><p>Optical light curves of magnetar-powered supernovae.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../_as_gen/trilobite.models.supernovae.arnett.MagnetarNickelArnettModel.html#trilobite.models.supernovae.arnett.MagnetarNickelArnettModel" title="trilobite.models.supernovae.arnett.MagnetarNickelArnettModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MagnetarNickelArnettModel</span></code></a></p></td>
-<td><p>Optical light curves of supernovae powered by both a magnetar and <span class="math notranslate nohighlight">\(^{56}\mathrm{Ni}\)</span>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_as_gen/trilobite.models.supernovae.arnett.NickelCobaltArnettCutoffModel.html#trilobite.models.supernovae.arnett.NickelCobaltArnettCutoffModel" title="trilobite.models.supernovae.arnett.NickelCobaltArnettCutoffModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NickelCobaltArnettCutoffModel</span></code></a></p></td>
-<td><p><span class="math notranslate nohighlight">\(^{56}\mathrm{Ni}\)</span>-powered optical light curves with a UV-suppressed blackbody.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../_as_gen/trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel.html#trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel" title="trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MagnetarArnettCutoffModel</span></code></a></p></td>
-<td><p>Magnetar-powered optical light curves with a UV-suppressed blackbody: the model of superluminous supernovae.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_as_gen/trilobite.models.supernovae.arnett.MagnetarNickelArnettCutoffModel.html#trilobite.models.supernovae.arnett.MagnetarNickelArnettCutoffModel" title="trilobite.models.supernovae.arnett.MagnetarNickelArnettCutoffModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MagnetarNickelArnettCutoffModel</span></code></a></p></td>
-<td><p>Optical light curves powered by a magnetar and <span class="math notranslate nohighlight">\(^{56}\mathrm{Ni}\)</span>, with a UV-suppressed blackbody.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
 <hr class="docutils" />
 </section>
 <section id="lfbot-models">
@@ -1400,7 +1362,6 @@ time deduplication, and band-index resolution automatically.</p>
 </tbody>
 </table>
 </div>
-<p>The <a class="reference internal" href="#supernova-models"><span class="std std-ref">Arnett diffusion models</span></a> of the supernova section above are also optical models.</p>
 </section>
 <hr class="docutils" />
 <section id="extending-the-model-library">
