@@ -209,3 +209,30 @@ Inverse Compton Scattering
 .. important::
 
     Coming Soon!
+
+----
+
+Radiative Diffusion and Transport
+----------------------------------
+
+Optically thick transients do not radiate their energy as it is released: the photons must first diffuse out of
+the expanding ejecta. Trilobite models this with one-zone *Arnett engines*, which solve for the bolometric
+luminosity of homologously expanding ejecta heated by :math:`^{56}\mathrm{Ni}` decay, magnetar spin-down, or a
+user-defined power source, and which are evaluated on a compiled quadrature kernel suitable for inference.
+
+.. grid:: 1
+    :gutter: 3
+
+    .. grid-item-card:: Arnett Engines
+        :link: arnett
+        :link-type: ref
+
+        Theory, usage, and implementation of the one-zone diffusion engines in
+        :mod:`trilobite.radiation.arnett`, including how to write a custom engine.
+
+.. toctree::
+    :hidden:
+    :maxdepth: 1
+    :caption: Radiative Diffusion
+
+    arnett

@@ -137,6 +137,7 @@ nitpick_ignore_regex = [
     (r"py:.*", r"float-like"),
     (r"py:.*", r"callable"),
     (r"py:.*", r"quantity"),
+    (r"py:.*", r"numba dispatcher"),
     (r"py:.*", r"Enum-like"),
     (r"py:.*", r"enum-like"),
     # Private type aliases not exposed in the public API

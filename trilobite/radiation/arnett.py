@@ -168,6 +168,9 @@ def build_solver(clock, injection_function, *, deposition_function=None, emergen
     The equation is linear in the deposited power, so several sources are handled by solving each one and
     summing (see :class:`~trilobite.radiation.arnett.Channel`).
 
+    The deposition and emergence functions are keyword-only: they share a signature, so passing
+    them positionally in the wrong order would fail silently.
+
     Parameters
     ----------
     clock : ~trilobite.radiation.arnett.DiffusionClock
@@ -193,9 +196,6 @@ def build_solver(clock, injection_function, *, deposition_function=None, emergen
         - ``initial_luminosity``: ``(n_realizations,)``, :math:`L_\mathrm{init}` in erg/s.
         - ``quadrature``: a ``QuadratureRule``.
         - ``out``: ``(n_times, n_realizations)``, filled in place.
-
-    The deposition and emergence functions are keyword-only: they share a signature, so passing
-    them positionally in the wrong order would fail silently.
     """
     if not isinstance(clock, DiffusionClock):
         raise TypeError(f"clock must be a DiffusionClock, got {type(clock).__name__}")
