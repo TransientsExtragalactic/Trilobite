@@ -63,7 +63,8 @@ class TestCutoffFlux:
         expected = (
             np.pi * np.exp(_log_planck_fnu_cgs(np.log(nu * (1 + z)), np.log(T))) * (self.R / self.D) ** 2 * (1 + z)
         )
-        np.testing.assert_allclose(self._flux(nu, T, z, 0.0), expected, rtol=1e-12)
+        # Both sides go through log/exp round-trips, so agreement is limited by platform libm differences (~1e-12).
+        np.testing.assert_allclose(self._flux(nu, T, z, 0.0), expected, rtol=1e-10)
 
     @pytest.mark.parametrize("z", [0.0, 0.5])
     @pytest.mark.parametrize("T", [8.0e3, 1.5e4, 3.0e4])
