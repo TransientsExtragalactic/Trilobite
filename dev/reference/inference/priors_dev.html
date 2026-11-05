@@ -488,8 +488,7 @@ generates callable evaluation functions:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">self._log_prior</span></code> (required),</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">self._prior</span></code> (optional PDF),</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">self._cum_prior</span></code> (optional CDF),</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">self._sampler</span></code> (optional sampler).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">self._cum_prior</span></code> (optional CDF).</p></li>
 </ul>
 <p>The only method subclasses are required to implement is:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_generate_log_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">):</span>
@@ -518,16 +517,6 @@ generates callable evaluation functions:</p>
 </div>
 <p>If a subclass does not implement a PDF or CDF, calling these methods
 raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p>
-<p>Priors can also be sampled. The draws are in physical parameter space, the same space in which the
-log-prior is evaluated:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="n">x</span> <span class="o">=</span> <span class="n">prior</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>                <span class="c1"># a scalar</span>
-<span class="n">xs</span> <span class="o">=</span> <span class="n">prior</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>    <span class="c1"># an array of shape (1000,)</span>
-</pre></div>
-</div>
-<p>If a subclass does not implement a sampler (as is the case for <a class="reference internal" href="../../_as_gen/trilobite.inference.prior.CallablePrior.html#trilobite.inference.prior.CallablePrior" title="trilobite.inference.prior.CallablePrior"><code class="xref py py-class docutils literal notranslate"><span class="pre">CallablePrior</span></code></a>),
-calling <a class="reference internal" href="../../_as_gen/trilobite.inference.prior.Prior.sample.html#trilobite.inference.prior.Prior.sample" title="trilobite.inference.prior.Prior.sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sample()</span></code></a> raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p>
 <p>Importantly, priors operate strictly in <strong>physical parameter space</strong>.
 Any transformations (e.g., log-sampling) are handled by
 <a class="reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceParameter.html#trilobite.inference.problem.InferenceParameter" title="trilobite.inference.problem.InferenceParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceParameter</span></code></a> inside the inference problem layer.</p>
@@ -589,15 +578,6 @@ you may optionally implement:</p>
 </div>
 <p>These are not required for MCMC or nested sampling but may be useful
 for diagnostics or prior predictive checks.</p>
-<p>To make the prior sampleable (for example, to initialize walkers from the prior), implement
-<code class="docutils literal notranslate"><span class="pre">_generate_sampler</span></code>. It returns a callable <code class="docutils literal notranslate"><span class="pre">draw(rng,</span> <span class="pre">size)</span></code>, where <code class="docutils literal notranslate"><span class="pre">rng</span></code> is a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a> and <code class="docutils literal notranslate"><span class="pre">size</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (a scalar draw) or a shape:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_generate_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-    <span class="k">return</span> <span class="k">lambda</span> <span class="n">rng</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">rng</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">rate</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The draws must follow the density that <code class="docutils literal notranslate"><span class="pre">_generate_log_prior</span></code> evaluates. The built-in priors are tested
-for this against the equivalent <code class="docutils literal notranslate"><span class="pre">scipy.stats</span></code> distributions.</p>
 </section>
 <section id="callable-priors">
 <h2>Callable Priors<a class="headerlink" href="#callable-priors" title="Link to this heading">#</a></h2>

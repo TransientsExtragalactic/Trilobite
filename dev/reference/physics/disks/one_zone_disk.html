@@ -740,6 +740,7 @@
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/arnett.html">Arnett Engines</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Accretion Disks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -1246,12 +1247,12 @@ physical regime.  The list of available models is as follows:</p>
 <td><p>Electron scattering</p></td>
 <td><p>Implicit (Brent’s method)</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p></td>
 <td><p>Gas + Radiation + advection</p></td>
 <td><p>Electron scattering</p></td>
 <td><p>Implicit (Brent’s method)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a> (<code class="docutils literal notranslate"><span class="pre">fallback=True</span></code>)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a> (<code class="docutils literal notranslate"><span class="pre">fallback=True</span></code>)</p></td>
 <td><p>Gas + Radiation + advection + fallback</p></td>
 <td><p>Electron scattering</p></td>
 <td><p>Implicit (Brent’s method)</p></td>
@@ -1340,7 +1341,7 @@ FullPressureDisk</label><div class="sd-tab-content docutils">
 <input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-2">
 AdvectiveDisk</label><div class="sd-tab-content docutils">
-<p><em>API Doc</em>: <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p>
+<p><em>API Doc</em>: <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
@@ -1371,7 +1372,7 @@ Watarai<a class="footnote-reference brackets" href="#footcite-watarainewanalytic
 <input id="sd-tab-item-3" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-3">
 AdvectiveDisk (fallback)</label><div class="sd-tab-content docutils">
-<p><em>API Doc</em>: <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p>
+<p><em>API Doc</em>: <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
@@ -1585,7 +1586,7 @@ property, which returns a dictionary of unit-bearing
 </pre></div>
 </div>
 <p>The following fields are available for all models.
-<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a> additionally
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a> additionally
 exposes <code class="docutils literal notranslate"><span class="pre">Q_adv</span></code> (advective cooling rate, erg cm⁻² s⁻¹):</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>

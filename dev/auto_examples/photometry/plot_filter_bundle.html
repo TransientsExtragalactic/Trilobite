@@ -530,6 +530,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../inference/plot_upper_limit_inference.html">Upper Limit Constraints: Non-Detections as Information</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../inference/plot_shock_parameter_inference.html">Inferring Physical Shock Parameters from a Radio Supernova</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../inference/plot_optical_lc_inference.html">Fitting a Multi-Band Optical Light Curve with MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../inference/plot_slsn_magnetar_swift.html">Fitting a Magnetar-Powered Superluminous Supernova to Swift/UVOT Photometry</a></li>
 </ul>
 </details></li>
 </ul>
@@ -826,9 +827,9 @@ multiply with no interpolation overhead.</p>
 </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">  filter loop          : </span><span class="si">{</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="float"><span class="n">t_loop</span></a><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">1e3</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms  (baseline)</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Timing over 1,000 evaluations (4 filters):
-  bundle.apply()       : 1.85 ms  (34.5x faster than loop)
-  bundle.convolve_nu() : 11.30 ms  (5.6x faster than loop)
-  filter loop          : 63.69 ms  (baseline)
+  bundle.apply()       : 2.37 ms  (38.8x faster than loop)
+  bundle.convolve_nu() : 16.32 ms  (5.6x faster than loop)
+  filter loop          : 91.84 ms  (baseline)
 </pre></div>
 </div>
 <p>Visualise the speedup as a bar chart</p>
@@ -856,7 +857,7 @@ multiply with no interpolation overhead.</p>
 This avoids the interpolation cost of <code class="docutils literal notranslate"><span class="pre">convolve_nu()</span></code> and typically delivers
 an order-of-magnitude speedup over per-filter loops.</p>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.363 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.511 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-photometry-plot-filter-bundle-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/d547c099a31362d72234dcb2372f4427/plot_filter_bundle.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_filter_bundle.ipynb</span></code></a></p>
