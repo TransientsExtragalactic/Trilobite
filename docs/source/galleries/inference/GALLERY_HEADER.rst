@@ -16,6 +16,7 @@ corner plots.
 .. rubric:: What you'll find here
 
 - Fitting a single-epoch synchrotron SED (with and without upper limits)
+- Fitting a free systematic error term (a likelihood-level nuisance parameter) when the quoted errors are too small
 - Fitting an evolving, multi-epoch SED time series
 - Recovering shock physical parameters from a simulated radio light curve
 - Propagating SED posteriors through closure relations to obtain source-size posteriors

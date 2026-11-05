@@ -7,5 +7,17 @@ for various types of likelihoods, including Gaussian, Poisson, and custom
 likelihoods tailored to specific data types.
 """
 
-__all__ = ["Likelihood", "GaussianLikelihood", "GaussianCensoredLikelihood", "LogGaussianCensoredLikelihood"]
-from .base import GaussianCensoredLikelihood, GaussianLikelihood, Likelihood, LogGaussianCensoredLikelihood
+__all__ = [
+    "Likelihood",
+    "GaussianLikelihood",
+    "GaussianCensoredLikelihood",
+    "LogGaussianCensoredLikelihood",
+    "LogGaussianCensoredSysLikelihood",
+]
+from .base import (
+    GaussianCensoredLikelihood,
+    GaussianLikelihood,
+    Likelihood,
+    LogGaussianCensoredLikelihood,
+    LogGaussianCensoredSysLikelihood,
+)
