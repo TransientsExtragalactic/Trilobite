@@ -473,7 +473,7 @@
 
 
 <div class="viewcode-block" id="GreyOpacityLaw">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.GreyOpacityLaw">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.GreyOpacityLaw">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GreyOpacityLaw</span><span class="p">(</span><span class="n">OpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Abstract base class for grey (frequency-averaged) opacity laws.</span>
 
@@ -559,7 +559,7 @@
     <span class="c1"># ================================================================ #</span>
 
 <div class="viewcode-block" id="GreyOpacityLaw.opacity">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.opacity.html#trilobite.radiation.opacity.GreyOpacityLaw.opacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.opacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.GreyOpacityLaw.opacity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">opacity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Return opacity :math:`\kappa(\rho, T)` (:math:`\mathrm{cm^2\,g^{-1}}`).</span>
 
@@ -584,7 +584,7 @@
 
 
 <div class="viewcode-block" id="GreyOpacityLaw.dlogkappa_dlogrho">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogrho.html#trilobite.radiation.opacity.GreyOpacityLaw.dlogkappa_dlogrho">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogrho.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.GreyOpacityLaw.dlogkappa_dlogrho">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dlogkappa_dlogrho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Return :math:`\partial\ln\kappa/\partial\ln\rho` (dimensionless).</span>
 
@@ -602,7 +602,7 @@
 
 
 <div class="viewcode-block" id="GreyOpacityLaw.dlogkappa_dlogT">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogT.html#trilobite.radiation.opacity.GreyOpacityLaw.dlogkappa_dlogT">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogT.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.GreyOpacityLaw.dlogkappa_dlogT">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dlogkappa_dlogT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Return :math:`\partial\ln\kappa/\partial\ln T` (dimensionless).</span>
 
@@ -620,7 +620,7 @@
 
 
 <div class="viewcode-block" id="GreyOpacityLaw.dlogkappa_dlognu">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlognu.html#trilobite.radiation.opacity.GreyOpacityLaw.dlogkappa_dlognu">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlognu.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.GreyOpacityLaw.dlogkappa_dlognu">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dlogkappa_dlognu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Return :math:`\partial\ln\kappa/\partial\ln\nu` = 0 (grey law)."""</span>
         <span class="k">return</span> <span class="mf">0.0</span></div>
@@ -629,7 +629,7 @@
 
 
 <div class="viewcode-block" id="ConstantGreyOpacity">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity.html#trilobite.radiation.opacity.ConstantGreyOpacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.ConstantGreyOpacity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConstantGreyOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Grey opacity law with a fixed, composition- and state-independent value.</span>
 
