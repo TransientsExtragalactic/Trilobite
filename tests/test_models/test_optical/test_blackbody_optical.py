@@ -183,3 +183,33 @@ class TestBlackbodyOpticalEpochModel:
         r_hot = bb_epoch_model.forward_model({"band_index": [0]}, {"T": 2e4, "R": 1e14, "D": 3.086e26})
         r_cool = bb_epoch_model.forward_model({"band_index": [0]}, {"T": 5e3, "R": 1e14, "D": 3.086e26})
         assert r_hot.flux.value[0] > r_cool.flux.value[0]
+
+
+# ---------------------------------------------------------------------------
+# End-to-end: data container -> InferenceData -> real OpticalModel
+# ---------------------------------------------------------------------------
+
+
+class TestContainerToModel:
+    """The variable names emitted by the data containers must match the real optical models."""
+
+    def test_photometry_container_feeds_optical_model(self, bb_model):
+        from astropy.table import Table
+
+        from trilobite.data.optical_photometry import OpticalPhotometryContainer
+
+        flux = np.array([1e-27, 2e-27, 3e-27]) * u.Unit("erg/(s cm2 Hz)")
+        table = Table(
+            {
+                "time": [1.0, 2.0, 3.0] * u.day,
+                "band_name": ["V", "R", "V"],
+                "flux_density": flux,
+                "flux_density_error": 0.1 * flux,
+                "flux_upper_limit": np.full(3, np.nan) * u.Unit("erg/(s cm2 Hz)"),
+            }
+        )
+        idata = OpticalPhotometryContainer(table).to_inference_data(bb_model)
+
+        assert set(idata.x) == set(bb_model.variable_names)
+        np.testing.assert_array_equal(idata.x["band_index"], [0, 1, 0])
+        assert bb_model.forward_model(idata.x, _PARAMS).flux.shape == (3,)

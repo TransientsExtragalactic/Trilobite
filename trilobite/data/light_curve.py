@@ -528,13 +528,13 @@ class OpticalLightCurveContainer(XYDataContainer):
         r"""
         Convert this :class:`OpticalLightCurveContainer` to an :class:`~trilobite.data.core.InferenceData` object.
 
-        The container's band name is resolved to an integer ``band_idx`` via
+        The container's band name is resolved to an integer ``band_index`` via
         ``model.bundle.filter_names``. The band index is broadcast to a constant
         array (same value for every time point) and injected into ``x``.
 
         Default mapping:
 
-        - ``variables``: ``{"time": ..., "band_idx": <constant>}``
+        - ``variables``: ``{"time": ..., "band_index": <constant>}``
         - ``observables``: the single model output mapped to flux columns
 
         Parameters
@@ -574,7 +574,7 @@ class OpticalLightCurveContainer(XYDataContainer):
         filter_names = list(model.bundle.filter_names)
         if self.band not in filter_names:
             raise KeyError(f"Band '{self.band}' is not in the model's FilterBundle. Available bands: {filter_names}")
-        band_idx = filter_names.index(self.band)
+        band_index = filter_names.index(self.band)
 
         # Apply optional row mask
         if mask is not None:
@@ -585,7 +585,7 @@ class OpticalLightCurveContainer(XYDataContainer):
             mask_arr = np.ones(self.n_obs, dtype=bool)
 
         t_vals = self.time.to(u.day).value[mask_arr]
-        idx_vals = np.full(t_vals.shape, band_idx, dtype=int)
+        idx_vals = np.full(t_vals.shape, band_index, dtype=int)
         flux_vals = self.flux.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
         flux_err_vals = self.flux_error.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
         flux_ul_vals = self.flux_upper_limit.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
@@ -608,7 +608,7 @@ class OpticalLightCurveContainer(XYDataContainer):
         if variables is None:
             variables = {
                 "time": t_vals * u.day,
-                "band_idx": idx_vals,
+                "band_index": idx_vals,
             }
         if observables is None:
             if len(model.output_names) != 1:
@@ -637,7 +637,7 @@ class OpticalLightCurveContainer(XYDataContainer):
         scratch = self.__table__.copy()
         if mask is not None:
             scratch = scratch[mask_arr]
-        scratch["band_idx"] = idx_vals
+        scratch["band_index"] = idx_vals
         return InferenceData.from_table(
             model=model,
             table=scratch,

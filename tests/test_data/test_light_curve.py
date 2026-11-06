@@ -30,7 +30,7 @@ def _mock_model(var_names=("time",), output_names=("flux_density",), filter_name
         "time": u.s,
         "freq": u.Hz,
         "frequency": u.Hz,
-        "band_idx": u.dimensionless_unscaled,
+        "band_index": u.dimensionless_unscaled,
     }
     model = MagicMock()
     model.variable_names = list(var_names)
@@ -207,7 +207,7 @@ def _optical_lc_mag_table(n=8, n_upper=2):
 
 def _optical_mock_model(filter_names=("g", "r", "i")):
     model = _mock_model(
-        var_names=("time", "band_idx"),
+        var_names=("time", "band_index"),
         output_names=("flux_density",),
         filter_names=filter_names,
     )
@@ -298,14 +298,14 @@ class TestOpticalLightCurveToInferenceData:
         model = _optical_mock_model(filter_names=("g", "r", "i"))
         id_ = c.to_inference_data(model)
         assert "time" in id_.x
-        assert "band_idx" in id_.x
-        assert np.all(id_.x["band_idx"] == 0)  # "g" is index 0
+        assert "band_index" in id_.x
+        assert np.all(id_.x["band_index"] == 0)  # "g" is index 0
 
     def test_second_band_index(self):
         c = OpticalLightCurveContainer(_optical_lc_flux_table(n_upper=0), band="r")
         model = _optical_mock_model(filter_names=("g", "r", "i"))
         id_ = c.to_inference_data(model)
-        assert np.all(id_.x["band_idx"] == 1)  # "r" is index 1
+        assert np.all(id_.x["band_index"] == 1)  # "r" is index 1
 
     def test_unknown_band_raises(self):
         c = OpticalLightCurveContainer(_optical_lc_flux_table(n_upper=0), band="z")
@@ -316,7 +316,7 @@ class TestOpticalLightCurveToInferenceData:
     def test_model_without_bundle_raises(self):
         c = OpticalLightCurveContainer(_optical_lc_flux_table(n_upper=0), band="g")
         model = MagicMock(spec=[])  # no 'bundle' attribute
-        model.variable_names = ["time", "band_idx"]
+        model.variable_names = ["time", "band_index"]
         model.output_names = ["flux_density"]
         with pytest.raises(AttributeError, match="bundle"):
             c.to_inference_data(model)
