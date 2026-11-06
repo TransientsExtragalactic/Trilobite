@@ -65,7 +65,7 @@
     <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Fit Radio Photometry to a BPL" href="plot_SED_fit.html" />
+    <link rel="next" title="Fit a Free Systematic Error Term (Nuisance Parameter)" href="plot_nuisance_parameter_fit.html" />
     <link rel="prev" title="Accretion Disk with Fallback Mass Supply" href="../accretion/plot_fallback_disk.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
@@ -522,6 +522,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a aria-current="page" class="current reference internal" href="#">Inference and Parameter Estimation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="plot_nuisance_parameter_fit.html">Fit a Free Systematic Error Term (Nuisance Parameter)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_SED_fit.html">Fit Radio Photometry to a BPL</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_evolving_sed.html">Fitting a Time-Evolving Synchrotron SED</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_censored_SED_fit.html">Fit Censored Radio Photometry to a BPL</a></li>
@@ -603,6 +604,7 @@ corner plots.</p>
 <p class="rubric">What you’ll find here</p>
 <ul class="simple">
 <li><p>Fitting a single-epoch synchrotron SED (with and without upper limits)</p></li>
+<li><p>Fitting a free systematic error term (a likelihood-level nuisance parameter) when the quoted errors are too small</p></li>
 <li><p>Fitting an evolving, multi-epoch SED time series</p></li>
 <li><p>Recovering shock physical parameters from a simulated radio light curve</p></li>
 <li><p>Propagating SED posteriors through closure relations to obtain source-size posteriors</p></li>
@@ -611,7 +613,10 @@ corner plots.</p>
 <p><a class="reference internal" href="../../_as_gen/trilobite.inference.html#module-trilobite.inference" title="trilobite.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.inference</span></code></a> — <a class="reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.html#trilobite.inference.problem.InferenceProblem" title="trilobite.inference.problem.InferenceProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code></a>,
 <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a>,
 <a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.likelihood.base.GaussianCensoredLikelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianCensoredLikelihood</span></code></a></p>
-<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="In this example, we&#x27;ll do the simplest possible SED fit to radio photometry data using a broken power-law (BPL) model. This is an excellent place to start for understanding how to fit models to data using the Trilobite library."><img alt="" src="../../_images/sphx_glr_plot_SED_fit_thumb.png" />
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Reported uncertainties are often too small: calibration errors, unmodeled variability, or scatter that the model does not capture all add noise that the quoted error bars do not include. If we fit such data with the quoted errors alone, the posterior is too narrow and the fit is dragged around by individual points."><img alt="" src="../../_images/sphx_glr_plot_nuisance_parameter_fit_thumb.png" />
+<p><a class="reference internal" href="plot_nuisance_parameter_fit.html"><span class="doc">Fit a Free Systematic Error Term (Nuisance Parameter)</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Fit a Free Systematic Error Term (Nuisance Parameter)</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="In this example, we&#x27;ll do the simplest possible SED fit to radio photometry data using a broken power-law (BPL) model. This is an excellent place to start for understanding how to fit models to data using the Trilobite library."><img alt="" src="../../_images/sphx_glr_plot_SED_fit_thumb.png" />
 <p><a class="reference internal" href="plot_SED_fit.html"><span class="doc">Fit Radio Photometry to a BPL</span></a></p>
   <div class="sphx-glr-thumbnail-title">Fit Radio Photometry to a BPL</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates a complete end-to-end inference workflow in Trilobite:"><img alt="" src="../../_images/sphx_glr_plot_evolving_sed_thumb.png" />
@@ -665,11 +670,11 @@ corner plots.</p>
       </div>
     </a>
     <a class="right-next"
-       href="plot_SED_fit.html"
+       href="plot_nuisance_parameter_fit.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Fit Radio Photometry to a BPL</p>
+        <p class="prev-next-title">Fit a Free Systematic Error Term (Nuisance Parameter)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

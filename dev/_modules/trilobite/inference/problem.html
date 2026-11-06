@@ -507,14 +507,17 @@
 <span class="sd">    When an :class:`~trilobite.inference.problem.InferenceProblem` is initialized, it</span>
 <span class="sd">    creates an :class:`~trilobite.inference.problem.InferenceParameter`</span>
 <span class="sd">    object for each of the parameters defined in the corresponding :class:`~trilobite.models.core.base.Model` provided</span>
-<span class="sd">    as part of the input :class:`~trilobite.inference.likelihood.base.Likelihood` object.</span>
+<span class="sd">    as part of the input :class:`~trilobite.inference.likelihood.base.Likelihood` object, followed by one for each</span>
+<span class="sd">    of the likelihood's own nuisance parameters</span>
+<span class="sd">    (:attr:`~trilobite.inference.likelihood.base.Likelihood.nuisance_parameters`).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    model_parameter: `~trilobite.models.core.parameters.ModelParameter`</span>
 <span class="sd">        The model parameter associated with this inference parameter. This is where we</span>
 <span class="sd">        get the name, default value, bounds, and other metadata about the parameter. This should be</span>
-<span class="sd">        selected from the model's :attr:`~trilobite.models.core.base.Model.PARAMETERS` list. Because</span>
+<span class="sd">        selected from the model's :attr:`~trilobite.models.core.base.Model.PARAMETERS` list or the likelihood's</span>
+<span class="sd">        nuisance parameters. Because</span>
 <span class="sd">        :class:`~trilobite.inference.problem.InferenceParameter`</span>
 <span class="sd">        instances are generated automatically during :class:`~trilobite.inference.problem.InferenceProblem`</span>
 <span class="sd">        initialization, users typically</span>
@@ -804,6 +807,7 @@
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">dict_rep</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="s2">"Model"</span><span class="p">,</span>
+        <span class="n">likelihood</span><span class="p">:</span> <span class="s2">"Likelihood"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"InferenceParameter"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Reconstruct an :class:`~trilobite.inference.problem.InferenceParameter` from a serialized dictionary.</span>
@@ -819,6 +823,11 @@
 <span class="sd">            to resolve the parameter definition (name, bounds,</span>
 <span class="sd">            units, default value, etc.).</span>
 
+<span class="sd">        likelihood : ~trilobite.inference.likelihood.base.Likelihood, optional</span>
+<span class="sd">            The likelihood whose :attr:`~trilobite.inference.likelihood.base.Likelihood.nuisance_parameters`</span>
+<span class="sd">            are searched, after the model's parameters, when resolving the name. Required to reconstruct a</span>
+<span class="sd">            nuisance parameter.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        InferenceParameter</span>
@@ -831,7 +840,7 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If dictionary structure is malformed.</span>
 <span class="sd">        KeyError</span>
-<span class="sd">            If the referenced parameter does not exist on the model.</span>
+<span class="sd">            If the referenced parameter is defined neither by the model nor, if given, by the likelihood.</span>
 <span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.prior</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prior</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParameterTransform</span>
@@ -853,10 +862,15 @@
         <span class="c1"># ------------------------------------------------------------------</span>
         <span class="c1"># Resolve ModelParameter from model</span>
         <span class="c1"># ------------------------------------------------------------------</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">likelihood</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">candidates</span> <span class="o">+=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">likelihood</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">model_parameter</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">model_parameter</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model does not define a parameter named '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+            <span class="n">where</span> <span class="o">=</span> <span class="s2">"Model"</span> <span class="k">if</span> <span class="n">likelihood</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">"Model and likelihood"</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2"> do not define a parameter named '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
         <span class="n">freeze</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">dict_rep</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"freeze"</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
         <span class="n">initial_value</span> <span class="o">=</span> <span class="n">dict_rep</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"initial_value"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -1022,10 +1036,12 @@
         <span class="c1"># all 3.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span> <span class="o">=</span> <span class="n">likelihood</span>
 
-        <span class="c1"># Specify an explicit ordering for the parameters based on their order in</span>
-        <span class="c1"># the underlying model. This ensures that there is no ambiguity about parameter</span>
-        <span class="c1"># ordering when packing/unpacking parameter vectors.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">])</span>
+        <span class="c1"># Specify an explicit ordering for the parameters: the model's parameters in the order the model defines</span>
+        <span class="c1"># them, followed by the likelihood's nuisance parameters. This ensures that there is no ambiguity about</span>
+        <span class="c1"># parameter ordering when packing/unpacking parameter vectors, and that the model's own ordering is</span>
+        <span class="c1"># unchanged. (Name collisions between the two groups are rejected by the Likelihood on construction.)</span>
+        <span class="n">all_parameters</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">all_parameters</span><span class="p">])</span>
 
         <span class="c1"># Generate the parameter dictionary with InferenceParameter objects so that</span>
         <span class="c1"># we can manage them easily. These are basically empty shells of parameters</span>
@@ -1038,7 +1054,7 @@
                 <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">initial_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">for</span> <span class="n">model_parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span>
+            <span class="k">for</span> <span class="n">model_parameter</span> <span class="ow">in</span> <span class="n">all_parameters</span>
         <span class="p">}</span>
 
         <span class="c1"># Further initialization can be performed in subclasses.</span>
@@ -1119,13 +1135,14 @@
 
         <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="n">nuisance</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameter_names</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">status</span> <span class="o">=</span> <span class="s2">"Free"</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">freeze</span> <span class="k">else</span> <span class="s2">"Fixed"</span>
             <span class="n">prior</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span> <span class="k">else</span> <span class="s2">"—"</span>
             <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">row</span><span class="p">(</span>
                     <span class="p">[</span>
-                        <span class="n">name</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> (nuisance)"</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">nuisance</span> <span class="k">else</span> <span class="n">name</span><span class="p">,</span>
                         <span class="n">status</span><span class="p">,</span>
                         <span class="n">p</span><span class="o">.</span><span class="n">initial_value</span><span class="p">,</span>
                         <span class="n">prior</span><span class="p">,</span>
@@ -1162,6 +1179,11 @@
 <a class="viewcode-back" href="../../../_as_gen/trilobite.inference.problem.InferenceProblem.summary.html#trilobite.inference.problem.InferenceProblem.summary">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return a formatted summary of the inference problem."""</span>
+        <span class="n">nuisance</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameter_names</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">nuisance_tag</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">" [nuisance]"</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">nuisance</span> <span class="k">else</span> <span class="s2">""</span>
+
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s2">"InferenceProblem"</span><span class="p">,</span>
             <span class="sa">f</span><span class="s2">"Model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
@@ -1173,13 +1195,13 @@
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">prior</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span> <span class="k">else</span> <span class="s2">"None"</span>
-            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: init=</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">initial_value</span><span class="si">}</span><span class="s2">, prior=</span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">nuisance_tag</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s2">: init=</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">initial_value</span><span class="si">}</span><span class="s2">, prior=</span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_parameters</span><span class="p">:</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fixed parameters (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_fixed_parameters</span><span class="si">}</span><span class="s2">):"</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: value=</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">initial_value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">nuisance_tag</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s2">: value=</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">initial_value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
 
@@ -1710,7 +1732,7 @@
 <span class="sd">        This is a public wrapper around the internal :meth:`_log_prior` method which</span>
 <span class="sd">        handles packing the parameters from a dictionary into the required NumPy array format.</span>
 <span class="sd">        """</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coerce_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span></div>
 
@@ -1736,7 +1758,7 @@
 <span class="sd">        This is a public wrapper around the internal :meth:`_log_likelihood` method which</span>
 <span class="sd">        handles packing the parameters from a dictionary into the required NumPy array format.</span>
 <span class="sd">        """</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coerce_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span></div>
 
@@ -1765,7 +1787,7 @@
 <span class="sd">        evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any</span>
 <span class="sd">        parameter transforms) at that point.</span>
 <span class="sd">        """</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coerce_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">z</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_theta_forward</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div>
@@ -1792,7 +1814,7 @@
 <span class="sd">        This is a public wrapper around the internal :meth:`_log_free_prior` method which</span>
 <span class="sd">        handles packing the free parameters from a dictionary into the required NumPy array format.</span>
 <span class="sd">        """</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coerce_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">theta_free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_free_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_prior</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span></div>
 
@@ -1819,7 +1841,7 @@
 <span class="sd">        handles packing the free parameters from a dictionary into the required NumPy array format.</span>
 
 <span class="sd">        """</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coerce_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">theta_free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_free_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_likelihood</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span></div>
 
@@ -1848,7 +1870,7 @@
 <span class="sd">        evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any</span>
 <span class="sd">        free-parameter transforms) at that point.</span>
 <span class="sd">        """</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coerce_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">theta_free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_free_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">z_free</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_free_theta_forward</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">z_free</span><span class="p">)</span></div>
@@ -2006,6 +2028,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Tuple of str: Names of the forward model's parameters, in the model's order."""</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nuisance_parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Tuple of str: Names of the likelihood's nuisance parameters (empty if it declares none)."""</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InferenceParameter</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""dict: Dictionary of inference parameters keyed by parameter name."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span>
@@ -2129,6 +2161,17 @@
     <span class="c1"># requiring the user to manually define prior callables. We can also do</span>
     <span class="c1"># some unit-handled priors this way, which is a nice feature.</span>
     <span class="n">_PRIOR_REGISTRY</span> <span class="o">=</span> <span class="n">PRIOR_REGISTRY</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">"_ModelParametersInput"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Coerce a dictionary of model and nuisance parameter values into raw values in base units.</span>
+
+<span class="sd">        Missing entries take their declared defaults. The model coerces its own parameters and the likelihood</span>
+<span class="sd">        coerces its nuisance parameters; unknown keys are ignored by both.</span>
+<span class="sd">        """</span>
+        <span class="n">coerced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">coerced</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">coerce_nuisance_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">coerced</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_to_base_units</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -2585,7 +2628,7 @@
         <span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param_spec</span> <span class="ow">in</span> <span class="n">dict_spec</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">InferenceParameter</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">param_spec</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">InferenceParameter</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">param_spec</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">likelihood</span><span class="o">=</span><span class="n">likelihood</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to reconstruct parameter '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">' from specification: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 

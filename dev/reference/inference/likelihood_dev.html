@@ -470,10 +470,11 @@ extending the framework safely.</p>
 <li><p><a class="reference internal" href="#configuration-hook-configure" id="id6">Configuration Hook: <code class="docutils literal notranslate"><span class="pre">_configure</span></code></a></p></li>
 <li><p><a class="reference internal" href="#compatibility-validation-validate-model-and-data" id="id7">Compatibility Validation: <code class="docutils literal notranslate"><span class="pre">_validate_model_and_data</span></code></a></p></li>
 <li><p><a class="reference internal" href="#likelihood-evaluation" id="id8">Likelihood Evaluation</a></p></li>
+<li><p><a class="reference internal" href="#nuisance-parameters" id="id9">Nuisance Parameters</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#concrete-likelihood-classes" id="id9">Concrete Likelihood Classes</a></p></li>
-<li><p><a class="reference internal" href="#summary" id="id10">Summary</a></p></li>
+<li><p><a class="reference internal" href="#concrete-likelihood-classes" id="id10">Concrete Likelihood Classes</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id11">Summary</a></p></li>
 </ul>
 </nav>
 <hr class="docutils" />
@@ -668,9 +669,67 @@ be repeated inside <code class="xref py py-meth docutils literal notranslate"><s
 method millions of times.</p>
 </div>
 </section>
+<section id="nuisance-parameters">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Nuisance Parameters</a><a class="headerlink" href="#nuisance-parameters" title="Link to this heading">#</a></h3>
+<p>Some statistical models need parameters that are not part of the physics: a free
+systematic error term, an error-inflation factor, or a noise scale. These belong
+to the likelihood, not to the model, so a likelihood may declare them in the
+class-level <a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.NUISANCE_PARAMETERS.html#trilobite.inference.likelihood.base.Likelihood.NUISANCE_PARAMETERS" title="trilobite.inference.likelihood.base.Likelihood.NUISANCE_PARAMETERS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">NUISANCE_PARAMETERS</span></code></a>
+tuple of <a class="reference internal" href="../../_as_gen/trilobite.models.core.parameters.ModelParameter.html#trilobite.models.core.parameters.ModelParameter" title="trilobite.models.core.parameters.ModelParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelParameter</span></code></a>, mirroring the
+model’s own <code class="docutils literal notranslate"><span class="pre">PARAMETERS</span></code>. The tuple is empty by default, so existing likelihoods
+are unchanged.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ScaledGaussianLikelihood</span><span class="p">(</span><span class="n">GaussianLikelihood</span><span class="p">):</span>
+
+    <span class="n">NUISANCE_PARAMETERS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">"error_scale"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">nuisance</span><span class="p">):</span>
+
+        <span class="n">model_tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">model_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">model_tuple</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">gaussian_loglikelihood</span><span class="p">(</span>
+            <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span>
+            <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
+            <span class="n">y_err</span><span class="o">=</span><span class="n">nuisance</span><span class="p">[</span><span class="s2">"error_scale"</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>The public
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html#trilobite.inference.likelihood.base.Likelihood.log_likelihood" title="trilobite.inference.likelihood.base.Likelihood.log_likelihood"><code class="xref py py-meth docutils literal notranslate"><span class="pre">log_likelihood()</span></code></a> accepts one
+dictionary holding both groups of parameters. It coerces the model parameters
+through the model and the nuisance parameters through
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.coerce_nuisance_parameters.html#trilobite.inference.likelihood.base.Likelihood.coerce_nuisance_parameters" title="trilobite.inference.likelihood.base.Likelihood.coerce_nuisance_parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">coerce_nuisance_parameters()</span></code></a>,
+then calls <code class="docutils literal notranslate"><span class="pre">_log_likelihood(parameters)</span></code> for a likelihood without nuisance
+parameters or <code class="docutils literal notranslate"><span class="pre">_log_likelihood(parameters,</span> <span class="pre">nuisance)</span></code> for one that declares some.
+The model never receives nuisance values.</p>
+<p>An <a class="reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.html#trilobite.inference.problem.InferenceProblem" title="trilobite.inference.problem.InferenceProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code></a> appends the nuisance
+parameters after the model parameters. They then take part in everything else
+exactly as model parameters do: priors, freezing, transforms, prior sampling,
+serialization, and the sampling results. Their names must be unique and must not
+coincide with any model parameter; the likelihood raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> on
+construction otherwise.</p>
+<div class="admonition-keep-the-normalization admonition">
+<p class="admonition-title">Keep the normalization</p>
+<p>When an uncertainty depends on a sampled parameter, the
+<span class="math notranslate nohighlight">\(\ln(2\pi\sigma^2)\)</span> term of the Gaussian log-likelihood is no longer a
+constant and must be kept. It is what allows the sampler to find the error
+scale on its own, without a reduced chi-squared constraint. The built-in
+numerical backends already include it.</p>
+</div>
+<p>The built-in example is
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.LogGaussianCensoredSysLikelihood.html#trilobite.inference.likelihood.base.LogGaussianCensoredSysLikelihood" title="trilobite.inference.likelihood.base.LogGaussianCensoredSysLikelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogGaussianCensoredSysLikelihood</span></code></a>,
+which samples the systematic term <code class="docutils literal notranslate"><span class="pre">sys_dex</span></code> of
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood" title="trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogGaussianCensoredLikelihood</span></code></a>.</p>
+</section>
 </section>
 <section id="concrete-likelihood-classes">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink">Concrete Likelihood Classes</a><a class="headerlink" href="#concrete-likelihood-classes" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Concrete Likelihood Classes</a><a class="headerlink" href="#concrete-likelihood-classes" title="Link to this heading">#</a></h2>
 <p>Concrete likelihood classes implement a specific statistical assumption
 for a given <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> object.</p>
 <p>Because <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> already guarantees:</p>
@@ -720,7 +779,7 @@ masks cached in <code class="xref py py-meth docutils literal notranslate"><span
 </section>
 <hr class="docutils" />
 <section id="summary">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
 <p>Under the current architecture:</p>
 <ul class="simple">
 <li><p>Numerical backends implement pure statistics.</p></li>
@@ -776,6 +835,7 @@ masks cached in <code class="xref py py-meth docutils literal notranslate"><span
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-hook-configure">Configuration Hook: <code class="docutils literal notranslate"><span class="pre">_configure</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compatibility-validation-validate-model-and-data">Compatibility Validation: <code class="docutils literal notranslate"><span class="pre">_validate_model_and_data</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#likelihood-evaluation">Likelihood Evaluation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nuisance-parameters">Nuisance Parameters</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concrete-likelihood-classes">Concrete Likelihood Classes</a></li>

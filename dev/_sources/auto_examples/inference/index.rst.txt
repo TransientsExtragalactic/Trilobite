@@ -18,6 +18,7 @@ corner plots.
 .. rubric:: What you'll find here
 
 - Fitting a single-epoch synchrotron SED (with and without upper limits)
+- Fitting a free systematic error term (a likelihood-level nuisance parameter) when the quoted errors are too small
 - Fitting an evolving, multi-epoch SED time series
 - Recovering shock physical parameters from a simulated radio light curve
 - Propagating SED posteriors through closure relations to obtain source-size posteriors
@@ -39,6 +40,23 @@ corner plots.
     <div class="sphx-glr-thumbnails">
 
 .. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Reported uncertainties are often too small: calibration errors, unmodeled variability, or scatter that the model does not capture all add noise that the quoted error bars do not include. If we fit such data with the quoted errors alone, the posterior is too narrow and the fit is dragged around by individual points.">
+
+.. only:: html
+
+  .. image:: /auto_examples/inference/images/thumb/sphx_glr_plot_nuisance_parameter_fit_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/inference/plot_nuisance_parameter_fit`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Fit a Free Systematic Error Term (Nuisance Parameter)</div>
+    </div>
+
 
 .. raw:: html
 
@@ -169,6 +187,7 @@ corner plots.
 .. toctree::
    :hidden:
 
+   /auto_examples/inference/plot_nuisance_parameter_fit
    /auto_examples/inference/plot_SED_fit
    /auto_examples/inference/plot_evolving_sed
    /auto_examples/inference/plot_censored_SED_fit

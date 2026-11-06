@@ -488,7 +488,7 @@ between:</p>
 <h2>Core Architecture<a class="headerlink" href="#core-architecture" title="Link to this heading">#</a></h2>
 <section id="inferenceparameter">
 <h3>InferenceParameter<a class="headerlink" href="#inferenceparameter" title="Link to this heading">#</a></h3>
-<p>Each model parameter is wrapped in an
+<p>Each model parameter, and each nuisance parameter declared by the likelihood, is wrapped in an
 <a class="reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceParameter.html#trilobite.inference.problem.InferenceParameter" title="trilobite.inference.problem.InferenceParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceParameter</span></code></a>.</p>
 <p>This dataclass stores:</p>
 <ul class="simple">
@@ -500,16 +500,19 @@ between:</p>
 </ul>
 <p>These objects are automatically constructed during
 <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code> initialization:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">all_parameters</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">nuisance_parameters</span>
+<span class="p">)</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">model_parameter</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">InferenceParameter</span><span class="p">(</span>
         <span class="n">model_parameter</span><span class="o">=</span><span class="n">model_parameter</span><span class="p">,</span>
         <span class="n">freeze</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">prior</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">inverse_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">initial_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">for</span> <span class="n">model_parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span>
+    <span class="k">for</span> <span class="n">model_parameter</span> <span class="ow">in</span> <span class="n">all_parameters</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -519,12 +522,16 @@ between:</p>
 <section id="parameter-ordering">
 <h3>Parameter Ordering<a class="headerlink" href="#parameter-ordering" title="Link to this heading">#</a></h3>
 <p>A critical invariant of the inference system is that <strong>parameter ordering
-is deterministic and inherited from the model definition</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-    <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">]</span>
-<span class="p">)</span>
+is deterministic</strong>. The model parameters come first, in the order the model
+defines them, followed by the likelihood’s nuisance parameters in the order the
+likelihood declares them:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">all_parameters</span><span class="p">])</span>
 </pre></div>
 </div>
+<p>Appending the nuisance parameters leaves the model’s own ordering unchanged. The
+two groups can be listed separately with
+<a class="reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.model_parameter_names.html#trilobite.inference.problem.InferenceProblem.model_parameter_names" title="trilobite.inference.problem.InferenceProblem.model_parameter_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">model_parameter_names</span></code></a> and
+<a class="reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.nuisance_parameter_names.html#trilobite.inference.problem.InferenceProblem.nuisance_parameter_names" title="trilobite.inference.problem.InferenceProblem.nuisance_parameter_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nuisance_parameter_names</span></code></a>.</p>
 <p>This ordering controls:</p>
 <ul class="simple">
 <li><p>vector packing,</p></li>

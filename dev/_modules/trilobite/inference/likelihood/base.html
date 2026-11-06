@@ -447,12 +447,13 @@
 <span></span><span class="sd">"""Abstract base class for likelihood models."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceData</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.core.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelParameter</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.gaussian</span><span class="w"> </span><span class="kn">import</span> <span class="n">censored_gaussian_loglikelihood</span><span class="p">,</span> <span class="n">gaussian_loglikelihood</span>
 
@@ -463,7 +464,13 @@
     <span class="p">)</span>
 
 <span class="c1"># Defining the __all__ variable.</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Likelihood"</span><span class="p">,</span> <span class="s2">"GaussianLikelihood"</span><span class="p">,</span> <span class="s2">"GaussianCensoredLikelihood"</span><span class="p">,</span> <span class="s2">"LogGaussianCensoredLikelihood"</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Likelihood"</span><span class="p">,</span>
+    <span class="s2">"GaussianLikelihood"</span><span class="p">,</span>
+    <span class="s2">"GaussianCensoredLikelihood"</span><span class="p">,</span>
+    <span class="s2">"LogGaussianCensoredLikelihood"</span><span class="p">,</span>
+    <span class="s2">"LogGaussianCensoredSysLikelihood"</span><span class="p">,</span>
+<span class="p">]</span>
 
 
 <span class="c1"># ============================================================ #</span>
@@ -536,6 +543,26 @@
 <span class="sd">    - This class makes no assumptions about priors or sampling strategies.</span>
 <span class="sd">    - Parameter coercion is delegated to the model.</span>
 <span class="sd">    - Data validation is delegated to :class:`InferenceData`.</span>
+
+<span class="sd">    Nuisance Parameters</span>
+<span class="sd">    -------------------</span>
+<span class="sd">    A likelihood may own parameters of its own, such as a free systematic error term, which are sampled</span>
+<span class="sd">    alongside the model parameters but belong to the statistical description of the data rather than to the</span>
+<span class="sd">    physics. They are declared in the class-level :attr:`NUISANCE_PARAMETERS` tuple, which mirrors</span>
+<span class="sd">    :attr:`~trilobite.models.core.base.Model.PARAMETERS` and is empty by default. An</span>
+<span class="sd">    :class:`~trilobite.inference.problem.InferenceProblem` appends them after the model parameters, so priors,</span>
+<span class="sd">    freezing and transforms behave exactly as they do for model parameters.</span>
+
+<span class="sd">    :meth:`log_likelihood` accepts one dictionary holding both groups, coerces the model parameters through the</span>
+<span class="sd">    model and the nuisance parameters through their own :class:`~trilobite.models.core.parameters.ModelParameter`</span>
+<span class="sd">    definitions, and calls ``_log_likelihood(parameters)`` or, when nuisance parameters are declared,</span>
+<span class="sd">    ``_log_likelihood(parameters, nuisance)``. The model therefore never sees nuisance values.</span>
+<span class="sd">    """</span>
+
+    <span class="n">NUISANCE_PARAMETERS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+<span class="w">    </span><span class="sd">"""tuple of ~trilobite.models.core.parameters.ModelParameter: Parameters owned by the likelihood (default: none).</span>
+
+<span class="sd">    Their names must be unique and must not coincide with any parameter of the model.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ============================================================ #</span>
@@ -566,6 +593,8 @@
 <span class="sd">            If `model` is not a :class:`~trilobite.models.core.base.Model` instance.</span>
 <span class="sd">        TypeError</span>
 <span class="sd">            If `data` is not an :class:`InferenceData` instance.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the declared nuisance parameters have duplicate names or share a name with a model parameter.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"`model` must be an instance of Model."</span><span class="p">)</span>
@@ -575,6 +604,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="p">:</span> <span class="n">InferenceData</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="c1"># Nuisance parameters share the parameter namespace with the model's, so names must not collide.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_nuisance_parameters</span><span class="p">()</span>
 
         <span class="c1"># Keep the configuration so that the likelihood can be serialized and rebuilt (see</span>
         <span class="c1"># `InferenceProblem.to_dict`); `model` and `data` are serialized separately.</span>
@@ -595,6 +627,70 @@
 <span class="sd">        :class:`~trilobite.inference.problem.InferenceProblem` is serialized, and must therefore be JSON-serializable.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nuisance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Tuple of ~trilobite.models.core.parameters.ModelParameter: The parameters owned by this likelihood.</span>
+
+<span class="sd">        Empty unless the subclass declares :attr:`NUISANCE_PARAMETERS`.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NUISANCE_PARAMETERS</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_nuisance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Check that the nuisance parameters are well-formed and do not collide with the model's parameters."""</span>
+        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUISANCE_PARAMETERS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">ModelParameter</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"`</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.NUISANCE_PARAMETERS` must contain ModelParameter instances, "</span>
+                    <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">."</span>
+                <span class="p">)</span>
+
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUISANCE_PARAMETERS</span><span class="p">]</span>
+        <span class="n">duplicated</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">names</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">duplicated</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Duplicate nuisance parameter names in `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">`: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">duplicated</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+
+        <span class="n">collisions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">collisions</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Nuisance parameter name(s) </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">collisions</span><span class="p">)</span><span class="si">}</span><span class="s2"> of `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">` collide with "</span>
+                <span class="sa">f</span><span class="s2">"parameters of the model `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">`."</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="Likelihood.coerce_nuisance_parameters">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.coerce_nuisance_parameters.html#trilobite.inference.likelihood.base.Likelihood.coerce_nuisance_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coerce_nuisance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Coerce the likelihood's nuisance parameters into raw numerical values in base units.</span>
+
+<span class="sd">        Mirrors :meth:`~trilobite.models.core.base.Model.coerce_model_parameters`: missing entries take the</span>
+<span class="sd">        declared default, and keys that are not nuisance parameters are ignored.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            Mapping of parameter names to values (floats, arrays or :class:`~astropy.units.Quantity`). May</span>
+<span class="sd">            also contain model parameters, which are ignored here.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Mapping of each nuisance parameter name to its value in base units.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If a value cannot be converted to the parameter's base units.</span>
+<span class="sd">        """</span>
+        <span class="n">coerced</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUISANCE_PARAMETERS</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">coerced</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">to_base_value</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error coercing nuisance parameter '</span><span class="si">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="k">return</span> <span class="n">coerced</span></div>
+
 
     <span class="c1"># ============================================================ #</span>
     <span class="c1"># Configuration &amp; Validation                                   #</span>
@@ -636,6 +732,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">"_ModelParametersInputRaw"</span><span class="p">],</span>
+        <span class="n">nuisance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the log-likelihood for raw model parameters.</span>
@@ -645,6 +742,10 @@
 <span class="sd">        parameters : dict</span>
 <span class="sd">            Mapping of model parameter names to values in the</span>
 <span class="sd">            model's raw, unit-consistent internal format.</span>
+<span class="sd">        nuisance : dict, optional</span>
+<span class="sd">            Mapping of nuisance parameter names to raw values in base units. Passed only when the likelihood</span>
+<span class="sd">            declares :attr:`NUISANCE_PARAMETERS`, in which case the implementation must accept it; likelihoods</span>
+<span class="sd">            without nuisance parameters may keep the single-argument signature ``_log_likelihood(self, parameters)``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -671,8 +772,10 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        parameters : dict</span>
-<span class="sd">            Mapping of model parameter names to values in any format</span>
-<span class="sd">            accepted by :meth:`~trilobite.models.core.base.Model.coerce_model_parameters`.</span>
+<span class="sd">            Mapping of parameter names to values in any format accepted by</span>
+<span class="sd">            :meth:`~trilobite.models.core.base.Model.coerce_model_parameters`. Nuisance parameters, if the</span>
+<span class="sd">            likelihood declares any, are read from the same dictionary and coerced by</span>
+<span class="sd">            :meth:`coerce_nuisance_parameters`.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -686,7 +789,11 @@
 <span class="sd">        in raw format to avoid repeated coercion overhead.</span>
 <span class="sd">        """</span>
         <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span></div>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUISANCE_PARAMETERS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coerce_nuisance_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">))</span></div>
 </div>
 
 
@@ -1150,6 +1257,25 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"`sys_dex` must be finite and non-negative, got </span><span class="si">{</span><span class="n">sys_dex</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sys_dex</span> <span class="o">=</span> <span class="n">sys_dex</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configure_log_space</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">sigma_dex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_meas_dex</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">sys_dex</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">sigma_dex</span><span class="p">))</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">sigma_dex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"LogGaussianCensoredLikelihood requires a finite, nonzero uncertainty for every entry. "</span>
+                <span class="s2">"Provide nonzero measurement errors or set `sys_dex` &gt; 0."</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="o">=</span> <span class="n">sigma_dex</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure_log_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Cache the log10-transformed data and limits, and the measurement-only uncertainty in dex.</span>
+
+<span class="sd">        Sets ``_sigma_meas_dex`` (the reported error converted to dex, without any systematic term) and</span>
+<span class="sd">        replaces ``_data_y``, ``_y_upper`` and ``_y_lower`` by their base-10 logarithms. Subclasses that</span>
+<span class="sd">        treat the systematic term differently (for example as a sampled parameter) build on this.</span>
+<span class="sd">        """</span>
         <span class="c1"># Cache the linear-space arrays and masks via the parent.</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -1161,21 +1287,15 @@
         <span class="n">reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">det_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">upper_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">reference</span><span class="p">))</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">reference</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">"LogGaussianCensoredLikelihood requires every detection and limit to be finite and strictly positive."</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> requires every detection and limit to be finite and strictly positive."</span>
             <span class="p">)</span>
 
-        <span class="n">sigma_dex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="o">/</span> <span class="p">(</span><span class="n">reference</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)))</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">sys_dex</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">sigma_dex</span><span class="p">))</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">sigma_dex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">"LogGaussianCensoredLikelihood requires a finite, nonzero uncertainty for every entry. "</span>
-                <span class="s2">"Provide nonzero measurement errors or set `sys_dex` &gt; 0."</span>
-            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_meas_dex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="o">/</span> <span class="p">(</span><span class="n">reference</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">10.0</span><span class="p">))</span>
 
         <span class="c1"># NaN entries (non-detections in `value`, detections in the limit arrays) stay NaN.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="o">=</span> <span class="n">sigma_dex</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -1191,6 +1311,19 @@
 <span class="sd">        float</span>
 <span class="sd">            Log-likelihood value, ``-inf`` if the model output is non-finite or negative.</span>
 <span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood_with_errors</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood_with_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">sigma_dex</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Evaluate the log10-space log-likelihood for the given per-entry uncertainties.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict[str, Any]</span>
+<span class="sd">            Raw model parameters in unit-consistent internal format.</span>
+<span class="sd">        sigma_dex : numpy.ndarray</span>
+<span class="sd">            Total one-sigma uncertainty of every entry in dex, shape ``(N, P)``.</span>
+<span class="sd">        """</span>
         <span class="n">model_tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
             <span class="n">parameters</span><span class="p">,</span>
@@ -1203,12 +1336,116 @@
         <span class="k">return</span> <span class="n">censored_gaussian_loglikelihood</span><span class="p">(</span>
             <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span>
             <span class="n">model_y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">model_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MODEL_FLOOR</span><span class="p">)),</span>
-            <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">,</span>
+            <span class="n">y_err</span><span class="o">=</span><span class="n">sigma_dex</span><span class="p">,</span>
             <span class="n">y_upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="p">,</span>
             <span class="n">y_lower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="p">,</span>
             <span class="n">y_upper_mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper_mask</span><span class="p">,</span>
             <span class="n">y_lower_mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower_mask</span><span class="p">,</span>
         <span class="p">)</span></div>
+
+
+
+<span class="c1"># ============================================================ #</span>
+<span class="c1"># Likelihoods with Nuisance Parameters                         #</span>
+<span class="c1"># ============================================================ #</span>
+<div class="viewcode-block" id="LogGaussianCensoredSysLikelihood">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.inference.likelihood.base.LogGaussianCensoredSysLikelihood.html#trilobite.inference.likelihood.base.LogGaussianCensoredSysLikelihood">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LogGaussianCensoredSysLikelihood</span><span class="p">(</span><span class="n">LogGaussianCensoredLikelihood</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Censored Gaussian likelihood in log10 space with a **sampled** systematic error term.</span>
+
+<span class="sd">    This is :class:`~trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood` with the fixed</span>
+<span class="sd">    systematic floor ``sys_dex`` promoted to a nuisance parameter. The total uncertainty of entry :math:`i` is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \sigma_i^2 = \sigma_{{\rm meas},i}^2 + \sigma_{\rm sys}^2,</span>
+
+<span class="sd">    where :math:`\sigma_{{\rm meas},i}` is the reported error converted to dex and :math:`\sigma_{\rm sys}`</span>
+<span class="sd">    is the nuisance parameter ``sys_dex``. It is added in quadrature to the width of detections and of censored</span>
+<span class="sd">    limits alike. Because :math:`\sigma_i` now depends on a parameter, the :math:`\ln(2\pi\sigma_i^2)`</span>
+<span class="sd">    normalization term is retained in the likelihood: the sampler therefore finds the error scale that the</span>
+<span class="sd">    data support, without any reduced-:math:`\chi^2 = 1` constraint.</span>
+
+<span class="sd">    The parameter appears in the :class:`~trilobite.inference.problem.InferenceProblem` after the model</span>
+<span class="sd">    parameters, under the name ``sys_dex``, and has a default of 0.1 dex and a lower bound of 0. Priors,</span>
+<span class="sd">    freezing and transforms (for example a :class:`~trilobite.inference.transform.Log10Transform`) are</span>
+<span class="sd">    configured exactly as for a model parameter. Its starting value is set through</span>
+<span class="sd">    ``problem.parameters["sys_dex"].initial_value``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : ~trilobite.models.core.base.Model</span>
+<span class="sd">        Forward model producing strictly positive predictions.</span>
+<span class="sd">    data : ~trilobite.data.core.InferenceData</span>
+<span class="sd">        Validated dataset. Every detection and limit must be finite and strictly positive.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If the fixed ``sys_dex`` option of the parent class is passed. Use</span>
+<span class="sd">        :class:`~trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood` for a fixed floor.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    If ``sys_dex`` is sampled to exactly zero while some entry has a zero reported error, that entry would have</span>
+<span class="sd">    no width at all and the log-likelihood is ``-inf``. A negative ``sys_dex`` is likewise rejected with ``-inf``.</span>
+<span class="sd">    """</span>
+
+    <span class="n">NUISANCE_PARAMETERS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ModelParameter</span><span class="p">(</span>
+            <span class="s2">"sys_dex"</span><span class="p">,</span>
+            <span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">"Systematic uncertainty added in quadrature to every entry, in dex."</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\sigma_{\rm sys}$"</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Cache the log10-space data and the measurement-only uncertainty in dex."""</span>
+        <span class="k">if</span> <span class="s2">"sys_dex"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">"`LogGaussianCensoredSysLikelihood` samples `sys_dex` as a nuisance parameter and does not accept a "</span>
+                <span class="s2">"fixed `sys_dex` option; use `LogGaussianCensoredLikelihood` for a fixed floor."</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configure_log_space</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_meas_dex</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_meas_dex</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"LogGaussianCensoredSysLikelihood requires a finite, non-negative reported uncertainty for every entry."</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Squared once here; the sampled term is added on every evaluation.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_meas_dex_sq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_meas_dex</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">nuisance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Evaluate the censored Gaussian log-likelihood in log10 space with a sampled systematic term.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict[str, Any]</span>
+<span class="sd">            Raw model parameters in unit-consistent internal format.</span>
+<span class="sd">        nuisance : dict[str, float]</span>
+<span class="sd">            Raw nuisance parameters; must contain ``sys_dex`` (dex).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value, ``-inf`` if the model output is non-finite or negative, if ``sys_dex`` is</span>
+<span class="sd">            negative or non-finite, or if some entry has a zero total uncertainty.</span>
+<span class="sd">        """</span>
+        <span class="n">sys_dex</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nuisance</span><span class="p">[</span><span class="s2">"sys_dex"</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">sys_dex</span><span class="p">)</span> <span class="ow">or</span> <span class="n">sys_dex</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="n">sigma_dex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_meas_dex_sq</span> <span class="o">+</span> <span class="n">sys_dex</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">sigma_dex</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood_with_errors</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">sigma_dex</span><span class="p">)</span></div>
 
 </pre></div>
 
