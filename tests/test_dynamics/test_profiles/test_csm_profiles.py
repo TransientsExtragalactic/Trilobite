@@ -854,6 +854,38 @@ class TestAxisymmetricCSMDensityProfile(BaseTestCSMProfile):
             AxisymmetricCSMDensityProfile.eval(1e16, **self._BASE)
 
     # ------------------------------------------------------------------ #
+    # Inner radius                                                       #
+    # ------------------------------------------------------------------ #
+    def test_r_min_defaults_to_no_truncation(self):
+        r = np.geomspace(1e10, 1e18, 50)
+        params = {**self._BASE, "theta": np.pi / 2}
+        default = AxisymmetricCSMDensityProfile.as_optimized_callable(**params)
+        explicit = AxisymmetricCSMDensityProfile.as_optimized_callable(**params, r_min=0.0)
+        assert np.array_equal(default(r, 0.0), explicit(r, 0.0))
+
+    @pytest.mark.parametrize("scalar", [False, True])
+    def test_density_vanishes_below_r_min_only(self, scalar):
+        r_min = 3e14
+        params = {**self._BASE, "theta": np.pi / 2}
+        truncated = AxisymmetricCSMDensityProfile.as_optimized_callable(**params, r_min=r_min)
+        full = AxisymmetricCSMDensityProfile.as_optimized_callable(**params)
+        r = np.array([1e13, 2.9e14, 3e14, 3.1e14, 1e16])
+        evaluate = (lambda f: np.array([f(float(x), 0.0) for x in r])) if scalar else (lambda f: f(r, 0.0))
+        expected = np.where(r >= r_min, full(r, 0.0), 0.0)
+        result = evaluate(truncated)
+        assert np.array_equal(result == 0.0, expected == 0.0)
+        assert np.allclose(result, expected, rtol=1e-12, atol=0.0)
+
+    def test_r_min_accepts_units(self):
+        a = AxisymmetricCSMDensityProfile.eval(1e14 * u.cm, theta=1.0, **self._BASE, r_min=1e15 * u.cm)
+        b = AxisymmetricCSMDensityProfile.eval(1e14 * u.cm, theta=1.0, **self._BASE, r_min=1e13 * u.m)
+        assert a.value == 0.0 and b.value == 0.0
+
+    def test_negative_r_min_raises(self):
+        with pytest.raises(ValueError):
+            AxisymmetricCSMDensityProfile.eval(1e16, theta=1.0, **self._BASE, r_min=-1.0)
+
+    # ------------------------------------------------------------------ #
     # Scalar fast path                                                   #
     # ------------------------------------------------------------------ #
     @pytest.mark.parametrize("params", PARAMETER_SETS)

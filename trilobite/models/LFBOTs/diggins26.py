@@ -20,6 +20,7 @@ two sightlines, the equator and the pole, each of which stands in for its solid-
 6. The observed flux density is the sum of the attenuated sectors.
 """
 
+import warnings
 from collections import namedtuple
 from collections.abc import Callable
 from typing import NamedTuple, Optional, Union
@@ -27,7 +28,7 @@ from typing import NamedTuple, Optional, Union
 import numpy as np
 from astropy import constants as const
 from astropy import units as u
-from scipy.integrate import quad
+from scipy.integrate import IntegrationWarning, quad
 
 from trilobite.dynamics.profiles.csm import AxisymmetricCSMDensityProfile
 from trilobite.dynamics.profiles.ejecta import BrokenPowerLawEjectaProfile, _normalize_bpl_cgs
@@ -468,7 +469,8 @@ class Diggins26_TwoComponentModel(Model):
     - the ejecta profile cannot be normalized to :math:`(E_{\rm ej}, M_{\rm ej})` with :math:`v_{\max} = c`,
     - :math:`v_0 = \sqrt{2E_{\rm ej}/M_{\rm ej}}` exceeds ``max_initial_beta`` times :math:`c`,
     - :math:`\gamma_{\max}` is too close to :math:`\gamma_{\min}` to place a cooling break,
-    - there is no CSM mass inside the starting radius, or
+    - there is no finite CSM mass inside the starting radius (including a slope :math:`\alpha \ge 3` with no
+      ``inner_radius``), or
     - the shock ODE integration fails.
 
     :meth:`diagnose` reports which condition rejected a parameter set. Hard parameter-bound violations raise
@@ -511,14 +513,14 @@ class Diggins26_TwoComponentModel(Model):
             1.5,
             description="Power-law slope of the interior CSM component.",
             latex=r"\alpha_{\rm int}",
-            bounds=(0, 3),
+            bounds=(0, None),
         ),
         ModelParameter(
             "alpha_ext",
             2.0,
             description="Power-law slope of the exterior CSM component.",
             latex=r"\alpha_{\rm ext}",
-            bounds=(0, 3),
+            bounds=(0, None),
         ),
         ModelParameter(
             "R_trans",
@@ -684,6 +686,7 @@ class Diggins26_TwoComponentModel(Model):
         helium_mass_fraction: Optional[float] = None,
         adiabatic_index: float = 5.0 / 3.0,
         reference_radius: Union[float, u.Quantity] = 1e15,
+        inner_radius: Union[float, u.Quantity] = 0.0,
         shock_start_time: Union[float, u.Quantity] = 0.3 * u.day,
         max_initial_beta: float = 0.8,
         gamma_points_per_decade: int = 20,
@@ -714,6 +717,12 @@ class Diggins26_TwoComponentModel(Model):
             Adiabatic index of the shocked gas. Default ``5/3``.
         reference_radius : float or ~astropy.units.Quantity, optional
             Reference radius at which ``rho_int`` and ``rho_ext`` are defined. Bare values are cm. Default ``1e15 cm``.
+        inner_radius : float or ~astropy.units.Quantity, optional
+            Inner radius :math:`r_{\rm min}` of the CSM, passed to the density profile as ``r_min``: both CSM
+            components have zero density below it. It sets the lower limit of the CSM mass swept up inside
+            :math:`R_0`. With the default ``0`` the CSM extends to the origin, and that mass diverges for slopes
+            :math:`\alpha \ge 3`, so ``inner_radius`` must be positive if the model is used with such slopes. It must
+            be smaller than :math:`R_0 = v_0 t_0` for a parameter set to be feasible. Bare values are cm. Default ``0``.
         shock_start_time : float or ~astropy.units.Quantity, optional
             Source-frame time at which the shock integration starts (at :math:`R_0 = v_0 t_0`). Every requested
             epoch must satisfy :math:`t_{\rm obs}/(1+z) \ge t_0`. Bare values are seconds. Default ``0.3 d``. The
@@ -797,6 +806,7 @@ class Diggins26_TwoComponentModel(Model):
         # ---- Shock and numerical configuration ------------------------------------------------------------------ #
         self._adiabatic_index = float(adiabatic_index)
         self._r_ref = float(ensure_in_units(reference_radius, u.cm))
+        self._r_min = float(ensure_in_units(inner_radius, u.cm))
         self._t_0 = float(ensure_in_units(shock_start_time, u.s))
         self._max_initial_beta = float(max_initial_beta)
         self._gamma_points_per_decade = int(gamma_points_per_decade)
@@ -816,6 +826,8 @@ class Diggins26_TwoComponentModel(Model):
             raise ValueError("`adiabatic_index` must exceed 1.")
         if self._r_ref <= 0:
             raise ValueError("`reference_radius` must be positive.")
+        if not self._r_min >= 0:
+            raise ValueError("`inner_radius` must be non-negative.")
         if self._t_0 <= 0:
             raise ValueError("`shock_start_time` must be positive.")
         if not 0 < self._max_initial_beta < 1:
@@ -846,6 +858,7 @@ class Diggins26_TwoComponentModel(Model):
             helium_mass_fraction=self._Y,
             adiabatic_index=self._adiabatic_index,
             reference_radius=self._r_ref,
+            inner_radius=self._r_min,
             shock_start_time=self._t_0,
             max_initial_beta=self._max_initial_beta,
             gamma_points_per_decade=self._gamma_points_per_decade,
@@ -915,6 +928,7 @@ class Diggins26_TwoComponentModel(Model):
             "rho_int": p["rho_int"],
             "rho_ext": p["rho_ext"],
             "r_ref": self._r_ref,
+            "r_min": self._r_min,
             "alpha_int": p["alpha_int"],
             "alpha_ext": p["alpha_ext"],
             "r_trans": p["R_trans"],
@@ -943,6 +957,16 @@ class Diggins26_TwoComponentModel(Model):
         if not p["gamma_max"] > 1.0201 * p["gamma_min"]:
             return None, "gamma_max must exceed 1.0201 * gamma_min to place a cooling break."
 
+        if self._r_min == 0.0:
+            # With no inner cutoff, the mass inside R_0 is the integral of rho r^2 from the origin, which diverges
+            # for any present component whose slope is >= 3.
+            for amplitude, slope in ((p["rho_int"], p["alpha_int"]), (p["rho_ext"], p["alpha_ext"])):
+                if amplitude > 0 and slope >= 3.0:
+                    return None, (
+                        f"A CSM slope of {slope:g} >= 3 has divergent mass at small radius; "
+                        "set a positive `inner_radius`."
+                    )
+
         # The private CGS normalization is used directly: the public `normalize` wraps its result in astropy units,
         # which would only be converted straight back (a measurable cost at every posterior evaluation).
         try:
@@ -963,13 +987,28 @@ class Diggins26_TwoComponentModel(Model):
         return AxisymmetricCSMDensityProfile.as_optimized_callable(theta=theta, **self._csm_parameters(p))
 
     @staticmethod
-    def _swept_mass(rho_csm, radius: float) -> float:
-        r"""CSM mass inside ``radius`` along a spherical sightline, :math:`4\pi\int_0^R \rho r^2 dr`."""
+    def _swept_mass(rho_csm, radius: float, r_min: float = 0.0) -> float:
+        r"""
+        CSM mass between ``r_min`` and ``radius`` along a spherical sightline.
+
+        This is :math:`4\pi\int_{r_{\min}}^R \rho r^2 dr`.
+
+        Returns ``nan`` if the integral diverges or does not converge (for ``r_min = 0`` and a slope
+        :math:`\alpha \ge 3`), so that the parameter set is rejected as infeasible rather than carrying an
+        unconverged value.
+        """
 
         def integrand(r):
             return float(rho_csm(r, 0.0)) * r * r
 
-        return 4.0 * np.pi * quad(integrand, 0.0, radius, epsabs=0.0, epsrel=1e-8, limit=200)[0]
+        if radius <= r_min:
+            return 0.0
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", category=IntegrationWarning)
+            try:
+                return 4.0 * np.pi * quad(integrand, r_min, radius, epsabs=0.0, epsrel=1e-8, limit=200)[0]
+            except IntegrationWarning:
+                return float("nan")
 
     def _solve_dynamics(self, p: dict, prep: dict, t_rest: np.ndarray):
         """
@@ -988,9 +1027,12 @@ class Diggins26_TwoComponentModel(Model):
             rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(rho_ej=prep["rho_ej"], rho_csm=rho_csm)
 
             # The starting shell holds the CSM swept up inside R_0 along this sightline.
-            M_0 = self._swept_mass(rho_csm, prep["R_0"])
+            M_0 = self._swept_mass(rho_csm, prep["R_0"], self._r_min)
             if not (np.isfinite(M_0) and M_0 > 0):
-                return None, "There is no CSM mass inside the starting radius R_0 = v_0 t_0."
+                return None, (
+                    "There is no CSM mass (or it is not finite) inside the starting radius "
+                    f"R_0 = v_0 t_0 = {prep['R_0']:.4g} cm for inner_radius = {self._r_min:.4g} cm."
+                )
 
             try:
                 shock = self._shock_engine._compute_shock_properties_cgs(

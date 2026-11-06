@@ -102,6 +102,7 @@ class TestConstruction:
             {"max_initial_beta": 1.5},
             {"shock_start_time": 0.0},
             {"reference_radius": -1.0},
+            {"inner_radius": -1.0},
             {"gamma_points_per_decade": 0},
             {"integrator_kw": {"rtol": 0.0}},
             {"integrator_kw": {"t_eval": [1.0]}},
@@ -116,6 +117,7 @@ class TestConstruction:
 
     def test_registered_for_serialization(self, model):
         kwargs = model._model_init_kwargs
+        assert kwargs["inner_radius"] == model._r_min
         assert kwargs["redshift"] == model.redshift
         rebuilt = Diggins26_TwoComponentModel(**kwargs)
         assert rebuilt.mean_molecular_weight == pytest.approx(model.mean_molecular_weight)
@@ -535,6 +537,48 @@ class TestInfeasibility:
         assert np.all(np.isnan(out.flux_density.value))
         reason = model.diagnose(parameters, TIMES)
         assert reason is not None and fragment.lower() in reason.lower()
+
+    def test_inner_radius_beyond_start_radius_is_infeasible(self):
+        """No CSM lies inside R_0 = v_0 t_0 when the CSM starts beyond it."""
+        m = Diggins26_TwoComponentModel(redshift=0.01, inner_radius=1e18)
+        reason = m.diagnose({}, TIMES)
+        assert reason is not None and "no CSM mass" in reason
+        out = m.forward_model({"time": TIMES, "frequency": np.full_like(TIMES, 5e9)}, {})
+        assert np.all(np.isnan(out.flux_density.value))
+
+    def test_inner_radius_passes_through_to_the_density(self):
+        m = Diggins26_TwoComponentModel(redshift=0.01, inner_radius=2e14)
+        rho = m._sector_density(m._coerce({}), np.pi / 2)
+        assert rho(1e14, 0.0) == 0.0 and rho(3e14, 0.0) > 0.0
+
+    def test_swept_mass_lower_limit(self):
+        """The swept mass of a power law starts at the inner radius; a slope >= 3 only converges with one."""
+        rho = lambda r, t: 1e-16 * (r / 1e15) ** -3.5  # noqa: E731
+        M = Diggins26_TwoComponentModel._swept_mass
+        r_min, R = 1e14, 1e15
+        analytic = 4 * np.pi * 1e-16 * 1e15**3.5 * (r_min**-0.5 - R**-0.5) / 0.5
+        assert M(rho, R, r_min) == pytest.approx(analytic, rel=1e-6)
+        assert np.isnan(M(rho, R, 0.0))
+        assert M(rho, R, R) == 0.0
+
+    @pytest.mark.parametrize("which", ["alpha_int", "alpha_ext"])
+    @pytest.mark.parametrize("slope", [3.0, 3.5])
+    def test_steep_slope_needs_an_inner_radius(self, model, which, slope):
+        """A slope >= 3 has divergent mass at small radius: infeasible without `inner_radius`, fine with one."""
+        parameters = {which: slope}
+        reason = model.diagnose(parameters, TIMES)
+        assert reason is not None and "inner_radius" in reason
+        out = model.forward_model({"time": TIMES, "frequency": np.full_like(TIMES, 5e9)}, parameters)
+        assert np.all(np.isnan(out.flux_density.value))
+
+        bounded = Diggins26_TwoComponentModel(redshift=0.01, inner_radius=1e13)
+        assert bounded.diagnose(parameters, TIMES) is None
+        out = bounded.forward_model({"time": TIMES, "frequency": np.full_like(TIMES, 5e9)}, parameters)
+        assert np.all(np.isfinite(out.flux_density.value))
+
+    def test_slope_of_zero_component_does_not_matter(self, model):
+        """A steep slope on a component with zero amplitude contributes no mass."""
+        assert model.diagnose({"rho_ext": 0.0, "alpha_ext": 4.0}, TIMES) is None
 
     def test_ejecta_normalization_failure_is_infeasible(self):
         m = Diggins26_TwoComponentModel(redshift=0.01, max_initial_beta=0.99)

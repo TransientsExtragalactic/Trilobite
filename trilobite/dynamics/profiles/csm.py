@@ -2964,7 +2964,10 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
         S(r) = \frac{1}{1 + (r / r_{\rm trans})^{1/\delta_{\rm trans}}}
 
     switches the interior component off beyond :math:`r_{\rm trans}`, with a sharpness set by
-    :math:`\delta_{\rm trans}` (smaller is sharper). The angular shape is
+    :math:`\delta_{\rm trans}` (smaller is sharper). Both components can additionally be truncated below an inner
+    radius :math:`r_{\rm min}`, :math:`\rho(r < r_{\rm min}) = 0`. This is optional (the default is no truncation) but
+    is required for the enclosed mass :math:`\int \rho r^2 dr` to converge at small :math:`r` when a slope is
+    :math:`\alpha \ge 3`. The angular shape is
 
     .. math::
 
@@ -3047,6 +3050,11 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
          - ☐
          - float
          - Dimensionless sharpness of the transition. Must be positive.
+       * - ``r_min``
+         - ✓
+         - float or :class:`~astropy.units.Quantity`
+         - Inner radius below which the density is zero (both components). Bare values interpreted as cm.
+           Must be non-negative. Default ``0`` (no truncation).
        * - ``f_pole``
          - ☐
          - float
@@ -3095,6 +3103,7 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
     - The angular normalization :math:`I(b)` is evaluated by numerical quadrature once per call to the
       validation layer; freeze parameters with ``as_optimized_callable`` to avoid repeating it.
     - With ``rho_int = 0``, or ``f_pole = 1``, the profile reduces to a spherical sum of power laws.
+    - Without ``r_min`` the enclosed mass diverges at small radius for :math:`\alpha \ge 3`.
 
     References
     ----------
@@ -3245,12 +3254,14 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
         f_pole,
         aspect,
         theta,
+        r_min=0.0,
         **_,
     ):
         rho_int = float(ensure_in_units(rho_int, u.g / u.cm**3))
         rho_ext = float(ensure_in_units(rho_ext, u.g / u.cm**3))
         r_ref = float(ensure_in_units(r_ref, u.cm))
         r_trans = float(ensure_in_units(r_trans, u.cm))
+        r_min = float(ensure_in_units(r_min, u.cm))
         alpha_int, alpha_ext, delta_trans = float(alpha_int), float(alpha_ext), float(delta_trans)
         theta = np.asarray(ensure_in_units(theta, u.rad), dtype=float)
 
@@ -3262,6 +3273,8 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
             raise ValueError("`r_ref` must be positive.")
         if r_trans <= 0:
             raise ValueError("`r_trans` must be positive.")
+        if not r_min >= 0:
+            raise ValueError("`r_min` must be non-negative.")
         if not delta_trans > 0:
             raise ValueError("`delta_trans` must be positive.")
         if not np.all(np.isfinite(theta)):
@@ -3276,6 +3289,7 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
             "alpha_ext": alpha_ext,
             "r_trans": r_trans,
             "delta_trans": delta_trans,
+            "r_min": r_min,
             "f_pole": f_pole,
             "aspect": aspect,
             "theta": theta,
@@ -3298,12 +3312,14 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
         # Everything that does not depend on the radius, evaluated once.
         shape = cls._unnormalized_angular_shape(p["theta"], p["f_pole"], p["aspect"]) / p["angular_norm"]
         rho_ext, rho_int, r_ref, r_trans = p["rho_ext"], p["rho_int"], p["r_ref"], p["r_trans"]
-        alpha_ext, alpha_int, delta_trans = p["alpha_ext"], p["alpha_int"], p["delta_trans"]
+        alpha_ext, alpha_int, delta_trans, r_min = p["alpha_ext"], p["alpha_int"], p["delta_trans"], p["r_min"]
         scalar_amplitude = rho_int * float(shape) if np.ndim(shape) == 0 else None
 
         def _frozen(r, _t=None):
             if scalar_amplitude is None or not isinstance(r, _SCALAR_TYPES) or not r > 0.0:
                 return cls._opt_eval(r, _t, **p)
+            if r < r_min:
+                return 0.0
 
             ln_x = math.log(r / r_ref)
             # S(r) = 1 / (1 + (r / r_trans)^(1/delta)), written so that neither branch can overflow.
@@ -3334,13 +3350,15 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
         aspect,
         theta,
         angular_norm,
+        r_min=0.0,
         **_,
     ):
         x = r / r_ref
         # S(r) = 1 / (1 + (r / r_trans)^(1/delta)), written with expit to avoid overflow.
         transition = expit(-np.log(r / r_trans) / delta_trans)
         shape = cls._unnormalized_angular_shape(theta, f_pole, aspect) / angular_norm
-        return rho_ext * x ** (-alpha_ext) + rho_int * x ** (-alpha_int) * transition * shape
+        rho = rho_ext * x ** (-alpha_ext) + rho_int * x ** (-alpha_int) * transition * shape
+        return np.where(r >= r_min, rho, 0.0) if r_min > 0.0 else rho
 
     # ------------------------------------------------------------------ #
     # Geometric Helpers                                                  #
