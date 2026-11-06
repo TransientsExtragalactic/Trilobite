@@ -53,6 +53,7 @@ from astropy import constants as const
 from astropy import units as u
 
 from trilobite.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
+from trilobite.dynamics.shocks.core import StrongColdShockConditions
 from trilobite.radiation.free_free.absorption import compute_ff_RJ_optical_depth_from_quadrature
 from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
 from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
@@ -152,9 +153,11 @@ shock_outputs = shock_engine.compute_shock_properties(epochs, **shock_params)
 r_sh = shock_outputs.radius.to(u.cm)
 v_sh = shock_outputs.velocity.to(u.cm / u.s)
 rho_up = (M_dot / (4 * np.pi * r_sh**2 * v_wind)).to(u.g / u.cm**3)
-_R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
-_U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
-B_arr = np.sqrt(8 * np.pi * epsilon_B * _U) * u.G
+e_th = StrongColdShockConditions.compute_post_shock_thermal_energy_density(
+    shock_velocity=v_sh,
+    upstream_density=rho_up,
+)
+B_arr = np.sqrt(8 * np.pi * epsilon_B * e_th.to_value(u.erg / u.cm**3)) * u.G
 gamma_c_arr = cooling_engine.compute_cooling_gamma(B=B_arr, t=epochs)
 
 # Store results
