@@ -1136,7 +1136,10 @@ density regardless of the slope.</p>
 <div class="math notranslate nohighlight">
 \[S(r) = \frac{1}{1 + (r / r_{\rm trans})^{1/\delta_{\rm trans}}}\]</div>
 <p>switches the interior component off beyond <span class="math notranslate nohighlight">\(r_{\rm trans}\)</span>, with a sharpness set by
-<span class="math notranslate nohighlight">\(\delta_{\rm trans}\)</span> (smaller is sharper). The angular shape is</p>
+<span class="math notranslate nohighlight">\(\delta_{\rm trans}\)</span> (smaller is sharper). Both components can additionally be truncated below an inner
+radius <span class="math notranslate nohighlight">\(r_{\rm min}\)</span>, <span class="math notranslate nohighlight">\(\rho(r &lt; r_{\rm min}) = 0\)</span>. This is optional (the default is no truncation) but
+is required for the enclosed mass <span class="math notranslate nohighlight">\(\int \rho r^2 dr\)</span> to converge at small <span class="math notranslate nohighlight">\(r\)</span> when a slope is
+<span class="math notranslate nohighlight">\(\alpha \ge 3\)</span>. The angular shape is</p>
 <div class="math notranslate nohighlight">
 \[G(\theta)
 =
@@ -1223,18 +1226,24 @@ as cm. Must be positive.</p></td>
 <td><p>float</p></td>
 <td><p>Dimensionless sharpness of the transition. Must be positive.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">f_pole</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">r_min</span></code></p></td>
+<td><p>✓</p></td>
+<td><p>float or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p></td>
+<td><p>Inner radius below which the density is zero (both components). Bare values interpreted as cm.
+Must be non-negative. Default <code class="docutils literal notranslate"><span class="pre">0</span></code> (no truncation).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">f_pole</span></code></p></td>
 <td><p>☐</p></td>
 <td><p>float</p></td>
 <td><p>Polar density floor of the interior component relative to its equatorial peak
 (before normalization). Must lie in <span class="math notranslate nohighlight">\([0, 1]\)</span>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">aspect</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">aspect</span></code></p></td>
 <td><p>☐</p></td>
 <td><p>float</p></td>
 <td><p>Angular thickness <span class="math notranslate nohighlight">\(b\)</span> of the interior component. Must be positive.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">theta</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">theta</span></code></p></td>
 <td><p>☐</p></td>
 <td><p>float or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p></td>
 <td><p>Polar angle from the symmetry axis. Bare values interpreted as radians.
@@ -1254,6 +1263,7 @@ May be an array that broadcasts against <code class="docutils literal notranslat
 <li><p>The angular normalization <span class="math notranslate nohighlight">\(I(b)\)</span> is evaluated by numerical quadrature once per call to the
 validation layer; freeze parameters with <code class="docutils literal notranslate"><span class="pre">as_optimized_callable</span></code> to avoid repeating it.</p></li>
 <li><p>With <code class="docutils literal notranslate"><span class="pre">rho_int</span> <span class="pre">=</span> <span class="pre">0</span></code>, or <code class="docutils literal notranslate"><span class="pre">f_pole</span> <span class="pre">=</span> <span class="pre">1</span></code>, the profile reduces to a spherical sum of power laws.</p></li>
+<li><p>Without <code class="docutils literal notranslate"><span class="pre">r_min</span></code> the enclosed mass diverges at small radius for <span class="math notranslate nohighlight">\(\alpha \ge 3\)</span>.</p></li>
 </ul>
 <p class="rubric">References</p>
 <div class="docutils container" id="id2">

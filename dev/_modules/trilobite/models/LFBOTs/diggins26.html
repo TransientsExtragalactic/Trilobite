@@ -466,6 +466,7 @@
 <span class="sd">6. The observed flux density is the sum of the attenuated sectors.</span>
 <span class="sd">"""</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
@@ -473,7 +474,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">quad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntegrationWarning</span><span class="p">,</span> <span class="n">quad</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.profiles.csm</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisymmetricCSMDensityProfile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.profiles.ejecta</span><span class="w"> </span><span class="kn">import</span> <span class="n">BrokenPowerLawEjectaProfile</span><span class="p">,</span> <span class="n">_normalize_bpl_cgs</span>
@@ -928,7 +929,8 @@
 <span class="sd">    - the ejecta profile cannot be normalized to :math:`(E_{\rm ej}, M_{\rm ej})` with :math:`v_{\max} = c`,</span>
 <span class="sd">    - :math:`v_0 = \sqrt{2E_{\rm ej}/M_{\rm ej}}` exceeds ``max_initial_beta`` times :math:`c`,</span>
 <span class="sd">    - :math:`\gamma_{\max}` is too close to :math:`\gamma_{\min}` to place a cooling break,</span>
-<span class="sd">    - there is no CSM mass inside the starting radius, or</span>
+<span class="sd">    - there is no finite CSM mass inside the starting radius (including a slope :math:`\alpha \ge 3` with no</span>
+<span class="sd">      ``inner_radius``), or</span>
 <span class="sd">    - the shock ODE integration fails.</span>
 
 <span class="sd">    :meth:`diagnose` reports which condition rejected a parameter set. Hard parameter-bound violations raise</span>
@@ -971,14 +973,14 @@
             <span class="mf">1.5</span><span class="p">,</span>
             <span class="n">description</span><span class="o">=</span><span class="s2">"Power-law slope of the interior CSM component."</span><span class="p">,</span>
             <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">"\alpha_{\rm int}"</span><span class="p">,</span>
-            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
             <span class="s2">"alpha_ext"</span><span class="p">,</span>
             <span class="mf">2.0</span><span class="p">,</span>
             <span class="n">description</span><span class="o">=</span><span class="s2">"Power-law slope of the exterior CSM component."</span><span class="p">,</span>
             <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">"\alpha_{\rm ext}"</span><span class="p">,</span>
-            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
             <span class="s2">"R_trans"</span><span class="p">,</span>
@@ -1144,6 +1146,7 @@
         <span class="n">helium_mass_fraction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
         <span class="n">reference_radius</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e15</span><span class="p">,</span>
+        <span class="n">inner_radius</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">shock_start_time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
         <span class="n">max_initial_beta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
         <span class="n">gamma_points_per_decade</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
@@ -1174,6 +1177,12 @@
 <span class="sd">            Adiabatic index of the shocked gas. Default ``5/3``.</span>
 <span class="sd">        reference_radius : float or ~astropy.units.Quantity, optional</span>
 <span class="sd">            Reference radius at which ``rho_int`` and ``rho_ext`` are defined. Bare values are cm. Default ``1e15 cm``.</span>
+<span class="sd">        inner_radius : float or ~astropy.units.Quantity, optional</span>
+<span class="sd">            Inner radius :math:`r_{\rm min}` of the CSM, passed to the density profile as ``r_min``: both CSM</span>
+<span class="sd">            components have zero density below it. It sets the lower limit of the CSM mass swept up inside</span>
+<span class="sd">            :math:`R_0`. With the default ``0`` the CSM extends to the origin, and that mass diverges for slopes</span>
+<span class="sd">            :math:`\alpha \ge 3`, so ``inner_radius`` must be positive if the model is used with such slopes. It must</span>
+<span class="sd">            be smaller than :math:`R_0 = v_0 t_0` for a parameter set to be feasible. Bare values are cm. Default ``0``.</span>
 <span class="sd">        shock_start_time : float or ~astropy.units.Quantity, optional</span>
 <span class="sd">            Source-frame time at which the shock integration starts (at :math:`R_0 = v_0 t_0`). Every requested</span>
 <span class="sd">            epoch must satisfy :math:`t_{\rm obs}/(1+z) \ge t_0`. Bare values are seconds. Default ``0.3 d``. The</span>
@@ -1257,6 +1266,7 @@
         <span class="c1"># ---- Shock and numerical configuration ------------------------------------------------------------------ #</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_adiabatic_index</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">adiabatic_index</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_r_ref</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">reference_radius</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">inner_radius</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_t_0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">shock_start_time</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_initial_beta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_initial_beta</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gamma_points_per_decade</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gamma_points_per_decade</span><span class="p">)</span>
@@ -1276,6 +1286,8 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`adiabatic_index` must exceed 1."</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_ref</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`reference_radius` must be positive."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_min</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`inner_radius` must be non-negative."</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t_0</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`shock_start_time` must be positive."</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_initial_beta</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -1306,6 +1318,7 @@
             <span class="n">helium_mass_fraction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_Y</span><span class="p">,</span>
             <span class="n">adiabatic_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_adiabatic_index</span><span class="p">,</span>
             <span class="n">reference_radius</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_r_ref</span><span class="p">,</span>
+            <span class="n">inner_radius</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_r_min</span><span class="p">,</span>
             <span class="n">shock_start_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_t_0</span><span class="p">,</span>
             <span class="n">max_initial_beta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_initial_beta</span><span class="p">,</span>
             <span class="n">gamma_points_per_decade</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_gamma_points_per_decade</span><span class="p">,</span>
@@ -1375,6 +1388,7 @@
             <span class="s2">"rho_int"</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="s2">"rho_int"</span><span class="p">],</span>
             <span class="s2">"rho_ext"</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="s2">"rho_ext"</span><span class="p">],</span>
             <span class="s2">"r_ref"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_ref</span><span class="p">,</span>
+            <span class="s2">"r_min"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_min</span><span class="p">,</span>
             <span class="s2">"alpha_int"</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="s2">"alpha_int"</span><span class="p">],</span>
             <span class="s2">"alpha_ext"</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="s2">"alpha_ext"</span><span class="p">],</span>
             <span class="s2">"r_trans"</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="s2">"R_trans"</span><span class="p">],</span>
@@ -1403,6 +1417,16 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="p">[</span><span class="s2">"gamma_max"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1.0201</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s2">"gamma_min"</span><span class="p">]:</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"gamma_max must exceed 1.0201 * gamma_min to place a cooling break."</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_min</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="c1"># With no inner cutoff, the mass inside R_0 is the integral of rho r^2 from the origin, which diverges</span>
+            <span class="c1"># for any present component whose slope is &gt;= 3.</span>
+            <span class="k">for</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">slope</span> <span class="ow">in</span> <span class="p">((</span><span class="n">p</span><span class="p">[</span><span class="s2">"rho_int"</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="s2">"alpha_int"</span><span class="p">]),</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">"rho_ext"</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="s2">"alpha_ext"</span><span class="p">])):</span>
+                <span class="k">if</span> <span class="n">amplitude</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">slope</span> <span class="o">&gt;=</span> <span class="mf">3.0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"A CSM slope of </span><span class="si">{</span><span class="n">slope</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> &gt;= 3 has divergent mass at small radius; "</span>
+                        <span class="s2">"set a positive `inner_radius`."</span>
+                    <span class="p">)</span>
+
         <span class="c1"># The private CGS normalization is used directly: the public `normalize` wraps its result in astropy units,</span>
         <span class="c1"># which would only be converted straight back (a measurable cost at every posterior evaluation).</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1423,13 +1447,28 @@
         <span class="k">return</span> <span class="n">AxisymmetricCSMDensityProfile</span><span class="o">.</span><span class="n">as_optimized_callable</span><span class="p">(</span><span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_csm_parameters</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_swept_mass</span><span class="p">(</span><span class="n">rho_csm</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""CSM mass inside ``radius`` along a spherical sightline, :math:`4\pi\int_0^R \rho r^2 dr`."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_swept_mass</span><span class="p">(</span><span class="n">rho_csm</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">r_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        CSM mass between ``r_min`` and ``radius`` along a spherical sightline.</span>
+
+<span class="sd">        This is :math:`4\pi\int_{r_{\min}}^R \rho r^2 dr`.</span>
+
+<span class="sd">        Returns ``nan`` if the integral diverges or does not converge (for ``r_min = 0`` and a slope</span>
+<span class="sd">        :math:`\alpha \ge 3`), so that the parameter set is rejected as infeasible rather than carrying an</span>
+<span class="sd">        unconverged value.</span>
+<span class="sd">        """</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">integrand</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">rho_csm</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="n">r</span>
 
-        <span class="k">return</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">quad</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">epsabs</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">epsrel</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">200</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">radius</span> <span class="o">&lt;=</span> <span class="n">r_min</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"error"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">IntegrationWarning</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">quad</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="n">r_min</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">epsabs</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">epsrel</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">200</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span> <span class="n">IntegrationWarning</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_solve_dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">prep</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">t_rest</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -1448,9 +1487,12 @@
             <span class="n">rho_1</span><span class="p">,</span> <span class="n">u_1</span><span class="p">,</span> <span class="n">rho_4</span><span class="p">,</span> <span class="n">u_4</span> <span class="o">=</span> <span class="n">make_homologous_stationary_sources</span><span class="p">(</span><span class="n">rho_ej</span><span class="o">=</span><span class="n">prep</span><span class="p">[</span><span class="s2">"rho_ej"</span><span class="p">],</span> <span class="n">rho_csm</span><span class="o">=</span><span class="n">rho_csm</span><span class="p">)</span>
 
             <span class="c1"># The starting shell holds the CSM swept up inside R_0 along this sightline.</span>
-            <span class="n">M_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_swept_mass</span><span class="p">(</span><span class="n">rho_csm</span><span class="p">,</span> <span class="n">prep</span><span class="p">[</span><span class="s2">"R_0"</span><span class="p">])</span>
+            <span class="n">M_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_swept_mass</span><span class="p">(</span><span class="n">rho_csm</span><span class="p">,</span> <span class="n">prep</span><span class="p">[</span><span class="s2">"R_0"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_min</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">M_0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">M_0</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
-                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"There is no CSM mass inside the starting radius R_0 = v_0 t_0."</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+                    <span class="s2">"There is no CSM mass (or it is not finite) inside the starting radius "</span>
+                    <span class="sa">f</span><span class="s2">"R_0 = v_0 t_0 = </span><span class="si">{</span><span class="n">prep</span><span class="p">[</span><span class="s1">'R_0'</span><span class="p">]</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2"> cm for inner_radius = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_r_min</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2"> cm."</span>
+                <span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">shock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shock_engine</span><span class="o">.</span><span class="n">_compute_shock_properties_cgs</span><span class="p">(</span>
