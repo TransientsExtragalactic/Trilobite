@@ -1649,7 +1649,7 @@ G(V)
     \frac{\nu_2\,\gamma}{\gamma V - 1}
 \right].\]</div>
 <p>The integral is then evaluated numerically using
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.quad.html#scipy.integrate.quad" title="(in SciPy v1.18.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.integrate.quad()</span></code></a>. For <span class="math notranslate nohighlight">\(\gamma = 5/3\)</span> (monatomic ideal gas),</p>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.integrate.quad()</span></code>. For <span class="math notranslate nohighlight">\(\gamma = 5/3\)</span> (monatomic ideal gas),</p>
 <div class="math notranslate nohighlight">
 \[\beta\!\left(\tfrac{5}{3}\right)
 \approx 1.1517,
@@ -1680,7 +1680,7 @@ all user-controllable via keyword arguments.</p>
 <p>The derivations above are directly reflected in the Trilobite implementation:</p>
 <ul>
 <li><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.sedov_taylor.sedov_taylor_beta.html#trilobite.dynamics.shocks.sedov_taylor.sedov_taylor_beta" title="trilobite.dynamics.shocks.sedov_taylor.sedov_taylor_beta"><code class="xref py py-func docutils literal notranslate"><span class="pre">sedov_taylor_beta()</span></code></a> evaluates
-<span class="math notranslate nohighlight">\(C_E(\gamma)\)</span> via <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.quad.html#scipy.integrate.quad" title="(in SciPy v1.18.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.integrate.quad()</span></code></a> over the parametric
+<span class="math notranslate nohighlight">\(C_E(\gamma)\)</span> via <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.integrate.quad()</span></code> over the parametric
 <span class="math notranslate nohighlight">\(V\)</span>-interval and returns <span class="math notranslate nohighlight">\(\beta = C_E^{-1/5}\)</span>.</p></li>
 <li><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.html#trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine" title="trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SedovTaylorShockEngine</span></code></a>
 stores <span class="math notranslate nohighlight">\(\beta\)</span> and evaluates the shock kinematics</p>

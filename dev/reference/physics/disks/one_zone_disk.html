@@ -1718,7 +1718,7 @@ governed by the local viscous timescale — the step size shrinks when the disk 
 evolving rapidly and grows when it is in a quasi-steady state.  To evaluate any
 field at a uniform or user-specified time grid, use the interpolation utilities.</p>
 <p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.get_field_interpolator.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.get_field_interpolator" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.get_field_interpolator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_field_interpolator()</span></code></a>
-builds a <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.InterpolatedUnivariateSpline.html#scipy.interpolate.InterpolatedUnivariateSpline" title="(in SciPy v1.18.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">InterpolatedUnivariateSpline</span></code></a> over the
+builds a <code class="xref py py-class docutils literal notranslate"><span class="pre">InterpolatedUnivariateSpline</span></code> over the
 integration time axis:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">interp_Tc</span>   <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_field_interpolator</span><span class="p">(</span><span class="s2">"T_c"</span><span class="p">)</span>       <span class="c1"># cubic spline (k=3)</span>
 <span class="n">interp_mdot</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_field_interpolator</span><span class="p">(</span><span class="s2">"mdot"</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># linear spline</span>
@@ -1784,7 +1784,7 @@ behaviour, pass <code class="docutils literal notranslate"><span class="pre">ext
 </tbody>
 </table>
 </div>
-<p>This keyword is forwarded to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.InterpolatedUnivariateSpline.html#scipy.interpolate.InterpolatedUnivariateSpline" title="(in SciPy v1.18.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">InterpolatedUnivariateSpline</span></code></a>
+<p>This keyword is forwarded to <code class="xref py py-class docutils literal notranslate"><span class="pre">InterpolatedUnivariateSpline</span></code>
 only when no pre-built interpolator is supplied.  If a pre-built interpolator is passed,
 its own <code class="docutils literal notranslate"><span class="pre">ext</span></code> setting applies.</p>
 </div>

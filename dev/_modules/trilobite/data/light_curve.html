@@ -993,13 +993,13 @@
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Convert this :class:`OpticalLightCurveContainer` to an :class:`~trilobite.data.core.InferenceData` object.</span>
 
-<span class="sd">        The container's band name is resolved to an integer ``band_idx`` via</span>
+<span class="sd">        The container's band name is resolved to an integer ``band_index`` via</span>
 <span class="sd">        ``model.bundle.filter_names``. The band index is broadcast to a constant</span>
 <span class="sd">        array (same value for every time point) and injected into ``x``.</span>
 
 <span class="sd">        Default mapping:</span>
 
-<span class="sd">        - ``variables``: ``{"time": ..., "band_idx": &lt;constant&gt;}``</span>
+<span class="sd">        - ``variables``: ``{"time": ..., "band_index": &lt;constant&gt;}``</span>
 <span class="sd">        - ``observables``: the single model output mapped to flux columns</span>
 
 <span class="sd">        Parameters</span>
@@ -1039,7 +1039,7 @@
         <span class="n">filter_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">bundle</span><span class="o">.</span><span class="n">filter_names</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filter_names</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Band '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="si">}</span><span class="s2">' is not in the model's FilterBundle. Available bands: </span><span class="si">{</span><span class="n">filter_names</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="n">band_idx</span> <span class="o">=</span> <span class="n">filter_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="n">band_index</span> <span class="o">=</span> <span class="n">filter_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
 
         <span class="c1"># Apply optional row mask</span>
         <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1050,7 +1050,7 @@
             <span class="n">mask_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
         <span class="n">t_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">mask_arr</span><span class="p">]</span>
-        <span class="n">idx_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">t_vals</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">band_idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">idx_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">t_vals</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">band_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">flux_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg/(s cm2 Hz)"</span><span class="p">))</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">mask_arr</span><span class="p">]</span>
         <span class="n">flux_err_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flux_error</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg/(s cm2 Hz)"</span><span class="p">))</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">mask_arr</span><span class="p">]</span>
         <span class="n">flux_ul_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flux_upper_limit</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg/(s cm2 Hz)"</span><span class="p">))</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">mask_arr</span><span class="p">]</span>
@@ -1073,7 +1073,7 @@
         <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">"time"</span><span class="p">:</span> <span class="n">t_vals</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
-                <span class="s2">"band_idx"</span><span class="p">:</span> <span class="n">idx_vals</span><span class="p">,</span>
+                <span class="s2">"band_index"</span><span class="p">:</span> <span class="n">idx_vals</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="k">if</span> <span class="n">observables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
@@ -1102,7 +1102,7 @@
         <span class="n">scratch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">scratch</span> <span class="o">=</span> <span class="n">scratch</span><span class="p">[</span><span class="n">mask_arr</span><span class="p">]</span>
-        <span class="n">scratch</span><span class="p">[</span><span class="s2">"band_idx"</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx_vals</span>
+        <span class="n">scratch</span><span class="p">[</span><span class="s2">"band_index"</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx_vals</span>
         <span class="k">return</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
             <span class="n">table</span><span class="o">=</span><span class="n">scratch</span><span class="p">,</span>

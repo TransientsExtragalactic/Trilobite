@@ -1430,7 +1430,7 @@ Each row is one observation in a specific band at a specific time:</p>
 <div class="math notranslate nohighlight">
 \[F_\nu(t,\, \mathrm{band})\]</div>
 <p class="sd-card-text">Band names (<code class="docutils literal notranslate"><span class="pre">&quot;g&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;r&quot;</span></code>, …) are stored as strings in a <code class="docutils literal notranslate"><span class="pre">band_name</span></code>
-column. At inference time they are mapped to integer <code class="docutils literal notranslate"><span class="pre">band_idx</span></code> values
+column. At inference time they are mapped to integer <code class="docutils literal notranslate"><span class="pre">band_index</span></code> values
 by looking them up in <code class="docutils literal notranslate"><span class="pre">model.bundle.filter_names</span></code>.</p>
 <p class="sd-card-text">Dual-representation example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load from magnitude columns — flux is computed on demand</span>
@@ -1462,7 +1462,7 @@ flux density or AB magnitude; both forms are always accessible regardless
 of input format.</p>
 <p class="sd-card-text">The band name is stored as metadata. At inference time it is resolved to
 an integer index via <code class="docutils literal notranslate"><span class="pre">model.bundle.filter_names</span></code> and broadcast as a
-constant array — every observation has the same <code class="docutils literal notranslate"><span class="pre">band_idx</span></code>.</p>
+constant array — every observation has the same <code class="docutils literal notranslate"><span class="pre">band_index</span></code>.</p>
 <p class="sd-card-text">Full reference: <a class="reference internal" href="light_curve.html#optical-light-curve"><span class="std std-ref">OpticalLightCurveContainer</span></a></p>
 </div>
 </details></section>

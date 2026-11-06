@@ -1392,14 +1392,14 @@ and converts the <span class="math notranslate nohighlight">\(8\pi\)</span> deno
 <span class="math notranslate nohighlight">\(F(x)\)</span> grows no faster than <span class="math notranslate nohighlight">\(x^{1/3}\)</span> (log-slope <span class="math notranslate nohighlight">\(1/3\)</span>) at small <span class="math notranslate nohighlight">\(x\)</span> and falls
 exponentially (log-slope <span class="math notranslate nohighlight">\(\approx -x \ll 0\)</span>) at large <span class="math notranslate nohighlight">\(x\)</span>, so the log-derivative is bounded above by
 <span class="math notranslate nohighlight">\(1/3 &lt; 1\)</span> across the entire domain. A positive definite integrand means the sum can be evaluated directly in
-log-space via <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.logsumexp.html#scipy.special.logsumexp" title="(in SciPy v1.18.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code></a> without any sign-handling — the same strategy used for the emissivity.</p>
+log-space via <code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code> without any sign-handling — the same strategy used for the emissivity.</p>
 <p>The practical evaluation is identical in structure to the emissivity: one builds the <span class="math notranslate nohighlight">\((n_\nu \times n_\gamma)\)</span>
 matrix of <span class="math notranslate nohighlight">\(x_{ij}\)</span> values, looks up <span class="math notranslate nohighlight">\(\ln F(x_{ij})\)</span> and the derivative <span class="math notranslate nohighlight">\(d\ln F/d\ln x\big|_{x_{ij}}\)</span>
 from their respective splines, computes the IBP kernel</p>
 <div class="math notranslate nohighlight">
 \[\ln\bigl(F(x_{ij}) - x_{ij} F'(x_{ij})\bigr)
 = \ln F(x_{ij}) + \ln\!\left(1 - \frac{d\ln F}{d\ln x}\bigg|_{x_{ij}}\right),\]</div>
-<p>and then sums over <span class="math notranslate nohighlight">\(\gamma\)</span> with <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.logsumexp.html#scipy.special.logsumexp" title="(in SciPy v1.18.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code></a>. The final result is</p>
+<p>and then sums over <span class="math notranslate nohighlight">\(\gamma\)</span> with <code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code>. The final result is</p>
 <div class="math notranslate nohighlight">
 \[\ln|\alpha_\nu| = \ln\!\left(\frac{\chi}{m_e}\right) + \ln B + \ln\sin\alpha - 2\ln\nu
            + \mathrm{logsumexp}_i\!\left[\ln(F - xF')_{\nu i} + n_i + \tilde{w}_i - \ln\gamma_i\right],\]</div>

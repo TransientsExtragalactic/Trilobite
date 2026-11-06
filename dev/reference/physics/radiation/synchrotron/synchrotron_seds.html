@@ -1546,7 +1546,7 @@ capability. Given any electron distribution — supplied either as a callable fu
 array — it evaluates the emissivity integral and the self-absorption coefficient on a log-uniform
 <span class="math notranslate nohighlight">\((\nu, \gamma)\)</span> grid, solves the radiative transfer equation for a homogeneous source slab, and
 applies relativistic Doppler and cosmological redshift corrections to produce an observed flux density.
-The entire computation is performed in log-space using <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.logsumexp.html#scipy.special.logsumexp" title="(in SciPy v1.18.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code></a>, which keeps it
+The entire computation is performed in log-space using <code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code>, which keeps it
 numerically stable across the large dynamic range typical of synchrotron spectra and fast enough for use
 in inference hot loops.</p>
 <p>Unlike the stateless <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED" title="trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronSED</span></code></a> subclasses,

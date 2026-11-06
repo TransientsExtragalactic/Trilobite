@@ -168,7 +168,7 @@ This call:
 
 1. Inspects ``model.bundle.filter_names`` (e.g., ``['g', 'r', 'i', 'z']``).
 2. Resolves each string in the ``band_name`` column to an integer index.
-3. Uses the integer ``band_idx`` array as the independent variable.
+3. Uses the integer ``band_index`` array as the independent variable.
 4. Returns a validated :class:`~trilobite.data.core.InferenceData` object.
 
 Before converting, you can inspect the model's registered bands:

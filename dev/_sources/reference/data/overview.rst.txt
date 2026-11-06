@@ -340,7 +340,7 @@ inference time via the model's :class:`~trilobite.utils.phot_utils.FilterBundle`
       F_\nu(t,\, \mathrm{band})
 
    Band names (``"g"``, ``"r"``, …) are stored as strings in a ``band_name``
-   column. At inference time they are mapped to integer ``band_idx`` values
+   column. At inference time they are mapped to integer ``band_index`` values
    by looking them up in ``model.bundle.filter_names``.
 
    Dual-representation example:
@@ -378,7 +378,7 @@ inference time via the model's :class:`~trilobite.utils.phot_utils.FilterBundle`
 
    The band name is stored as metadata. At inference time it is resolved to
    an integer index via ``model.bundle.filter_names`` and broadcast as a
-   constant array — every observation has the same ``band_idx``.
+   constant array — every observation has the same ``band_index``.
 
    Full reference: :ref:`optical_light_curve`
 

@@ -1266,7 +1266,7 @@ magnitude convention. <code class="docutils literal notranslate"><span class="pr
 <ol class="arabic simple">
 <li><p>Inspects <code class="docutils literal notranslate"><span class="pre">model.bundle.filter_names</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">['g',</span> <span class="pre">'r',</span> <span class="pre">'i',</span> <span class="pre">'z']</span></code>).</p></li>
 <li><p>Resolves each string in the <code class="docutils literal notranslate"><span class="pre">band_name</span></code> column to an integer index.</p></li>
-<li><p>Uses the integer <code class="docutils literal notranslate"><span class="pre">band_idx</span></code> array as the independent variable.</p></li>
+<li><p>Uses the integer <code class="docutils literal notranslate"><span class="pre">band_index</span></code> array as the independent variable.</p></li>
 <li><p>Returns a validated <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object.</p></li>
 </ol>
 <p>Before converting, you can inspect the model’s registered bands:</p>
@@ -1440,7 +1440,7 @@ Magnitudes are converted to physical flux densities before the
 InferenceData is constructed.</p>
 <p>Default mapping:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code>: <code class="docutils literal notranslate"><span class="pre">{&quot;band_idx&quot;:</span> <span class="pre">&lt;resolved</span> <span class="pre">integer</span> <span class="pre">indices&gt;}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code>: <code class="docutils literal notranslate"><span class="pre">{&quot;band_index&quot;:</span> <span class="pre">&lt;resolved</span> <span class="pre">integer</span> <span class="pre">indices&gt;}</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">observables</span></code>: the single model output mapped to flux columns</p></li>
 </ul>
 <dl class="field-list simple">
