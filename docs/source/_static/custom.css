@@ -1,9 +1,81 @@
-:root {
-    --pst-color-primary: #6d28d9;
-    --pst-color-secondary: #a78bfa;
+/* ── Color scheme ───────────────────────────────────────────────────────────
+   Palette sampled from the Trilobite logo (indigo -> plum -> coral -> orange -> gold).
+   pydata-sphinx-theme defines its colors under html[data-theme=...], which has higher
+   specificity than :root, so overrides must use the same selectors to take effect.
+   Everything else in this file should reference --pst-color-* rather than hardcoding. */
+html[data-theme="light"] {
+    --pst-color-primary: #8b376c;
+    --pst-color-primary-text: #fff;
+    --pst-color-primary-highlight: #6f2c56;
+    --pst-color-primary-bg: #f3e1ec;
+    --pst-color-secondary: #c25a38;
+    --pst-color-secondary-text: #fff;
+    --pst-color-secondary-highlight: #a24626;
+    --pst-color-secondary-bg: #fbe6dd;
+    --pst-color-accent: #d9822b;
+    --pst-color-accent-bg: #fbecd6;
 
-    --pst-color-link: #6d28d9;
-    --pst-color-link-hover: #5b21b6;
+    --pst-color-info: #4b3a7a;
+    --pst-color-info-bg: #e6e1f2;
+    --pst-color-warning: #c47a1c;
+    --pst-color-warning-bg: #fbead2;
+    --pst-color-success: #8b6063;
+    --pst-color-success-bg: #f3e8e8;
+    --pst-color-danger: #b3283f;
+    --pst-color-danger-bg: #f8e1e5;
+
+    --pst-color-text-base: #2e2241;
+    --pst-color-text-muted: #6c6179;
+    --pst-color-border: #eadfe6;
+    --pst-color-inline-code: #b4472b;
+    --pst-color-target: #f6dfa0;
+    --pst-color-link: var(--pst-color-primary);
+    --pst-color-link-hover: #5f2449;
+    --pst-color-link-higher-contrast: #6f2c56;
+
+    --pst-color-background: #fff;
+    --pst-color-on-background: #fff;
+    --pst-color-surface: #faf5f8;
+    --pst-color-on-surface: #2e2241;
+    --pst-color-table-row-hover-bg: #f3e1ec;
+}
+
+html[data-theme="dark"] {
+    --pst-color-primary: #e08ab8;
+    --pst-color-primary-text: #17121f;
+    --pst-color-primary-highlight: #ee9fc8;
+    --pst-color-primary-bg: #3a1a2f;
+    --pst-color-secondary: #ee8f6a;
+    --pst-color-secondary-text: #17121f;
+    --pst-color-secondary-highlight: #f7a688;
+    --pst-color-secondary-bg: #3d2118;
+    --pst-color-accent: #f9cf6c;
+    --pst-color-accent-bg: #3d3016;
+
+    --pst-color-info: #a99be0;
+    --pst-color-info-bg: #2a2250;
+    --pst-color-warning: #f9cf6c;
+    --pst-color-warning-bg: #45350f;
+    --pst-color-success: #ee8f6a;
+    --pst-color-success-bg: #3d2118;
+    --pst-color-danger: #f08a9a;
+    --pst-color-danger-bg: #4e111b;
+
+    --pst-color-text-base: #ece6f2;
+    --pst-color-text-muted: #a79bb5;
+    --pst-color-border: #3a2f4d;
+    --pst-color-border-muted: #2a2139;
+    --pst-color-inline-code: #f4a07e;
+    --pst-color-target: #5c4a12;
+    --pst-color-link: #eba0c6;
+    --pst-color-link-hover: #f9cf6c;
+    --pst-color-link-higher-contrast: #f0a8cb;
+
+    --pst-color-background: #17121f;
+    --pst-color-on-background: #1d1629;
+    --pst-color-surface: #261d36;
+    --pst-color-on-surface: #ece6f2;
+    --pst-color-table-row-hover-bg: #3a1a2f;
 }
 
 .hero {
@@ -18,6 +90,14 @@
     width: 250px;
 }
 
+/* The logo is already transparent. pydata-sphinx-theme gives content images a white
+   backing and dims them in dark mode; opt the logos out of both. */
+html[data-theme="dark"] .bd-content img.hero-logo,
+html[data-theme="dark"] .navbar-brand img {
+    background-color: transparent;
+    filter: none;
+}
+
 .hero-text h1 {
     margin: 0;
     font-size: 3.75rem;
@@ -28,7 +108,7 @@
 
 .hero-text p {
     margin: 0.25rem 0;
-    color: #555;
+    color: var(--pst-color-text-muted);
 }
 
 .badges {
@@ -44,7 +124,7 @@
 }
 
 .install-card {
-    background: linear-gradient(135deg, #f5f3ff, #ffffff);
+    background: linear-gradient(135deg, var(--pst-color-surface), var(--pst-color-background));
     border-left: 5px solid var(--pst-color-primary);
 }
 
@@ -52,7 +132,7 @@
 .affiliation-footer {
     margin-top: 3rem;
     padding: 2rem 1rem 1.25rem;
-    border-top: 1px solid var(--pst-color-border, #e0e0e0);
+    border-top: 1px solid var(--pst-color-border);
     text-align: center;
 }
 
@@ -60,7 +140,7 @@
     font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    color: #999;
+    color: var(--pst-color-text-muted);
     margin-bottom: 1.25rem;
 }
 
@@ -91,7 +171,7 @@
 
 .affiliation-text {
     font-size: 0.82rem;
-    color: #888;
+    color: var(--pst-color-text-muted);
     max-width: 520px;
     margin: 0.5rem auto 0;
     line-height: 1.65;
@@ -100,7 +180,7 @@
 /* ── Model directory ────────────────────────────────────────────────────── */
 /* Intro callout cards */
 .trilobite-callout {
-    background: linear-gradient(135deg, var(--pst-color-surface, #f5f3ff), var(--pst-color-background, #fff));
+    background: linear-gradient(135deg, var(--pst-color-surface), var(--pst-color-background));
     border-left: 4px solid var(--pst-color-primary);
 }
 
@@ -113,7 +193,7 @@
 .trilobite-jump-grid .sd-card:hover,
 .trilobite-topic-grid .sd-card:hover {
     border-color: var(--pst-color-secondary);
-    box-shadow: 0 2px 10px rgba(109, 40, 217, 0.18) !important;
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--pst-color-secondary) 30%, transparent) !important;
 }
 
 .trilobite-jump-grid .sd-card-title,
@@ -206,7 +286,7 @@
 .gallery-chip.on {
     background: var(--pst-color-primary);
     border-color: var(--pst-color-primary);
-    color: #fff;
+    color: var(--pst-color-primary-text);
 }
 
 .gallery-result-count {
