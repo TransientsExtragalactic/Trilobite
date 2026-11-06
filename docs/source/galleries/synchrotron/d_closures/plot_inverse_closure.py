@@ -28,14 +28,6 @@ This example demonstrates:
 2. Recovering the physical parameters from those observables
    (inverse closure).
 3. Testing the round-trip accuracy of the inversion.
-
-Relevant API References
------------------------
-
-- :meth:`~radiation.synchrotron.SEDs.PowerLaw_SynchrotronSED.from_physics_to_params`
-- :meth:`~radiation.synchrotron.SEDs.PowerLaw_SynchrotronSED.from_params_to_physics`
-- :meth:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params`
-- :meth:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED.from_params_to_physics`
 """
 
 import matplotlib.pyplot as plt
@@ -100,25 +92,11 @@ for B in B_grid:
         B_flat.append(B.to_value(u.G))
         R_flat.append(R.to_value(u.cm))
 
-        # --- Simple PL model ---
-        pars_pl = sed_pl.from_physics_to_params(
-            B=B,
-            R=R,
-            **base_kwargs,
-        )
-
+        pars_pl = sed_pl.from_physics_to_params(B=B, R=R, **base_kwargs)
         nu_peak_pl_fwd.append(pars_pl["nu_m"])
         F_peak_pl_fwd.append(pars_pl["F_peak"])
 
-        # --- Full Cooling + SSA model ---
-        pars_full = sed_full.from_physics_to_params(
-            B=B,
-            R=R,
-            f_A=1.0,
-            gamma_c=gamma_c,
-            **base_kwargs,
-        )
-
+        pars_full = sed_full.from_physics_to_params(B=B, R=R, f_A=1.0, gamma_c=gamma_c, **base_kwargs)
         nu_peak_full_fwd.append(pars_full["nu_peak"])
         F_peak_full_fwd.append(pars_full["F_peak"])
         regime_full_fwd.append(pars_full["regime"])
@@ -132,9 +110,6 @@ F_peak_pl_fwd = u.Quantity(F_peak_pl_fwd)
 nu_peak_full_fwd = u.Quantity(nu_peak_full_fwd)
 F_peak_full_fwd = u.Quantity(F_peak_full_fwd)
 
-print(f"Grid size: {len(B_flat)} (B,R) pairs")
-print(f"Regimes encountered (full model): {set(regime_full_fwd)}")
-
 
 # %%
 # Inverse Closure: Observable → Physical
@@ -147,7 +122,6 @@ B_rec_full = []
 R_rec_full = []
 
 for i in range(len(B_flat)):
-    # --- Simple model ---
     phys_pl = sed_pl.from_params_to_physics(
         F_peak=F_peak_pl_fwd[i],
         nu_peak=nu_peak_pl_fwd[i],
@@ -164,7 +138,6 @@ for i in range(len(B_flat)):
     B_rec_pl.append(phys_pl["B"].to_value(u.G))
     R_rec_pl.append(phys_pl["R"].to_value(u.cm))
 
-    # --- Full model ---
     phys_full = sed_full.from_params_to_physics(
         regime=regime_full_fwd[i],
         F_peak=F_peak_full_fwd[i],
@@ -194,6 +167,8 @@ R_rec_full = np.array(R_rec_full)
 # %%
 # Round-Trip Fidelity
 # -------------------
+#
+# Points lying on the dashed diagonal recover the input exactly.
 
 fig, axes = plt.subplots(2, 2, figsize=(10, 9))
 
@@ -206,23 +181,18 @@ for row, (B_rec, R_rec, label) in enumerate(cases):
     ax_B = axes[row, 0]
     ax_R = axes[row, 1]
 
-    B_true = B_flat
-    R_true = R_flat
+    lim_B = [B_flat.min() * 0.5, B_flat.max() * 2]
+    lim_R = [R_flat.min() * 0.5, R_flat.max() * 2]
 
-    lim_B = [B_true.min() * 0.5, B_true.max() * 2]
-    lim_R = [R_true.min() * 0.5, R_true.max() * 2]
-
-    ax_B.loglog(B_true, B_rec, "o", ms=4, alpha=0.75)
+    ax_B.loglog(B_flat, B_rec, "o", ms=4, alpha=0.75)
     ax_B.loglog(lim_B, lim_B, "k--", lw=1)
-
     ax_B.set_xlabel(r"Input $B$ [G]")
     ax_B.set_ylabel(r"Recovered $B$ [G]")
     ax_B.set_title(f"Magnetic Field Round-Trip ({label})")
     ax_B.grid(True, which="both", ls="--", alpha=0.3)
 
-    ax_R.loglog(R_true, R_rec, "s", ms=4, alpha=0.75, color="C1")
+    ax_R.loglog(R_flat, R_rec, "s", ms=4, alpha=0.75, color="C1")
     ax_R.loglog(lim_R, lim_R, "k--", lw=1)
-
     ax_R.set_xlabel(r"Input $R$ [cm]")
     ax_R.set_ylabel(r"Recovered $R$ [cm]")
     ax_R.set_title(f"Radius Round-Trip ({label})")
@@ -230,25 +200,6 @@ for row, (B_rec, R_rec, label) in enumerate(cases):
 
 plt.tight_layout()
 plt.show()
-
-
-# %%
-# Round-Trip Error Statistics
-# ---------------------------
-
-rel_B_pl = np.abs(B_rec_pl - B_flat) / B_flat
-rel_R_pl = np.abs(R_rec_pl - R_flat) / R_flat
-
-rel_B_full = np.abs(B_rec_full - B_flat) / B_flat
-rel_R_full = np.abs(R_rec_full - R_flat) / R_flat
-
-print("\nRound-trip relative errors (Simple PL)")
-print(f"B: max = {rel_B_pl.max():.2e}, median = {np.median(rel_B_pl):.2e}")
-print(f"R: max = {rel_R_pl.max():.2e}, median = {np.median(rel_R_pl):.2e}")
-
-print("\nRound-trip relative errors (Cooling + SSA)")
-print(f"B: max = {rel_B_full.max():.2e}, median = {np.median(rel_B_full):.2e}")
-print(f"R: max = {rel_R_full.max():.2e}, median = {np.median(rel_R_full):.2e}")
 
 
 # %%
@@ -266,9 +217,11 @@ print(f"R: max = {rel_R_full.max():.2e}, median = {np.median(rel_R_full):.2e}")
 # determined observationally from the measured ordering of the spectral
 # breaks in the broadband SED.
 #
-# The simpler :class:`PowerLaw_SynchrotronSED` has only a single break and
-# therefore no regime ambiguity. It is appropriate when the source is
-# optically thin and uncooled across the observed band.
+# The simpler
+# :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED`
+# has only a single break and therefore no regime ambiguity. It is
+# appropriate when the source is optically thin and uncooled across the
+# observed band.
 #
 # See the forward-closure example for how the characteristic break
 # frequencies scale with the physical parameters.

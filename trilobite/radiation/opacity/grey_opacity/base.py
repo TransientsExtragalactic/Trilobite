@@ -119,7 +119,7 @@ class GreyOpacityLaw(OpacityLaw):
             Mass density, convertible to :math:`\mathrm{g\,cm^{-3}}`.
         T : `~astropy.units.Quantity`
             Temperature, convertible to K.
-        nu : ignored
+        nu : any, optional
             Accepted for interface compatibility; grey opacity has no frequency
             dependence.
 
@@ -141,7 +141,7 @@ class GreyOpacityLaw(OpacityLaw):
             Mass density.
         T : `~astropy.units.Quantity`
             Temperature.
-        nu : ignored
+        nu : any, optional
         """
         log_T = np.log(ensure_in_units(T, u.K))
         log_rho = np.log(ensure_in_units(rho, u.g / u.cm**3))
@@ -156,7 +156,7 @@ class GreyOpacityLaw(OpacityLaw):
             Mass density.
         T : `~astropy.units.Quantity`
             Temperature.
-        nu : ignored
+        nu : any, optional
         """
         log_T = np.log(ensure_in_units(T, u.K))
         log_rho = np.log(ensure_in_units(rho, u.g / u.cm**3))

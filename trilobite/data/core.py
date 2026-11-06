@@ -381,7 +381,7 @@ class DataContainer(ABC):
 
         Returns
         -------
-        DataContainer
+        ~trilobite.data.core.DataContainer
             A new instance of the same class containing only the selected rows,
             with full schema validation re-applied.
 
@@ -460,7 +460,7 @@ class DataContainer(ABC):
 
         Returns
         -------
-        DataContainer
+        ~trilobite.data.core.DataContainer
             An instance of the subclass containing the data from the table.
         """
         pass
@@ -481,7 +481,7 @@ class DataContainer(ABC):
 
         Returns
         -------
-        DataContainer
+        ~trilobite.data.core.DataContainer
             An instance of the subclass containing the data from the FITS file.
         """
         # Coerce the read kwargs.
@@ -578,7 +578,7 @@ class DataContainer(ABC):
         ValueError
             If required columns are missing or shapes are inconsistent.
 
-        UnitsError
+        ~astropy.units.UnitsError
             If table column units cannot be coerced to model-declared units.
 
         Notes
@@ -1593,7 +1593,7 @@ class InferenceData:
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             The model defining:
 
             - Required independent variable names
@@ -1890,7 +1890,7 @@ class InferenceData:
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             Model defining required variable and observable names and units.
 
         table : astropy.table.Table
@@ -2717,7 +2717,7 @@ class XYDataContainer(DataContainer, ABC):
 
     See Also
     --------
-    DataContainer
+    ~trilobite.data.core.DataContainer
      Base class providing schema validation and immutability.
     trilobite.inference.likelihood.base.Likelihood
      Likelihood classes that interpret uncertainties and censoring.

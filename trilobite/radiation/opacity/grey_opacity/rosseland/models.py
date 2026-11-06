@@ -184,7 +184,7 @@ class KramersFFOpacity(GreyOpacityLaw):
             = \kappa_{\rm ff,0}\,\rho\,T^{-3.5},
 
     where composition factors :math:`(1+X)` are absorbed into the normalisation
-    :attr:`kappa0`.  This is the dominant grey opacity source at
+    ``kappa0``.  This is the dominant grey opacity source at
     :math:`T \lesssim 10^7\,\mathrm{K}` in hot, diffuse, fully ionised
     gas where there are few bound electrons for photoionisation (e.g. hot
     ISM, stellar coronae, accretion disc corona).  Below
@@ -251,7 +251,7 @@ class KramersBFOpacity(GreyOpacityLaw):
         \kappa_{\rm bf}(\rho, T)
             = \kappa_{\rm bf,0}\,\rho\,T^{-3.5},
 
-    where composition factors :math:`Z\,(1+X)` are absorbed into :attr:`kappa0`.
+    where composition factors :math:`Z\,(1+X)` are absorbed into ``kappa0``.
     For solar composition :math:`\kappa_{\rm bf,0} \approx 4.34 \times 10^{25}`, roughly
     three orders of magnitude above the free-free coefficient, so bound-free
     dominates the Kramers opacity in most stellar-envelope conditions
@@ -619,11 +619,11 @@ class OPALOpacity(GreyOpacityLaw):
 
     Parameters
     ----------
-    grid_T : array_like, shape (n1,)
+    grid_T : ~numpy.ndarray
         :math:`\log_{10}(T\,[\mathrm{K}])` grid values (strictly increasing).
-    grid_R : array_like, shape (n2,)
+    grid_R : ~numpy.ndarray
         :math:`\log_{10}(R)` grid values (strictly increasing).
-    kappa : array_like, shape (n1, n2)
+    kappa : ~numpy.ndarray
         :math:`\log_{10}(\kappa\,[\mathrm{cm^2\,g^{-1}}])`.
         ``NaN`` marks out-of-range cells.
     out_of_bounds : {'raise', 'clamp', 'nan'}, optional
@@ -632,7 +632,7 @@ class OPALOpacity(GreyOpacityLaw):
 
     See Also
     --------
-    load_opal_opacity : Convenience loader for the bundled table.
+    ~trilobite.radiation.opacity.utils.load_opal_opacity : Convenience loader for the bundled table.
     KramersESOpacity : Analytic alternative for rough estimates.
 
     Examples
@@ -712,7 +712,7 @@ class OPALOpacity(GreyOpacityLaw):
 
         Returns
         -------
-        SimpleNamespace
+        ~types.SimpleNamespace
             Read-only namespace with arrays:
 
             * ``grid_T``  — :math:`\log_{10}(T\,[\mathrm{K}])`, shape ``(70,)``

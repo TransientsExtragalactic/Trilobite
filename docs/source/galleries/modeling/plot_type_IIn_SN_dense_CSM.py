@@ -47,12 +47,15 @@ Relevant API
 # %%
 # Setup
 # -----
+import warnings
+
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
 from trilobite.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
+from trilobite.dynamics.shocks.core import StrongColdShockConditions
 from trilobite.radiation.free_free.absorption import (
     compute_ff_RJ_optical_depth_from_quadrature,
 )
@@ -83,7 +86,7 @@ v_wind = 100.0 * u.km / u.s  # Wind speed (LBV; RSG wind is ~10 km/s)
 epsilon_e = 0.1
 epsilon_B = 0.1
 p = 3.0
-gamma_min = 1.0
+gamma_min = 2.0
 gamma_max = 1e8
 mu = 0.61
 f_V = 0.5
@@ -128,13 +131,24 @@ v_sh = shock_outputs.velocity.to(u.cm / u.s)
 rho_up = (M_dot / (4 * np.pi * r_sh**2 * v_wind)).to(u.g / u.cm**3)
 
 # Post-shock magnetic field
-_R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
-_U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
-B = np.sqrt(8 * np.pi * epsilon_B * _U) * u.G
+e_th = StrongColdShockConditions.compute_post_shock_thermal_energy_density(
+    shock_velocity=v_sh,
+    upstream_density=rho_up,
+)
+B = np.sqrt(8 * np.pi * epsilon_B * e_th.to_value(u.erg / u.cm**3)) * u.G
 
 # Synchrotron cooling Lorentz factor
 cooling_engine = SynchrotronRadiativeCoolingEngine()
-gamma_c = cooling_engine.compute_cooling_gamma(B=B, t=times)
+
+
+def cooling_gamma(B, t):
+    """Cooling Lorentz factor floored at ``gamma_min = 1`` (fast cooling). The engine warns when it is below 1."""
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        return np.maximum(cooling_engine.compute_cooling_gamma(B=B, t=t), 1.0)
+
+
+gamma_c = cooling_gamma(B, times)
 
 # %%
 # Free-Free Optical Depth from the Unshocked Wind
@@ -376,9 +390,12 @@ for Mdot, label, color in zip(Mdot_values, Mdot_labels, Mdot_colors):
     r_i = so.radius.to(u.cm)
     v_i = so.velocity.to(u.cm / u.s)
     rho_i = (Mdot / (4 * np.pi * r_i**2 * v_wind)).to(u.g / u.cm**3)
-    _U_i = 1.5 * (_R - 1) / _R**2 * rho_i.to_value(u.g / u.cm**3) * v_i.to_value(u.cm / u.s) ** 2
-    B_i = np.sqrt(8 * np.pi * epsilon_B * _U_i) * u.G
-    gc_i = cooling_engine.compute_cooling_gamma(B=B_i, t=times)
+    e_th_i = StrongColdShockConditions.compute_post_shock_thermal_energy_density(
+        shock_velocity=v_i,
+        upstream_density=rho_i,
+    )
+    B_i = np.sqrt(8 * np.pi * epsilon_B * e_th_i.to_value(u.erg / u.cm**3)) * u.G
+    gc_i = cooling_gamma(B_i, times)
 
     M_dot_cgs_i = Mdot.to(u.g / u.s).value
 

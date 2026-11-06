@@ -5,7 +5,7 @@ Fitting a Multi-Band Optical Light Curve with MCMC
 This example performs a complete round-trip:
 
 1. **Forward model** — generate synthetic SDSS *ugriz* photometry from a
-   :class:`~trilobite.models.generic.optical_photometry.FREDBlackbodyModel`
+   ``FREDBlackbodyModel``
    with known parameters.
 2. **Load** — package the noisy observations into an
    :class:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`,
@@ -23,11 +23,11 @@ This example performs a complete round-trip:
    overlay them on the data in all five bands.
 
 The coupled optical model architecture is detailed in
-:ref:`sphx_glr_galleries_modeling_plot_fred_blackbody_optical_lc.py`.
+:ref:`sphx_glr_auto_examples_modeling_plot_fred_blackbody_optical_lc.py`.
 
 See Also
 --------
-- :class:`trilobite.models.generic.optical_photometry.FREDBlackbodyModel`
+- ``FREDBlackbodyModel``
 - :class:`trilobite.data.optical_photometry.OpticalPhotometryContainer`
 - :class:`trilobite.inference.likelihood.base.GaussianCensoredLikelihood`
 - :class:`trilobite.inference.sampling.mcmc.EmceeSampler`
@@ -40,13 +40,13 @@ See Also
 # -----------------------
 #
 # We assemble the SDSS *ugriz* filter bundle and instantiate the
-# :class:`~trilobite.models.generic.optical_photometry.FREDBlackbodyModel`.
+# ``FREDBlackbodyModel``.
 # The bundle's ``filter_names`` list defines the mapping
 # ``band_name → band_idx`` that is used automatically when the data container
 # calls :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`.
 #
 # Trilobite loads real SDSS response curves via ``speclite``.  See
-# :ref:`sphx_glr_galleries_photometry_plot_filter_bundle.py` for details
+# :ref:`sphx_glr_auto_examples_photometry_plot_filter_bundle.py` for details
 # on filter construction.
 
 import matplotlib.pyplot as plt
@@ -128,8 +128,8 @@ print(f"Noise level: {noise_frac * 100:.0f}% Gaussian (S/N ~ {1 / noise_frac:.0f
 # the inference layer.
 #
 # The ``flux_upper_limit`` column is ``NaN`` for all rows because all
-# observations are detections.  For censored data workflows, see
-# :ref:`sphx_glr_galleries_inference_plot_censored_SED_fit.py`.
+# observations are detections.  Censored data workflows (upper limits) follow
+# the same pipeline but set finite values in the ``flux_upper_limit`` column.
 
 from trilobite.data import OpticalPhotometryContainer
 
@@ -462,7 +462,7 @@ plt.show()
 # Key takeaways
 # ~~~~~~~~~~~~~
 #
-# - A :class:`~trilobite.models.generic.optical_photometry.FREDBlackbodyModel`
+# - A ``FREDBlackbodyModel``
 #   with just five parameters (three temporal, two spectral) recovers the
 #   true light curves in all five *ugriz* bands simultaneously.
 # - Multi-band coverage strongly constrains :math:`T_\mathrm{eff}`: the colour
@@ -479,7 +479,7 @@ plt.show()
 #   ``container = OpticalPhotometryContainer.from_file("phot.fits")``.
 # - Add upper limits by setting ``flux_density = NaN`` and populating
 #   ``flux_upper_limit`` for non-detections.
-# - Try :class:`~trilobite.models.generic.optical_photometry.GeneralizedFREDBlackbodyModel`
+# - Try ``GeneralizedFREDBlackbodyModel``
 #   for a more flexible temporal shape, or
 #   :class:`~trilobite.models.generic.optical_photometry.GaussianBlackbodyModel`
 #   for symmetric transients.

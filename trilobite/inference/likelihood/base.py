@@ -1,12 +1,13 @@
 """Abstract base class for likelihood models."""
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar, Optional
 
 import numpy as np
 
 from trilobite.data.core import InferenceData
 from trilobite.models.core.base import Model
+from trilobite.models.core.parameters import ModelParameter
 
 from .gaussian import censored_gaussian_loglikelihood, gaussian_loglikelihood
 
@@ -17,7 +18,13 @@ if TYPE_CHECKING:
     )
 
 # Defining the __all__ variable.
-__all__ = ["Likelihood", "GaussianLikelihood", "GaussianCensoredLikelihood"]
+__all__ = [
+    "Likelihood",
+    "GaussianLikelihood",
+    "GaussianCensoredLikelihood",
+    "LogGaussianCensoredLikelihood",
+    "LogGaussianCensoredSysLikelihood",
+]
 
 
 # ============================================================ #
@@ -88,6 +95,26 @@ class Likelihood(ABC):
     - This class makes no assumptions about priors or sampling strategies.
     - Parameter coercion is delegated to the model.
     - Data validation is delegated to :class:`InferenceData`.
+
+    Nuisance Parameters
+    -------------------
+    A likelihood may own parameters of its own, such as a free systematic error term, which are sampled
+    alongside the model parameters but belong to the statistical description of the data rather than to the
+    physics. They are declared in the class-level :attr:`NUISANCE_PARAMETERS` tuple, which mirrors
+    :attr:`~trilobite.models.core.base.Model.PARAMETERS` and is empty by default. An
+    :class:`~trilobite.inference.problem.InferenceProblem` appends them after the model parameters, so priors,
+    freezing and transforms behave exactly as they do for model parameters.
+
+    :meth:`log_likelihood` accepts one dictionary holding both groups, coerces the model parameters through the
+    model and the nuisance parameters through their own :class:`~trilobite.models.core.parameters.ModelParameter`
+    definitions, and calls ``_log_likelihood(parameters)`` or, when nuisance parameters are declared,
+    ``_log_likelihood(parameters, nuisance)``. The model therefore never sees nuisance values.
+    """
+
+    NUISANCE_PARAMETERS: ClassVar[tuple] = ()
+    """tuple of ~trilobite.models.core.parameters.ModelParameter: Parameters owned by the likelihood (default: none).
+
+    Their names must be unique and must not coincide with any parameter of the model.
     """
 
     # ============================================================ #
@@ -118,6 +145,8 @@ class Likelihood(ABC):
             If `model` is not a :class:`~trilobite.models.core.base.Model` instance.
         TypeError
             If `data` is not an :class:`InferenceData` instance.
+        ValueError
+            If the declared nuisance parameters have duplicate names or share a name with a model parameter.
         """
         if not isinstance(model, Model):
             raise TypeError("`model` must be an instance of Model.")
@@ -128,11 +157,89 @@ class Likelihood(ABC):
         self._model: Model = model
         self._data_container: InferenceData = data
 
+        # Nuisance parameters share the parameter namespace with the model's, so names must not collide.
+        self._validate_nuisance_parameters()
+
+        # Keep the configuration so that the likelihood can be serialized and rebuilt (see
+        # `InferenceProblem.to_dict`); `model` and `data` are serialized separately.
+        self._config: dict = dict(kwargs)
+
         # Allow subclasses to configure internal state
         self._configure(**kwargs)
 
         # Validate model–data compatibility
         self._validate_model_and_data()
+
+    @property
+    def config(self) -> dict:
+        """dict: The keyword arguments this likelihood was constructed with (excluding ``model`` and ``data``).
+
+        These are exactly the options forwarded to :meth:`_configure` (e.g. ``sys_dex`` for
+        :class:`~trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood`). They are stored when the
+        :class:`~trilobite.inference.problem.InferenceProblem` is serialized, and must therefore be JSON-serializable.
+        """
+        return dict(self._config)
+
+    @property
+    def nuisance_parameters(self) -> tuple:
+        """Tuple of ~trilobite.models.core.parameters.ModelParameter: The parameters owned by this likelihood.
+
+        Empty unless the subclass declares :attr:`NUISANCE_PARAMETERS`.
+        """
+        return tuple(self.NUISANCE_PARAMETERS)
+
+    def _validate_nuisance_parameters(self):
+        """Check that the nuisance parameters are well-formed and do not collide with the model's parameters."""
+        for parameter in self.NUISANCE_PARAMETERS:
+            if not isinstance(parameter, ModelParameter):
+                raise TypeError(
+                    f"`{type(self).__name__}.NUISANCE_PARAMETERS` must contain ModelParameter instances, "
+                    f"got {type(parameter).__name__}."
+                )
+
+        names = [p.name for p in self.NUISANCE_PARAMETERS]
+        duplicated = {name for name in names if names.count(name) > 1}
+        if duplicated:
+            raise ValueError(f"Duplicate nuisance parameter names in `{type(self).__name__}`: {sorted(duplicated)}.")
+
+        collisions = set(names) & {p.name for p in self._model.PARAMETERS}
+        if collisions:
+            raise ValueError(
+                f"Nuisance parameter name(s) {sorted(collisions)} of `{type(self).__name__}` collide with "
+                f"parameters of the model `{type(self._model).__name__}`."
+            )
+
+    def coerce_nuisance_parameters(self, parameters: dict) -> dict:
+        """
+        Coerce the likelihood's nuisance parameters into raw numerical values in base units.
+
+        Mirrors :meth:`~trilobite.models.core.base.Model.coerce_model_parameters`: missing entries take the
+        declared default, and keys that are not nuisance parameters are ignored.
+
+        Parameters
+        ----------
+        parameters : dict
+            Mapping of parameter names to values (floats, arrays or :class:`~astropy.units.Quantity`). May
+            also contain model parameters, which are ignored here.
+
+        Returns
+        -------
+        dict
+            Mapping of each nuisance parameter name to its value in base units.
+
+        Raises
+        ------
+        ValueError
+            If a value cannot be converted to the parameter's base units.
+        """
+        coerced = {}
+        for param in self.NUISANCE_PARAMETERS:
+            try:
+                coerced[param.name] = param.to_base_value(parameters.get(param.name, param.default))
+            except Exception as exc:
+                raise ValueError(f"Error coercing nuisance parameter '{param.name}': {exc}") from exc
+
+        return coerced
 
     # ============================================================ #
     # Configuration & Validation                                   #
@@ -174,6 +281,7 @@ class Likelihood(ABC):
     def _log_likelihood(
         self,
         parameters: dict[str, "_ModelParametersInputRaw"],
+        nuisance: Optional[dict] = None,
     ) -> float:
         """
         Compute the log-likelihood for raw model parameters.
@@ -183,6 +291,10 @@ class Likelihood(ABC):
         parameters : dict
             Mapping of model parameter names to values in the
             model's raw, unit-consistent internal format.
+        nuisance : dict, optional
+            Mapping of nuisance parameter names to raw values in base units. Passed only when the likelihood
+            declares :attr:`NUISANCE_PARAMETERS`, in which case the implementation must accept it; likelihoods
+            without nuisance parameters may keep the single-argument signature ``_log_likelihood(self, parameters)``.
 
         Returns
         -------
@@ -207,8 +319,10 @@ class Likelihood(ABC):
         Parameters
         ----------
         parameters : dict
-            Mapping of model parameter names to values in any format
-            accepted by :meth:`~trilobite.models.core.base.Model.coerce_model_parameters`.
+            Mapping of parameter names to values in any format accepted by
+            :meth:`~trilobite.models.core.base.Model.coerce_model_parameters`. Nuisance parameters, if the
+            likelihood declares any, are read from the same dictionary and coerced by
+            :meth:`coerce_nuisance_parameters`.
 
         Returns
         -------
@@ -222,7 +336,11 @@ class Likelihood(ABC):
         in raw format to avoid repeated coercion overhead.
         """
         raw = self._model.coerce_model_parameters(parameters)
-        return self._log_likelihood(raw)
+
+        if not self.NUISANCE_PARAMETERS:
+            return self._log_likelihood(raw)
+
+        return self._log_likelihood(raw, self.coerce_nuisance_parameters(parameters))
 
 
 class GaussianLikelihood(Likelihood):
@@ -593,3 +711,272 @@ class GaussianCensoredLikelihood(Likelihood):
             y_upper_mask=self._y_upper_mask,
             y_lower_mask=self._y_lower_mask,
         )
+
+
+class LogGaussianCensoredLikelihood(GaussianCensoredLikelihood):
+    r"""
+    Censored Gaussian log-likelihood in :math:`\log_{10}` of the observables.
+
+    This likelihood compares model and data in logarithmic space, which is the natural choice
+    for strictly positive observables (e.g. flux densities) that span several orders of
+    magnitude. In linear space, the brightest points dominate the fit and a model that
+    under-predicts a point by a large factor is penalized far less than one that over-predicts
+    it by the same factor. In log space both directions are penalized equally.
+
+    For detections, the likelihood contribution is
+
+    .. math::
+
+        \log \mathcal{L}_i
+        =
+        -\frac{1}{2}
+        \left[
+            \frac{(\log_{10} y_i - \log_{10} \mu_i)^2}{\sigma_{i}^2}
+            +
+            \log(2\pi \sigma_i^2)
+        \right],
+
+    and upper (lower) limits contribute :math:`\log\Phi` (:math:`\log[1-\Phi]`) of the standardized
+    :math:`\log_{10}` limit, exactly as in
+    :class:`~trilobite.inference.likelihood.base.GaussianCensoredLikelihood`. The uncertainty
+    in log space combines the reported measurement error, propagated to log space at the
+    observed value (or at the limit value for censored entries), with an optional systematic
+    floor added in quadrature:
+
+    .. math::
+
+        \sigma_i^2
+        =
+        \left(\frac{\sigma_{y,i}}{y_i \ln 10}\right)^2
+        +
+        \sigma_{\rm sys}^2 .
+
+    Parameters
+    ----------
+    model : ~trilobite.models.core.base.Model
+        The forward model. All of its outputs must be strictly positive.
+    data : ~trilobite.data.core.InferenceData
+        The dataset. Every detection and every limit must be strictly positive and finite.
+    sys_dex : float, optional
+        Systematic uncertainty floor in dex (:math:`\sigma_{\rm sys}`), added in quadrature to the
+        propagated measurement error of every entry, including the censoring width of limits.
+        Default is ``0``. If ``0``, every entry must have a nonzero reported error.
+
+    Notes
+    -----
+    - **Invalid model output.** If any model output is NaN, infinite, or negative, the
+      log-likelihood is ``-inf`` (this is how the infeasible-physics convention of models, which
+      return NaN, is carried through). A model output of exactly zero is floored at
+      ``1e-300`` before taking the logarithm, so it is penalized very strongly by detections but
+      remains consistent with upper limits.
+    - **Normalization.** This is a density in :math:`\log_{10} y`, not in :math:`y`; it omits the
+      constant Jacobian :math:`1/(y\ln 10)`. Values of :math:`\ln\mathcal{L}` are therefore not
+      comparable to those of the linear-space likelihoods (the parameter dependence, and hence
+      all posteriors, are unaffected).
+    - **Positivity.** Every observable in the dataset is assumed to be strictly positive.
+
+    See Also
+    --------
+    ~trilobite.inference.likelihood.base.GaussianCensoredLikelihood : The linear-space version.
+    """
+
+    #: Floor applied to non-negative model output before taking the logarithm.
+    _MODEL_FLOOR = 1e-300
+
+    def _configure(self, sys_dex: float = 0.0, **kwargs):
+        """
+        Cache the log10-transformed data, errors and limits.
+
+        Executed once during initialization.
+        """
+        sys_dex = float(sys_dex)
+        if not np.isfinite(sys_dex) or sys_dex < 0:
+            raise ValueError(f"`sys_dex` must be finite and non-negative, got {sys_dex}.")
+        self._sys_dex = sys_dex
+
+        self._configure_log_space(**kwargs)
+
+        sigma_dex = np.sqrt(self._sigma_meas_dex**2 + sys_dex**2)
+        if not (np.all(np.isfinite(sigma_dex)) and np.all(sigma_dex > 0)):
+            raise ValueError(
+                "LogGaussianCensoredLikelihood requires a finite, nonzero uncertainty for every entry. "
+                "Provide nonzero measurement errors or set `sys_dex` > 0."
+            )
+
+        self._y_err = sigma_dex
+
+    def _configure_log_space(self, **kwargs):
+        """
+        Cache the log10-transformed data and limits, and the measurement-only uncertainty in dex.
+
+        Sets ``_sigma_meas_dex`` (the reported error converted to dex, without any systematic term) and
+        replaces ``_data_y``, ``_y_upper`` and ``_y_lower`` by their base-10 logarithms. Subclasses that
+        treat the systematic term differently (for example as a sampled parameter) build on this.
+        """
+        # Cache the linear-space arrays and masks via the parent.
+        super()._configure(**kwargs)
+
+        upper_mask, lower_mask = self._y_upper_mask, self._y_lower_mask
+        det_mask = ~upper_mask & ~lower_mask
+
+        # The value at which each entry's reported error is converted to dex: the measured
+        # value for detections and the limit value for censored entries.
+        reference = np.where(det_mask, self._data_y, np.where(upper_mask, self._y_upper, self._y_lower))
+        if not (np.all(np.isfinite(reference)) and np.all(reference > 0)):
+            raise ValueError(
+                f"{type(self).__name__} requires every detection and limit to be finite and strictly positive."
+            )
+
+        self._sigma_meas_dex = self._y_err / (reference * np.log(10.0))
+
+        # NaN entries (non-detections in `value`, detections in the limit arrays) stay NaN.
+        self._data_y = np.log10(self._data_y)
+        self._y_upper = np.log10(self._y_upper)
+        self._y_lower = np.log10(self._y_lower)
+
+    def _log_likelihood(self, parameters):
+        """
+        Evaluate the censored Gaussian log-likelihood in log10 space.
+
+        Parameters
+        ----------
+        parameters : dict[str, Any]
+            Raw model parameters in unit-consistent internal format.
+
+        Returns
+        -------
+        float
+            Log-likelihood value, ``-inf`` if the model output is non-finite or negative.
+        """
+        return self._log_likelihood_with_errors(parameters, self._y_err)
+
+    def _log_likelihood_with_errors(self, parameters, sigma_dex):
+        """
+        Evaluate the log10-space log-likelihood for the given per-entry uncertainties.
+
+        Parameters
+        ----------
+        parameters : dict[str, Any]
+            Raw model parameters in unit-consistent internal format.
+        sigma_dex : numpy.ndarray
+            Total one-sigma uncertainty of every entry in dex, shape ``(N, P)``.
+        """
+        model_tuple = self._model._forward_model_tupled(
+            self._x,
+            parameters,
+        )
+        model_y = np.stack(model_tuple, axis=-1)
+
+        if not np.all(np.isfinite(model_y)) or np.any(model_y < 0):
+            return -np.inf
+
+        return censored_gaussian_loglikelihood(
+            data_y=self._data_y,
+            model_y=np.log10(np.maximum(model_y, self._MODEL_FLOOR)),
+            y_err=sigma_dex,
+            y_upper=self._y_upper,
+            y_lower=self._y_lower,
+            y_upper_mask=self._y_upper_mask,
+            y_lower_mask=self._y_lower_mask,
+        )
+
+
+# ============================================================ #
+# Likelihoods with Nuisance Parameters                         #
+# ============================================================ #
+class LogGaussianCensoredSysLikelihood(LogGaussianCensoredLikelihood):
+    r"""
+    Censored Gaussian likelihood in log10 space with a **sampled** systematic error term.
+
+    This is :class:`~trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood` with the fixed
+    systematic floor ``sys_dex`` promoted to a nuisance parameter. The total uncertainty of entry :math:`i` is
+
+    .. math::
+
+        \sigma_i^2 = \sigma_{{\rm meas},i}^2 + \sigma_{\rm sys}^2,
+
+    where :math:`\sigma_{{\rm meas},i}` is the reported error converted to dex and :math:`\sigma_{\rm sys}`
+    is the nuisance parameter ``sys_dex``. It is added in quadrature to the width of detections and of censored
+    limits alike. Because :math:`\sigma_i` now depends on a parameter, the :math:`\ln(2\pi\sigma_i^2)`
+    normalization term is retained in the likelihood: the sampler therefore finds the error scale that the
+    data support, without any reduced-:math:`\chi^2 = 1` constraint.
+
+    The parameter appears in the :class:`~trilobite.inference.problem.InferenceProblem` after the model
+    parameters, under the name ``sys_dex``, and has a default of 0.1 dex and a lower bound of 0. Priors,
+    freezing and transforms (for example a :class:`~trilobite.inference.transform.Log10Transform`) are
+    configured exactly as for a model parameter. Its starting value is set through
+    ``problem.parameters["sys_dex"].initial_value``.
+
+    Parameters
+    ----------
+    model : ~trilobite.models.core.base.Model
+        Forward model producing strictly positive predictions.
+    data : ~trilobite.data.core.InferenceData
+        Validated dataset. Every detection and limit must be finite and strictly positive.
+
+    Raises
+    ------
+    TypeError
+        If the fixed ``sys_dex`` option of the parent class is passed. Use
+        :class:`~trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood` for a fixed floor.
+
+    Notes
+    -----
+    If ``sys_dex`` is sampled to exactly zero while some entry has a zero reported error, that entry would have
+    no width at all and the log-likelihood is ``-inf``. A negative ``sys_dex`` is likewise rejected with ``-inf``.
+    """
+
+    NUISANCE_PARAMETERS = (
+        ModelParameter(
+            "sys_dex",
+            0.1,
+            description="Systematic uncertainty added in quadrature to every entry, in dex.",
+            latex=r"$\sigma_{\rm sys}$",
+            bounds=(0.0, None),
+        ),
+    )
+
+    def _configure(self, **kwargs):
+        """Cache the log10-space data and the measurement-only uncertainty in dex."""
+        if "sys_dex" in kwargs:
+            raise TypeError(
+                "`LogGaussianCensoredSysLikelihood` samples `sys_dex` as a nuisance parameter and does not accept a "
+                "fixed `sys_dex` option; use `LogGaussianCensoredLikelihood` for a fixed floor."
+            )
+
+        self._configure_log_space(**kwargs)
+
+        if not np.all(np.isfinite(self._sigma_meas_dex) & (self._sigma_meas_dex >= 0)):
+            raise ValueError(
+                "LogGaussianCensoredSysLikelihood requires a finite, non-negative reported uncertainty for every entry."
+            )
+
+        # Squared once here; the sampled term is added on every evaluation.
+        self._sigma_meas_dex_sq = self._sigma_meas_dex**2
+
+    def _log_likelihood(self, parameters, nuisance):
+        """
+        Evaluate the censored Gaussian log-likelihood in log10 space with a sampled systematic term.
+
+        Parameters
+        ----------
+        parameters : dict[str, Any]
+            Raw model parameters in unit-consistent internal format.
+        nuisance : dict[str, float]
+            Raw nuisance parameters; must contain ``sys_dex`` (dex).
+
+        Returns
+        -------
+        float
+            Log-likelihood value, ``-inf`` if the model output is non-finite or negative, if ``sys_dex`` is
+            negative or non-finite, or if some entry has a zero total uncertainty.
+        """
+        sys_dex = float(nuisance["sys_dex"])
+        if not np.isfinite(sys_dex) or sys_dex < 0.0:
+            return -np.inf
+
+        sigma_dex = np.sqrt(self._sigma_meas_dex_sq + sys_dex**2)
+        if not np.all(sigma_dex > 0.0):
+            return -np.inf
+
+        return self._log_likelihood_with_errors(parameters, sigma_dex)

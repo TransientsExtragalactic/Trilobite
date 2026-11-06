@@ -26,6 +26,8 @@ from .core import DataContainer, InferenceData
 if TYPE_CHECKING:
     from trilobite.models.core.base import Model  # noqa: F401
 
+    from .light_curve import OpticalLightCurveContainer
+
 
 __all__ = ["OpticalPhotometryContainer", "OpticalPhotometryEpoch"]
 
@@ -46,7 +48,7 @@ class OpticalPhotometryContainer(DataContainer):
     Band identification uses human-readable **band names** (e.g. ``"g"``, ``"r"``)
     rather than integer indices.  Integer indices are resolved at
     :meth:`to_inference_data` time by looking up each name in the optical model's
-    :attr:`FilterBundle.filter_names` list.  This keeps the container independent
+    :attr:`~trilobite.utils.phot_utils.FilterBundle.filter_names` list.  This keeps the container independent
     of any particular model or filter ordering convention.
 
     Schema
@@ -97,7 +99,7 @@ class OpticalPhotometryContainer(DataContainer):
             "required": True,
         },
         # Band identification — band_name is the canonical identifier;
-        # band_idx is intentionally absent and only appears in InferenceData.x
+        # band_index is intentionally absent and only appears in InferenceData.x
         {
             "name": "band_name",
             "dtype": str,
@@ -238,12 +240,12 @@ class OpticalPhotometryContainer(DataContainer):
     # ========================= Detection Properties ========================= #
     @property
     def detection_mask(self) -> np.ndarray:
-        """Boolean mask selecting detections (rows where upper limit is NaN)."""
+        """True where the row is a detection (upper limit is NaN); False otherwise."""
         return self.__detection_mask__.copy()
 
     @property
     def non_detection_mask(self) -> np.ndarray:
-        """Boolean mask selecting non-detections / upper limits."""
+        """True where the row is a non-detection; False for detections."""
         return self.__non_detection_mask__.copy()
 
     @property
@@ -448,6 +450,46 @@ class OpticalPhotometryContainer(DataContainer):
             sliced["epoch_id"] = self.__epoch_ids__[mask]
         return self.__class__.from_table(sliced)
 
+    def extract_lightcurve(self, band: str) -> "OpticalLightCurveContainer":
+        """Extract a single-band light curve from this container.
+
+        Selects all observations whose ``band_name`` matches *band* and returns
+        them as an :class:`~trilobite.data.light_curve.OpticalLightCurveContainer`.
+
+        Parameters
+        ----------
+        band : str
+            Band name to extract (e.g. ``"g"``, ``"r"``). Must match a value
+            present in the ``band_name`` column.
+
+        Returns
+        -------
+        ~trilobite.data.light_curve.OpticalLightCurveContainer
+            Light curve for the requested band, ordered by time.
+
+        Raises
+        ------
+        ValueError
+            If *band* is not found in this container.
+        """
+        from .light_curve import OpticalLightCurveContainer
+
+        available = np.unique(self.band_name)
+        if band not in available:
+            raise ValueError(f"Band '{band}' not found. Available bands: {list(available)}.")
+
+        mask = self.band_name == band
+        sliced = self.table[mask]
+
+        # band_name is now metadata on the container; drop it from the table.
+        drop = [c for c in ["band_name", "epoch_id"] if c in sliced.colnames]
+        if drop:
+            sliced = sliced.copy()
+            sliced.remove_columns(drop)
+
+        sort_order = np.argsort(sliced["time"])
+        return OpticalLightCurveContainer(sliced[sort_order], band=band)
+
     # ========================= IO Methods ========================= #
     @classmethod
     def from_table(
@@ -554,7 +596,7 @@ class OpticalPhotometryContainer(DataContainer):
         r"""
         Convert this container to :class:`~trilobite.data.core.InferenceData`.
 
-        The independent variable ``band_idx`` is resolved at call time by
+        The independent variable ``band_index`` is resolved at call time by
         looking up each observation's ``band_name`` in
         ``model.bundle.filter_names``.  The model is therefore the single
         source of truth for the band → index mapping, and the container remains
@@ -567,7 +609,7 @@ class OpticalPhotometryContainer(DataContainer):
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             Optical model instance.  Must expose a ``bundle`` attribute
             (:class:`~trilobite.utils.phot_utils.FilterBundle`) whose
             ``filter_names`` list maps band names to integer indices.
@@ -576,7 +618,7 @@ class OpticalPhotometryContainer(DataContainer):
             Override the default variable mapping.  By default:
 
             - ``"time"`` → ``time`` column (converted to model units)
-            - ``"band_idx"`` → resolved from ``band_name`` via
+            - ``"band_index"`` → resolved from ``band_name`` via
               ``model.bundle.filter_names``
 
         observables : dict, optional
@@ -607,7 +649,7 @@ class OpticalPhotometryContainer(DataContainer):
             ``model.bundle.filter_names``.
         """
         # ------------------------------------------------------------------
-        # Resolve band_name → band_idx via model.bundle
+        # Resolve band_name → band_index via model.bundle
         # ------------------------------------------------------------------
         if not hasattr(model, "bundle"):
             raise AttributeError(
@@ -621,7 +663,7 @@ class OpticalPhotometryContainer(DataContainer):
 
         band_names = self.band_name
         try:
-            band_idx = np.array([name_to_idx[n] for n in band_names], dtype=int)
+            band_index = np.array([name_to_idx[n] for n in band_names], dtype=int)
         except KeyError as exc:
             bad = str(exc).strip("'")
             raise KeyError(
@@ -638,7 +680,7 @@ class OpticalPhotometryContainer(DataContainer):
             mask = np.ones(self.n_obs, dtype=bool)
 
         t_vals = self.time.to(u.day).value[mask]
-        idx_vals = band_idx[mask]
+        idx_vals = band_index[mask]
 
         # ------------------------------------------------------------------
         # Resolve flux values — convert from mag if needed
@@ -671,7 +713,7 @@ class OpticalPhotometryContainer(DataContainer):
         # ------------------------------------------------------------------
         x = {
             "time": t_vals * u.day,
-            "band_idx": idx_vals,
+            "band_index": idx_vals,
         }
         y = {model.output_names[0]: flux_vals * u.Unit("erg/(s cm2 Hz)")}
         y_err = {model.output_names[0]: flux_err_vals * u.Unit("erg/(s cm2 Hz)")}
@@ -728,9 +770,9 @@ class OpticalPhotometryEpoch(DataContainer):
 
     See Also
     --------
-    RadioPhotometryEpoch
+    ~trilobite.data.photometry.RadioPhotometryEpoch
         Equivalent container for single-epoch radio SED measurements.
-    OpticalPhotometryContainer
+    ~trilobite.data.optical_photometry.OpticalPhotometryContainer
         Multi-epoch optical photometry container.
     """
 
@@ -872,12 +914,12 @@ class OpticalPhotometryEpoch(DataContainer):
     # ========================= DETECTION LOGIC ========================= #
     @property
     def detection_mask(self) -> np.ndarray:
-        """Boolean mask: True for detections."""
+        """True where the row is a detection; False for upper limits."""
         return np.isnan(self.flux_upper_limit.value)
 
     @property
     def non_detection_mask(self) -> np.ndarray:
-        """Boolean mask: True for upper limits (non-detections)."""
+        """True where the row is an upper limit; False for detections."""
         return ~self.detection_mask
 
     @property
@@ -913,12 +955,12 @@ class OpticalPhotometryEpoch(DataContainer):
 
         Default mapping:
 
-        - ``variables``: ``{"band_idx": <resolved integer indices>}``
+        - ``variables``: ``{"band_index": <resolved integer indices>}``
         - ``observables``: the single model output mapped to flux columns
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             Optical model instance exposing a ``bundle`` attribute
             (:class:`~trilobite.utils.phot_utils.FilterBundle`).
         variables : dict, optional
@@ -954,7 +996,7 @@ class OpticalPhotometryEpoch(DataContainer):
         name_to_idx = {name: idx for idx, name in enumerate(filter_names)}
 
         try:
-            band_idx = np.array([name_to_idx[n] for n in self.band_name], dtype=int)
+            band_index = np.array([name_to_idx[n] for n in self.band_name], dtype=int)
         except KeyError as exc:
             bad = str(exc).strip("'")
             raise KeyError(
@@ -969,7 +1011,7 @@ class OpticalPhotometryEpoch(DataContainer):
         else:
             mask_arr = np.ones(self.n_obs, dtype=bool)
 
-        idx_vals = band_idx[mask_arr]
+        idx_vals = band_index[mask_arr]
         flux_vals = self.flux.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
         flux_err_vals = self.flux_error.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
         flux_ul_vals = self.flux_upper_limit.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
@@ -990,7 +1032,7 @@ class OpticalPhotometryEpoch(DataContainer):
             )
 
         if variables is None:
-            variables = {"band_idx": idx_vals}
+            variables = {"band_index": idx_vals}
 
         if observables is None:
             if len(model.output_names) != 1:
@@ -1015,7 +1057,7 @@ class OpticalPhotometryEpoch(DataContainer):
         scratch = self.__table__.copy()
         if mask is not None:
             scratch = scratch[mask_arr]
-        scratch["band_idx"] = idx_vals
+        scratch["band_index"] = idx_vals
         return InferenceData.from_table(
             model=model,
             table=scratch,

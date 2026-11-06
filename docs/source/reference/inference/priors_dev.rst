@@ -57,7 +57,8 @@ The base class automatically builds:
 
 - ``self._log_prior`` (required),
 - ``self._prior`` (optional PDF),
-- ``self._cum_prior`` (optional CDF).
+- ``self._cum_prior`` (optional CDF),
+- ``self._sampler`` (optional sampler).
 
 The only method subclasses are required to implement is:
 
@@ -96,9 +97,22 @@ Optional PDF and CDF evaluation are also supported:
 If a subclass does not implement a PDF or CDF, calling these methods
 raises ``NotImplementedError``.
 
+Priors can also be sampled. The draws are in physical parameter space, the same space in which the
+log-prior is evaluated:
+
+.. code-block:: python
+
+    rng = np.random.default_rng(0)
+
+    x = prior.sample(rng=rng)                # a scalar
+    xs = prior.sample(size=1000, rng=rng)    # an array of shape (1000,)
+
+If a subclass does not implement a sampler (as is the case for :class:`~trilobite.inference.prior.CallablePrior`),
+calling :meth:`~trilobite.inference.prior.Prior.sample` raises ``NotImplementedError``.
+
 Importantly, priors operate strictly in **physical parameter space**.
 Any transformations (e.g., log-sampling) are handled by
-:class:`InferenceParameter` inside the inference problem layer.
+:class:`~trilobite.inference.problem.InferenceParameter` inside the inference problem layer.
 
 Serialization
 -------------
@@ -113,7 +127,7 @@ Each prior implements:
 
 This mechanism works for all built-in priors.
 
-Custom callable priors (wrapped by :class:`CallablePrior`) are marked
+Custom callable priors (wrapped by :class:`~trilobite.inference.prior.CallablePrior`) are marked
 as non-reconstructible because arbitrary Python callables cannot be
 serialized safely.
 
@@ -124,7 +138,7 @@ continues to work automatically.
 Implementing a New Prior
 ------------------------
 
-To implement a new prior, subclass :class:`Prior` and define
+To implement a new prior, subclass :class:`~trilobite.inference.prior.Prior` and define
 ``_generate_log_prior``.
 
 For example, suppose we want a simple exponential prior:
@@ -168,6 +182,18 @@ you may optionally implement:
 
 These are not required for MCMC or nested sampling but may be useful
 for diagnostics or prior predictive checks.
+
+To make the prior sampleable (for example, to initialize walkers from the prior), implement
+``_generate_sampler``. It returns a callable ``draw(rng, size)``, where ``rng`` is a
+:class:`numpy.random.Generator` and ``size`` is ``None`` (a scalar draw) or a shape:
+
+.. code-block:: python
+
+    def _generate_sampler(self, *, rate: float):
+        return lambda rng, size: rng.exponential(1.0 / rate, size)
+
+The draws must follow the density that ``_generate_log_prior`` evaluates. The built-in priors are tested
+for this against the equivalent ``scipy.stats`` distributions.
 
 Callable Priors
 ---------------

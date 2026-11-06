@@ -359,7 +359,7 @@ class OpacityLaw:
 
         Returns
         -------
-        OpacityLaw
+        ~trilobite.radiation.opacity.base.OpacityLaw
             A fully initialised opacity instance.
 
         Examples

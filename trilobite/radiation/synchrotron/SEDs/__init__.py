@@ -1,14 +1,25 @@
 """
 Synchrotron spectral energy distribution models.
 
-This module implements the various spectral energy distributions relevant to synchrotron emission from transients.
+This package implements the various spectral energy distributions relevant to synchrotron
+emission from astrophysical transients. It is organized into two subpackages:
+
+- :mod:`~trilobite.radiation.synchrotron.SEDs.one_zone`: analytic power-law one-zone SED
+  models and inversion closures.
+- :mod:`~trilobite.radiation.synchrotron.SEDs.numerical`: numerical SED engines for
+  arbitrary electron distributions.
+
 For documentation on synchrotron emission modeling in Trilobite, see :ref:`radiation_overview`.
 """
 
-__all__ = ["one_zone", "one_zone_closure"]
-from . import one_zone, one_zone_closure
+from . import numerical, one_zone
+from .numerical import *
 from .one_zone import *
-from .one_zone_closure import *
 
-__all__ += one_zone.__all__
-__all__ += one_zone_closure.__all__
+__all__ = [
+    "numerical",
+    "one_zone",
+]
+
+__all__.extend(one_zone.__all__)
+__all__.extend(numerical.__all__)

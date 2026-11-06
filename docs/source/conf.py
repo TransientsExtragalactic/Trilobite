@@ -14,9 +14,6 @@ import os
 import sys
 
 import matplotlib  # noqa: F401
-
-sys.path.insert(0, os.path.abspath("../../trilobite"))
-sys.path.insert(0, os.path.abspath("../../"))
 # -- Project information -----------------------------------------------------
 
 project = "Trilobite"
@@ -141,6 +138,8 @@ nitpick_ignore_regex = [
     (r"py:class", r"_ArrayLike"),
     (r"py:class", r"_OneZoneMeta"),
     (r"py:class", r"_ModelParametersInput"),
+    (r"py:class", r"_ModelVariablesInput"),
+    (r"py:class", r"_ModelVariablesInputRaw"),
     # Broken generic annotations produced by napoleon for Python 3.10+ syntax
     (r"py:class", r"dict\[.*"),
     (r"py:class", r"tuple\[.*"),
@@ -175,6 +174,14 @@ nitpick_ignore_regex = [
     (r"py:class", r"trilobite\.parallel\.base\.[RT]"),
     # Informal type annotations: not Python objects
     (r"py:class", r"namedtuple"),
+    (r"py:class", r"Boolean mask.*"),
+    (r"py:class", r"array_like"),
+    (r"py:class", r"ignored"),
+    (r"py:class", r"result"),
+    (r"py:class", r"SimpleNamespace"),
+    (r"py:class", r"n_theta\).*"),
+    (r"py:class", r"n_phi\).*"),
+    (r"py:class", r"n_nu.*"),
     (r"py:class", r"OUTPUTS"),
     (r"py:class", r"C-contiguous"),
     (r"py:class", r"float64"),

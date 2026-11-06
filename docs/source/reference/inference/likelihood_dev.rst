@@ -146,7 +146,7 @@ Model and Data Binding
 
 The constructor requires:
 
-- a :class:`Model`,
+- a :class:`~trilobite.models.core.base.Model`,
 - an :class:`InferenceData`.
 
 Basic interface checks ensure that the objects conform to the expected
@@ -251,6 +251,70 @@ Nothing else.
    Any operation that can be performed once during initialization must not
    be repeated inside :meth:`_log_likelihood`. Sampling loops may invoke that
    method millions of times.
+
+
+Nuisance Parameters
+^^^^^^^^^^^^^^^^^^^
+
+Some statistical models need parameters that are not part of the physics: a free
+systematic error term, an error-inflation factor, or a noise scale. These belong
+to the likelihood, not to the model, so a likelihood may declare them in the
+class-level :attr:`~trilobite.inference.likelihood.base.Likelihood.NUISANCE_PARAMETERS`
+tuple of :class:`~trilobite.models.core.parameters.ModelParameter`, mirroring the
+model's own ``PARAMETERS``. The tuple is empty by default, so existing likelihoods
+are unchanged.
+
+.. code-block:: python
+
+    class ScaledGaussianLikelihood(GaussianLikelihood):
+
+        NUISANCE_PARAMETERS = (
+            ModelParameter("error_scale", 1.0, bounds=(0.0, None)),
+        )
+
+        def _log_likelihood(self, parameters, nuisance):
+
+            model_tuple = self._model._forward_model_tupled(
+                self._x,
+                parameters,
+            )
+
+            model_y = np.stack(model_tuple, axis=-1)
+
+            return gaussian_loglikelihood(
+                data_y=self._data_y,
+                model_y=model_y,
+                y_err=nuisance["error_scale"] * self._y_err,
+            )
+
+The public
+:meth:`~trilobite.inference.likelihood.base.Likelihood.log_likelihood` accepts one
+dictionary holding both groups of parameters. It coerces the model parameters
+through the model and the nuisance parameters through
+:meth:`~trilobite.inference.likelihood.base.Likelihood.coerce_nuisance_parameters`,
+then calls ``_log_likelihood(parameters)`` for a likelihood without nuisance
+parameters or ``_log_likelihood(parameters, nuisance)`` for one that declares some.
+The model never receives nuisance values.
+
+An :class:`~trilobite.inference.problem.InferenceProblem` appends the nuisance
+parameters after the model parameters. They then take part in everything else
+exactly as model parameters do: priors, freezing, transforms, prior sampling,
+serialization, and the sampling results. Their names must be unique and must not
+coincide with any model parameter; the likelihood raises ``ValueError`` on
+construction otherwise.
+
+.. admonition:: Keep the normalization
+
+   When an uncertainty depends on a sampled parameter, the
+   :math:`\ln(2\pi\sigma^2)` term of the Gaussian log-likelihood is no longer a
+   constant and must be kept. It is what allows the sampler to find the error
+   scale on its own, without a reduced chi-squared constraint. The built-in
+   numerical backends already include it.
+
+The built-in example is
+:class:`~trilobite.inference.likelihood.base.LogGaussianCensoredSysLikelihood`,
+which samples the systematic term ``sys_dex`` of
+:class:`~trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood`.
 
 
 Concrete Likelihood Classes

@@ -2,8 +2,6 @@
 
 .. raw:: html
 
-.. raw:: html
-
    <style>
      .bd-article h1 {
          font-size: 2.6rem;

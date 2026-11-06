@@ -1,7 +1,6 @@
 r"""
-=====================================================
 From SED to Source Size: The Inverse Closure Workflow
-=====================================================
+======================================================
 
 Radio astronomers often measure a synchrotron SED with uncertainties and want
 to estimate the **source radius**, **magnetic field**, and **minimum energy**
@@ -12,11 +11,13 @@ inverse closure — is the standard approach in the literature.
 This example demonstrates the complete pipeline:
 
 1. **Generate a realistic observed SED** with measurement uncertainties.
-2. **Fit the SED** using :class:`~models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model`
+2. **Fit the SED** using
+   :class:`~trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model`
    and MCMC to extract posterior distributions of :math:`F_{\rm pk}`,
    :math:`\nu_{\rm pk}`.
-3. **Propagate the posteriors** through the inverse closure to obtain a
-   posterior distribution of source radius :math:`R`.
+3. **Propagate the posteriors** through the inverse closure via
+   :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.from_params_to_physics`
+   to obtain posterior distributions of :math:`R` and :math:`B`.
 4. **Check the expansion velocity** :math:`v = R/t` as a fraction of the
    speed of light — a simple test for relativistic ejecta.
 
@@ -24,26 +25,21 @@ This example demonstrates the complete pipeline:
 
     This workflow is particularly powerful when applied to a time series of
     epochs: the evolution of :math:`R(t)` directly measures the shock
-    expansion velocity. For multi-epoch usage see the
-    :ref:`sphx_glr_auto_examples_inference_plot_multi_epoch_sed_evolution.py`
-    example.
-
-Relevant API
-------------
-- :class:`~models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model`
-- :meth:`~radiation.synchrotron.SEDs.PowerLaw_SSA_SynchrotronSED.from_params_to_physics`
-- :class:`~inference.problem.InferenceProblem`
-- :class:`~inference.sampling.mcmc.EmceeSampler`
+    expansion velocity.
 """
 
-# %%
-# Setup
-# -----
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import constants as const
 from astropy import units as u
+from astropy.table import Table
+from tqdm.auto import tqdm
 
+from trilobite.data import InferenceData
+from trilobite.data.photometry import RadioPhotometryEpochContainer
+from trilobite.inference import GaussianCensoredLikelihood
+from trilobite.inference.problem import InferenceProblem
+from trilobite.inference.sampling.mcmc import EmceeSampler
 from trilobite.models.SEDs.synchrotron import Synchrotron_SSA_SBPL_Model
 from trilobite.radiation.synchrotron.SEDs import PowerLaw_SSA_SynchrotronSED
 from trilobite.utils.plot_utils import set_plot_style
@@ -67,7 +63,6 @@ set_plot_style()
 
 sed_model = Synchrotron_SSA_SBPL_Model()
 
-# True SED parameters (from a forward closure calculation with B=0.5 G, R=3e16 cm)
 true_params = {
     "norm": 8.0 * u.mJy,
     "nu_break": 5.0 * u.GHz,
@@ -85,10 +80,6 @@ true_flux = sed_model.forward_model({"frequency": frequencies}, true_params).flu
 noise = rng.normal(size=true_flux.size, scale=noise_frac) * true_flux
 obs_flux = true_flux + noise
 obs_err = noise_frac * true_flux
-
-print("=== Simulated observations ===")
-for f, flux, err in zip(frequencies, obs_flux, obs_err):
-    print(f"  {f.to_value(u.GHz):5.1f} GHz:  {flux.to_value(u.mJy):.2f} ± {err.to_value(u.mJy):.2f} mJy")
 
 # %%
 # Visualize the Synthetic Data
@@ -120,18 +111,10 @@ plt.show()
 # Fit the SED with MCMC
 # ---------------------
 #
-# We set up an :class:`~inference.problem.InferenceProblem` to fit the SED
-# parameters and sample the posterior with :class:`~inference.sampling.mcmc.EmceeSampler`.
+# We set up an :class:`~trilobite.inference.problem.InferenceProblem` to fit
+# the SED parameters and sample the posterior with
+# :class:`~trilobite.inference.sampling.mcmc.EmceeSampler`.
 
-from astropy.table import Table
-
-from trilobite.data import InferenceData
-from trilobite.data.photometry import RadioPhotometryEpochContainer
-from trilobite.inference import GaussianCensoredLikelihood
-from trilobite.inference.problem import InferenceProblem
-from trilobite.inference.sampling.mcmc import EmceeSampler
-
-# Build a data table
 data_table = Table()
 data_table["freq"] = frequencies
 data_table["flux_density"] = obs_flux
@@ -164,8 +147,6 @@ sampler = EmceeSampler(problem, n_walkers=16)
 result = sampler.run(8_000, progress=True)
 samples = result.get_flat_samples(burn=2000, thin=5)
 
-print(f"\nPosterior samples shape: {samples.shape}")
-
 # %%
 # Plot Posterior SED Envelope
 # ---------------------------
@@ -193,7 +174,6 @@ for i in idx:
     ax.plot(freqs_plot.to_value(u.GHz), flux.to_value(u.mJy), color="C1", alpha=0.05)
 
 ax.plot(freqs_plot.to_value(u.GHz), true_curve.to_value(u.mJy), color="black", lw=2, label="True SED")
-
 ax.set_xlabel("Frequency [GHz]")
 ax.set_ylabel("Flux Density [mJy]")
 ax.set_xscale("log")
@@ -208,13 +188,9 @@ plt.show()
 # Propagate Posteriors Through the Inverse Closure
 # ------------------------------------------------
 #
-# Now comes the key step: for each posterior sample we apply the inverse
-# closure to recover :math:`R` and :math:`B`. This propagates the SED
-# measurement uncertainties into physical parameter uncertainties.
-#
-# We assume fixed microphysical parameters:
-# :math:`p=3`, :math:`\epsilon_e = \epsilon_B = 0.1`.
-from tqdm.auto import tqdm
+# For each posterior sample we apply the inverse closure to recover :math:`R`
+# and :math:`B`, propagating SED measurement uncertainties into physical
+# parameter uncertainties.  Microphysical parameters are held fixed.
 
 phys_sed = PowerLaw_SSA_SynchrotronSED()
 
@@ -253,20 +229,8 @@ for i in tqdm(indices):
 R_post = u.Quantity(R_post).to_value("cm")
 B_post = u.Quantity(B_post).to_value("G")
 
-# Expansion velocity posterior
 v_post = R_post / t_obs.to_value("s")
 v_over_c = v_post / const.c.cgs.value
-
-print("\n=== Physical parameter posteriors ===")
-print(
-    f"  R  :  {np.percentile(R_post, 16):.2e}  –  {np.percentile(R_post, 50):.2e}  –  {np.percentile(R_post, 84):.2e}  cm"
-)
-print(
-    f"  B  :  {np.percentile(B_post, 16):.3f}  –  {np.percentile(B_post, 50):.3f}  –  {np.percentile(B_post, 84):.3f}  G"
-)
-print(
-    f"  v/c:  {np.percentile(v_over_c, 16):.4f}  –  {np.percentile(v_over_c, 50):.4f}  –  {np.percentile(v_over_c, 84):.4f}"
-)
 
 # %%
 # Physical Parameter Posteriors
@@ -308,12 +272,8 @@ plt.show()
 #
 # A crucial sanity check: if the posterior on :math:`v/c = R/(ct)` extends
 # above 1 the source is **superluminal** — which signals either (a) truly
-# relativistic ejecta requiring a relativistic shock model, (b) an underestimated
-# distance, or (c) a geometry effect (e.g. off-axis viewing).
+# relativistic ejecta requiring a relativistic shock model, (b) an
+# underestimated distance, or (c) a geometry effect (e.g. off-axis viewing).
 #
 # In this case the inferred :math:`v/c \sim 0.04` is comfortably sub-relativistic,
 # consistent with the true input parameters.
-#
-# Median inferred velocity:
-v_median = np.median(v_over_c)
-print(f"\n  Median v/c = {v_median:.4f}  ({'sub-relativistic' if v_median < 0.1 else 'mildly relativistic'})")

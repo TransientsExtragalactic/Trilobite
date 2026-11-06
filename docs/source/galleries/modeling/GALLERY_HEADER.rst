@@ -8,8 +8,8 @@ These examples show how to evaluate Trilobite' high-level physical models direct
 running inference — to generate synthetic light curves and SEDs, visualize model parameter
 sensitivity, and compare model predictions to observations.
 
-All models inherit from :class:`~trilobite.models.core.Model` and share a common interface:
-declare :attr:`PARAMETERS` (fixed or free) and call :meth:`~trilobite.models.core.Model.__call__`
+All models inherit from :class:`~trilobite.models.core.base.Model` and share a common interface:
+declare ``PARAMETERS`` (fixed or free) and call :meth:`~trilobite.models.core.base.Model.__call__`
 to evaluate. Examples range from Chevalier self-similar shock models for radio supernovae through
 phenomenological light-curve fitters and TDE radio afterglow models.
 
@@ -23,5 +23,5 @@ phenomenological light-curve fitters and TDE radio afterglow models.
 
 .. rubric:: API reference
 
-:mod:`trilobite.models` — :class:`~trilobite.models.core.Model`,
-:class:`~trilobite.models.core.ModelParameter`
+:mod:`trilobite.models` — :class:`~trilobite.models.core.base.Model`,
+:class:`~trilobite.models.core.parameters.ModelParameter`

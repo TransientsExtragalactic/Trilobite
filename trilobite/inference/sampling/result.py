@@ -10,6 +10,7 @@ results.
 
 import json
 from abc import ABC
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Union
@@ -397,12 +398,42 @@ class MCMCSamplingResult(SamplingResult):
         return tuple(self.problem.free_parameter_names)
 
     # ------------------------------------------------ #
+    # Sampling space <-> physical space                #
+    # ------------------------------------------------ #
+    def _inverse_transform_column(self, values: np.ndarray, idx: int) -> np.ndarray:
+        """Map sampling-space values of the ``idx``-th free parameter to physical space."""
+        transform = self.problem.parameters[self.parameter_names[idx]].transform
+        if transform is None:
+            return values
+        return np.asarray(transform.inverse(values), dtype=float)
+
+    def _to_physical(self, samples: np.ndarray) -> np.ndarray:
+        """Map an array of sampling-space samples, with parameters on the last axis, to physical space."""
+        if all(self.problem.parameters[name].transform is None for name in self.parameter_names):
+            return samples
+        return np.stack([self._inverse_transform_column(samples[..., i], i) for i in range(self.n_dim)], axis=-1)
+
+    @property
+    def physical_samples(self) -> np.ndarray:
+        """numpy.ndarray: The chain mapped to physical space, with shape ``(n_steps, n_walkers, n_dim)``.
+
+        The sampler explores *sampling space*, in which any parameter transforms (e.g. a
+        :class:`~trilobite.inference.transform.Log10Transform`) are applied, and that raw chain is what is stored in
+        :attr:`samples` (and what the convergence diagnostics use). This property applies the inverse transforms
+        to give the values of the model parameters themselves. If no parameter has a transform it is :attr:`samples`
+        itself (not a copy).
+        """
+        return self._to_physical(self.samples)
+
+    # ------------------------------------------------ #
     # Flattening                                       #
     # ------------------------------------------------ #
     def get_flat_samples(
         self,
         burn: int = 0,
         thin: int = 1,
+        exclude_walkers: Optional[Sequence[int]] = None,
+        physical: bool = True,
     ) -> np.ndarray:
         """
         Return flattened MCMC samples with optional burn-in and thinning.
@@ -413,6 +444,12 @@ class MCMCSamplingResult(SamplingResult):
             Number of initial steps to discard.
         thin : int, optional
             Thinning factor.
+        exclude_walkers : sequence of int, optional
+            Indices of walkers to drop entirely, e.g. the output of :meth:`find_stranded_walkers`.
+        physical : bool, optional
+            If ``True`` (default), return the samples in physical space, i.e. with the inverse parameter
+            transforms applied. If ``False``, return the raw sampling-space chain. The two are identical for
+            parameters without a transform.
 
         Returns
         -------
@@ -420,9 +457,55 @@ class MCMCSamplingResult(SamplingResult):
             Array of shape (n_effective_samples, n_dim).
         """
         samples = self.samples[burn::thin, :, :]
+        if exclude_walkers is not None and len(exclude_walkers) > 0:
+            keep = np.ones(self.n_walkers, dtype=bool)
+            keep[np.asarray(exclude_walkers, dtype=int)] = False
+            samples = samples[:, keep, :]
+
+        # Transform after burn / thin / exclusion so that only the retained samples are mapped.
+        if physical:
+            samples = self._to_physical(samples)
+
         n_steps, n_walkers, n_dim = samples.shape
 
         return samples.reshape((n_steps * n_walkers, n_dim))
+
+    def find_stranded_walkers(self, burn: Optional[int] = None, threshold: float = 20.0) -> np.ndarray:
+        """
+        Identify walkers stuck far below the rest of the ensemble in log-posterior.
+
+        A walker is flagged when its median log-posterior after burn-in lies more than ``threshold``
+        below the median over all walkers. Walkers that have converged to the same distribution have
+        per-walker medians that agree to within a few units, whereas a stranded walker (typically one
+        flung to a prior edge early in the run) sits many orders of magnitude lower and never rejoins
+        the ensemble.
+
+        Parameters
+        ----------
+        burn : int, optional
+            Number of initial steps to discard. Defaults to half of the chain.
+        threshold : float, optional
+            Required log-posterior deficit, relative to the ensemble median, for a walker to be
+            flagged. Default 20.
+
+        Returns
+        -------
+        numpy.ndarray
+            Integer indices of the flagged walkers. Empty if there are none, or if no log-posterior
+            was stored.
+        """
+        if self.log_posterior is None:
+            return np.array([], dtype=int)
+
+        burn = self.n_steps // 2 if burn is None else burn
+        logp = self.log_posterior[burn:]
+
+        # Non-finite values (-inf from prior violations) count as arbitrarily low, so they push a walker's
+        # median down without poisoning the statistic with NaNs.
+        walker_logp = np.median(np.where(np.isfinite(logp), logp, -np.inf), axis=0)
+        reference = np.median(walker_logp)
+
+        return np.flatnonzero(walker_logp < reference - threshold)
 
     # ------------------------------------------------ #
     # Goodness of Fit Statistics                       #
@@ -508,6 +591,9 @@ class MCMCSamplingResult(SamplingResult):
         where :math:`\sigma` is the posterior standard deviation and :math:`\mathrm{ESS}` is the effective sample
         size accounting for autocorrelation.
 
+        Like all convergence diagnostics, this is computed on the chain in sampling space, so for a transformed
+        parameter it is in the units of the transformed variable (e.g. dex for a ``Log10Transform``).
+
         Parameters
         ----------
         burn : int, optional
@@ -522,8 +608,9 @@ class MCMCSamplingResult(SamplingResult):
         numpy.ndarray
             Array of shape ``(n_dim,)`` containing the MCSE for each parameter.
         """
-        # Flatten samples after burn-in / thinning
-        flat_samples = self.get_flat_samples(burn=burn, thin=thin)
+        # Flatten samples after burn-in / thinning. Diagnostics are computed in sampling space (the space the
+        # sampler explored), consistently with the autocorrelation time / ESS used below.
+        flat_samples = self.get_flat_samples(burn=burn, thin=thin, physical=False)
 
         # Posterior standard deviation
         posterior_sd = np.std(flat_samples, axis=0, ddof=1)
@@ -671,6 +758,7 @@ class MCMCSamplingResult(SamplingResult):
         thin: int = 1,
         fig=None,
         axes=None,
+        physical: bool = True,
         **kwargs,
     ):
         """
@@ -691,6 +779,9 @@ class MCMCSamplingResult(SamplingResult):
             Existing figure to plot into.
         axes : matplotlib.axes.Axes, optional
             Existing axes to plot into.
+        physical : bool, optional
+            If ``True`` (default), plot the parameter in physical space (inverse transform applied). If ``False``,
+            plot the raw sampling-space chain, which is the space the sampler explored.
         **kwargs: Additional keyword arguments passed to the plotting function.
 
         Returns
@@ -715,6 +806,8 @@ class MCMCSamplingResult(SamplingResult):
 
         # Extract samples
         samples = self.samples[burn::thin, :, pidx]  # (steps, walkers)
+        if physical:
+            samples = self._inverse_transform_column(samples, pidx)
         n_steps, n_walkers = samples.shape
 
         # Resolve the figure and the axes.
@@ -750,7 +843,8 @@ class MCMCSamplingResult(SamplingResult):
             )
 
         axes.set_xlabel("Step")
-        axes.set_ylabel(parameter)
+        transform = self.problem.parameters[parameter].transform
+        axes.set_ylabel(parameter if physical or transform is None else f"{parameter} (sampling space)")
         axes.set_title(f"Trace plot: {parameter}")
 
         axes.legend(frameon=False)
@@ -764,6 +858,7 @@ class MCMCSamplingResult(SamplingResult):
         parameters: Optional[list[str]] = None,
         truths: Optional[dict[str, float]] = None,
         fig=None,
+        physical: bool = True,
         **kwargs,
     ):
         """
@@ -780,9 +875,13 @@ class MCMCSamplingResult(SamplingResult):
             all parameters are plotted.
         truths : dict, optional
             Dictionary mapping parameter names to reference values
-            (e.g. injected or true values) to overlay on the plot.
+            (e.g. injected or true values) to overlay on the plot. These must be in the same space as the
+            plotted samples, i.e. physical values unless ``physical=False``.
         fig : matplotlib.figure.Figure, optional
             Existing figure to draw into.
+        physical : bool, optional
+            If ``True`` (default), plot the samples in physical space (inverse transforms applied). If ``False``,
+            plot the raw sampling-space chain.
         **kwargs
             Additional keyword arguments passed to `corner.corner`.
 
@@ -810,7 +909,7 @@ class MCMCSamplingResult(SamplingResult):
         pidx = [self.parameter_names.index(p) for p in parameters]
 
         # Extract flattened samples
-        flat_samples = self.get_flat_samples(burn=burn, thin=thin)
+        flat_samples = self.get_flat_samples(burn=burn, thin=thin, physical=physical)
         flat_samples = flat_samples[:, pidx]
 
         # Resolve truth values in correct order

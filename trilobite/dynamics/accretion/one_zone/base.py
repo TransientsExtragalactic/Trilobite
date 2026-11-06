@@ -391,7 +391,7 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
             "log_transform": bool,     # True → stored as log(CGS value)
         }
 
-    :meth:`process_runtime_parameters` iterates this dict to validate,
+    :meth:`~OneZoneAccretionDiskBase.process_runtime_parameters` iterates this dict to validate,
     convert, and pack user-supplied values into the flat float dict
     threaded through the closure pipeline.  Log-transformed parameters
     are stored under ``"log_{key}"``; others under ``"{key}"``.
@@ -404,7 +404,7 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
     r"""dict : ODE initial-condition declarations.
 
     Same schema as :attr:`RUNTIME_PARAMETERS`.
-    :meth:`process_initial_conditions` iterates this dict in declaration
+    :meth:`~OneZoneAccretionDiskBase.process_initial_conditions` iterates this dict in declaration
     order and packs values into the state vector ``y0`` passed to the ODE
     solver.
 

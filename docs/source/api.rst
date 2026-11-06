@@ -15,7 +15,7 @@ Below is an overview of the main modules available:
 Trilobite Models
 ------------------
 The most relevant modules for typical users working with Trilobite is the set of model implementations. These
-are all located in the :mod:`models` subpackage and include various forward models of radio emission
+are all located in the :mod:`trilobite.models` subpackage and include various forward models of radio emission
 in different scenarios. These models can be used to simulate observations, fit data, and perform inference.
 
 .. autosummary::
@@ -23,11 +23,13 @@ in different scenarios. These models can be used to simulate observations, fit d
     :recursive:
     :template: module.rst
 
+    trilobite.models
     trilobite.models.core
     trilobite.models.generic
     trilobite.models.SEDs
     trilobite.models.GRBs
     trilobite.models.supernovae
+    trilobite.models.LFBOTs
 
 Data Modules
 ------------
@@ -39,6 +41,7 @@ and visualizing data sets.
     :recursive:
     :template: module.rst
 
+    trilobite.data
     trilobite.data.core
     trilobite.data.light_curve
     trilobite.data.photometry
@@ -55,6 +58,7 @@ estimation, and conducting statistical analysis.
     :recursive:
     :template: module.rst
 
+    trilobite.inference
     trilobite.inference.prior
     trilobite.inference.likelihood
     trilobite.inference.sampling

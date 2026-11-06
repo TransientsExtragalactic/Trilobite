@@ -238,20 +238,20 @@ Analytic Approximation
 ~~~~~~~~~~~~~~~~~~~~~~
 
 A fast closed-form approximation due to :footcite:t:`Draine2011ISM` (Eq. 10.9) is provided by
-:func:`~trilobite.radiation.free_free.gaunt_factor.gaunt_ff_draine`.  It accepts
+:func:`~trilobite.radiation.free_free.gaunt_factor.compute_ff_gaunt_factor`.  It accepts
 unit-aware or plain-float inputs and is suitable for quick estimates in the radio through
 infrared regime:
 
 .. code-block:: python
 
-    from trilobite.radiation.free_free.gaunt_factor import gaunt_ff_draine
+    from trilobite.radiation.free_free.gaunt_factor import compute_ff_gaunt_factor
 
     # Scalar
-    gff = gaunt_ff_draine(Z=1, T=1e4, nu=1e10)
+    gff = compute_ff_gaunt_factor(Z=1, T=1e4, nu=1e10)
 
     # With astropy units
     from astropy import units as u
-    gff = gaunt_ff_draine(Z=1, T=1e6 * u.K, nu=5.0 * u.GHz)
+    gff = compute_ff_gaunt_factor(Z=1, T=1e6 * u.K, nu=5.0 * u.GHz)
 
 .. note::
 
@@ -396,27 +396,22 @@ Profile Overview
 
    * - Function pair
      - Description
-   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_optical_depth_from_quadrature` /
-       :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature`
+   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature`
      - Adaptive quadrature over arbitrary user-supplied CGS callables for
        :math:`n_e(r)`, :math:`n_i(r)`, :math:`T(r)`.  Maximum flexibility for non-analytic
        or tabulated CSM models.
-   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_optical_depth_from_arrays` /
-       :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays`
+   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays`
      - Trapezoidal integration over pre-computed (:math:`r`, :math:`\alpha_\nu`) or
        (:math:`r`, :math:`n_e`, :math:`n_i`, :math:`T`) grids.  Ideal for
        post-processing hydrodynamic simulation outputs.
-   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_optical_depth_wind` /
-       :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind`
+   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind`
      - Analytic integral for a steady stellar wind with
        :math:`\rho \propto r^{-2}` (constant mass-loss rate :math:`\dot{M}`, wind velocity
        :math:`v_w`).  Gives :math:`\tau_{\rm ff} \propto r^{-3}`.
-   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_optical_depth_shell` /
-       :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell`
+   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell`
      - Analytic integral for a uniform-density shell between radii :math:`r` and
        :math:`r_{\rm max}`.  Returns :math:`\tau_{\rm ff} = \alpha_\nu (r_{\rm max} - r)`.
-   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_optical_depth_powerlaw` /
-       :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw`
+   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw`
      - Analytic integral for a generalized power-law density profile
        :math:`\rho \propto r^{-p}` between :math:`r` and :math:`r_{\rm max}`.  Encompasses
        the wind (:math:`p = 2`) and uniform (:math:`p = 0`) cases.
@@ -437,7 +432,7 @@ Usage Examples
             import numpy as np
             from astropy import units as u
             from trilobite.radiation.free_free.absorption import (
-                compute_ff_optical_depth_from_quadrature,
+                compute_ff_RJ_optical_depth_from_quadrature,
             )
 
             # Define CGS callables (no astropy units inside)
@@ -450,7 +445,7 @@ Usage Examples
             def T(r):
                 return 1e4  # Kelvin, uniform temperature
 
-            tau = compute_ff_optical_depth_from_quadrature(
+            tau = compute_ff_RJ_optical_depth_from_quadrature(
                 nu=1e9 * u.Hz,
                 Z=1.0,
                 n_e_func=n_e,
@@ -471,23 +466,12 @@ Usage Examples
 
             from astropy import units as u
             from trilobite.radiation.free_free.absorption import (
-                compute_ff_optical_depth_wind,
                 compute_ff_RJ_optical_depth_wind,
             )
 
             # Wind parameters
             mdot = 1e-5 * u.Msun / u.yr
             v_w  = 10   * u.km / u.s
-
-            tau_exact = compute_ff_optical_depth_wind(
-                nu=1e9 * u.Hz,
-                Z=1.0,
-                mdot=mdot,
-                v_wind=v_w,
-                T=1e4 * u.K,
-                r=1e15 * u.cm,
-                g_ff=5.0,
-            )
 
             tau_rj = compute_ff_RJ_optical_depth_wind(
                 nu=1e9 * u.Hz,
@@ -508,10 +492,10 @@ Usage Examples
 
             from astropy import units as u
             from trilobite.radiation.free_free.absorption import (
-                compute_ff_optical_depth_shell,
+                compute_ff_RJ_optical_depth_shell,
             )
 
-            tau = compute_ff_optical_depth_shell(
+            tau = compute_ff_RJ_optical_depth_shell(
                 nu=1e9 * u.Hz,
                 Z=1.0,
                 n_e=1e3 * u.cm**-3,
@@ -532,11 +516,11 @@ Usage Examples
 
             from astropy import units as u
             from trilobite.radiation.free_free.absorption import (
-                compute_ff_optical_depth_powerlaw,
+                compute_ff_RJ_optical_depth_powerlaw,
             )
 
             # General p = 1.5 profile
-            tau = compute_ff_optical_depth_powerlaw(
+            tau = compute_ff_RJ_optical_depth_powerlaw(
                 nu=1e9 * u.Hz,
                 Z=1.0,
                 n_e=1e3 * u.cm**-3,

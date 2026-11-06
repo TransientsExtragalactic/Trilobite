@@ -9,7 +9,7 @@ energy distribution — onto the phenomenological **spectral parameters**
 that are directly measured from broadband observations.
 
 For
-:class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
+:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED`
 the characteristic scales follow
 
 .. math::
@@ -40,17 +40,14 @@ and emitting radius while holding all other parameters fixed.
 
     These closure relations assume a **single homogeneous emission zone**,
     isotropic pitch-angle distribution, and a power-law electron population.
-
-Relevant API References
------------------------
-
-- :meth:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params`
-- :class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
 """
+
+import matplotlib.colors as mcolors
 
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
+from matplotlib.lines import Line2D
 
 from trilobite.radiation.synchrotron.SEDs import PowerLaw_Cooling_SSA_SynchrotronSED
 from trilobite.utils.plot_utils import set_plot_style
@@ -121,7 +118,6 @@ B_ref = B_val[len(B_val) // 2]
 
 fig, axes = plt.subplots(1, 3, figsize=(13, 4))
 
-# ν_m scaling
 axes[0].loglog(B_val, nu_m_B, "o-", lw=2)
 axes[0].loglog(B_val, nu_m_B[len(B_val) // 2] * (B_val / B_ref), "k--", label=r"$\propto B$")
 axes[0].set_xlabel(r"$B$ [G]")
@@ -130,7 +126,6 @@ axes[0].set_title("Injection Break")
 axes[0].legend()
 axes[0].grid(True, which="both", ls="--", alpha=0.3)
 
-# ν_c scaling
 axes[1].loglog(B_val, nu_c_B, "o-", lw=2)
 axes[1].loglog(B_val, nu_c_B[len(B_val) // 2] * (B_val / B_ref) ** (-3), "k--", label=r"$\propto B^{-3}$")
 axes[1].set_xlabel(r"$B$ [G]")
@@ -139,7 +134,6 @@ axes[1].set_title("Cooling Break")
 axes[1].legend()
 axes[1].grid(True, which="both", ls="--", alpha=0.3)
 
-# F_peak scaling
 axes[2].loglog(B_val, F_peak_B, "o-", lw=2)
 axes[2].loglog(B_val, F_peak_B[len(B_val) // 2] * (B_val / B_ref), "k--", label=r"$\propto B$")
 axes[2].set_xlabel(r"$B$ [G]")
@@ -224,22 +218,21 @@ plt.tight_layout()
 plt.show()
 
 
-import matplotlib.colors as mcolors
-
 # %%
-# Section 3: SED Family Across (B,R)
-# ----------------------------------
-from matplotlib.lines import Line2D
+# Section 3: SED Family Across (B, R)
+# ------------------------------------
+#
+# Combining variation in both :math:`B` (colormap) and :math:`R` (linestyle)
+# shows how the full SED shape shifts.  Stronger :math:`B` moves all break
+# frequencies to higher values; larger :math:`R` boosts the overall flux.
 
 B_grid = np.array([0.03, 0.1, 0.3, 1.0]) * u.G
 R_grid = np.array([1e15, 1e16, 1e17]) * u.cm
 
 nu = np.geomspace(1e8, 1e18, 600) * u.Hz
 
-# Colormap for B
 cmap = plt.get_cmap("cool")
 norm = mcolors.LogNorm(vmin=B_grid.min().value, vmax=B_grid.max().value)
-
 linestyles = ["-", "--", ":"]
 
 fig, ax = plt.subplots(figsize=(9, 6))
@@ -283,23 +276,15 @@ ax.set_ylabel(r"$F_\nu$ [Jy]")
 ax.set_title("SED Family Across Magnetic Field and Radius")
 ax.grid(True, which="both", ls="--", alpha=0.3)
 
-# -----------------------------
-# Colorbar for B
-# -----------------------------
 sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
 sm.set_array([])
-
 cbar = plt.colorbar(sm, ax=ax, pad=0.02)
 cbar.set_label(r"Magnetic Field $B$ [G]")
 
-# -----------------------------
-# Legend for R (linestyle)
-# -----------------------------
 legend_lines = [
     Line2D([0], [0], color="black", ls=ls, lw=2, label=rf"$R=10^{{{int(np.log10(R.value))}}}\,\mathrm{{cm}}$")
     for ls, R in zip(linestyles, R_grid)
 ]
-
 ax.legend(handles=legend_lines, title="Emission Radius", loc="lower left")
 
 plt.tight_layout()

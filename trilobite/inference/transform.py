@@ -185,7 +185,8 @@ class ParameterTransform(ABC):
 
         Returns
         -------
-        The transformed parameter value.
+        float
+            The transformed parameter value.
         """
         return self._forward(theta)
 
@@ -200,7 +201,8 @@ class ParameterTransform(ABC):
 
         Returns
         -------
-        The original parameter value.
+        float
+            The original parameter value.
         """
         return self._inverse(z)
 
@@ -215,7 +217,8 @@ class ParameterTransform(ABC):
 
         Returns
         -------
-        The jacobian of the transformation at the given parameter value.
+        float
+            The jacobian of the transformation at the given parameter value.
         """
         return self._log_abs_det_jacobian(theta)
 

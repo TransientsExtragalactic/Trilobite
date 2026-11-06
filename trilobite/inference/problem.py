@@ -18,13 +18,7 @@ from astropy import units as u
 
 from trilobite.utils.misc_utils import ensure_in_units
 
-from .prior import (
-    HalfNormalPrior,
-    LogNormalPrior,
-    LogUniformPrior,
-    NormalPrior,
-    UniformPrior,
-)
+from .prior import PRIOR_REGISTRY
 
 # ============================================================= #
 # Package versioning and Type checking
@@ -65,14 +59,17 @@ class InferenceParameter:
     When an :class:`~trilobite.inference.problem.InferenceProblem` is initialized, it
     creates an :class:`~trilobite.inference.problem.InferenceParameter`
     object for each of the parameters defined in the corresponding :class:`~trilobite.models.core.base.Model` provided
-    as part of the input :class:`~trilobite.inference.likelihood.base.Likelihood` object.
+    as part of the input :class:`~trilobite.inference.likelihood.base.Likelihood` object, followed by one for each
+    of the likelihood's own nuisance parameters
+    (:attr:`~trilobite.inference.likelihood.base.Likelihood.nuisance_parameters`).
 
     Parameters
     ----------
     model_parameter: `~trilobite.models.core.parameters.ModelParameter`
         The model parameter associated with this inference parameter. This is where we
         get the name, default value, bounds, and other metadata about the parameter. This should be
-        selected from the model's :attr:`~trilobite.models.core.base.Model.PARAMETERS` list. Because
+        selected from the model's :attr:`~trilobite.models.core.base.Model.PARAMETERS` list or the likelihood's
+        nuisance parameters. Because
         :class:`~trilobite.inference.problem.InferenceParameter`
         instances are generated automatically during :class:`~trilobite.inference.problem.InferenceProblem`
         initialization, users typically
@@ -357,6 +354,7 @@ class InferenceParameter:
         cls,
         dict_rep: dict,
         model: "Model",
+        likelihood: "Likelihood" = None,
     ) -> "InferenceParameter":
         """
         Reconstruct an :class:`~trilobite.inference.problem.InferenceParameter` from a serialized dictionary.
@@ -366,11 +364,16 @@ class InferenceParameter:
         dict_rep : dict
             Dictionary produced by :meth:`to_dict`.
 
-        model : Model
+        model : ~trilobite.models.core.base.Model
             The model instance that owns the corresponding
             :class:`~trilobite.models.core.parameters.ModelParameter`. This is required in order
             to resolve the parameter definition (name, bounds,
             units, default value, etc.).
+
+        likelihood : ~trilobite.inference.likelihood.base.Likelihood, optional
+            The likelihood whose :attr:`~trilobite.inference.likelihood.base.Likelihood.nuisance_parameters`
+            are searched, after the model's parameters, when resolving the name. Required to reconstruct a
+            nuisance parameter.
 
         Returns
         -------
@@ -384,7 +387,7 @@ class InferenceParameter:
         ValueError
             If dictionary structure is malformed.
         KeyError
-            If the referenced parameter does not exist on the model.
+            If the referenced parameter is defined neither by the model nor, if given, by the likelihood.
         """
         from trilobite.inference.prior import Prior
         from trilobite.inference.transform import ParameterTransform
@@ -406,10 +409,15 @@ class InferenceParameter:
         # ------------------------------------------------------------------
         # Resolve ModelParameter from model
         # ------------------------------------------------------------------
+        candidates = tuple(model.PARAMETERS)
+        if likelihood is not None:
+            candidates += tuple(likelihood.nuisance_parameters)
+
         try:
-            model_parameter = next(p for p in model.PARAMETERS if p.name == name)
+            model_parameter = next(p for p in candidates if p.name == name)
         except StopIteration as exc:
-            raise KeyError(f"Model does not define a parameter named '{name}'.") from exc
+            where = "Model" if likelihood is None else "Model and likelihood"
+            raise KeyError(f"{where} do not define a parameter named '{name}'.") from exc
 
         freeze = bool(dict_rep.get("freeze", False))
         initial_value = dict_rep.get("initial_value", None)
@@ -571,10 +579,12 @@ class InferenceProblem:
         # all 3.
         self.__likelihood__ = likelihood
 
-        # Specify an explicit ordering for the parameters based on their order in
-        # the underlying model. This ensures that there is no ambiguity about parameter
-        # ordering when packing/unpacking parameter vectors.
-        self.__parameter_order__ = tuple([p.name for p in self.__likelihood__._model.PARAMETERS])
+        # Specify an explicit ordering for the parameters: the model's parameters in the order the model defines
+        # them, followed by the likelihood's nuisance parameters. This ensures that there is no ambiguity about
+        # parameter ordering when packing/unpacking parameter vectors, and that the model's own ordering is
+        # unchanged. (Name collisions between the two groups are rejected by the Likelihood on construction.)
+        all_parameters = tuple(self.__likelihood__._model.PARAMETERS) + tuple(self.__likelihood__.nuisance_parameters)
+        self.__parameter_order__ = tuple([p.name for p in all_parameters])
 
         # Generate the parameter dictionary with InferenceParameter objects so that
         # we can manage them easily. These are basically empty shells of parameters
@@ -587,7 +597,7 @@ class InferenceProblem:
                 transform=None,
                 initial_value=None,
             )
-            for model_parameter in self.__likelihood__._model.PARAMETERS
+            for model_parameter in all_parameters
         }
 
         # Further initialization can be performed in subclasses.
@@ -597,19 +607,20 @@ class InferenceProblem:
     # ------------------------------------------------- #
     def __call__(self, theta: np.ndarray) -> float:
         """
-        Evaluate the log-posterior at the given parameter vector.
+        Evaluate the log-posterior at the given free-parameter vector.
 
         Parameters
         ----------
         theta: np.ndarray
-            Array of free parameters in the order defined by the model.
+            Array of free parameters in the order defined by the model, in **sampling space** (identical to
+            physical space for parameters without a transform).
 
         Returns
         -------
         float
             The computed log-posterior value.
         """
-        return self._log_posterior(theta)
+        return self._log_free_posterior(theta)
 
     def __len__(self) -> int:
         """
@@ -667,13 +678,14 @@ class InferenceProblem:
 
         rows = []
 
+        nuisance = set(self.nuisance_parameter_names)
         for name, p in self.parameters.items():
             status = "Free" if not p.freeze else "Fixed"
             prior = p.prior.__class__.__name__ if p.prior else "—"
             rows.append(
                 row(
                     [
-                        name,
+                        f"{name} (nuisance)" if name in nuisance else name,
                         status,
                         p.initial_value,
                         prior,
@@ -708,6 +720,11 @@ class InferenceProblem:
 
     def summary(self) -> str:
         """Return a formatted summary of the inference problem."""
+        nuisance = set(self.nuisance_parameter_names)
+
+        def nuisance_tag(name):
+            return " [nuisance]" if name in nuisance else ""
+
         lines = [
             "InferenceProblem",
             f"Model: {self.model.__class__.__name__}",
@@ -719,13 +736,13 @@ class InferenceProblem:
 
         for name, p in self.free_parameters.items():
             prior = p.prior.__class__.__name__ if p.prior else "None"
-            lines.append(f"  - {name}: init={p.initial_value}, prior={prior}")
+            lines.append(f"  - {name}{nuisance_tag(name)}: init={p.initial_value}, prior={prior}")
 
         if self.fixed_parameters:
             lines.append("")
             lines.append(f"Fixed parameters ({self.n_fixed_parameters}):")
             for name, p in self.fixed_parameters.items():
-                lines.append(f"  - {name}: value={p.initial_value}")
+                lines.append(f"  - {name}{nuisance_tag(name)}: value={p.initial_value}")
 
         return "\n".join(lines)
 
@@ -782,10 +799,14 @@ class InferenceProblem:
         """
         Unpack a NumPy array of parameter values into a dictionary keyed by parameter name.
 
+        This is the exact inverse of :meth:`pack_parameters`. No parameter transforms are applied: the
+        values are returned as given, so ``theta`` is expected to be in physical space. To convert a
+        sampling-space vector, use :meth:`transform_theta_inverse` first.
+
         Parameters
         ----------
         theta : np.ndarray
-            One-dimensional array of parameter values ordered according
+            One-dimensional array of (physical-space) parameter values ordered according
             to the model definition.
 
         Returns
@@ -795,23 +816,7 @@ class InferenceProblem:
         """
         theta = np.asarray(theta, dtype=float)
 
-        out = {}
-
-        for i, name in enumerate(self.__parameter_order__):
-            p = self.__parameters__[name]
-            z = theta[i]
-
-            if p.transform is not None:
-                try:
-                    x = p.transform.inverse(z)
-                except Exception:
-                    return None  # caller handles -inf
-            else:
-                x = z
-
-            out[name] = x
-
-        return out
+        return {name: theta[i] for i, name in enumerate(self.__parameter_order__)}
 
     def pack_free_parameters(self, parameters: dict[str, float]) -> np.ndarray:
         """
@@ -1053,7 +1058,12 @@ class InferenceProblem:
 
     # Prior callables.
     def _log_prior(self, theta: np.ndarray) -> float:
-        """Compute the log-prior in sampling space, including Jacobian corrections for transformed parameters."""
+        """
+        Compute the log-prior of a full **physical-space** parameter vector.
+
+        Priors are always defined on the physical parameters. Any Jacobian correction for transformed
+        parameters is added separately, by :meth:`_log_posterior` and :meth:`_log_free_posterior`.
+        """
         logp = 0.0
 
         for i, name in enumerate(self.__parameter_order__):
@@ -1073,21 +1083,21 @@ class InferenceProblem:
 
     def _log_likelihood(self, theta: np.ndarray) -> float:
         """
-        Compute the log-likelihood for a given set of parameters.
+        Compute the log-likelihood of a full **physical-space** parameter vector.
 
         Parameters
         ----------
         theta : np.ndarray
-            Array of parameter values in the order defined by the model. These
-            will be in the sampling space and therefore must be transformed back
-            to physical space before being passed to the likelihood.
+            Array of all parameter values in the order defined by the model, in physical space. No parameter
+            transforms are applied here; a sampling-space vector must first be mapped to physical space with
+            :meth:`transform_theta_inverse`.
 
         Returns
         -------
         float
             The computed log-likelihood value.
         """
-        # Unpack the parameters into a dictionary.
+        # Unpack the parameters into a dictionary (no transforms are applied).
         params = self.unpack_parameters(theta)
 
         # Compute the log-likelihood using the likelihood object.
@@ -1095,14 +1105,18 @@ class InferenceProblem:
 
         return logl
 
-    def _log_posterior(self, z: np.ndarray) -> float:
-        """Compute log-posterior in sampling space."""
-        # Convert sampling → physical once
-        try:
-            theta, log_jac = self.transform_theta_inverse(z)
-        except Exception as exp:
-            raise ValueError("Inverse transform failed.") from exp
+    def _log_posterior_physical(self, theta: np.ndarray, log_jac: float) -> float:
+        r"""
+        Evaluate the sampling-space log-posterior given the physical-space parameters.
 
+        Parameters
+        ----------
+        theta : np.ndarray
+            Full parameter vector in physical space.
+        log_jac : float
+            Log-Jacobian :math:`\log|d\theta/dz|` of the transform that produced ``theta`` from the
+            sampling-space vector.
+        """
         # Prior in physical space
         logp = self._log_prior(theta)
         if not np.isfinite(logp):
@@ -1115,6 +1129,26 @@ class InferenceProblem:
 
         return logp + logl + log_jac
 
+    def _log_posterior(self, z: np.ndarray) -> float:
+        """
+        Compute the log-posterior of a full **sampling-space** parameter vector.
+
+        The inverse transforms are applied exactly once, the prior and likelihood are evaluated in
+        physical space, and the log-Jacobian of the transform is added.
+
+        Parameters
+        ----------
+        z : np.ndarray
+            Array of all parameter values (free and frozen) in sampling space.
+        """
+        # Convert sampling → physical once
+        try:
+            theta, log_jac = self.transform_theta_inverse(z)
+        except Exception as exp:
+            raise ValueError("Inverse transform failed.") from exp
+
+        return self._log_posterior_physical(theta, log_jac)
+
     def _log_free_prior(self, theta_free: np.ndarray) -> float:
         """
         Compute the log-prior for a given set of free parameters.
@@ -1122,7 +1156,7 @@ class InferenceProblem:
         Parameters
         ----------
         theta_free : np.ndarray
-            Array of free parameter values in the order defined by the model.
+            Array of free parameter values in the order defined by the model, in physical space.
 
         Returns
         -------
@@ -1141,7 +1175,7 @@ class InferenceProblem:
         Parameters
         ----------
         theta_free : np.ndarray
-            Array of free parameter values in the order defined by the model.
+            Array of free parameter values in the order defined by the model, in physical space.
 
         Returns
         -------
@@ -1153,24 +1187,36 @@ class InferenceProblem:
         theta = self.pack_parameters(params)
         return self._log_likelihood(theta)
 
-    def _log_free_posterior(self, theta_free: np.ndarray) -> float:
+    def _log_free_posterior(self, z_free: np.ndarray) -> float:
         """
-        Compute the log-posterior for a given set of free parameters.
+        Compute the log-posterior for a given set of free **sampling-space** parameters.
+
+        This is the function evaluated by samplers (and by :meth:`__call__`). The free parameters are mapped
+        to physical space once, frozen parameters are inserted at their (physical) initial values, and the
+        log-Jacobian of the free-parameter transforms is added. Frozen parameters do not contribute a
+        Jacobian term.
 
         Parameters
         ----------
-        theta_free : np.ndarray
-            Array of free parameter values in the order defined by the model.
+        z_free : np.ndarray
+            Array of free parameter values in the order defined by the model, in sampling space. If no
+            parameter has a transform, this is identical to the physical-space vector.
 
         Returns
         -------
         float
             The computed log-posterior value.
         """
-        # Expand the free parameters into a full parameter vector.
-        params = self.unpack_free_parameters(theta_free)
-        theta = self.pack_parameters(params)
-        return self._log_posterior(theta)
+        # Map the free parameters to physical space once.
+        try:
+            theta_free, log_jac = self.transform_free_theta_inverse(z_free)
+        except Exception as exp:
+            raise ValueError("Inverse transform failed.") from exp
+
+        # Expand into a full physical-space vector, inserting the frozen values.
+        theta = self.pack_parameters(self.unpack_free_parameters(theta_free))
+
+        return self._log_posterior_physical(theta, log_jac)
 
     def log_prior(self, params: "_ModelParametersInput") -> float:
         """
@@ -1191,7 +1237,7 @@ class InferenceProblem:
         This is a public wrapper around the internal :meth:`_log_prior` method which
         handles packing the parameters from a dictionary into the required NumPy array format.
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta = self.pack_parameters(params)
         return self._log_prior(theta)
 
@@ -1214,7 +1260,7 @@ class InferenceProblem:
         This is a public wrapper around the internal :meth:`_log_likelihood` method which
         handles packing the parameters from a dictionary into the required NumPy array format.
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta = self.pack_parameters(params)
         return self._log_likelihood(theta)
 
@@ -1236,10 +1282,14 @@ class InferenceProblem:
         -----
         This is a public wrapper around the internal :meth:`_log_posterior` method which
         handles packing the parameters from a dictionary into the required NumPy array format.
+        The dictionary values are **physical** values; they are mapped to sampling space before the
+        evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any
+        parameter transforms) at that point.
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta = self.pack_parameters(params)
-        return self._log_posterior(theta)
+        z, _ = self.transform_theta_forward(theta)
+        return self._log_posterior(z)
 
     def log_free_prior(self, params: "_ModelParametersInput") -> float:
         """
@@ -1260,7 +1310,7 @@ class InferenceProblem:
         This is a public wrapper around the internal :meth:`_log_free_prior` method which
         handles packing the free parameters from a dictionary into the required NumPy array format.
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta_free = self.pack_free_parameters(params)
         return self._log_free_prior(theta_free)
 
@@ -1284,7 +1334,7 @@ class InferenceProblem:
         handles packing the free parameters from a dictionary into the required NumPy array format.
 
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta_free = self.pack_free_parameters(params)
         return self._log_free_likelihood(theta_free)
 
@@ -1306,10 +1356,14 @@ class InferenceProblem:
         -----
         This is a public wrapper around the internal :meth:`_log_free_posterior` method which
         handles packing the free parameters from a dictionary into the required NumPy array format.
+        The dictionary values are **physical** values; they are mapped to sampling space before the
+        evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any
+        free-parameter transforms) at that point.
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta_free = self.pack_free_parameters(params)
-        return self._log_free_posterior(theta_free)
+        z_free, _ = self.transform_free_theta_forward(theta_free)
+        return self._log_free_posterior(z_free)
 
     # ------------------------------------------------- #
     # Validation Methods                                #
@@ -1460,6 +1514,16 @@ class InferenceProblem:
         return self.__parameter_order__
 
     @property
+    def model_parameter_names(self) -> tuple[str, ...]:
+        """Tuple of str: Names of the forward model's parameters, in the model's order."""
+        return tuple(p.name for p in self.__likelihood__._model.PARAMETERS)
+
+    @property
+    def nuisance_parameter_names(self) -> tuple[str, ...]:
+        """Tuple of str: Names of the likelihood's nuisance parameters (empty if it declares none)."""
+        return tuple(p.name for p in self.__likelihood__.nuisance_parameters)
+
+    @property
     def parameters(self) -> dict[str, InferenceParameter]:
         """dict: Dictionary of inference parameters keyed by parameter name."""
         return self.__parameters__
@@ -1574,7 +1638,7 @@ class InferenceProblem:
     @property
     def initial_log_posterior(self) -> float:
         """float: The log-posterior evaluated at the initial free parameter values."""
-        return self._log_free_posterior(self.initial_theta)
+        return self._log_free_posterior(self.initial_z)
 
     # ------------------------------------------------- #
     # Prior Setting Helpers                             #
@@ -1582,28 +1646,18 @@ class InferenceProblem:
     # These methods allow us to set up some basic priors quickly without
     # requiring the user to manually define prior callables. We can also do
     # some unit-handled priors this way, which is a nice feature.
-    _PRIOR_REGISTRY = {
-        "uniform": {
-            "class": UniformPrior,
-            "unit_params": ("lower", "upper"),
-        },
-        "loguniform": {
-            "class": LogUniformPrior,
-            "unit_params": ("lower", "upper"),
-        },
-        "normal": {
-            "class": NormalPrior,
-            "unit_params": ("mean", "sigma"),
-        },
-        "lognormal": {
-            "class": LogNormalPrior,
-            "unit_params": ("mean", "sigma"),
-        },
-        "halfnormal": {
-            "class": HalfNormalPrior,
-            "unit_params": ("sigma",),
-        },
-    }
+    _PRIOR_REGISTRY = PRIOR_REGISTRY
+
+    def _coerce_parameters(self, params: "_ModelParametersInput") -> dict:
+        """
+        Coerce a dictionary of model and nuisance parameter values into raw values in base units.
+
+        Missing entries take their declared defaults. The model coerces its own parameters and the likelihood
+        coerces its nuisance parameters; unknown keys are ignored by both.
+        """
+        coerced = self.__likelihood__._model.coerce_model_parameters(params)
+        coerced.update(self.__likelihood__.coerce_nuisance_parameters(params))
+        return coerced
 
     def _coerce_to_base_units(
         self,
@@ -1624,7 +1678,7 @@ class InferenceProblem:
         return out
 
     def set_prior(self, parameter: str, prior_type: str, **parameters):
-        """
+        r"""
         Set a prior distribution on a parameter.
 
         Parameters
@@ -1632,9 +1686,24 @@ class InferenceProblem:
         parameter : str
             Name of the model parameter.
         prior_type : str
-            Type of prior ('uniform', 'loguniform', 'normal', etc.).
+            Type of prior. One of the keys of :data:`~trilobite.inference.prior.PRIOR_REGISTRY`:
+            ``'uniform'``, ``'loguniform'``, ``'normal'``, ``'lognormal'``, ``'halfnormal'``, ``'gamma'``,
+            ``'beta'`` or ``'truncatednormal'``.
         parameters
-            Parameters defining the prior.
+            Parameters defining the prior. Those that carry the parameter's units (e.g. ``lower`` and ``upper``
+            for ``'uniform'``) may be given as :class:`~astropy.units.Quantity`; a bare float is interpreted in
+            the parameter's base units. Dimensionless arguments (e.g. ``alpha`` and ``beta`` for ``'beta'``)
+            must be plain numbers.
+
+            For ``'lognormal'`` the median may be given instead of ``mean`` via ``median=``. Since
+            ``mean`` is :math:`\ln(x / x_{\rm ref})`, it depends on the reference unit, whereas the median
+            :math:`e^{\mu}` carries the parameter's units and converts like any other value.
+
+        Raises
+        ------
+        ValueError
+            If ``prior_type`` is unknown, if a unit-less argument is given a dimensional
+            :class:`~astropy.units.Quantity`, or if both ``mean`` and ``median`` are given for a log-normal prior.
         """
         prior_type = prior_type.lower()
 
@@ -1649,6 +1718,29 @@ class InferenceProblem:
         prior_cls = entry["class"]
         unit_params = entry["unit_params"]
 
+        parameters = dict(parameters)
+
+        # A log-normal is specified either by ``mean = ln(x / base_unit)`` or, with units, by its median.
+        if prior_type == "lognormal" and "median" in parameters:
+            if "mean" in parameters:
+                raise ValueError("Specify either `mean` or `median` for a lognormal prior, not both.")
+            median = self._coerce_to_base_units(parameter, {"median": parameters.pop("median")})["median"]
+            if not median > 0:
+                raise ValueError(f"The median of a lognormal prior must be positive, got {median}.")
+            parameters["mean"] = float(np.log(median))
+
+        # Dimensionless arguments must not carry units: silently converting them would produce a meaningless
+        # number, so a dimensional Quantity is an error and a dimensionless one is reduced to a float.
+        for key, val in list(parameters.items()):
+            if key in unit_params or not isinstance(val, u.Quantity):
+                continue
+            try:
+                parameters[key] = val.to_value(u.dimensionless_unscaled)
+            except u.UnitConversionError as exc:
+                raise ValueError(
+                    f"Argument '{key}' of a '{prior_type}' prior is dimensionless, but was given {val}."
+                ) from exc
+
         # Split parameters into unit-bearing and unitless
         unit_values = {k: parameters[k] for k in unit_params if k in parameters}
 
@@ -1661,6 +1753,72 @@ class InferenceProblem:
 
         # Assign prior
         self.__parameters__[parameter].prior = prior_cls(**final_params)
+
+    def sample_prior(self, n: int, rng: Optional[np.random.Generator] = None) -> np.ndarray:
+        r"""
+        Draw samples of the free parameters from their priors, in **sampling space**.
+
+        Each free parameter is drawn independently from its prior (via :meth:`~trilobite.inference.prior.Prior.sample`)
+        in physical space and then mapped through its transform, if any. The result is distributed according to
+        the prior part of the sampling-space target density, :math:`p(\theta(z))\,|d\theta/dz|`, so it can be
+        passed directly to :meth:`_log_free_posterior`, to :meth:`EmceeSampler.run
+        <trilobite.inference.sampling.mcmc.EmceeSampler.run>` as ``initial_state`` or to a pool.
+
+        Parameters
+        ----------
+        n : int
+            Number of draws.
+        rng : ~numpy.random.Generator, optional
+            Random number generator. Pass a seeded generator for reproducible draws.
+
+        Returns
+        -------
+        numpy.ndarray
+            Array of shape ``(n, n_free_parameters)`` with columns in the order of
+            :attr:`free_parameter_names`.
+
+        Raises
+        ------
+        ValueError
+            If ``n`` is not a positive integer.
+        RuntimeError
+            If a free parameter has no prior, if its prior cannot be sampled (e.g. a plain callable or a
+            :class:`~trilobite.inference.prior.CallablePrior`), or if a draw falls outside the domain of its
+            transform (e.g. a normal prior with a log transform).
+        """
+        if int(n) != n or n < 1:
+            raise ValueError(f"`n` must be a positive integer, got {n}.")
+        n = int(n)
+        rng = rng if rng is not None else np.random.default_rng()
+
+        draws = np.empty((n, self.n_free_parameters))
+
+        for j, (name, p) in enumerate(self.free_parameters.items()):
+            if p.prior is None:
+                raise RuntimeError(f"No prior specified for free parameter '{name}'.")
+
+            try:
+                x = np.asarray(p.prior.sample(size=n, rng=rng), dtype=float)
+            except (AttributeError, NotImplementedError) as exc:
+                raise RuntimeError(
+                    f"The prior of parameter '{name}' ({p.prior!r}) cannot be sampled. Use a "
+                    f"`Prior` subclass that defines a sampler."
+                ) from exc
+
+            if p.transform is not None:
+                # Applied element-wise so that scalar-only custom transforms work too.
+                with np.errstate(all="ignore"):
+                    x = np.array([p.transform.forward(xi) for xi in x], dtype=float)
+
+            if not np.all(np.isfinite(x)):
+                raise RuntimeError(
+                    f"Draws of parameter '{name}' are non-finite after applying its transform "
+                    f"({p.transform!r}); the prior support lies outside the transform's domain."
+                )
+
+            draws[:, j] = x
+
+        return draws
 
     # ------------------------------------------------- #
     # Freezing and Unfreezing Parameters                #
@@ -1746,14 +1904,16 @@ class InferenceProblem:
           serializable.
         - The model must implement :meth:`to_model_spec`.
         - The data container must implement :meth:`to_dict`.
-        - The likelihood must be importable via its fully-qualified module path.
+        - The likelihood must be importable via its fully-qualified module path, and its construction options
+          (:attr:`~trilobite.inference.likelihood.base.Likelihood.config`, e.g. ``sys_dex``) must be
+          JSON-serializable. They are stored under ``likelihood_kwargs``.
         - The returned dictionary contains a ``format`` field for validation
           during reconstruction.
         - A version tag is embedded to allow compatibility checks during loading.
         """
         import json
 
-        from .likelihood.utils import get_likelihood_target
+        from .likelihood.utils import get_likelihood_config, get_likelihood_target
 
         # ---------------------------------------------------------
         # Base output template
@@ -1763,6 +1923,7 @@ class InferenceProblem:
             "metadata": {},
             "model": None,
             "likelihood": None,
+            "likelihood_kwargs": {},
             "data": None,
             "parameters": {},
         }
@@ -1781,6 +1942,7 @@ class InferenceProblem:
         # ---------------------------------------------------------
         try:
             output["likelihood"] = get_likelihood_target(self.__likelihood__)
+            output["likelihood_kwargs"] = get_likelihood_config(self.__likelihood__)
         except Exception as e:
             raise TypeError(f"Failed to serialize likelihood: {e}") from e
 
@@ -1925,7 +2087,9 @@ class InferenceProblem:
         # --- Likelihood Reconstruction ------------------------
         try:
             likelihood_target = dict_spec["likelihood"]
-            likelihood = build_likelihood(likelihood_target, model=model, data=data)
+            # ``likelihood_kwargs`` is absent from specifications written before it was introduced.
+            likelihood_kwargs = dict_spec.get("likelihood_kwargs") or {}
+            likelihood = build_likelihood(likelihood_target, model=model, data=data, config=likelihood_kwargs)
         except Exception as e:
             raise TypeError(f"Failed to reconstruct likelihood from specification: {e}") from e
 
@@ -1933,7 +2097,7 @@ class InferenceProblem:
         parameters = {}
         for name, param_spec in dict_spec["parameters"].items():
             try:
-                parameters[name] = InferenceParameter.from_dict(param_spec, model)
+                parameters[name] = InferenceParameter.from_dict(param_spec, model, likelihood=likelihood)
             except Exception as e:
                 raise TypeError(f"Failed to reconstruct parameter '{name}' from specification: {e}") from e
 

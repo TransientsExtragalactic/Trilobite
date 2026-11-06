@@ -19,14 +19,15 @@ a comprehensive overview of the relevant components and their usage.
 
     The core structure of TRILOBITE, from data and physics modules to a final inference product. The typical workflow
     in Trilobite will touch each of these 4 layers, but the user can also interact with each layer independently.
+
 ----
 
 Getting Started
 ---------------
 
-To get started with trilobite, check out :ref:`getting_started` guide which walks through installation,
-basic usage, and a simple example. This is a great place to begin if you're new to trilobite or scientific
-Python in general. You can also explore the :ref:`examples` section for more in-depth tutorials and use cases.
+To get started with trilobite, check out the :doc:`Quickstart Guide </getting_started>` which walks through
+installation, basic usage, and a simple example. This is a great place to begin if you're new to trilobite or
+scientific Python in general. You can also explore the example galleries for more in-depth tutorials and use cases.
 
 Data Loading, Handling, and Visualization
 -----------------------------------------
@@ -85,7 +86,7 @@ of the system being modeled. These building blocks can be combined in various wa
 capture the nuances of radio observations. Each major division of the building-block layer has its own landing page
 that provides an overview of the available modules and links to detailed user, theory, and developer documentation:
 
-.. grid:: 3
+.. grid:: 2 2 3 3
     :gutter: 2
 
     .. grid-item-card:: Shocks
@@ -108,6 +109,13 @@ that provides an overview of the available modules and links to detailed user, t
         Time-dependent one-zone disk models: thermodynamic closures, viscous spreading, fallback
         accretion, and the advective RIAF regime.
 
+    .. grid-item-card:: Dynamical Profiles
+        :link: profiles_user_guide
+        :link-type: ref
+
+        Parameterized analytic field classes for CSM densities, homologous ejecta, and upstream
+        velocity distributions. Used as source functions by shock engines and ODE integrators.
+
 .. toctree::
     :maxdepth: 1
     :hidden:
@@ -115,6 +123,7 @@ that provides an overview of the available modules and links to detailed user, t
     physics/shocks/overview
     physics/radiation/overview
     physics/disks/index
+    physics/profiles/profiles_user_guide
 
 
 Parallel Computing

@@ -23,7 +23,7 @@ _igP_adv
     Setting :math:`xi to 0` recovers the non-advective ``igP`` limit.
 
 All closures default to electron-scattering opacity and accept any
-:class:`~trilobite.radiation.opacity.base.GreyOpacityLaw` via the
+:class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` via the
 ``opacity`` property.  Call
 :meth:`~trilobite.dynamics.accretion.one_zone.closure.OneZoneClosure.bind_runtime_parameters`
 before passing to the integrator; each can optionally install the power-law

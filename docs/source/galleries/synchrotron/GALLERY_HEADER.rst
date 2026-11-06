@@ -1,5 +1,3 @@
-.. _synchrotron_gallery:
-
 *****************************
 Synchrotron Emission Examples
 *****************************
@@ -20,5 +18,5 @@ Examples are grouped into four progressive sections:
 
 For the underlying physics, see :ref:`synchrotron_theory` and :ref:`synch_sed_theory`.
 For cooling theory, see :ref:`synchrotron_cooling_theory` and :ref:`electron_cooling`.
-For the API, see :ref:`synchrotron_core`, :ref:`synchrotron_microphysics`, :ref:`synchrotron_seds`,
+For the API, see :ref:`synchrotron_core`, :ref:`synchrotron_seds`,
 and :ref:`synchrotron_cooling`.

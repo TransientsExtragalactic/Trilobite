@@ -951,27 +951,39 @@ The mechanical model
 is the most physically complete of the three numerical closures. Rather than
 collapsing the shocked region into a single shell, it assigns separate masses,
 internal energies, and effective volumes to the shocked ejecta (Region 2) and
-shocked CSM (Region 3), and evolves all of them as coupled ODEs.
+shocked CSM (Region 3), and evolves all of them as coupled ODEs. In developing this model,
+we follow schematically the approach of :footcite:t:`wangVegasAfterglowHighperformanceFramework2026`, but
+in the non-relativistic case.
 
-This closure is appropriate when the shocked gas stores thermal energy that
-continues to provide pressure support over dynamical timescales — the regime
-relevant to adiabatic or partially radiative shocks early in the evolution of a
-remnant.
+One significant advantage of this approach is that it allows for the inclusion of
+radiative losses in the shocked layers, which can be important in many late-time scenarios.
 
 Assumptions
 ^^^^^^^^^^^^
+
+Like our other models in this document, we assume that the shock separates the system into
+four regions: the unshocked ejecta (Region 1), the shocked ejecta (Region 2), the shocked CSM (Region 3),
+and the unshocked CSM (Region 4). The following are also assumed:
 
 - The contact discontinuity at :math:`R_{\rm cd}` separates two finite-width
   shocked layers:
 
   .. math::
 
-      R_{\rm rs} = R_{\rm cd} - \Delta_2,
+      R_{\rm rs} = R_{\rm cd} - \Delta_{\rm rs},
       \qquad
-      R_{\rm fs} = R_{\rm cd} + \Delta_3.
+      R_{\rm fs} = R_{\rm cd} + \Delta_{\rm fs}.
 
-- The shock speeds are :math:`D_{\rm rs} = v_{\rm cd} - \dot\Delta_2` and
-  :math:`D_{\rm fs} = v_{\rm cd} + \dot\Delta_3`.
+- The shock speeds are (by definition)
+
+  .. math::
+
+        \begin{aligned}
+        \frac{dR_{\rm rs}}{dt} &= v_{\rm cd} - \dot{\Delta}_{\rm rs},
+        \\
+        \frac{dR_{\rm fs}}{dt} &= v_{\rm cd} + \dot{\Delta}_{\rm fs},
+        \end{aligned}
+
 - The volumes of the shocked layers are approximated by thin-slab expressions,
 
   .. math::
@@ -980,16 +992,17 @@ Assumptions
       \qquad
       V_3 \simeq 4\pi R_{\rm cd}^2\Delta_3.
 
-- The layer-averaged pressures are thermodynamic functions of the evolved internal
-  energies:
+In order to *avoid* having to specify in full detail the fluid dynamic structure of the shocked layers, we invoke
+*approximate / heuristic* closure relations for the internal thermodynamics:
+
+- Each shocked layer is treated as a single-zone, uniform-density, uniform-pressure slab. The internal energy
+  is some :math:`U_i`.
+
+- The pressure is related to the internal energy and volume by an effective adiabatic index :math:`\hat\gamma_i`:
 
   .. math::
 
       P_i = (\hat\gamma_i-1)\frac{U_i}{V_i}.
-
-- The contact discontinuity is accelerated by the net pressure force with effective
-  mass :math:`M_{\rm eff}=M_2+M_3`.
-- The upstream media are cold: :math:`P_1\simeq P_4\simeq 0`.
 
 .. important::
 
@@ -998,227 +1011,324 @@ Assumptions
     the internal-energy budget of each shocked region, and they evolve continuously
     as mass is swept up and work is done by expansion.
 
+For simplicity, we also assume that the upstream media are cold: :math:`P_1\simeq P_4\simeq 0`.
+
+
 Model Equations
 ^^^^^^^^^^^^^^^^
 
-The full state vector is
+The first equation describing this model is the standard **continuity equation**, which provides two mass-loading
+equations:
 
-.. math::
-
-    {\bf y}
-    =
-    \left(
-        R_{\rm cd},\;
-        v_{\rm cd},\;
-        M_2,\;
-        M_3,\;
-        U_2,\;
-        U_3,\;
-        \Delta_2,\;
-        \Delta_3
-    \right).
-
-The mass-loading equations are
-
-.. math::
-
-    \boxed{
-    \frac{dM_2}{dt}
-    =
-    4\pi R_{\rm rs}^2
-    \rho_1(R_{\rm rs},t)
-    \left[
-        u_1(R_{\rm rs},t)-D_{\rm rs}
-    \right],
-    \qquad
-    \frac{dM_3}{dt}
-    =
-    4\pi R_{\rm fs}^2
-    \rho_4(R_{\rm fs},t)
-    \left[
-        D_{\rm fs}-u_4(R_{\rm fs},t)
-    \right].
-    }
-
-The contact-discontinuity equation of motion is
-
-.. math::
-
-    \boxed{
-    (M_2+M_3)
-    \frac{dv_{\rm cd}}{dt}
-    =
-    4\pi R_{\rm cd}^2(P_2-P_3).
-    }
-
-The internal energies evolve according to
-
-.. math::
-
-    \boxed{
-    \frac{dU_i}{dt}
-    =
-    \dot U_{{\rm sh},i}
-    +
-    \dot U_{{\rm ad},i}
-    +
-    \dot U_{{\rm rad},i},
-    \qquad
-    i\in\{2,3\},
-    }
-
-with the shock-heating term
-
-.. math::
-
-    \boxed{
-    \dot U_{{\rm sh},i}
-    =
-    \frac{1}{\hat\gamma_i-1}
-    \left(
-        \frac{\chi_i-1}{\chi_i^2}
-    \right)
-    v_{{\rm rel},i}^2
-    \frac{dM_i}{dt},
-    }
-
-where
-:math:`v_{{\rm rel},2}=u_1(R_{\rm rs},t)-D_{\rm rs}` and
-:math:`v_{{\rm rel},3}=D_{\rm fs}-u_4(R_{\rm fs},t)`,
-the adiabatic expansion term
-
-.. math::
-
-    \boxed{
-    \dot U_{{\rm ad},i}
-    =
-    -(\hat\gamma_i-1)U_i
-    \left(
-        2\frac{v_{\rm cd}}{R_{\rm cd}}
-        +
-        \frac{\dot\Delta_i}{\Delta_i}
-    \right),
-    }
-
-and :math:`\dot U_{{\rm rad},i}` an external radiative loss to be specified by the
-user. The layer widths are closed by the layer sound speed,
-
-.. math::
-
-    \boxed{
-    \dot\Delta_i\simeq c_{s,i},
-    \qquad
-    c_{s,i}^2
-    \simeq
-    \hat\gamma_i\frac{P_i V_i}{M_i}.
-    }
-
-Collecting all equations, the minimal mechanical model is
 
 .. math::
 
     \boxed{
     \begin{aligned}
-        \frac{dR_{\rm cd}}{dt}
-        &=
-        v_{\rm cd},
-        \\[6pt]
-        \frac{dM_2}{dt}
-        &=
-        4\pi R_{\rm rs}^2
-        \rho_1(R_{\rm rs},t)
-        \left[
-            u_1(R_{\rm rs},t)-D_{\rm rs}
-        \right],
-        \\[6pt]
-        \frac{dM_3}{dt}
-        &=
-        4\pi R_{\rm fs}^2
-        \rho_4(R_{\rm fs},t)
-        \left[
-            D_{\rm fs}-u_4(R_{\rm fs},t)
-        \right],
-        \\[6pt]
-        (M_2+M_3)
-        \frac{dv_{\rm cd}}{dt}
-        &=
-        4\pi R_{\rm cd}^2(P_2-P_3),
-        \\[6pt]
-        \frac{dU_i}{dt}
-        &=
-        \dot U_{{\rm sh},i}
-        +
-        \dot U_{{\rm ad},i}
-        +
-        \dot U_{{\rm rad},i},
-        \\[6pt]
-        \dot\Delta_i
-        &\simeq
-        c_{s,i}.
+    \frac{dM_2}{dt}
+    &=
+    4\pi R_{\rm rs}^2
+    \rho_1(R_{\rm rs},t)
+    \left[
+        u_1(R_{\rm rs},t)-D_{\rm rs}
+    \right],
+    \\
+    \frac{dM_3}{dt}
+    &=
+    4\pi R_{\rm fs}^2
+    \rho_4(R_{\rm fs},t)
+    \left[
+        D_{\rm fs}-u_4(R_{\rm fs},t)
+    \right].
     \end{aligned}
     }
 
-.. dropdown:: Derivation: shock-heating source term
+To provide the additional constraint needed to close the dynamics, we impose
+global energy conservation for the shocked region. The total mechanical energy
+stored in the shocked layers is
 
-    For a cold, strong, non-relativistic shock, the compression ratio is
+.. math::
 
-    .. math::
+    E_{\rm sh}
+    =
+    \frac{1}{2}M v_{\rm cd}^2
+    +
+    U_2
+    +
+    U_3,
+    \qquad
+    M = M_2 + M_3.
 
-        \chi_i
-        =
-        \frac{\hat\gamma_i+1}{\hat\gamma_i-1}.
+Here :math:`M_2` and :math:`M_3` are the masses in the shocked ejecta and
+shocked CSM, respectively, while :math:`U_2` and :math:`U_3` are their
+corresponding internal energies.
 
-    The downstream pressure generated by upstream relative velocity :math:`v_{\rm rel}` is
+Differentiating gives
 
-    .. math::
+.. math::
 
-        P_d
-        =
-        \rho_u v_{\rm rel}^2
-        \left(1-\frac{1}{\chi_i}\right).
+    \frac{dE_{\rm sh}}{dt}
+    =
+    \frac{1}{2} M \frac{dv^2_{\rm cd}}{dt}
+    +
+    \frac{1}{2}v_{\rm cd}^2\frac{dM}{dt}
+    +
+    \frac{dU_2}{dt}
+    +
+    \frac{dU_3}{dt}.
 
-    Since :math:`\rho_d=\chi_i\rho_u`, the downstream specific internal energy is
+The **left-hand side** of this equation can be made to represent the *advected* energy fluxes into the shocked layers
+along with any *ab initio* energy injection (e.g., from a central engine):
 
-    .. math::
+.. math::
 
-        \varepsilon_{{\rm int},d}
-        =
-        \frac{1}{\hat\gamma_i-1}
-        \frac{P_d}{\rho_d}
-        =
-        \frac{1}{\hat\gamma_i-1}
-        \left(
-            \frac{\chi_i-1}{\chi_i^2}
-        \right)
-        v_{\rm rel}^2.
+    \frac{dE_{\rm sh}}{dt} = \dot{E}_{\rm adv} + \dot{E}_{\rm inj} + \dot{E}_{\rm rad}.
 
-    Multiplying by the mass-loading rate gives the shock-heating source
-    :math:`\dot U_{{\rm sh},i} = \varepsilon_{{\rm int},i}\,dM_i/dt`.
+Here,
 
-.. dropdown:: Derivation: adiabatic energy loss
+.. math::
 
-    The adiabatic term follows from :math:`P\,dV` work:
+    \dot{E}_{\rm adv} = \frac{1}{2}\left[u_1(R_{\rm rs},t)^2 \frac{dM_2}{dt} + u_4(R_{\rm fs},t)^2 \frac{dM_3}{dt}\right],
 
-    .. math::
+and
 
-        \dot U_{{\rm ad},i}
-        =
-        -P_i\frac{dV_i}{dt}
-        =
-        -(\hat\gamma_i-1)U_i
-        \frac{d\ln V_i}{dt}.
+.. math::
 
-    With :math:`V_i\simeq4\pi R_{\rm cd}^2\Delta_i`,
+    \dot{E}_{\rm rad} = \dot{U}_2{\rm rad} + \dot{U}_3{\rm rad}
 
-    .. math::
+are the radiative losses from the shocked layers. These may be specified by the user to include radiative losses. Finally,
+:math:`\dot{E}_{\rm inj}` is the energy injection rate from a central engine, which may also be specified by the user.
 
-        \frac{d\ln V_i}{dt}
-        =
-        2\frac{v_{\rm cd}}{R_{\rm cd}}
+On the **right-hand side**, we must account for all relevant dissipation mechanisms of the internal energy. In this
+model, **we include 3 such mechanisms**: adabatic expansion, radiative losses, and shock heating:
+
+.. math::
+
+    \frac{dU_i}{dt} = \dot{U}_{\rm ad,i} + \dot{U}_{\rm rad,i} + \dot{U}_{\rm sh,i}.
+
+More details are provided below:
+
+.. tab-set::
+
+    .. tab-item:: Adiabatic Expansion
+
+        The adiabatic term follows from :math:`P\,dV` work:
+
+        .. math::
+
+            \dot U_{{\rm ad},i}
+            =
+            -P_i\frac{dV_i}{dt}
+            =
+            -(\hat\gamma_i-1)U_i
+            \frac{d\ln V_i}{dt}.
+
+        With :math:`V_i\simeq4\pi R_{\rm cd}^2\Delta_i`,
+
+        .. math::
+
+            \frac{d\ln V_i}{dt}
+            =
+            2\frac{v_{\rm cd}}{R_{\rm cd}}
+            +
+            \frac{\dot\Delta_i}{\Delta_i},
+
+        giving
+
+        .. math::
+
+            \boxed{
+            \dot U_{{\rm ad},i}
+            =
+            -(\hat\gamma_i-1)U_i
+            \left(
+                2\frac{v_{\rm cd}}{R_{\rm cd}}
+                +
+                \frac{\dot\Delta_i}{\Delta_i}
+            \right),
+            }
+
+    .. tab-item:: Shock Heating
+
+        For a cold, strong, non-relativistic shock, the compression ratio is
+
+        .. math::
+
+            \chi_i
+            =
+            \frac{\hat\gamma_i+1}{\hat\gamma_i-1}.
+
+        The downstream pressure generated by upstream relative velocity :math:`v_{\rm rel}` is
+
+        .. math::
+
+            P_d
+            =
+            \rho_u v_{\rm rel}^2
+            \left(1-\frac{1}{\chi_i}\right).
+
+        Since :math:`\rho_d=\chi_i\rho_u`, the downstream specific internal energy is
+
+        .. math::
+
+            \varepsilon_{{\rm int},d}
+            =
+            \frac{1}{\hat\gamma_i-1}
+            \frac{P_d}{\rho_d}
+            =
+            \frac{1}{\hat\gamma_i-1}
+            \left(
+                \frac{\chi_i-1}{\chi_i^2}
+            \right)
+            v_{\rm rel}^2.
+
+        Multiplying by the mass-loading rate gives the shock-heating source
+        :math:`\dot U_{{\rm sh},i} = \varepsilon_{{\rm int},i}\,dM_i/dt`:
+
+        .. math::
+
+            \boxed{
+            \dot U_{{\rm sh},i}
+            =
+            \frac{1}{\hat\gamma_i-1}
+            \left(
+                \frac{\chi_i-1}{\chi_i^2}
+            \right)
+            v_{{\rm rel},i}^2
+            \frac{dM_i}{dt},
+            }
+
+    .. tab-item:: Radiative Losses
+
+        :math:`\dot U_{{\rm rad},i}` should be an external function of the state variables which may be
+        specified by the user to provide radiative losses from free-free, line emission, synchrotron, etc.
+
+With all of the energy accounting in place, we introduce the parameter :math:`\Phi = v_{\rm cd}^2` and may then
+write the differential equation in the form
+
+.. math::
+
+    \boxed{
+    \frac{d\Phi}{dt} = \frac{2}{M}\left[\dot{E}_{\rm adv} +
+                                        \dot{E}_{\rm inj} +
+                                        \dot{E}_{\rm rad} -
+             \frac{1}{2} \dot{M} \Phi - \dot{U}_2 - \dot{U}_3\right]
+    }
+
+Because the reverse shock propagates through a finite ejecta mass, we modify the behavior of the system
+once :math:`M_2 \gtrsim M_{\rm ej}`. In this case, we set :math:`M_2 = M_{\rm ej}` and :math:`\dot{M}_2 = 0`, and we
+remove the advective and shock heating terms from the energy equation for the shocked ejecta layer.
+
+To close the model, we must specify the evolution of the shocked-layer
+widths. These widths should be interpreted as effective single-zone volumes
+rather than resolved hydrodynamic structures. Following the spirit of
+:footcite:t:`wangVegasAfterglowHighperformanceFramework2026`, we use an
+asymmetric closure during reverse-shock crossing: the forward-shocked CSM
+layer expands at its internal sound speed, while the reverse-shocked ejecta
+layer grows according to the rate at which compressed ejecta is deposited
+behind the reverse shock.
+
+For the forward-shocked CSM layer, we take
+
+.. math::
+
+    \dot{\Delta}_{\rm fs}
+    =
+    c_{s,3}
+    =
+    \sqrt{
+        \hat\gamma_3
+        \frac{P_3}{\rho_3}
+    }.
+
+For the reverse-shocked ejecta layer, mass deposition implies
+
+.. math::
+
+    \dot{\Delta}_{\rm rs}
+    =
+    \frac{1}{4\pi R_{\rm cd}^2\chi_2\rho_1(R_{\rm rs},t)}
+    \frac{dM_2}{dt},
+
+where :math:`\chi_2=(\hat\gamma_2+1)/(\hat\gamma_2-1)` is the strong-shock
+compression ratio. Since
+
+.. math::
+
+    D_{\rm rs}
+    =
+    v_{\rm cd}
+    -
+    \dot{\Delta}_{\rm rs},
+
+the reverse-shock mass-loading rate is
+
+.. math::
+
+    \frac{dM_2}{dt}
+    =
+    4\pi R_{\rm rs}^2\rho_1(R_{\rm rs},t)
+    \left[
+        u_1(R_{\rm rs},t)
+        -
+        v_{\rm cd}
         +
-        \frac{\dot\Delta_i}{\Delta_i},
+        \dot{\Delta}_{\rm rs}
+    \right].
 
-    giving the boxed expression for :math:`\dot U_{{\rm ad},i}`.
+Combining the previous two equations gives an explicit algebraic closure,
+
+.. math::
+
+    \dot{\Delta}_{\rm rs}
+    =
+    \frac{
+        \eta_{\rm rs}
+        \left[
+            u_1(R_{\rm rs},t)-v_{\rm cd}
+        \right]
+    }{
+        1-\eta_{\rm rs}
+    },
+    \qquad
+    \eta_{\rm rs}
+    =
+    \frac{R_{\rm rs}^2}{R_{\rm cd}^2\chi_2}.
+
+In the thin-shell limit, :math:`R_{\rm rs}\simeq R_{\rm cd}`, this reduces to
+the form used in the numerical kernel,
+
+.. math::
+
+    \boxed{
+    \dot{\Delta}_{\rm rs}
+    \simeq
+    \frac{
+        u_1(R_{\rm rs},t)-v_{\rm cd}
+    }{
+        \chi_2-1
+    }.
+    }
+
+Once the reverse shock has crossed the ejecta, Region 2 is no longer supplied
+by newly shocked ejecta. We therefore set :math:`\dot M_2=0` and
+:math:`\dot U_{{\rm sh},2}=0`, and switch the reverse-shocked layer to the same
+sound-speed expansion closure,
+
+.. math::
+
+    \dot{\Delta}_{\rm rs}
+    =
+    c_{s,2}
+    =
+    \sqrt{
+        \hat\gamma_2
+        \frac{P_2}{\rho_2}
+    }.
+
+If :math:`u_1(R_{\rm rs},t)-v_{\rm cd}\le 0` during the crossing phase, the
+reverse shock is treated as inactive and the corresponding mass-loading and
+shock-heating terms are set to zero.
 
 Relativistic Models
 --------------------
@@ -1708,7 +1818,7 @@ time :math:`t_0`. Assuming a cold shell,
    \qquad
    \Gamma_0 = \frac{1}{\sqrt{1-\beta_0^2}}.
 
-.. bigidea::
+.. note::
 
    The evolved variables are :math:`R_{\rm sh}`, :math:`M_{\rm sh}`,
    :math:`E_{\rm sh}`, and :math:`\Pi_{\rm sh}`. Rest mass :math:`M_{\rm sh}`

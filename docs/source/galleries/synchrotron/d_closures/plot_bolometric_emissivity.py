@@ -71,26 +71,16 @@ Combining this with the intrinsic synchrotron scaling
 
 This scaling is independent of the power-law index :math:`p`.
 
-Relevant API References
------------------------
-
-- :func:`~radiation.synchrotron.microphysics.compute_bol_emissivity`
-- :func:`~radiation.synchrotron.microphysics.compute_bol_emissivity_BPL`
-- :func:`~radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density`
-- :func:`~radiation.synchrotron.microphysics.compute_equipartition_magnetic_field`
-- :func:`~radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field`
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from trilobite.radiation.synchrotron import (
-    compute_bol_emissivity,
-    compute_bol_emissivity_BPL,
-    compute_bol_emissivity_from_thermal_energy_density,
-    compute_equipartition_magnetic_field,
-    compute_PL_norm_from_magnetic_field,
+from trilobite.radiation.synchrotron.electron_distributions import (
+    BrokenPowerLaw,
+    PowerLaw,
+    equipartition_magnetic_field,
 )
 from trilobite.utils.plot_utils import set_plot_style
 
@@ -131,19 +121,10 @@ epsilon_B = 0.1
 fig, ax = plt.subplots(figsize=(8, 5))
 
 for p in p_values:
-    N0 = compute_PL_norm_from_magnetic_field(
-        B=B_arr,
-        p=p,
+    j = PowerLaw.bol_emiss_from_magnetic_field(
+        B_arr,
         epsilon_B=epsilon_B,
         epsilon_E=epsilon_E,
-        gamma_min=gamma_min,
-        gamma_max=gamma_max,
-        mode="gamma",
-    )
-
-    j = compute_bol_emissivity(
-        B=B_arr,
-        N0=N0,
         p=p,
         gamma_min=gamma_min,
         gamma_max=gamma_max,
@@ -158,17 +139,10 @@ for p in p_values:
 
 # reference B^4 guide
 B_ref = 0.1
-j_ref = compute_bol_emissivity(
-    B=B_ref * u.G,
-    N0=compute_PL_norm_from_magnetic_field(
-        B=B_ref * u.G,
-        p=2.5,
-        epsilon_B=epsilon_B,
-        epsilon_E=epsilon_E,
-        gamma_min=gamma_min,
-        gamma_max=gamma_max,
-        mode="gamma",
-    ),
+j_ref = PowerLaw.bol_emiss_from_magnetic_field(
+    B_ref * u.G,
+    epsilon_B=epsilon_B,
+    epsilon_E=epsilon_E,
     p=2.5,
     gamma_min=gamma_min,
     gamma_max=gamma_max,
@@ -217,33 +191,30 @@ p = 2.5
 
 gamma_c = np.geomspace(200, 5e5, 200)
 
-N0 = compute_PL_norm_from_magnetic_field(
-    B=B_demo,
-    p=p,
+j_pl = PowerLaw.bol_emiss_from_magnetic_field(
+    B_demo,
     epsilon_B=epsilon_B,
     epsilon_E=epsilon_E,
-    gamma_min=gamma_min,
-    gamma_max=gamma_max,
-    mode="gamma",
-)
-
-j_pl = compute_bol_emissivity(
-    B=B_demo,
-    N0=N0,
     p=p,
     gamma_min=gamma_min,
     gamma_max=gamma_max,
 )
 
-j_bpl = compute_bol_emissivity_BPL(
-    B=B_demo,
-    N0=N0,
-    a1=p,
-    a2=p + 1,
-    gamma_b=gamma_c,
-    gamma_min=gamma_min,
-    gamma_max=gamma_max,
-)
+j_bpl = np.array(
+    [
+        BrokenPowerLaw.bol_emiss_from_magnetic_field(
+            B_demo,
+            epsilon_B=epsilon_B,
+            epsilon_E=epsilon_E,
+            p1=p,
+            p2=p + 1,
+            gamma_c=float(gc),
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+        ).to_value(u.erg / u.s / u.cm**3)
+        for gc in gamma_c
+    ]
+) * (u.erg / u.s / u.cm**3)
 
 fig, axes = plt.subplots(2, 1, figsize=(8, 7), sharex=True)
 
@@ -285,23 +256,10 @@ plt.show()
 # Section 3: Equipartition Magnetic Field
 # ---------------------------------------
 #
-# The equipartition magnetic field follows directly from
-#
-# .. math::
-#
-#     u_B = \frac{B^2}{8\pi} = \epsilon_B u_{\rm therm}.
-#
-# Therefore
-#
-# .. math::
-#
-#     B_{\rm eq} = \sqrt{8\pi\,\epsilon_B\,u_{\rm therm}}.
-#
-# This produces the characteristic scaling
-#
-# .. math::
-#
-#     B_{\rm eq} \propto u_{\rm therm}^{1/2}.
+# Solving :math:`u_B = B^2/(8\pi) = \epsilon_B u_{\rm therm}` for :math:`B`
+# gives :math:`B_{\rm eq} \propto u_{\rm therm}^{1/2}`, independent of
+# :math:`\epsilon_B` in slope (only the intercept shifts).  Below we confirm
+# this for several values of :math:`\epsilon_B`.
 
 u_therm = np.geomspace(1e-4, 1e6, 200) * u.erg / u.cm**3
 
@@ -310,7 +268,7 @@ eps_vals = [0.01, 0.1, 0.33, 1]
 fig, ax = plt.subplots(figsize=(8, 5))
 
 for eps in eps_vals:
-    B_eq = compute_equipartition_magnetic_field(
+    B_eq = equipartition_magnetic_field(
         u_therm=u_therm,
         epsilon_B=eps,
     )
@@ -323,12 +281,12 @@ for eps in eps_vals:
     )
 
 # guide slope
-B_ref = compute_equipartition_magnetic_field(
+B_ref_eq = equipartition_magnetic_field(
     u_therm=1 * u.erg / u.cm**3,
     epsilon_B=0.1,
 )
 
-guide = B_ref.value * (u_therm.value) ** 0.5
+guide = B_ref_eq.value * (u_therm.value) ** 0.5
 
 ax.loglog(u_therm.value, guide, "k--", label=r"$\propto u_{\rm therm}^{1/2}$")
 

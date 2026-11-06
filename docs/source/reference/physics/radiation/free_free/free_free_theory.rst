@@ -263,7 +263,7 @@ context of thermal bremsstrahlung. In the low frequency limit, the Gaunt factor 
 In Trilobite, we provide a number of options for actually performing the Gaunt factor calculations,
 
 The Gaunt Factor in Practice
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In practice, the Gaunt factor is **not evaluated directly from the Coulomb logarithm**, but instead
 computed using a combination of **analytic approximations** and **tabulated data** that incorporate

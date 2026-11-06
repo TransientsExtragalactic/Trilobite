@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.703** total execution time for 55 files **from all galleries**:
+**05:59.505** total execution time for 68 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_chevalier_shock_structure.py` (``galleries/dynamics/plot_chevalier_shock_structure.py``)
-     - 00:00.703
+   * - :ref:`sphx_glr_auto_examples_inference_plot_slsn_magnetar_swift.py` (``galleries/inference/plot_slsn_magnetar_swift.py``)
+     - 05:59.505
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -59,40 +59,70 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_accretion_plot_tde_disk_observables.py` (``galleries/accretion/plot_tde_disk_observables.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_data_plot_epoch_photometry.py` (``galleries/data/plot_epoch_photometry.py``)
+   * - :ref:`sphx_glr_auto_examples_data_plot_inference_data.py` (``galleries/data/plot_inference_data.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_data_plot_inference_workflow.py` (``galleries/data/plot_inference_workflow.py``)
+   * - :ref:`sphx_glr_auto_examples_data_plot_multiband_optical.py` (``galleries/data/plot_multiband_optical.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_data_plot_multiband_radio.py` (``galleries/data/plot_multiband_radio.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_data_plot_optical_light_curve.py` (``galleries/data/plot_optical_light_curve.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_data_plot_photometry_data.py` (``galleries/data/plot_photometry_data.py``)
+   * - :ref:`sphx_glr_auto_examples_data_plot_optical_photometry.py` (``galleries/data/plot_optical_photometry.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_data_plot_specific_epochs.py` (``galleries/data/plot_specific_epochs.py``)
+   * - :ref:`sphx_glr_auto_examples_data_plot_radio_light_curve.py` (``galleries/data/plot_radio_light_curve.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_mechanical_shock_cooling.py` (``galleries/dynamics/plot_mechanical_shock_cooling.py``)
+   * - :ref:`sphx_glr_auto_examples_data_plot_radio_photometry.py` (``galleries/data/plot_radio_photometry.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_mechanical_shock_model.py` (``galleries/dynamics/plot_mechanical_shock_model.py``)
+   * - :ref:`sphx_glr_auto_examples_dynamics_a_fundamentals_plot_rh_jump_conditions.py` (``galleries/dynamics/a_fundamentals/plot_rh_jump_conditions.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_numerical_shock_engine.py` (``galleries/dynamics/plot_numerical_shock_engine.py``)
+   * - :ref:`sphx_glr_auto_examples_dynamics_a_fundamentals_plot_rh_jump_weak_conditions.py` (``galleries/dynamics/a_fundamentals/plot_rh_jump_weak_conditions.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_numerical_shocks_csms.py` (``galleries/dynamics/plot_numerical_shocks_csms.py``)
+   * - :ref:`sphx_glr_auto_examples_dynamics_b_models_plot_blandford_mcKee.py` (``galleries/dynamics/b_models/plot_blandford_mcKee.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_relativistic_thin_shell_convergence.py` (``galleries/dynamics/plot_relativistic_thin_shell_convergence.py``)
+   * - :ref:`sphx_glr_auto_examples_dynamics_b_models_plot_chevalier_self_similar.py` (``galleries/dynamics/b_models/plot_chevalier_self_similar.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_rh_jump_conditions.py` (``galleries/dynamics/plot_rh_jump_conditions.py``)
+   * - :ref:`sphx_glr_auto_examples_dynamics_b_models_plot_chevalier_shock_structure.py` (``galleries/dynamics/b_models/plot_chevalier_shock_structure.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_rh_jump_weak_conditions.py` (``galleries/dynamics/plot_rh_jump_weak_conditions.py``)
+   * - :ref:`sphx_glr_auto_examples_dynamics_b_models_plot_chevalier_two_shock.py` (``galleries/dynamics/b_models/plot_chevalier_two_shock.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_b_models_plot_chevalier_wind_engine.py` (``galleries/dynamics/b_models/plot_chevalier_wind_engine.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_b_models_plot_sedov_taylor_shock.py` (``galleries/dynamics/b_models/plot_sedov_taylor_shock.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_c_engines_plot_mechanical_shock_cooling.py` (``galleries/dynamics/c_engines/plot_mechanical_shock_cooling.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_c_engines_plot_mechanical_shock_model.py` (``galleries/dynamics/c_engines/plot_mechanical_shock_model.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_c_engines_plot_mechanical_shocks_csms.py` (``galleries/dynamics/c_engines/plot_mechanical_shocks_csms.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_c_engines_plot_momentum_conserving_shock.py` (``galleries/dynamics/c_engines/plot_momentum_conserving_shock.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_c_engines_plot_numerical_shock_engine.py` (``galleries/dynamics/c_engines/plot_numerical_shock_engine.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_c_engines_plot_numerical_shocks_csms.py` (``galleries/dynamics/c_engines/plot_numerical_shocks_csms.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_c_engines_plot_relativistic_thin_shell_convergence.py` (``galleries/dynamics/c_engines/plot_relativistic_thin_shell_convergence.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_free_free_a_gaunt_factors_plot_gaunt_factor_comparison.py` (``galleries/free_free/a_gaunt_factors/plot_gaunt_factor_comparison.py``)
@@ -161,13 +191,22 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_photometry_plot_svo_filters.py` (``galleries/photometry/plot_svo_filters.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_synchrotron_a_fundamentals_plot_frequency_gamma_relation.py` (``galleries/synchrotron/a_fundamentals/plot_frequency_gamma_relation.py``)
+   * - :ref:`sphx_glr_auto_examples_synchrotron_a_fundamentals_plot_electron_distributions.py` (``galleries/synchrotron/a_fundamentals/plot_electron_distributions.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_SSA_cooling_SED.py` (``galleries/synchrotron/b_seds/plot_SSA_cooling_SED.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_inhomogeneous_cylinder.py` (``galleries/synchrotron/b_seds/plot_inhomogeneous_cylinder.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_inhomogeneous_sphere.py` (``galleries/synchrotron/b_seds/plot_inhomogeneous_sphere.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_multi_component_numerical_SED.py` (``galleries/synchrotron/b_seds/plot_multi_component_numerical_SED.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_off_axis_numerical.py` (``galleries/synchrotron/b_seds/plot_off_axis_numerical.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_on_axis_numerical.py` (``galleries/synchrotron/b_seds/plot_on_axis_numerical.py``)

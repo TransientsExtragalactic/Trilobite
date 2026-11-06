@@ -481,7 +481,7 @@ class EvolvingSEDModel(Model, ABC):
             Dictionary mapping break names to physical values.
 
             If a break name is not found in
-            :attr:`~trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.BREAK_UNITS`,
+            ``BREAK_UNITS``,
             it is assumed to have units of Hz.
 
         Raises

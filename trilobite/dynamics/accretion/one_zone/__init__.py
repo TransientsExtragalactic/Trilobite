@@ -80,7 +80,7 @@ Model classes
 All models accept:
 
 - ``opacity``: either a string identifier or a
-  :class:`~trilobite.radiation.opacity.base.GreyOpacityLaw` instance
+  :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` instance
 - ``fallback``: whether to include a mass fallback source term
 
 Submodules

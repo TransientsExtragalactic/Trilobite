@@ -30,21 +30,18 @@ at which electrons cool significantly within the dynamical time:
 Electrons with :math:`\gamma > \gamma_c` are in the fast-cooling regime;
 those with :math:`\gamma < \gamma_c` are in the slow-cooling regime.
 
-This example demonstrates the
-:class:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`
-class which encapsulates all of these calculations.
+This example demonstrates
+:class:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`,
+which encapsulates all of these calculations.
 
 .. note::
 
-    :class:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`
+    :class:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`
     must be imported directly from
-    :mod:`radiation.synchrotron.cooling`.  The top-level
-    :mod:`radiation.synchrotron` namespace only exports the abstract
-    base class :class:`~radiation.synchrotron.SynchrotronCoolingEngine`.
-
-Relevant API References
------------------------
-- :class:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`
+    :mod:`trilobite.radiation.synchrotron.cooling`.  The top-level
+    :mod:`trilobite.radiation.synchrotron` namespace only exports the abstract
+    base class
+    :class:`~trilobite.radiation.synchrotron.cooling.SynchrotronCoolingEngine`.
 """
 
 import matplotlib.pyplot as plt
@@ -58,12 +55,13 @@ from trilobite.utils.plot_utils import set_plot_style
 # Engine Instantiation
 # --------------------
 #
-# The :class:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`
+# :class:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`
 # is a stateless engine: physical parameters are passed at call time, not stored
-# at construction.  The only configuration choice at instantiation is whether to
-# use the pitch-angle averaged loss rate (default, ``pitch_averaged=True``).
+# at construction.  All cooling rates are ensemble-averaged over an isotropic
+# pitch-angle distribution by default; a specific pitch angle may be supplied
+# via ``sin_alpha`` to any ``compute_*`` method.
 
-engine = SynchrotronRadiativeCoolingEngine(pitch_averaged=True)
+engine = SynchrotronRadiativeCoolingEngine()
 
 # Lorentz factor grid
 gamma_arr = np.geomspace(10, 1e8, 500)
@@ -106,7 +104,7 @@ plt.show()
 # Section 2: Cooling Time vs γ and the Cooling Lorentz Factor
 # -------------------------------------------------------------
 #
-# :meth:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_time`
+# :meth:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_time`
 # returns :math:`t_{\rm cool}(\gamma, B)`.  We overlay a representative
 # dynamical time :math:`t_{\rm dyn}` and identify the crossing point
 # :math:`\gamma_c` where :math:`t_{\rm cool} = t_{\rm dyn}`.
@@ -184,7 +182,7 @@ plt.show()
 # :math:`\nu_c = \nu_{\rm synch}(\gamma_c, B)`, traces a
 # characteristic **cooling track** as a function of :math:`t_{\rm dyn}`.
 #
-# :meth:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_characteristic_frequency`
+# :meth:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_characteristic_frequency`
 # combines :math:`\gamma_c(B, t)` and :math:`\nu(\gamma, B)` into a
 # single convenience method.
 

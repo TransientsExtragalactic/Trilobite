@@ -1,4 +1,5 @@
 .. _synch_numerical_sed_theory:
+
 ==============================================
 Methods: Quadrature Based SEDs
 ==============================================
@@ -39,7 +40,34 @@ Overview
 
 Even in the **analytical theory** of synchrotron emission, the fundamental building blocks are the emissivity and
 absorption coefficients, which can be represented as **integrals over fundamental kernels** (see :ref:`synchrotron_theory`).
-For a population of relativistic electrons with number density :math:`dN/d\gamma = N(\gamma)` spiraling in a magnetic
+
+To be as specific as possible in our construction, we will first consider the case of emission from a **single region**
+subject to the following geometric / physical assumptions:
+
+1. The source is a **homogeneous slab** of thickness :math:`\ell` along the line of sight with a uniform magnetic field
+   strength :math:`B`.
+2. The electron distribution is **homogeneous** throughout the source and is described by a distribution function
+   :math:`N(\gamma)`, where :math:`\gamma` is the electron Lorentz factor.
+3. The source moves with a **bulk Lorentz** factor :math:`\Gamma_{\rm bulk}` at an angle :math:`\theta_{\rm obs}` to the
+   line of sight, resulting in a Doppler factor :math:`\delta = [\Gamma (1 - \beta \cos \theta_{\rm obs})]^{-1}`.
+4. The source is located at a **luminosity distance** :math:`d_L` from the observer and is observed at a corresponding
+   redshift :math:`z`. This also implies an angular diameter distance :math:`d_A = d_L / (1 + z)^2` and **corresponding
+   angular size** :math:`d\Omega = A / d_A^2`, where :math:`A` is the physical area of the source on the plane of the sky.
+
+Under these assumptions, the observed SED can be computed by integrating the radiative transfer equation along
+the line of sight through the source, which reduces to a simple expression in terms of the emissivity :math:`j_\nu`
+and absorption coefficient :math:`\alpha_\nu`. This will be the starting point for our model.
+
+
+Absorption and Emission Coefficients
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. note::
+
+    Unless otherwise stated, we will work in the comoving frame of the source, where the bulk motion
+    is zero. Relativistic transformations to the observer frame will be applied at the end of the calculation.
+
+For a population of relativistic electrons with (rest-frame) number density :math:`dN/d\gamma = N(\gamma)` spiraling in a magnetic
 field :math:`B` at a pitch angle :math:`\alpha` to the field, the emissivity is given by (see e.g. :footcite:t:`RybickiLightman`,
 Chapter 6; :footcite:t:`lu_2026_18603474`, Chapter 8;
 :footcite:t:`ghisellini2013radiative`, Chapter 4):
@@ -77,6 +105,8 @@ so efficient computation demands that it be pre-tabulated and interpolated.
 The following sections describe the methods by which Trilobite achieves these calculations with a high
 degree of fidelity and numerical stability, including the handling of asymptotic regimes, the use of log-space quadrature,
 and the application of integration by parts to simplify the absorption coefficient integral.
+
+----
 
 Synchrotron Kernels
 -------------------
@@ -213,14 +243,22 @@ In Trilobite, the exact Bessel-function form is used in the intermediate
 regime, while the asymptotic limits are applied at small and large
 :math:`x` to ensure numerical stability and efficiency.
 
-.. _sec_emissivity:
 
-Computing the Emissivity
--------------------------
+
+Computing Radiative Quantities
+--------------------------------
 
 To avoid repeated evaluation of the synchrotron kernels, Trilobite precomputes a table of these values on
-a configurable grid of :math:`x` values. Then for any given frequency :math:`\nu`, magnetic field strength :math:`B`, and pitch angle :math:`\alpha`,
-the kernel can be interpolated rapidly to determine the correct value of :math:`F(x)` for each electron Lorentz factor :math:`\gamma` in the distribution.
+a configurable grid of :math:`x` values. Then for any given frequency :math:`\nu`, magnetic field
+strength :math:`B`, and pitch angle :math:`\alpha`,
+the kernel can be interpolated rapidly to determine the correct value of :math:`F(x)` for each electron
+Lorentz factor :math:`\gamma` in the distribution.
+From this, we can rapidly evaluate various radiative quantities of interest.
+
+.. _sec_emissivity:
+
+Emissivity
+^^^^^^^^^^^
 
 With the kernel interpolator in hand, the emissivity integral
 
@@ -246,8 +284,8 @@ serves as the **quadrature weight** and is precomputed once for a given grid.
 
 .. _sec_absorption:
 
-Computing the Absorption Coefficient
--------------------------------------
+Absorption
+^^^^^^^^^^
 
 The standard expression for the self-absorption coefficient,
 
@@ -329,7 +367,7 @@ where the additional :math:`-\ln\gamma_i` converts the quadrature weights :math:
 into pure :math:`d\!\ln\gamma` spacings :math:`\Delta\!\ln\gamma_i`, as required by the IBP form of the integral.
 
 The Radiative Transfer Solution
---------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Once the emissivity and absorption coefficient have been evaluated at each frequency, the specific intensity
 emerging from a homogeneous, spherical source is given by the solution to the one-dimensional radiative transfer
@@ -351,7 +389,7 @@ In log-space the radiative transfer solution reads
     \ln I_\nu = \ln j_\nu - \ln|\alpha_\nu| + \ln\!\bigl(1 - e^{-\tau_\nu}\bigr),
 
 where :math:`\tau_\nu = \exp(\ln|\alpha_\nu| + \ln R)`. The term :math:`\ln(1 - e^{-\tau})` is evaluated using
-:func:`numpy.expm1` as :math:`\ln(-\mathrm{expm1}(-\tau))`, which avoids catastrophic cancellation for small
+``numpy.expm1`` as :math:`\ln(-\mathrm{expm1}(-\tau))`, which avoids catastrophic cancellation for small
 :math:`\tau` (where :math:`1 - e^{-\tau} \approx \tau` and a naive subtraction loses all significant digits). For
 very large optical depths, :math:`\tau` is clipped before exponentiation to prevent overflow. The result is a
 numerically stable expression for :math:`\ln I_\nu` that is accurate from the deeply optically thin to the deeply
@@ -371,14 +409,14 @@ redshift of the source. The relativistic Doppler factor is
 
 .. math::
 
-    \mathcal{D} = \frac{1}{\Gamma_{\rm bulk}\,\bigl(1 + \beta\cos\theta\bigr)},
+    \mathcal{D} = \frac{1}{\Gamma_{\rm bulk}\,\bigl(1 - \beta\cos\theta\bigr)},
 
 where :math:`\Gamma_{\rm bulk} = (1 - \beta^2)^{-1/2}` is the bulk Lorentz factor. The combined
 Doppler-plus-redshift correction factor is
 
 .. math::
 
-    \mathcal{C} = \frac{\mathcal{D}}{1 + z} = \frac{1}{\Gamma_{\rm bulk}\,(1+\beta\cos\theta)\,(1+z)}.
+    \mathcal{C} = \frac{\mathcal{D}}{1 + z} = \frac{1}{\Gamma_{\rm bulk}\,(1-\beta\cos\theta)\,(1+z)}.
 
 The relationship between the **observed** frequency :math:`\nu_{\rm obs}` and the **rest-frame** frequency
 :math:`\nu_{\rm rf}` is
@@ -420,7 +458,327 @@ where :math:`A_{\rm eff}` is the effective projected area of the source on the s
 for a sphere) and :math:`D_A` is the angular diameter distance to the source. This is the quantity returned by
 :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density`, which
 handles distance resolution (including conversion from luminosity distance, proper distance, or redshift) via
-:func:`~trilobite.physics_utils.resolve_cosmological_distances`.
+:func:`~trilobite.physics_utils.cosmology.resolve_cosmological_distances`.
+
+.. important::
+
+    In the case of **ultra-relativistic outflows** (e.g. gamma-ray burst jets), extra care must be taken to account
+    for differences in the light-travel time across the source, meaning that the observed emission at a given time may '
+    not correspond to a single rest-frame snapshot of the source. In this model, we assume that the depth of the
+    slab is **sufficiently small** that the light-travel time across it is negligible compared to the timescale of
+    evolution of the
+    source and therefore ignore EATS effects.
+
+----
+
+Classical Models
+-----------------
+
+The *classical* synchrotron SED models (see :ref:`synchrotron_seds`) are widely used throughout the literature as
+a convenient, analytically tractable approach for modeling synchrotron emission from astrophysical sources. While these
+models are a staple of modern analysis and are implemented in Trilobite, it is occasionally useful to produce analogous
+models using the more accurate and flexible numerical methods described here. For this reason, a number of
+these "classical models" are here described again in the context of our numerical engine.
+
+In all of these models, we are concerned with emission from a homogeneous spherical region with radius :math:`R`,
+magnetic field :math:`B`, and an electron distribution :math:`N(\gamma)`, which is usually chosen to be a power-law.
+Additionally, the surface of the source may be expanding with bulk Lorentz-factor :math:`\Gamma_{\rm bulk}` and
+the source may be at a cosmological redshift :math:`z`.
+
+Tradiationally, (see :ref:`synch_sed_theory`) the SEDs in this scenario are computed analytically by means of
+a fairly complex case-by-case analysis of the relative ordering of the characteristic frequencies
+:math:`\nu_a`, :math:`\nu_m`, and :math:`\nu_c`. In contrast, the numerical engine described here computes
+the SEDs by directly evaluating the emissivity and absorption coefficient at each frequency and then applying
+the radiative transfer solution, without any assumptions about the relative ordering of the characteristic frequencies.
+This means that the numerical SEDs are more accurate and flexible than the classical models, but they also
+require more computational resources to evaluate.
+
+The Non-Relativistic Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the non-relativistic limit, we consider a spherical region which appears on the sky as a disk with solid angle
+
+.. math::
+
+    \Omega = \frac{\pi R^2 f_A}{D_A^2},
+
+where :math:`D_A` is the angular diameter distance to the source, and :math:`f_A` is a geometric factor which accounts for
+the fact that the effective area of the source may be smaller than :math:`\pi R^2` (e.g. if the source is a
+thin shell rather than a filled sphere).
+
+As is done in the analytic case, we ignore limb-darkening effects and assume that every sightline through the
+source has the same depth :math:`\ell`. To compute the depth :math:`\ell`, we assume that the source is a sphere of
+radius :math:`R` with a volume filling factor :math:`f_V` (i.e. the emitting plasma fills a fraction :math:`f_V` of
+the volume of the sphere). The depth is then given by
+
+.. math::
+
+    \ell = f_V^{1/3} R.
+
+From this, the specific intensity at the surface of the source may be computed and used to determine
+the flux density as described above. In the non-relativistic limit, we ignore bulk motion of the source.
+
+
+The Ultra-Relativistic Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the ultra-relativistic limit the emitting shell expands with a bulk Lorentz factor :math:`\Gamma \gg 1`.
+Relativistic beaming confines the observable emission to a forward cone of half-opening angle
+:math:`\sim 1/\Gamma` around the line of sight. The model therefore replaces the full spherical surface
+with the **beamed cap** — the small patch of the shell whose emission is directed toward the on-axis observer
+— and neglects equal-arrival-time-surface (EATS) corrections, treating the entire cap as a single
+homogeneous slab evaluated at one instant in the observer frame.
+
+Under the beamed-cap approximation the effective projected area and comoving slab depth are
+
+.. math::
+
+    A_\mathrm{eff} = \frac{\pi R^2 f_A}{\Gamma^2}, \qquad
+    \ell' = \frac{f_V R}{\Gamma},
+
+where :math:`R` is the lab-frame blast-wave radius, :math:`f_A` and :math:`f_V` are the area and volume
+filling factors respectively, and :math:`\Gamma` enters both expressions because the beaming solid angle
+scales as :math:`1/\Gamma^2` and the comoving depth is Lorentz-contracted by one factor of :math:`\Gamma`.
+The bulk velocity follows self-consistently from the Lorentz factor,
+
+.. math::
+
+    \beta = \sqrt{1 - \Gamma^{-2}},
+
+and the observer is fixed on-axis (:math:`\theta = 0`). With :math:`\theta = 0` the relativistic Doppler
+factor reduces to
+
+.. math::
+
+    \mathcal{D} = \frac{1}{\Gamma(1-\beta)} \approx 2\Gamma \quad (\Gamma \gg 1),
+
+giving the combined correction factor
+
+.. math::
+
+    \mathcal{C} = \frac{\mathcal{D}}{1+z} \approx \frac{2\Gamma}{1+z}.
+
+The comoving emissivity and absorption coefficient are computed from the effective depth :math:`\ell'`
+using the same slab radiative transfer described above. The observed specific intensity then follows from
+the standard relativistic transformation
+
+.. math::
+
+    I_{\nu_\mathrm{obs}} = \mathcal{C}^3\,I_{\nu_\mathrm{rf}}\!\left(\frac{\nu_\mathrm{obs}}{\mathcal{C}}\right),
+
+and the flux density is obtained by integrating over the effective solid angle
+
+.. math::
+
+    F_\nu = \frac{A_\mathrm{eff}}{D_A^2}\,I_{\nu_\mathrm{obs}}
+          = \frac{\pi R^2 f_A}{\Gamma^2 D_A^2}\,I_{\nu_\mathrm{obs}}.
+
+.. important::
+
+    The beamed-cap approximation is valid only while the ejecta are highly relativistic
+    (:math:`\Gamma \gg 1`). As :math:`\Gamma` decreases toward unity the cap widens and the
+    EATS corrections grow; for :math:`\Gamma \lesssim \mathrm{few}` the non-relativistic
+    engine is the more appropriate choice. Additionally, the model ignores the finite
+    light-travel time across the cap itself; see the note in the `Relativistic Corrections`_
+    section for further discussion.
+
+Composite Models
+------------------
+
+Having now described the physics of the one-zone slab model in detail, we may now consider how to use this formalism
+to build more complex models. These models are referred to as **composite models** in the codebase, and they are built
+by summing together multiple instances of the single-zone slab model described above.
+
+The Inhomogeneous Cylinder Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+One very simple instance of a composite model is that of the so-called **inhomogeneous cylinder**. In this model,
+we consider an emitting region composed of **edge-on, nested cylinders** of varying radii, each with its own
+electron distribution, depth, and magnetic field strength.
+
+.. note::
+
+    For clarity, we restrict the bulk-velocity in this case to be perpendicular to the line of sight, corresponding
+    to expansion of the different shells. This will, of course, mean that for ultra-relativistic outflows, the observer
+    will see a vanishingly small flux.
+
+As before, for a specific radius :math:`r`, one can easily compute the specific intensity :math:`I_\nu(r)` as described
+above. The corresponding flux density contribution from this radius is just
+
+.. math::
+
+    dF_\nu = \frac{2\pi r\,dr}{D_A^2}\,I_\nu(r),
+
+and the total flux density is then given by integrating over the radius:
+
+.. math::
+
+    F_\nu = \int_0^R \frac{2\pi r}{D_A^2}\,I_\nu(r)\,dr.
+
+By discretizing the radius into a set of :math:`n_r` annuli, this integral can be evaluated as a sum:
+
+.. math::
+
+    F_\nu \approx \sum_{j=1}^{n_r} \frac{2\pi r_j\,\Delta r_j}{D_A^2}\,I_\nu(r_j).
+
+.. dropdown:: Algorithmic Details
+
+    Algorithmically, we implement this model using a single grid of :math:`\gamma_i` values shared among all radii.
+    The user may then supply a grid of radii, :math:`r_k`, along with values for the magnetic field :math:`B_k`,
+    the electron distribution :math:`N_{ik} = N(\gamma_i, r_k)`, and the depth :math:`\ell_k` at each radius.
+
+    We then compute the specific intensity :math:`I_\nu(r_k)` at each radius using the single-zone slab model
+    described above, and sum over radii to get the total flux density.
+
+The Aspherical Shell Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Another simple case in which the composite model formalism is useful is that of an aspherical shell. Consider
+an emitting surface such that, for any angular position relative to the observer :math:`(\theta, \phi)`, the depth
+of the emitting region, its magnetic field strength, and its electron distribution are all
+functions of :math:`\theta` and :math:`\phi`.
+
+Assuming the observer is located at :math:`\theta = 0`, a region at :math:`(\theta, \phi)` will contribute a
+surface element of area :math:`dA = R^2 \sin\theta\,d\theta\,d\phi` to the observed flux density, and the specific
+intensity from this region can be computed using the single-zone slab model as described above. The total flux
+density is then given by integrating over the surface of the shell:
+
+.. math::
+
+    F_\nu = \int_0^{2\pi} \int_0^\pi \frac{R^2 \sin\theta}{D_A^2}\,I_\nu(\theta, \phi)\,d\theta\,d\phi.
+
+To be as efficient as possible, we recognize that this integral may be written as
+
+.. math::
+
+    F_\nu = \int_{-1}^{1} d\mu \int_0^{2\pi} \frac{R^2}{D_A^2}\,I_\nu(\mu, \phi)\,d\phi,
+
+and we may therefore introduce Gauss-Legendre quadrature in :math:`\mu = \cos\theta` to evaluate the integral
+over :math:`\theta` with high accuracy using a small number of points. The integral over :math:`\phi` is
+then evaluated using a simple trapezoidal rule.
+
+In cases where there is an axis of symmetry, the memory load of the algorithm may be reduced; however,
+one still generally needs to compute the full 2D grid of :math:`I_\nu(\theta, \phi)` values to perform the integration,
+so the computational cost is not significantly reduced.
+
+The Axisymmetric Shell Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A minor modification of the above model is that of an **axisymmetric shell**, where the observer is on-axis with
+the symmetry axis of the shell. In this case, the specific intensity is independent of :math:`\phi`, and the flux
+density is given by
+
+.. math::
+
+    F_\nu = \int_0^\pi \frac{2\pi R^2 \sin\theta}{D_A^2}\,I_\nu(\theta)\,d\theta.
+
+This integral can again be evaluated using Gauss-Legendre quadrature in :math:`\mu = \cos\theta` as described above.
+
+.. _synch_off_axis_model:
+
+The Off-Axis Axisymmetric Shell Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The on-axis restriction :math:`\theta_\mathrm{obs} = 0` is lifted in the **off-axis axisymmetric shell model**,
+implemented by :class:`~trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine`.
+The outflow retains axial symmetry — physical properties depend only on the zone polar angle
+:math:`\theta_\mathrm{jet}` — but the observer may be located at an arbitrary polar angle
+:math:`\theta_\mathrm{obs}` relative to the symmetry axis.
+
+**Geometry.** For a zone at colatitude :math:`\theta_\mathrm{jet}` and azimuth :math:`\phi`, the cosine of the
+angle between the zone velocity and the observer line of sight is
+
+.. math::
+
+    \mu_\mathrm{obs}(\mu, \phi)
+    =
+    \cos\theta_\mathrm{obs}\,\mu
+    +
+    \sin\theta_\mathrm{obs}\,\sqrt{1-\mu^2}\,\cos\phi,
+
+where :math:`\mu = \cos\theta_\mathrm{jet}`. The relativistic Doppler factor for this zone is
+
+.. math::
+
+    \mathcal{D}(\mu, \phi)
+    =
+    \frac{1}{\Gamma\bigl(1 - \beta(\mu)\,\mu_\mathrm{obs}(\mu, \phi)\bigr)},
+
+where :math:`\Gamma = (1-\beta^2)^{-1/2}` and :math:`\beta(\mu)` is the bulk speed at zone :math:`\mu`.
+
+**Flux formula.** Each surface element contributes a projected area
+:math:`R^2 \max(\mu_\mathrm{obs}, 0)\,d\mu\,d\phi` toward the observer. Back-facing zones
+(:math:`\mu_\mathrm{obs} \le 0`) contribute no observed flux in the thin-shell approximation. The total
+observed spectral flux density is
+
+.. math::
+
+    F_\nu
+    =
+    \frac{2}{D_A^2}
+    \int_{-1}^{1}
+    \int_0^{\pi}
+    f_A(\mu)\,R(\mu)^2\,
+    \max\!\bigl(\mu_\mathrm{obs},\,0\bigr)
+    \left(\frac{\mathcal{D}(\mu,\phi)}{1+z}\right)^{\!3}
+    I'_{\nu'(\mu,\phi)}(\mu)\,
+    d\mu\,d\phi,
+
+where the factor of two exploits the azimuthal symmetry of an axisymmetric outflow
+(:math:`\phi \to 2\pi - \phi` leaves the integrand unchanged), reducing the azimuthal domain to
+:math:`[0, \pi]`.
+
+.. note::
+
+    The full-sphere integration convention (:math:`\mu \in [-1,1]`) is used here. Back-facing material
+    (:math:`\mu_\mathrm{obs} \le 0`) is suppressed by the :math:`\max(\mu_\mathrm{obs}, 0)` factor rather
+    than being excluded from the domain. This is equivalent to excluding it, but avoids any dependence of
+    the integration domain on :math:`\theta_\mathrm{obs}`.
+
+**LOS path length.** For a thin shell of perpendicular comoving thickness :math:`\Delta r'(\mu)`, the
+line-of-sight path length at zone :math:`(\mu, \phi)` is
+
+.. math::
+
+    \ell'(\mu, \phi)
+    =
+    \frac{\Delta r'(\mu)}{\max\!\bigl(\mu_\mathrm{obs}(\mu, \phi),\,\mu_\mathrm{min}\bigr)},
+
+where :math:`\mu_\mathrm{min} = 10^{-6}` prevents division by zero at grazing incidence. At forward
+angles the enhanced path length is exactly compensated by the vanishing projected-area factor, so
+grazing zones contribute negligible flux.
+
+.. admonition:: Convention: ``shell_thickness`` vs ``slab_depth``
+
+    The parameter name differs between the on-axis and off-axis engines to reflect this geometric
+    distinction. :class:`~trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OnAxisAsymmetricSynchrotronEngine`
+    accepts ``slab_depth``, the direct LOS depth per zone (the caller is responsible for any angular
+    correction). :class:`~trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine`
+    accepts ``shell_thickness``, the perpendicular depth :math:`\Delta r'`, and applies the
+    :math:`1/\max(\mu_\mathrm{obs}, \mu_\mathrm{min})` correction internally.
+
+**On-axis limit.** Setting :math:`\theta_\mathrm{obs} = 0` gives :math:`\mu_\mathrm{obs} = \mu`, so
+back-facing zones (:math:`\mu < 0`) vanish and the :math:`\phi`-integral evaluates to :math:`\pi`,
+recovering
+
+.. math::
+
+    F_\nu\big|_{\theta_\mathrm{obs}=0}
+    =
+    \frac{2\pi}{D_A^2}
+    \int_0^1
+    f_A(\mu)\,R(\mu)^2\,\mu\,
+    \left(\frac{\mathcal{D}(\mu,0)}{1+z}\right)^3
+    I'_{\nu'}(\mu)\,d\mu,
+
+which matches the on-axis formula with the LOS-corrected slab depth :math:`\ell' = \Delta r' / \mu`.
+
+**Quadrature.** Both the :math:`\mu` and :math:`\phi` integrals are evaluated by
+Gauss--Legendre quadrature with :math:`n_\theta` and :math:`n_\phi` nodes respectively. The
+:math:`\phi` loop is executed in Python over :math:`n_\phi` nodes; at each node the inherited
+on-axis inner radiative-transfer kernel evaluates all :math:`n_\theta` zones simultaneously,
+so memory is bounded to the on-axis footprint regardless of :math:`n_\phi`.
+
 
 .. rubric:: References
 

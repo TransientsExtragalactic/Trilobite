@@ -12,4 +12,4 @@ uncertainties through to physical posteriors via MCMC.
 
 **Theory:** :ref:`sed_forward_closure`, :ref:`sed_inverse_closure`, :ref:`synch_equipartition_theory`
 
-**API:** :ref:`synchrotron_microphysics`, :ref:`synchrotron_seds`
+**API:** :ref:`synchrotron_core`, :ref:`synchrotron_seds`
