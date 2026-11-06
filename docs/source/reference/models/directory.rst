@@ -254,7 +254,7 @@ Filter-convolved flux densities for multi-band photometric observations. Optical
 :class:`~trilobite.models.core.optical.OpticalModel` and
 :class:`~trilobite.models.core.optical.OpticalEpochModel` abstract base classes, which handle
 :class:`~trilobite.utils.phot_utils.FilterBundle` convolution, time deduplication, and band-index resolution
-automatically. See :ref:`optical_model_pattern` for a guide to implementing custom optical models.
+automatically. See :ref:`the optical model pattern <optical_model_pattern>` for a guide to implementing custom optical models.
 
 .. dropdown:: Blackbody models :bdg-primary:`2`
    :open:
@@ -287,4 +287,4 @@ Extending the Model Library
 Every model subclasses :class:`~trilobite.models.core.base.Model`, declaring its ``PARAMETERS`` and ``VARIABLES``
 and implementing the forward model. The :ref:`models_overview` walks through a complete worked example
 (:ref:`forward_modeling`, :ref:`model_parameters`) and covers specialized patterns such as
-:ref:`optical_model_pattern`.
+:ref:`the optical model pattern <optical_model_pattern>`.

@@ -104,19 +104,26 @@
     border-left: 4px solid var(--pst-color-primary);
 }
 
-/* Category jump grid: compact tiles with a model-count footer */
-.trilobite-jump-grid .sd-card {
+/* Category jump grid / topic cards: compact tiles with a count footer */
+.trilobite-jump-grid .sd-card,
+.trilobite-topic-grid .sd-card {
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.trilobite-jump-grid .sd-card:hover {
+.trilobite-jump-grid .sd-card:hover,
+.trilobite-topic-grid .sd-card:hover {
     border-color: var(--pst-color-secondary);
     box-shadow: 0 2px 10px rgba(109, 40, 217, 0.18) !important;
 }
 
-.trilobite-jump-grid .sd-card-title {
+.trilobite-jump-grid .sd-card-title,
+.trilobite-topic-grid .sd-card-title {
     color: var(--pst-color-primary);
     margin-bottom: 0.1rem;
+}
+
+.trilobite-topic-grid .sd-card-body {
+    font-size: 0.9rem;
 }
 
 .trilobite-jump-grid .sd-card-body {
@@ -125,7 +132,8 @@
     color: var(--pst-color-text-muted);
 }
 
-.trilobite-jump-grid .sd-card-footer {
+.trilobite-jump-grid .sd-card-footer,
+.trilobite-topic-grid .sd-card-footer {
     padding: 0.2rem 0.75rem;
     font-size: 0.75rem;
     color: var(--pst-color-text-muted);
@@ -149,4 +157,122 @@
 
 .trilobite-dropdown table.table {
     margin-bottom: 0;
+}
+
+/* ── Example gallery landing page ───────────────────────────────────────── */
+/* Search + filter (built by _static/gallery_search.js) */
+.gallery-search-input {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--pst-color-border);
+    border-radius: 8px;
+    font: inherit;
+    background: var(--pst-color-background);
+    color: var(--pst-color-text-base);
+}
+
+.gallery-search-input:focus {
+    outline: 2px solid var(--pst-color-secondary);
+    border-color: var(--pst-color-secondary);
+}
+
+.gallery-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.5rem 0 0;
+}
+
+.gallery-chip-label {
+    width: 6.5rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--pst-color-text-muted);
+}
+
+.gallery-chip {
+    padding: 0.15rem 0.75rem;
+    border: 1px solid var(--pst-color-border);
+    border-radius: 999px;
+    background: var(--pst-color-background);
+    color: var(--pst-color-text-base);
+    font: inherit;
+    font-size: 0.84rem;
+    cursor: pointer;
+}
+
+.gallery-chip.on {
+    background: var(--pst-color-primary);
+    border-color: var(--pst-color-primary);
+    color: #fff;
+}
+
+.gallery-result-count {
+    margin: 0.8rem 0 0.2rem;
+    font-size: 0.85rem;
+    color: var(--pst-color-text-muted);
+}
+
+.gallery-row {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.45rem 0.3rem;
+    border-bottom: 1px solid var(--pst-color-border);
+}
+
+.gallery-row:hover {
+    background: var(--pst-color-surface);
+}
+
+.gallery-row-title {
+    flex: 1;
+}
+
+.gallery-row-tags {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.gallery-tag {
+    padding: 0.05rem 0.55rem;
+    border-radius: 999px;
+    background: var(--pst-color-surface);
+    border: 1px solid var(--pst-color-border);
+    font-size: 0.72rem;
+    color: var(--pst-color-primary);
+    white-space: nowrap;
+}
+
+.gallery-row-meta {
+    font-size: 0.78rem;
+    color: var(--pst-color-text-muted);
+    white-space: nowrap;
+}
+
+/* Workflow path: stage sections hang off a vertical rail with a dot at each heading */
+section.trilobite-stage {
+    position: relative;
+    margin-left: 0.6rem;
+    padding-left: 1.8rem;
+    border-left: 3px solid var(--pst-color-secondary);
+}
+
+section.trilobite-stage > h2::before {
+    content: "";
+    position: absolute;
+    left: -0.62rem;
+    top: 0.55rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: var(--pst-color-primary);
+    border: 3px solid var(--pst-color-background);
+}
+
+section.trilobite-stage > h2 {
+    margin-top: 0.6rem;
+    border-bottom: none;
 }

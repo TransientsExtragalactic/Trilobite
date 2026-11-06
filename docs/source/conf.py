@@ -1,8 +1,10 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
+Configuration file for the Sphinx documentation builder.
+
+This file only contains a selection of the most common options. For a full
+list see the documentation:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
 
 # -- Path setup --------------------------------------------------------------
 
@@ -14,6 +16,8 @@ import os
 import sys
 
 import matplotlib  # noqa: F401
+
+sys.path.insert(0, os.path.abspath("_ext"))
 # -- Project information -----------------------------------------------------
 
 project = "Trilobite"
@@ -41,6 +45,7 @@ extensions = [
     "sphinxcontrib.bibtex",
     "sphinx_gallery.gen_gallery",
     "sphinx_copybutton",
+    "gallery_index",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -99,6 +104,7 @@ html_favicon = "images/logo.svg"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+html_js_files = ["gallery_search.js"]
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
