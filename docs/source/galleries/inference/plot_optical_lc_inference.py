@@ -22,9 +22,6 @@ This example performs a complete round-trip:
 6. **Posterior predictive check** — draw light curves from the posterior and
    overlay them on the data in all five bands.
 
-The coupled optical model architecture is detailed in
-:ref:`sphx_glr_auto_examples_modeling_plot_fred_blackbody_optical_lc.py`.
-
 See Also
 --------
 - ``FREDBlackbodyModel``

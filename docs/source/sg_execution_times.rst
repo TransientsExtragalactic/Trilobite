@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**03:44.691** total execution time for 71 files **from all galleries**:
+**02:55.778** total execution time for 68 files **from all galleries**:
 
 .. container::
 
@@ -38,9 +38,6 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_inference_plot_multi_epoch_sed_evolution.py` (``galleries/inference/plot_multi_epoch_sed_evolution.py``)
      - 00:34.089
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_modeling_plot_ffa_fadeout_evolution.py` (``galleries/modeling/plot_ffa_fadeout_evolution.py``)
-     - 00:27.728
-     - 0.0
    * - :ref:`sphx_glr_auto_examples_inference_plot_evolving_sed.py` (``galleries/inference/plot_evolving_sed.py``)
      - 00:26.473
      - 0.0
@@ -50,23 +47,23 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_inference_plot_censored_SED_fit.py` (``galleries/inference/plot_censored_SED_fit.py``)
      - 00:17.853
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_modeling_plot_phenomenological_lc_fit.py` (``galleries/modeling/plot_phenomenological_lc_fit.py``)
-     - 00:15.918
-     - 0.0
    * - :ref:`sphx_glr_auto_examples_inference_plot_SED_fit.py` (``galleries/inference/plot_SED_fit.py``)
      - 00:11.969
      - 0.0
    * - :ref:`sphx_glr_auto_examples_inference_plot_nuisance_parameter_fit.py` (``galleries/inference/plot_nuisance_parameter_fit.py``)
      - 00:11.877
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_modeling_plot_type_IIn_SN_dense_CSM.py` (``galleries/modeling/plot_type_IIn_SN_dense_CSM.py``)
-     - 00:08.380
+   * - :ref:`sphx_glr_auto_examples_modeling_plot_sn2010jl_ffa_turn_on.py` (``galleries/modeling/plot_sn2010jl_ffa_turn_on.py``)
+     - 00:02.755
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_modeling_plot_chevalier_shock_synchrotron_cooling.py` (``galleries/modeling/plot_chevalier_shock_synchrotron_cooling.py``)
-     - 00:00.807
+   * - :ref:`sphx_glr_auto_examples_modeling_plot_sn1993j_radio_sed.py` (``galleries/modeling/plot_sn1993j_radio_sed.py``)
+     - 00:00.730
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_c_cooling_plot_synchrotron_cooling_engine.py` (``galleries/synchrotron/c_cooling/plot_synchrotron_cooling_engine.py``)
      - 00:00.542
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_modeling_plot_phenomenological_lc_fit.py` (``galleries/modeling/plot_phenomenological_lc_fit.py``)
+     - 00:00.436
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_e_inversions_plot_inversion_cooling_diggins26.py` (``galleries/synchrotron/e_inversions/plot_inversion_cooling_diggins26.py``)
      - 00:00.413
@@ -102,10 +99,7 @@ Computation times
      - 00:00.087
      - 0.0
    * - :ref:`sphx_glr_auto_examples_inference_plot_optical_lc_inference.py` (``galleries/inference/plot_optical_lc_inference.py``)
-     - 00:00.004
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_modeling_plot_fred_blackbody_optical_lc.py` (``galleries/modeling/plot_fred_blackbody_optical_lc.py``)
-     - 00:00.001
+     - 00:00.003
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -240,8 +234,5 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_c_cooling_plot_ic_vs_synchrotron_cooling.py` (``galleries/synchrotron/c_cooling/plot_ic_vs_synchrotron_cooling.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_synchrotron_d_closures_plot_forward_closure.py` (``galleries/synchrotron/d_closures/plot_forward_closure.py``)
      - 00:00.000
      - 0.0

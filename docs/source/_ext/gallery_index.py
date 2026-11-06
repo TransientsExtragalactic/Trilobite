@@ -42,6 +42,7 @@ SUBGALLERIES = {
     "synchrotron/b_seds": "Synchrotron SEDs",
     "synchrotron/c_cooling": "Electron cooling",
     "synchrotron/d_closures": "Closures & equipartition",
+    "synchrotron/e_inversions": "Spectral inversions",
     "free_free/a_gaunt_factors": "Free-free",
     "free_free/b_emission": "Free-free",
     "free_free/c_ffa_sed": "Free-free",
@@ -50,9 +51,9 @@ SUBGALLERIES = {
 # Science-case tags, keyed by example path relative to ``galleries/`` (no ``.py``). An example may have several.
 CASES = {
     "SNe & CSM": [
-        "modeling/plot_chevalier_shock_synchrotron_cooling",
-        "modeling/plot_type_IIn_SN_dense_CSM",
-        "modeling/plot_ffa_fadeout_evolution",
+        "modeling/plot_sn1993j_radio_sed",
+        "modeling/plot_sn2010jl_ffa_turn_on",
+        "modeling/plot_phenomenological_lc_fit",
         "dynamics/b_models/plot_chevalier_two_shock",
         "dynamics/c_engines/plot_numerical_shocks_csms",
         "inference/plot_shock_parameter_inference",

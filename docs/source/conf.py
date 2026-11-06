@@ -316,7 +316,6 @@ sphinx_gallery_conf = {
     # here so that the build treats them as known failures rather than
     # unexpected errors.  Remove each entry once the corresponding model exists.
     "expected_failing_examples": [
-        "galleries/modeling/plot_fred_blackbody_optical_lc.py",
         "galleries/inference/plot_optical_lc_inference.py",
     ],
 }
