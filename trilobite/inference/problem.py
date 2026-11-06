@@ -59,14 +59,17 @@ class InferenceParameter:
     When an :class:`~trilobite.inference.problem.InferenceProblem` is initialized, it
     creates an :class:`~trilobite.inference.problem.InferenceParameter`
     object for each of the parameters defined in the corresponding :class:`~trilobite.models.core.base.Model` provided
-    as part of the input :class:`~trilobite.inference.likelihood.base.Likelihood` object.
+    as part of the input :class:`~trilobite.inference.likelihood.base.Likelihood` object, followed by one for each
+    of the likelihood's own nuisance parameters
+    (:attr:`~trilobite.inference.likelihood.base.Likelihood.nuisance_parameters`).
 
     Parameters
     ----------
     model_parameter: `~trilobite.models.core.parameters.ModelParameter`
         The model parameter associated with this inference parameter. This is where we
         get the name, default value, bounds, and other metadata about the parameter. This should be
-        selected from the model's :attr:`~trilobite.models.core.base.Model.PARAMETERS` list. Because
+        selected from the model's :attr:`~trilobite.models.core.base.Model.PARAMETERS` list or the likelihood's
+        nuisance parameters. Because
         :class:`~trilobite.inference.problem.InferenceParameter`
         instances are generated automatically during :class:`~trilobite.inference.problem.InferenceProblem`
         initialization, users typically
@@ -351,6 +354,7 @@ class InferenceParameter:
         cls,
         dict_rep: dict,
         model: "Model",
+        likelihood: "Likelihood" = None,
     ) -> "InferenceParameter":
         """
         Reconstruct an :class:`~trilobite.inference.problem.InferenceParameter` from a serialized dictionary.
@@ -366,6 +370,11 @@ class InferenceParameter:
             to resolve the parameter definition (name, bounds,
             units, default value, etc.).
 
+        likelihood : ~trilobite.inference.likelihood.base.Likelihood, optional
+            The likelihood whose :attr:`~trilobite.inference.likelihood.base.Likelihood.nuisance_parameters`
+            are searched, after the model's parameters, when resolving the name. Required to reconstruct a
+            nuisance parameter.
+
         Returns
         -------
         InferenceParameter
@@ -378,7 +387,7 @@ class InferenceParameter:
         ValueError
             If dictionary structure is malformed.
         KeyError
-            If the referenced parameter does not exist on the model.
+            If the referenced parameter is defined neither by the model nor, if given, by the likelihood.
         """
         from trilobite.inference.prior import Prior
         from trilobite.inference.transform import ParameterTransform
@@ -400,10 +409,15 @@ class InferenceParameter:
         # ------------------------------------------------------------------
         # Resolve ModelParameter from model
         # ------------------------------------------------------------------
+        candidates = tuple(model.PARAMETERS)
+        if likelihood is not None:
+            candidates += tuple(likelihood.nuisance_parameters)
+
         try:
-            model_parameter = next(p for p in model.PARAMETERS if p.name == name)
+            model_parameter = next(p for p in candidates if p.name == name)
         except StopIteration as exc:
-            raise KeyError(f"Model does not define a parameter named '{name}'.") from exc
+            where = "Model" if likelihood is None else "Model and likelihood"
+            raise KeyError(f"{where} do not define a parameter named '{name}'.") from exc
 
         freeze = bool(dict_rep.get("freeze", False))
         initial_value = dict_rep.get("initial_value", None)
@@ -565,10 +579,12 @@ class InferenceProblem:
         # all 3.
         self.__likelihood__ = likelihood
 
-        # Specify an explicit ordering for the parameters based on their order in
-        # the underlying model. This ensures that there is no ambiguity about parameter
-        # ordering when packing/unpacking parameter vectors.
-        self.__parameter_order__ = tuple([p.name for p in self.__likelihood__._model.PARAMETERS])
+        # Specify an explicit ordering for the parameters: the model's parameters in the order the model defines
+        # them, followed by the likelihood's nuisance parameters. This ensures that there is no ambiguity about
+        # parameter ordering when packing/unpacking parameter vectors, and that the model's own ordering is
+        # unchanged. (Name collisions between the two groups are rejected by the Likelihood on construction.)
+        all_parameters = tuple(self.__likelihood__._model.PARAMETERS) + tuple(self.__likelihood__.nuisance_parameters)
+        self.__parameter_order__ = tuple([p.name for p in all_parameters])
 
         # Generate the parameter dictionary with InferenceParameter objects so that
         # we can manage them easily. These are basically empty shells of parameters
@@ -581,7 +597,7 @@ class InferenceProblem:
                 transform=None,
                 initial_value=None,
             )
-            for model_parameter in self.__likelihood__._model.PARAMETERS
+            for model_parameter in all_parameters
         }
 
         # Further initialization can be performed in subclasses.
@@ -662,13 +678,14 @@ class InferenceProblem:
 
         rows = []
 
+        nuisance = set(self.nuisance_parameter_names)
         for name, p in self.parameters.items():
             status = "Free" if not p.freeze else "Fixed"
             prior = p.prior.__class__.__name__ if p.prior else "—"
             rows.append(
                 row(
                     [
-                        name,
+                        f"{name} (nuisance)" if name in nuisance else name,
                         status,
                         p.initial_value,
                         prior,
@@ -703,6 +720,11 @@ class InferenceProblem:
 
     def summary(self) -> str:
         """Return a formatted summary of the inference problem."""
+        nuisance = set(self.nuisance_parameter_names)
+
+        def nuisance_tag(name):
+            return " [nuisance]" if name in nuisance else ""
+
         lines = [
             "InferenceProblem",
             f"Model: {self.model.__class__.__name__}",
@@ -714,13 +736,13 @@ class InferenceProblem:
 
         for name, p in self.free_parameters.items():
             prior = p.prior.__class__.__name__ if p.prior else "None"
-            lines.append(f"  - {name}: init={p.initial_value}, prior={prior}")
+            lines.append(f"  - {name}{nuisance_tag(name)}: init={p.initial_value}, prior={prior}")
 
         if self.fixed_parameters:
             lines.append("")
             lines.append(f"Fixed parameters ({self.n_fixed_parameters}):")
             for name, p in self.fixed_parameters.items():
-                lines.append(f"  - {name}: value={p.initial_value}")
+                lines.append(f"  - {name}{nuisance_tag(name)}: value={p.initial_value}")
 
         return "\n".join(lines)
 
@@ -1215,7 +1237,7 @@ class InferenceProblem:
         This is a public wrapper around the internal :meth:`_log_prior` method which
         handles packing the parameters from a dictionary into the required NumPy array format.
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta = self.pack_parameters(params)
         return self._log_prior(theta)
 
@@ -1238,7 +1260,7 @@ class InferenceProblem:
         This is a public wrapper around the internal :meth:`_log_likelihood` method which
         handles packing the parameters from a dictionary into the required NumPy array format.
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta = self.pack_parameters(params)
         return self._log_likelihood(theta)
 
@@ -1264,7 +1286,7 @@ class InferenceProblem:
         evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any
         parameter transforms) at that point.
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta = self.pack_parameters(params)
         z, _ = self.transform_theta_forward(theta)
         return self._log_posterior(z)
@@ -1288,7 +1310,7 @@ class InferenceProblem:
         This is a public wrapper around the internal :meth:`_log_free_prior` method which
         handles packing the free parameters from a dictionary into the required NumPy array format.
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta_free = self.pack_free_parameters(params)
         return self._log_free_prior(theta_free)
 
@@ -1312,7 +1334,7 @@ class InferenceProblem:
         handles packing the free parameters from a dictionary into the required NumPy array format.
 
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta_free = self.pack_free_parameters(params)
         return self._log_free_likelihood(theta_free)
 
@@ -1338,7 +1360,7 @@ class InferenceProblem:
         evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any
         free-parameter transforms) at that point.
         """
-        params = self.__likelihood__._model.coerce_model_parameters(params)
+        params = self._coerce_parameters(params)
         theta_free = self.pack_free_parameters(params)
         z_free, _ = self.transform_free_theta_forward(theta_free)
         return self._log_free_posterior(z_free)
@@ -1492,6 +1514,16 @@ class InferenceProblem:
         return self.__parameter_order__
 
     @property
+    def model_parameter_names(self) -> tuple[str, ...]:
+        """Tuple of str: Names of the forward model's parameters, in the model's order."""
+        return tuple(p.name for p in self.__likelihood__._model.PARAMETERS)
+
+    @property
+    def nuisance_parameter_names(self) -> tuple[str, ...]:
+        """Tuple of str: Names of the likelihood's nuisance parameters (empty if it declares none)."""
+        return tuple(p.name for p in self.__likelihood__.nuisance_parameters)
+
+    @property
     def parameters(self) -> dict[str, InferenceParameter]:
         """dict: Dictionary of inference parameters keyed by parameter name."""
         return self.__parameters__
@@ -1615,6 +1647,17 @@ class InferenceProblem:
     # requiring the user to manually define prior callables. We can also do
     # some unit-handled priors this way, which is a nice feature.
     _PRIOR_REGISTRY = PRIOR_REGISTRY
+
+    def _coerce_parameters(self, params: "_ModelParametersInput") -> dict:
+        """
+        Coerce a dictionary of model and nuisance parameter values into raw values in base units.
+
+        Missing entries take their declared defaults. The model coerces its own parameters and the likelihood
+        coerces its nuisance parameters; unknown keys are ignored by both.
+        """
+        coerced = self.__likelihood__._model.coerce_model_parameters(params)
+        coerced.update(self.__likelihood__.coerce_nuisance_parameters(params))
+        return coerced
 
     def _coerce_to_base_units(
         self,
@@ -2054,7 +2097,7 @@ class InferenceProblem:
         parameters = {}
         for name, param_spec in dict_spec["parameters"].items():
             try:
-                parameters[name] = InferenceParameter.from_dict(param_spec, model)
+                parameters[name] = InferenceParameter.from_dict(param_spec, model, likelihood=likelihood)
             except Exception as e:
                 raise TypeError(f"Failed to reconstruct parameter '{name}' from specification: {e}") from e
 
