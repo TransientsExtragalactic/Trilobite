@@ -1396,15 +1396,25 @@
 
 <span class="sd">        F(t) =</span>
 <span class="sd">        A \left[</span>
-<span class="sd">            \left(\frac{t}{t_b}\right)^{\alpha_1/s}</span>
-<span class="sd">            +</span>
-<span class="sd">            \left(\frac{t}{t_b}\right)^{\alpha_2/s}</span>
+<span class="sd">            \frac{1}{2}\left(</span>
+<span class="sd">                \left(\frac{t}{t_b}\right)^{\alpha_1/s}</span>
+<span class="sd">                +</span>
+<span class="sd">                \left(\frac{t}{t_b}\right)^{\alpha_2/s}</span>
+<span class="sd">            \right)</span>
 <span class="sd">        \right]^s + C,</span>
 
-<span class="sd">    where :math:`s` controls the smoothness of the transition.</span>
+<span class="sd">    so that :math:`F(t_b) = A + C` for every :math:`s`. The parameter :math:`s` controls both the smoothness and</span>
+<span class="sd">    the *convexity* of the transition:</span>
 
-<span class="sd">    - Small :math:`s` → sharp break</span>
-<span class="sd">    - Large :math:`s` → smooth transition</span>
+<span class="sd">    - :math:`|s|` small: sharp break; large :math:`|s|`: smooth transition.</span>
+<span class="sd">    - :math:`s &lt; 0`: the flux follows the *lower* of the two power laws, so the curve is concave. Use this for a</span>
+<span class="sd">      light curve that rises and then falls (:math:`\alpha_1 &gt; \alpha_2`), with :math:`\alpha_1` the early-time</span>
+<span class="sd">      and :math:`\alpha_2` the late-time slope.</span>
+<span class="sd">    - :math:`s &gt; 0`: the flux follows the *higher* of the two power laws, so the curve is convex. Use this for a</span>
+<span class="sd">      slope that increases through the break (:math:`\alpha_1 &lt; \alpha_2`), such as a decay that flattens.</span>
+
+<span class="sd">    If the sign of :math:`s` does not match the ordering of the slopes, the early- and late-time slopes are</span>
+<span class="sd">    swapped, so that the curve follows :math:`\alpha_2` before the break and :math:`\alpha_1` after it.</span>
 
 <span class="sd">    This form is widely used in GRB afterglow modeling.</span>
 
@@ -1431,7 +1441,8 @@
 <span class="sd">             - Late-time power-law slope.</span>
 <span class="sd">           * - ``s``</span>
 <span class="sd">             - :math:`s`</span>
-<span class="sd">             - Smoothness parameter controlling the sharpness of the break. Smaller values approach a sharp break.</span>
+<span class="sd">             - Smoothness and convexity of the break. Must be non-zero. :math:`s&lt;0` gives a concave break (peak),</span>
+<span class="sd">               :math:`s&gt;0` a convex break. Smaller :math:`|s|` approaches a sharp break.</span>
 <span class="sd">           * - ``C``</span>
 <span class="sd">             - :math:`C`</span>
 <span class="sd">             - Constant background level.</span>
@@ -1465,7 +1476,7 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    This model is continuous and differentiable for all</span>
-<span class="sd">    :math:`t &gt; 0`.</span>
+<span class="sd">    :math:`t &gt; 0`. The parameter ``s`` may be negative or positive but not zero.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1509,7 +1520,7 @@
         <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">"t_b"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span>
         <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">"alpha_1"</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">"alpha_2"</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
-        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span>
         <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">"C"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
     <span class="p">)</span>
 
@@ -1534,8 +1545,14 @@
             <span class="n">parameters</span><span class="p">[</span><span class="s2">"C"</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="n">term</span> <span class="o">=</span> <span class="p">((</span><span class="n">t</span> <span class="o">/</span> <span class="n">tb</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">a1</span> <span class="o">/</span> <span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="n">tb</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">a2</span> <span class="o">/</span> <span class="n">s</span><span class="p">))</span> <span class="o">**</span> <span class="n">s</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">OUTPUTS</span><span class="p">(</span><span class="n">flux</span><span class="o">=</span><span class="n">A</span> <span class="o">*</span> <span class="n">term</span> <span class="o">+</span> <span class="n">C</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Smoothing parameter s must be non-zero."</span><span class="p">)</span>
+
+        <span class="c1"># Evaluate in log space so that small |s| does not overflow. The factor of 1/2 inside the bracket makes</span>
+        <span class="c1"># F(t_b) = A for every s.</span>
+        <span class="n">log_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="n">tb</span><span class="p">)</span>
+        <span class="n">log_term</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logaddexp</span><span class="p">((</span><span class="n">a1</span> <span class="o">/</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_ratio</span><span class="p">,</span> <span class="p">(</span><span class="n">a2</span> <span class="o">/</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_ratio</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">OUTPUTS</span><span class="p">(</span><span class="n">flux</span><span class="o">=</span><span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_term</span><span class="p">)</span> <span class="o">+</span> <span class="n">C</span><span class="p">)</span></div>
 
 
 

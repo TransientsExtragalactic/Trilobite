@@ -3382,15 +3382,24 @@ temporal power-law regimes.</p>
 <div class="math notranslate nohighlight">
 \[F(t) =
 A \left[
-    \left(\frac{t}{t_b}\right)^{\alpha_1/s}
-    +
-    \left(\frac{t}{t_b}\right)^{\alpha_2/s}
+    \frac{1}{2}\left(
+        \left(\frac{t}{t_b}\right)^{\alpha_1/s}
+        +
+        \left(\frac{t}{t_b}\right)^{\alpha_2/s}
+    \right)
 \right]^s + C,\]</div>
-<p>where <span class="math notranslate nohighlight">\(s\)</span> controls the smoothness of the transition.</p>
+<p>so that <span class="math notranslate nohighlight">\(F(t_b) = A + C\)</span> for every <span class="math notranslate nohighlight">\(s\)</span>. The parameter <span class="math notranslate nohighlight">\(s\)</span> controls both the smoothness and
+the <em>convexity</em> of the transition:</p>
 <ul class="simple">
-<li><p>Small <span class="math notranslate nohighlight">\(s\)</span> → sharp break</p></li>
-<li><p>Large <span class="math notranslate nohighlight">\(s\)</span> → smooth transition</p></li>
+<li><p><span class="math notranslate nohighlight">\(|s|\)</span> small: sharp break; large <span class="math notranslate nohighlight">\(|s|\)</span>: smooth transition.</p></li>
+<li><p><span class="math notranslate nohighlight">\(s &lt; 0\)</span>: the flux follows the <em>lower</em> of the two power laws, so the curve is concave. Use this for a
+light curve that rises and then falls (<span class="math notranslate nohighlight">\(\alpha_1 &gt; \alpha_2\)</span>), with <span class="math notranslate nohighlight">\(\alpha_1\)</span> the early-time
+and <span class="math notranslate nohighlight">\(\alpha_2\)</span> the late-time slope.</p></li>
+<li><p><span class="math notranslate nohighlight">\(s &gt; 0\)</span>: the flux follows the <em>higher</em> of the two power laws, so the curve is convex. Use this for a
+slope that increases through the break (<span class="math notranslate nohighlight">\(\alpha_1 &lt; \alpha_2\)</span>), such as a decay that flattens.</p></li>
 </ul>
+<p>If the sign of <span class="math notranslate nohighlight">\(s\)</span> does not match the ordering of the slopes, the early- and late-time slopes are
+swapped, so that the curve follows <span class="math notranslate nohighlight">\(\alpha_2\)</span> before the break and <span class="math notranslate nohighlight">\(\alpha_1\)</span> after it.</p>
 <p>This form is widely used in GRB afterglow modeling.</p>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -3426,7 +3435,8 @@ A \left[
 </tr>
 <tr class="row-even"><td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">s</span></code></p></td>
 <td><p class="sd-card-text"><span class="math notranslate nohighlight">\(s\)</span></p></td>
-<td><p class="sd-card-text">Smoothness parameter controlling the sharpness of the break. Smaller values approach a sharp break.</p></td>
+<td><p class="sd-card-text">Smoothness and convexity of the break. Must be non-zero. <span class="math notranslate nohighlight">\(s&lt;0\)</span> gives a concave break (peak),
+<span class="math notranslate nohighlight">\(s&gt;0\)</span> a convex break. Smaller <span class="math notranslate nohighlight">\(|s|\)</span> approaches a sharp break.</p></td>
 </tr>
 <tr class="row-odd"><td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">C</span></code></p></td>
 <td><p class="sd-card-text"><span class="math notranslate nohighlight">\(C\)</span></p></td>
@@ -3486,7 +3496,7 @@ A \left[
 </div>
 </details><p class="rubric">Notes</p>
 <p>This model is continuous and differentiable for all
-<span class="math notranslate nohighlight">\(t &gt; 0\)</span>.</p>
+<span class="math notranslate nohighlight">\(t &gt; 0\)</span>. The parameter <code class="docutils literal notranslate"><span class="pre">s</span></code> may be negative or positive but not zero.</p>
 <p class="rubric">Examples</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
