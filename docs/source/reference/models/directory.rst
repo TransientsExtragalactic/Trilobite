@@ -4,281 +4,287 @@
 Trilobite Model Directory
 =========================================
 
-Trilobite provides an ever-expanding collection of forward models
-designed for astrophysical inference, phenomenological curve fitting,
-and physically motivated transient modeling.
+Trilobite provides an ever-expanding collection of forward models for astrophysical inference,
+phenomenological curve fitting, and physically motivated transient modeling. Models range from lightweight
+mathematical forms to physically grounded shock and emission models, and all share the unified
+:class:`~trilobite.models.core.base.Model` interface: consistent parameter handling, unit support, and
+compatibility with likelihood and inference tools.
 
-The goal of the model library is twofold:
+.. grid:: 1 1 2 2
+   :gutter: 2
 
-- Provide robust, reusable forward models for inference workflows
-- Offer modular building blocks that can be extended, subclassed, or composed
+   .. grid-item-card:: New to the framework?
+      :link: models_overview
+      :link-type: ref
+      :class-card: sd-shadow-sm trilobite-callout
 
-Models span a range of complexity, from lightweight mathematical
-curve-fitting forms to physically grounded shock and emission models.
-All models share a unified interface through the :class:`~trilobite.models.core.base.Model`
-base class, ensuring consistent parameter handling, unit support,
-and compatibility with likelihood and inference tools.
+      Start with the :ref:`models_overview`: design philosophy, ``ModelParameter`` and ``ModelVariable``,
+      unit handling, inference integration, and how to write your own model.
 
-If you are new to the framework, we recommend first reading the
-:ref:`models_overview` documentation, which explains:
+   .. grid-item-card:: Can't find your model?
+      :link: extending_model_library
+      :link-type: ref
+      :class-card: sd-shadow-sm trilobite-callout
 
-- The design philosophy of the modeling framework
-- The role of ``ModelParameter`` and ``ModelVariable``
-- How unit handling and coercion are implemented
-- How models integrate with inference engines
-- Best practices for implementing new models
+      Most models are designed to be subclassed. Phenomenological models adapt with minimal effort, and
+      physical models expose their core components so assumptions can be modified cleanly.
 
-Below is the catalog of existing models, organized by category. Each model includes a link to
-its documentation and source code.
+Browse by category
+------------------
 
-.. hint::
+.. grid:: 2 3 3 3
+   :gutter: 2
+   :class-container: trilobite-jump-grid
 
-    Even if we do not yet provide the exact model you need,
-    many models are designed to be easily subclassed or extended.
-    Most phenomenological models can be adapted with minimal effort.
-    Physically motivated models are built to expose their core components
-    so that researchers can modify assumptions cleanly.
+   .. grid-item-card:: Generic
+      :link: generic_models
+      :link-type: ref
+      :text-align: center
+      :class-card: sd-shadow-sm
 
----------------------------------------------------------------------
+      Curve fits, pulses, evolving SEDs
 
-Quick Navigation
-----------------
+      +++
+      17 models
 
-.. card-carousel:: 3
+   .. grid-item-card:: SEDs
+      :link: sed_models
+      :link-type: ref
+      :text-align: center
+      :class-card: sd-shadow-sm
 
-   .. card:: 📈 Generic Models
-        :link: generic_models
-        :link-type: ref
-        :class-card: sd-shadow-sm
+      Physical multi-wavelength spectra
 
-        Flexible, modular models for curve fitting and exploratory analysis.
+      +++
+      5 models
 
-   .. card:: Physical SEDs
-        :link: sed_models
-        :link-type: ref
-        :class-card: sd-shadow-sm
-
-        Flexible spectral energy distribution models for multi-wavelength fitting.
-
-   .. card:: 💥 Supernova Models
+   .. grid-item-card:: Supernovae
       :link: supernova_models
       :link-type: ref
+      :text-align: center
       :class-card: sd-shadow-sm
 
-      Physically motivated explosion and shock interaction models.
+      Shock and CSM interaction
 
-   .. card:: 🌟 GRB Models
+      +++
+      1 model
+
+   .. grid-item-card:: LFBOTs
+      :link: lfbot_models
+      :link-type: ref
+      :text-align: center
+      :class-card: sd-shadow-sm
+
+      Two-component radio emission
+
+      +++
+      1 model
+
+   .. grid-item-card:: GRBs
       :link: grb_models
       :link-type: ref
+      :text-align: center
       :class-card: sd-shadow-sm
 
-      Empirical and physical models for gamma-ray burst emission.
+      Prompt and afterglow emission
 
-   .. card:: 🔭 Optical Models
+      +++
+      1 model
+
+   .. grid-item-card:: Optical
       :link: optical_models
       :link-type: ref
+      :text-align: center
       :class-card: sd-shadow-sm
 
-      Filter-convolved optical photometry models for multi-band inference.
+      Filter-convolved photometry
 
----------------------------------------------------------------------
+      +++
+      4 models
 
 .. _generic_models:
 
 Generic Models
-----------------
+--------------
 
-Generic models are designed to be flexible, modular, and easily subclassed. They are ideal for rapid prototyping,
-exploratory data analysis, and building custom likelihood functions. These models are not tied
-to specific physical scenarios but provide mathematical forms that can be adapted to a wide range of applications.
+Flexible, modular models that are not tied to a specific physical scenario. They are ideal for rapid
+prototyping, exploratory analysis, and building custom likelihoods.
 
-.. _curve_fitting_models:
+.. dropdown:: Curve-fitting models :bdg-primary:`4`
+   :name: curve_fitting_models
+   :open:
+   :class-container: trilobite-dropdown
 
-Curve-Fitting Models
-^^^^^^^^^^^^^^^^^^^^
+   Flexible mathematical forms for fitting data.
 
-These models provide flexible mathematical forms for fitting data.
-They are especially useful during exploratory analysis and for
-building likelihood functions.
+   .. currentmodule:: trilobite.models.generic.curves
 
-.. rubric:: Generic Broken Power Laws
+   .. autosummary::
+      :nosignatures:
 
-.. currentmodule:: trilobite.models.generic.curves
+      BrokenPowerLaw
+      SmoothedBrokenPowerLaw
+      TripleBrokenPowerLaw
+      SmoothedTripleBrokenPowerLaw
 
-.. autosummary::
-   :nosignatures:
+.. dropdown:: Light curve models :bdg-primary:`10`
+   :name: light_curve_models
+   :class-container: trilobite-dropdown
 
-   BrokenPowerLaw
-   SmoothedBrokenPowerLaw
-   TripleBrokenPowerLaw
-   SmoothedTripleBrokenPowerLaw
+   Phenomenological models for time-domain transient analysis and pulse-shape modeling.
 
+   .. currentmodule:: trilobite.models.generic.light_curve
 
-.. _light_curve_models:
+   .. autosummary::
+      :nosignatures:
 
-Light Curve Models
-^^^^^^^^^^^^^^^^^^
+      FRED
+      GeneralizedFRED
+      GaussianPulse
+      LogNormalPulse
+      BrokenPowerLawTime
+      SmoothedBrokenPowerLawTime
+      ExponentialRisePowerLawDecay
+      NorrisPulse
+      WeibullPulse
+      LogisticPulse
 
-These phenomenological models are designed for time-domain transient
-analysis and pulse-shape modeling.
+.. dropdown:: Evolving SED models :bdg-primary:`3`
+   :name: evolving_models
+   :class-container: trilobite-dropdown
 
-.. rubric:: Generic Light Curve Models
+   Phenomenological SED models in which the spectral parameters evolve in time.
 
-.. currentmodule:: trilobite.models.generic.light_curve
+   .. currentmodule:: trilobite.models.generic.evolving_seds
 
-.. autosummary::
-   :nosignatures:
+   .. autosummary::
+      :nosignatures:
 
-   FRED
-   GeneralizedFRED
-   GaussianPulse
-   LogNormalPulse
-   BrokenPowerLawTime
-   SmoothedBrokenPowerLawTime
-   ExponentialRisePowerLawDecay
-   NorrisPulse
-   WeibullPulse
-   LogisticPulse
-
-.. _evolving_models:
-
-Evolving Phenomenological Models
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Models for phenomenological modeling (not tied to specific physical scenarios) that include time-evolution of parameters.
-
-.. rubric:: Generic SED Evolution
-
-.. currentmodule:: trilobite.models.generic.evolving_seds
-
-.. autosummary::
-   :nosignatures:
-
-   ~evolving_sbpl.PL_Evolving_SBPL_Model
-   ~evolving_sbpl.BPL_Evolving_SBPL_Model
-   ~evolving_sbpl.TripleBPL_Evolving_SBPL_Model
-
----------------------------------------------------------------------
+      ~evolving_sbpl.PL_Evolving_SBPL_Model
+      ~evolving_sbpl.BPL_Evolving_SBPL_Model
+      ~evolving_sbpl.TripleBPL_Evolving_SBPL_Model
 
 .. _sed_models:
 
 SED Models
------------
+----------
 
-SED models are designed to provide full-physics spectral energy distribution modeling for various different
-scenarios, emission mechanisms, and physical assumptions. These models are ideal for multi-wavelength fitting and inference.
+Full-physics spectral energy distributions for a range of emission mechanisms and physical assumptions,
+suited to multi-wavelength fitting and inference.
 
-.. rubric:: Synchrotron
+.. dropdown:: Synchrotron :bdg-primary:`5`
+   :open:
+   :class-container: trilobite-dropdown
 
-.. currentmodule:: trilobite.models.SEDs.synchrotron
+   .. currentmodule:: trilobite.models.SEDs.synchrotron
 
-.. autosummary::
-   :nosignatures:
+   .. autosummary::
+      :nosignatures:
 
-    SSA_Cooling_SynchrotronSEDModel
-    SSA_SynchrotronSEDModel
-    Cooling_SynchrotronSEDModel
-    SynchrotronSEDModel
-    Synchrotron_SSA_SBPL_Model
-
----------------------------------------------------------------------
+      SSA_Cooling_SynchrotronSEDModel
+      SSA_SynchrotronSEDModel
+      Cooling_SynchrotronSEDModel
+      SynchrotronSEDModel
+      Synchrotron_SSA_SBPL_Model
 
 .. _supernova_models:
 
 Supernova Models
 ----------------
 
-These models incorporate physically motivated shock dynamics,
-radiation processes, and circumstellar interaction physics.
+Physically motivated shock dynamics, radiation processes, and circumstellar interaction physics.
 
-.. rubric:: Self-Similar Shock Models
+.. dropdown:: Self-similar shock models :bdg-primary:`1`
+   :open:
+   :class-container: trilobite-dropdown
 
-.. currentmodule:: trilobite.models.supernovae
+   .. currentmodule:: trilobite.models.supernovae
 
-.. autosummary::
-   :nosignatures:
+   .. autosummary::
+      :nosignatures:
 
-   chevalier_shock.ChevalierShockModel
-
----------------------------------------------------------------------
+      chevalier_shock.ChevalierShockModel
 
 .. _lfbot_models:
 
 LFBOT Models
 ------------
 
-Models of the circumstellar interaction of luminous fast blue optical transients (LFBOTs). The two-component model
-follows an equatorial and a polar sightline through an axisymmetric CSM, each with its own thin-shell shock,
-synchrotron emission and free-free attenuation. It provides both a paired ``(time, frequency)`` path for inference
-and a ``tabulate`` path for analysis and plotting.
+Circumstellar interaction of luminous fast blue optical transients (LFBOTs). The two-component model follows an
+equatorial and a polar sightline through an axisymmetric CSM, each with its own thin-shell shock, synchrotron
+emission and free-free attenuation. It provides both a paired ``(time, frequency)`` path for inference and a
+``tabulate`` path for analysis and plotting.
 
-.. rubric:: Two-Component Synchrotron Model
+.. dropdown:: Two-component synchrotron model :bdg-primary:`1`
+   :open:
+   :class-container: trilobite-dropdown
 
-.. currentmodule:: trilobite.models.LFBOTs.diggins26
+   .. currentmodule:: trilobite.models.LFBOTs.diggins26
 
-.. autosummary::
-   :nosignatures:
+   .. autosummary::
+      :nosignatures:
 
-   Diggins26_TwoComponentModel
-
----------------------------------------------------------------------
+      Diggins26_TwoComponentModel
 
 .. _grb_models:
 
 GRB Models
 ----------
 
-These models are designed to describe the spectral and temporal
-properties of gamma-ray burst (GRB) emission. They range from
-empirical spectral characterisation to physically motivated
-jet and afterglow models.
+Spectral and temporal properties of gamma-ray burst (GRB) emission, from empirical spectral characterisation to
+physically motivated jet and afterglow models.
 
-.. rubric:: Prompt-Emission Spectral Models
+.. dropdown:: Prompt-emission spectral models :bdg-primary:`1`
+   :open:
+   :class-container: trilobite-dropdown
 
-.. currentmodule:: trilobite.models.GRBs
+   .. currentmodule:: trilobite.models.GRBs
 
-.. autosummary::
-   :nosignatures:
+   .. autosummary::
+      :nosignatures:
 
-   band.BandFunctionModel
-
----------------------------------------------------------------------
+      band.BandFunctionModel
 
 .. _optical_models:
 
 Optical Models
 --------------
 
-Optical models predict filter-convolved flux densities for multi-band photometric
-observations. They are built on the
+Filter-convolved flux densities for multi-band photometric observations. Optical models are built on the
 :class:`~trilobite.models.core.optical.OpticalModel` and
-:class:`~trilobite.models.core.optical.OpticalEpochModel` abstract base classes,
-which handle :class:`~trilobite.utils.phot_utils.FilterBundle` convolution,
-time deduplication, and band-index resolution automatically.
+:class:`~trilobite.models.core.optical.OpticalEpochModel` abstract base classes, which handle
+:class:`~trilobite.utils.phot_utils.FilterBundle` convolution, time deduplication, and band-index resolution
+automatically. See :ref:`optical_model_pattern` for a guide to implementing custom optical models.
 
-See :ref:`optical_model_pattern` for a guide to implementing custom optical models.
+.. dropdown:: Blackbody models :bdg-primary:`2`
+   :open:
+   :class-container: trilobite-dropdown
 
-.. rubric:: Abstract Base Classes
+   .. currentmodule:: trilobite.models.SEDs.blackbody_optical
 
-.. currentmodule:: trilobite.models.core.optical
+   .. autosummary::
+      :nosignatures:
 
-.. autosummary::
-   :nosignatures:
+      BlackbodyOpticalModel
+      BlackbodyOpticalEpochModel
 
-   OpticalModel
-   OpticalEpochModel
+.. dropdown:: Abstract base classes :bdg-secondary:`2`
+   :class-container: trilobite-dropdown
 
-.. rubric:: Blackbody Models
+   .. currentmodule:: trilobite.models.core.optical
 
-.. currentmodule:: trilobite.models.SEDs.blackbody_optical
+   .. autosummary::
+      :nosignatures:
 
-.. autosummary::
-   :nosignatures:
+      OpticalModel
+      OpticalEpochModel
 
-   BlackbodyOpticalModel
-   BlackbodyOpticalEpochModel
-
----------------------------------------------------------------------
+.. _extending_model_library:
 
 Extending the Model Library
-----------------------------
+---------------------------
+
+Every model subclasses :class:`~trilobite.models.core.base.Model`, declaring its ``PARAMETERS`` and ``VARIABLES``
+and implementing the forward model. The :ref:`models_overview` walks through a complete worked example
+(:ref:`forward_modeling`, :ref:`model_parameters`) and covers specialized patterns such as
+:ref:`optical_model_pattern`.
