@@ -933,15 +933,25 @@ class SmoothedBrokenPowerLawTime(Model):
 
         F(t) =
         A \left[
-            \left(\frac{t}{t_b}\right)^{\alpha_1/s}
-            +
-            \left(\frac{t}{t_b}\right)^{\alpha_2/s}
+            \frac{1}{2}\left(
+                \left(\frac{t}{t_b}\right)^{\alpha_1/s}
+                +
+                \left(\frac{t}{t_b}\right)^{\alpha_2/s}
+            \right)
         \right]^s + C,
 
-    where :math:`s` controls the smoothness of the transition.
+    so that :math:`F(t_b) = A + C` for every :math:`s`. The parameter :math:`s` controls both the smoothness and
+    the *convexity* of the transition:
 
-    - Small :math:`s` → sharp break
-    - Large :math:`s` → smooth transition
+    - :math:`|s|` small: sharp break; large :math:`|s|`: smooth transition.
+    - :math:`s < 0`: the flux follows the *lower* of the two power laws, so the curve is concave. Use this for a
+      light curve that rises and then falls (:math:`\alpha_1 > \alpha_2`), with :math:`\alpha_1` the early-time
+      and :math:`\alpha_2` the late-time slope.
+    - :math:`s > 0`: the flux follows the *higher* of the two power laws, so the curve is convex. Use this for a
+      slope that increases through the break (:math:`\alpha_1 < \alpha_2`), such as a decay that flattens.
+
+    If the sign of :math:`s` does not match the ordering of the slopes, the early- and late-time slopes are
+    swapped, so that the curve follows :math:`\alpha_2` before the break and :math:`\alpha_1` after it.
 
     This form is widely used in GRB afterglow modeling.
 
@@ -968,7 +978,8 @@ class SmoothedBrokenPowerLawTime(Model):
              - Late-time power-law slope.
            * - ``s``
              - :math:`s`
-             - Smoothness parameter controlling the sharpness of the break. Smaller values approach a sharp break.
+             - Smoothness and convexity of the break. Must be non-zero. :math:`s<0` gives a concave break (peak),
+               :math:`s>0` a convex break. Smaller :math:`|s|` approaches a sharp break.
            * - ``C``
              - :math:`C`
              - Constant background level.
@@ -1002,7 +1013,7 @@ class SmoothedBrokenPowerLawTime(Model):
     Notes
     -----
     This model is continuous and differentiable for all
-    :math:`t > 0`.
+    :math:`t > 0`. The parameter ``s`` may be negative or positive but not zero.
 
     Examples
     --------
@@ -1046,7 +1057,7 @@ class SmoothedBrokenPowerLawTime(Model):
         ModelParameter("t_b", 1.0, base_units=None, bounds=(1e-6, None)),
         ModelParameter("alpha_1", -1.0, base_units=None),
         ModelParameter("alpha_2", -2.0, base_units=None),
-        ModelParameter("s", 0.1, base_units=None, bounds=(1e-3, None)),
+        ModelParameter("s", -0.1, base_units=None, bounds=(None, None)),
         ModelParameter("C", 0.0, base_units=None),
     )
 
@@ -1071,8 +1082,14 @@ class SmoothedBrokenPowerLawTime(Model):
             parameters["C"],
         )
 
-        term = ((t / tb) ** (a1 / s) + (t / tb) ** (a2 / s)) ** s
-        return self.OUTPUTS(flux=A * term + C)
+        if s == 0:
+            raise ValueError("Smoothing parameter s must be non-zero.")
+
+        # Evaluate in log space so that small |s| does not overflow. The factor of 1/2 inside the bracket makes
+        # F(t_b) = A for every s.
+        log_ratio = np.log(t / tb)
+        log_term = s * (np.logaddexp((a1 / s) * log_ratio, (a2 / s) * log_ratio) - np.log(2.0))
+        return self.OUTPUTS(flux=A * np.exp(log_term) + C)
 
 
 class ExponentialRisePowerLawDecay(Model):
