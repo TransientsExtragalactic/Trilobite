@@ -8,6 +8,7 @@ normalization, energy limits, and consistency with theoretical predictions.
 """
 
 import astropy.constants as const
+import astropy.units as u
 import numpy as np
 import pytest
 from scipy.integrate import quad
@@ -585,40 +586,226 @@ def test_pl_bpl_energy_budget_consistency():
     assert e_bpl == pytest.approx(expected, rel=1.0e-10)
 
 
+class TestBrokenPowerLawArrayParameters:
+    """``BrokenPowerLaw`` moments and normalizations broadcast over array-valued parameters (issue #17)."""
+
+    BREAKS = np.array([1.5, 10.0, 300.0, 5e5])
+    SHAPE = {"p1": 2.0, "p2": 3.0, "gamma_min": 1.2, "gamma_max": 1e6}  # p1 = 2 hits the first-moment log branch
+
+    @pytest.mark.parametrize("order", [0, 1, 2])
+    @pytest.mark.parametrize("p1", [1.0, 2.0, 2.4])  # p1 = order + 1 hits the logarithmic branch
+    def test_moment_matches_scalar(self, order, p1):
+        shape = {**self.SHAPE, "p1": p1, "p2": p1 + 1.0}
+        vec = BrokenPowerLaw.moment(order, gamma_c=self.BREAKS, **shape)
+        ref = np.array([BrokenPowerLaw.moment(order, gamma_c=g, **shape) for g in self.BREAKS])
+        assert vec.shape == self.BREAKS.shape
+        assert np.allclose(vec, ref, rtol=1e-13, atol=0.0)
+
+    def test_moment_scalar_stays_scalar(self):
+        assert np.ndim(BrokenPowerLaw.moment(1, gamma_c=10.0, **self.SHAPE)) == 0
+
+    def test_moment_vectorizes_over_support_and_indices(self):
+        gc = np.array([10.0, 20.0, 30.0])
+        gmin = np.array([1.0, 2.0, 5.0])
+        gmax = np.array([1e4, 1e5, 1e6])
+        p1 = np.array([1.8, 2.0, 2.2])
+        p2 = np.array([3.0, 3.5, 4.0])
+        vec = BrokenPowerLaw.moment(1, p1=p1, p2=p2, gamma_c=gc, gamma_min=gmin, gamma_max=gmax)
+        ref = [
+            BrokenPowerLaw.moment(1, p1=a, p2=b, gamma_c=c, gamma_min=lo, gamma_max=hi)
+            for a, b, c, lo, hi in zip(p1, p2, gc, gmin, gmax)
+        ]
+        assert np.allclose(vec, ref, rtol=1e-13, atol=0.0)
+
+    def test_moment_between_matches_scalar(self):
+        # Intervals below, straddling, above, and entirely outside the break / support.
+        a = np.array([1.0, 2.0, 50.0, 2e6, 5.0])
+        b = np.array([5.0, 500.0, 1e5, 3e6, 4.0])
+        gc = np.array([10.0, 10.0, 10.0, 10.0, 10.0])
+        vec = BrokenPowerLaw.moment_between(1, a, b, gamma_c=gc, **self.SHAPE)
+        ref = [BrokenPowerLaw.moment_between(1, x, y, gamma_c=c, **self.SHAPE) for x, y, c in zip(a, b, gc)]
+        assert np.allclose(vec, ref, rtol=1e-13, atol=0.0)
+        assert vec[3] == 0.0 and vec[4] == 0.0  # no overlap with the support, empty interval
+
+    def test_normalize_from_magnetic_field(self):
+        B = np.geomspace(0.01, 5.0, self.BREAKS.size)
+        vec = BrokenPowerLaw.normalize_from_magnetic_field(B, 0.01, 0.1, gamma_c=self.BREAKS, **self.SHAPE)
+        ref = np.array(
+            [
+                BrokenPowerLaw.normalize_from_magnetic_field(b, 0.01, 0.1, gamma_c=g, **self.SHAPE).value
+                for b, g in zip(B, self.BREAKS)
+            ]
+        )
+        assert vec.unit == u.cm**-3
+        assert np.allclose(vec.value, ref, rtol=1e-13, atol=0.0)
+
+    def test_normalize_from_magnetic_field_broadcasts_scalar_B(self):
+        vec = BrokenPowerLaw.normalize_from_magnetic_field(1.0, 0.01, 0.1, gamma_c=self.BREAKS, **self.SHAPE)
+        assert vec.shape == self.BREAKS.shape
+
+    @pytest.mark.parametrize("gamma_c", [np.array([10.0, 1.0]), np.array([10.0, 2e6])])
+    def test_validation_rejects_any_invalid_element(self, gamma_c):
+        with pytest.raises(ValueError):
+            BrokenPowerLaw.moment(1, gamma_c=gamma_c, **self.SHAPE)
+
+
+def _element(params, i):
+    """Return the ``i``-th element of every array-valued parameter."""
+    return {k: (v[i] if np.ndim(v) else v) for k, v in params.items()}
+
+
+_THETA = np.array([0.3, 1.0, 5.0])
+ARRAY_CASES = {
+    "PowerLaw": (PowerLaw, {"p": np.array([2.0, 2.5, 3.0]), "gamma_min": np.array([1.0, 2.0, 1.5]), "gamma_max": 1e4}),
+    "BrokenPowerLaw": (
+        BrokenPowerLaw,
+        {
+            "p1": 2.0,
+            "p2": np.array([3.0, 3.5, 4.0]),
+            "gamma_c": np.array([10.0, 50.0, 400.0]),
+            "gamma_min": 1.2,
+            "gamma_max": 1e4,
+        },
+    ),
+    "MaxwellJuettner": (MaxwellJuettner, {"Theta": _THETA}),
+    "MaxwellJuettnerPowerLaw": (
+        MaxwellJuettnerPowerLaw,
+        {"delta": np.array([0.2, 0.5, 0.8]), "Theta": _THETA, "p": 2.5, "gamma_min": 1.0, "gamma_max": 1e4},
+    ),
+    "MaxwellJuettnerBrokenPowerLaw": (
+        MaxwellJuettnerBrokenPowerLaw,
+        {
+            "delta": 0.3,
+            "Theta": _THETA,
+            "p1": 2.0,
+            "p2": 3.0,
+            "gamma_c": np.array([10.0, 50.0, 400.0]),
+            "gamma_min": 1.2,
+            "gamma_max": 1e4,
+        },
+    ),
+}
+ARRAY_GAMMA = np.array([1.5, 30.0, 700.0])
+
+
+@pytest.mark.parametrize("case", ARRAY_CASES)
+class TestArrayParameters:
+    """Every distribution broadcasts over array-valued parameters and agrees with a per-element scalar loop."""
+
+    def test_pdf(self, case):
+        dist, params = ARRAY_CASES[case]
+        vec = dist.pdf(ARRAY_GAMMA, norm=2.0, **params)
+        ref = [dist.pdf(g, norm=2.0, **_element(params, i)) for i, g in enumerate(ARRAY_GAMMA)]
+        assert vec.shape == ARRAY_GAMMA.shape
+        assert np.allclose(vec, ref, rtol=1e-12, atol=0.0)
+
+    @pytest.mark.parametrize("order", [0, 1, 2, 3])  # order 3 exercises the Maxwell-Juttner quadrature fallback
+    def test_moment(self, case, order):
+        dist, params = ARRAY_CASES[case]
+        vec = dist.moment(order, **params)
+        ref = [dist.moment(order, **_element(params, i)) for i in range(3)]
+        assert np.allclose(vec, ref, rtol=1e-10, atol=0.0)
+
+    def test_scalar_input_stays_scalar(self, case):
+        dist, params = ARRAY_CASES[case]
+        scalar = _element(params, 0)
+        assert np.ndim(dist.pdf(5.0, **scalar)) == 0
+        assert np.ndim(dist.moment(1, **scalar)) == 0
+
+    def test_list_inputs_are_accepted(self, case):
+        dist, params = ARRAY_CASES[case]
+        listed = {k: (v.tolist() if np.ndim(v) else v) for k, v in params.items()}
+        assert np.allclose(dist.pdf(ARRAY_GAMMA.tolist(), **listed), dist.pdf(ARRAY_GAMMA, **params), rtol=1e-14)
+
+    def test_normalize_from_magnetic_field(self, case):
+        dist, params = ARRAY_CASES[case]
+        B = np.array([0.1, 1.0, 5.0])
+        vec = dist.normalize_from_magnetic_field(B, 0.01, 0.1, **params)
+        ref = [dist.normalize_from_magnetic_field(b, 0.01, 0.1, **_element(params, i)).value for i, b in enumerate(B)]
+        assert vec.unit == u.cm**-3
+        assert np.allclose(vec.value, ref, rtol=1e-10, atol=0.0)
+
+    def test_public_methods_validate(self, case):
+        """The public wrappers raise on bad parameters, including through the ``normalize_*`` methods."""
+        dist, params = ARRAY_CASES[case]
+        bad = {**params}
+        key = "Theta" if "Theta" in bad and "p" not in bad and "p1" not in bad else ("p" if "p" in bad else "p1")
+        bad[key] = -1.0
+        with pytest.raises(ValueError):
+            dist.pdf(ARRAY_GAMMA, **bad)
+        with pytest.raises(ValueError):
+            dist.normalize_from_magnetic_field(1.0, 0.01, 0.1, **bad)
+
+
+@pytest.mark.parametrize("case", ["PowerLaw", "BrokenPowerLaw"])
+class TestAnalyticArrayParameters:
+    """CDF and truncated moments of the analytic power-law families broadcast over array parameters."""
+
+    def test_cdf(self, case):
+        dist, params = ARRAY_CASES[case]
+        vec = dist.cdf(ARRAY_GAMMA, norm=2.0, **params)
+        ref = [dist.cdf(g, norm=2.0, **_element(params, i)) for i, g in enumerate(ARRAY_GAMMA)]
+        assert np.allclose(vec, ref, rtol=1e-12, atol=0.0)
+
+    def test_cdf_is_zero_below_and_total_above_support(self, case):
+        dist, params = ARRAY_CASES[case]
+        lo, hi = 0.5, 1e9
+        assert np.all(dist.cdf(np.full(3, lo), **params) == 0.0)
+        assert np.allclose(dist.cdf(np.full(3, hi), **params), dist.moment(0, **params), rtol=1e-12)
+
+    def test_moment_between(self, case):
+        dist, params = ARRAY_CASES[case]
+        a = np.array([1.0, 20.0, 5e5])  # the last interval lies entirely above the support
+        b = np.array([5.0, 300.0, 6e5])
+        vec = dist.moment_between(1, a, b, **params)
+        ref = [dist.moment_between(1, a[i], b[i], **_element(params, i)) for i in range(3)]
+        assert np.allclose(vec, ref, rtol=1e-12, atol=0.0)
+        assert vec[2] == 0.0
+
+
+class TestMaxwellJuettnerScalarOnly:
+    def test_cdf_rejects_array_temperature(self):
+        with pytest.raises(ValueError, match="scalar"):
+            MaxwellJuettner.cdf(2.0, Theta=np.array([0.5, 1.0]))
+
+
 class TestBrokenPowerLawBatchHelpers:
     """The batched helpers used by the LFBOT model must match the scalar interface."""
 
     GAMMA = np.geomspace(1.0, 1e8, 120)
     BREAKS = np.geomspace(1.5, 5e7, 25)
 
-    @pytest.mark.parametrize("p1", [2.0, 2.4, 3.0])  # p1 = 2 is the logarithmic first-moment branch
-    def test_first_moment(self, p1):
-        shape = {"p1": p1, "p2": p1 + 1.0, "gamma_min": 1.2, "gamma_max": 1e8}
-        batch = BrokenPowerLaw._opt_first_moment_batch(self.BREAKS, **shape)
-        scalar = np.array([BrokenPowerLaw.moment(order=1, gamma_c=g, **shape) for g in self.BREAKS])
-        assert np.allclose(batch, scalar, rtol=1e-12, atol=0.0)
-
-    @pytest.mark.parametrize("p1", [2.0, 3.0])
-    def test_magnetic_field_normalization(self, p1):
+    @pytest.mark.parametrize("p1", [2.0, 3.0])  # p1 = 2 is the logarithmic first-moment branch
+    def test_unvalidated_backends_match_public_path(self, p1):
+        """The unguarded vectorized backends agree with the validated public methods, element by element."""
         shape = {"p1": p1, "p2": p1 + 1.0, "gamma_min": 1.2, "gamma_max": 1e8}
         B = np.geomspace(0.01, 5.0, self.BREAKS.size)
-        batch = BrokenPowerLaw._opt_normalize_from_magnetic_field_batch(B, 0.01, 0.1, self.BREAKS, **shape)
-        scalar = np.array(
-            [
-                BrokenPowerLaw._normalize_from_magnetic_field(b, 0.01, 0.1, gamma_c=g, **shape)
-                for b, g in zip(B, self.BREAKS)
-            ]
-        )
-        assert np.allclose(batch, scalar, rtol=1e-12, atol=0.0)
 
-    def test_log_pdf(self):
+        moment = BrokenPowerLaw._opt_moment(1.0, gamma_c=self.BREAKS, **shape)
+        moment_ref = [BrokenPowerLaw.moment(1, gamma_c=g, **shape) for g in self.BREAKS]
+        assert np.allclose(moment, moment_ref, rtol=1e-13, atol=0.0)
+
+        N0 = BrokenPowerLaw._normalize_from_magnetic_field(B, 0.01, 0.1, gamma_c=self.BREAKS, **shape)
+        N0_ref = [
+            BrokenPowerLaw.normalize_from_magnetic_field(b, 0.01, 0.1, gamma_c=g, **shape).value
+            for b, g in zip(B, self.BREAKS)
+        ]
+        assert np.allclose(N0, N0_ref, rtol=1e-13, atol=0.0)
+
+    def test_pdf_grid_over_breaks(self):
+        """``(K, G)`` evaluation by broadcasting matches a per-break loop, including zeros outside the support."""
         shape = {"p1": 3.0, "p2": 4.0, "gamma_min": 1.2, "gamma_max": 1e8}
         norm = np.geomspace(1e-3, 1e3, self.BREAKS.size)
-        batch = BrokenPowerLaw._opt_log_pdf_batch(self.GAMMA, norm, self.BREAKS, **shape)
-        assert batch.shape == (self.BREAKS.size, self.GAMMA.size)
-        with np.errstate(divide="ignore"):
-            scalar = np.log(
-                [BrokenPowerLaw.pdf(self.GAMMA, norm=n, gamma_c=g, **shape) for n, g in zip(norm, self.BREAKS)]
-            )
-        assert np.array_equal(batch, scalar)  # includes the -inf entries outside the support
-        assert np.isneginf(batch).any()
+        grid = BrokenPowerLaw._opt_pdf(self.GAMMA[None, :], norm[:, None], gamma_c=self.BREAKS[:, None], **shape)
+        ref = np.array([BrokenPowerLaw.pdf(self.GAMMA, norm=n, gamma_c=g, **shape) for n, g in zip(norm, self.BREAKS)])
+        assert grid.shape == (self.BREAKS.size, self.GAMMA.size)
+        assert np.array_equal(grid, ref)
+        assert (grid == 0.0).any()
+
+    def test_public_pdf_broadcasts_and_validates(self):
+        shape = {"p1": 3.0, "p2": 4.0, "gamma_min": 1.2, "gamma_max": 1e8}
+        out = BrokenPowerLaw.pdf(self.GAMMA[None, :], gamma_c=self.BREAKS[:, None], **shape)
+        assert out.shape == (self.BREAKS.size, self.GAMMA.size)
+        assert np.ndim(BrokenPowerLaw.pdf(10.0, gamma_c=5.0, **shape)) == 0
+        with pytest.raises(ValueError):
+            BrokenPowerLaw.pdf(self.GAMMA, gamma_c=np.array([5.0, 1e9]), **shape)
