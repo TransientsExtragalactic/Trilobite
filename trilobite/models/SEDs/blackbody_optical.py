@@ -73,7 +73,7 @@ class BlackbodyOpticalModel(OpticalModel):
         Filter set defining the observable bands.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     PARAMETERS = _BB_PARAMETERS
     DESCRIPTION = "Static spherical blackbody observed through an optical filter set."
@@ -117,7 +117,7 @@ class BlackbodyOpticalEpochModel(OpticalEpochModel):
         Filter set defining the observable bands.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     PARAMETERS = _BB_PARAMETERS
     DESCRIPTION = "Static spherical blackbody SED observed through an optical filter set."

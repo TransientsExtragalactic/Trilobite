@@ -38,7 +38,7 @@ class ChevalierShockModel(Model):
     based on a set of macroscopic and microscopic parameters.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     # =============================================== #
     # Parameter and Variable Declarations             #

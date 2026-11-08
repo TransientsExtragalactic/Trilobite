@@ -476,7 +476,7 @@ class PL_Evolving_SBPL_Model(EvolvingSEDModel):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (
         ModelVariable("frequency", base_units=u.Hz, description="Observing frequency."),
@@ -725,7 +725,7 @@ class BPL_Evolving_SBPL_Model(EvolvingSEDModel):
     - This model does **not** enforce microphysical closure relations.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (
         ModelVariable("frequency", base_units=u.Hz, description="Observing frequency."),
@@ -991,7 +991,7 @@ class TripleBPL_Evolving_SBPL_Model(EvolvingSEDModel):
     - This model does **not** enforce physical closure relations.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (
         ModelVariable("frequency", base_units=u.Hz, description="Observing frequency."),

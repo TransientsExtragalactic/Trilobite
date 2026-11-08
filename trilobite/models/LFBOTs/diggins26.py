@@ -525,7 +525,7 @@ class Diggins26_TwoComponentModel(Model):
     Diggins et al. (2026, in preparation).
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     # =============================================== #
     # Parameter and Variable Declarations             #

@@ -99,7 +99,7 @@ class LinearModel(Model):
              - Evaluated model value.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("x", base_units=None),)
 
@@ -194,7 +194,7 @@ class QuadraticModel(Model):
              - Evaluated model value.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("x", base_units=None),)
 
@@ -292,7 +292,7 @@ class PowerLawModel(Model):
     The amplitude parameter is constrained to be non-negative.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("x", base_units=None),)
 
@@ -384,7 +384,7 @@ class ExponentialModel(Model):
              - Evaluated model value.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("x", base_units=None),)
 
@@ -473,7 +473,7 @@ class ConstantModel(Model):
              - Constant model value.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("x", base_units=None),)
 
@@ -628,7 +628,7 @@ class BrokenPowerLaw(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (
         ModelVariable(
@@ -811,7 +811,7 @@ class SmoothedBrokenPowerLaw(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("x", base_units=u.dimensionless_unscaled),)
 
@@ -987,7 +987,7 @@ class TripleBrokenPowerLaw(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("x", base_units=u.dimensionless_unscaled),)
 
@@ -1127,7 +1127,7 @@ class SmoothedTripleBrokenPowerLaw(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("x", base_units=u.dimensionless_unscaled),)
 

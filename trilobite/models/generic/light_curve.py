@@ -205,7 +205,7 @@ class FRED(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (
         ModelVariable(
@@ -406,7 +406,7 @@ class GeneralizedFRED(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -584,7 +584,7 @@ class GaussianPulse(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -747,7 +747,7 @@ class LogNormalPulse(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -902,7 +902,7 @@ class BrokenPowerLawTime(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1069,7 +1069,7 @@ class SmoothedBrokenPowerLawTime(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1226,7 +1226,7 @@ class ExponentialRisePowerLawDecay(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1390,7 +1390,7 @@ class NorrisPulse(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1544,7 +1544,7 @@ class WeibullPulse(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1692,7 +1692,7 @@ class LogisticPulse(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 

@@ -133,7 +133,7 @@ class BandFunctionModel(Model):
     absolute normalisation of :math:`A`.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     # =============================================== #
     # Parameter and Variable Declarations             #

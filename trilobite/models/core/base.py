@@ -149,22 +149,22 @@ class Model(ABC):
     textbook citation, or other authoritative source describing
     the model's origin or usage.
     """
-    STATUS: ModelStatus = ModelStatus.UNVALIDATED
+    STATUS: ModelStatus = ModelStatus.UNVERIFIED
     """
     ModelStatus: Development stage of the model.
 
     One of :class:`~trilobite.models.core.status.ModelStatus`. The status is **not inherited**: a subclass that does
-    not declare its own ``STATUS`` is reset to :attr:`~trilobite.models.core.status.ModelStatus.UNVALIDATED`, since
+    not declare its own ``STATUS`` is reset to :attr:`~trilobite.models.core.status.ModelStatus.UNVERIFIED`, since
     verification of a parent class says nothing about a subclass that changes the physics. Strings (e.g.
-    ``"validated"``) are accepted and converted at class-definition time. Models with an ``EXPERIMENTAL`` or
+    ``"verified"``) are accepted and converted at class-definition time. Models with an ``EXPERIMENTAL`` or
     ``DEPRECATED`` status emit a :class:`UserWarning` when instantiated.
     """
     STATUS_NOTE: str = ""
     """
     str: Optional free-text qualification of :attr:`STATUS`.
 
-    For example, what a validated model was checked against, or the replacement for a deprecated one. Shown next to
-    the status badge in the documentation. Like :attr:`STATUS`, it is not inherited.
+    For example, what a verified model was checked against, why a novel model has no reference, or the replacement
+    for a deprecated one. Shown next to the status badge in the documentation. Like :attr:`STATUS`, it is not inherited.
     """
 
     # =============================================== #
@@ -185,7 +185,7 @@ class Model(ABC):
 
         # Status is per-class, never inherited: reset to the safe default unless declared on this class.
         cls._status_declared = "STATUS" in cls.__dict__
-        cls.STATUS = ModelStatus.coerce(cls.__dict__.get("STATUS", ModelStatus.UNVALIDATED))
+        cls.STATUS = ModelStatus.coerce(cls.__dict__.get("STATUS", ModelStatus.UNVERIFIED))
         if "STATUS_NOTE" not in cls.__dict__:
             cls.STATUS_NOTE = ""
 

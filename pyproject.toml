@@ -123,6 +123,9 @@ tag_regex = "^v(?P<version>\\d+\\.\\d+\\.\\d+(?:[-a-zA-Z0-9\\.]+)?)$"
 minversion = "6.0"
 addopts = "-ra -q --strict-markers"
 testpaths = ["tests"]
+markers = [
+  "verification: compares a model with published results or an independent reference; deselected by default (run with --run-verification or -m verification)",
+]
 
 
 # ================================== #

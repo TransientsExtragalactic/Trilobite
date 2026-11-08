@@ -248,7 +248,7 @@ class VanVelzenModel(OpticalModel):
     van Velzen et al. 2021, ApJ, 908, 4.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     PARAMETERS = _VV_PARAMETERS
     DESCRIPTION = (

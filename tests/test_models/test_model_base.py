@@ -349,24 +349,24 @@ def _make_model(**attrs):
     return type("_StatusModel", (SimpleModel,), attrs)
 
 
-def test_status_default_is_unvalidated():
-    """A model that declares no status is UNVALIDATED."""
-    assert Model.STATUS is ModelStatus.UNVALIDATED
-    assert _make_model().STATUS is ModelStatus.UNVALIDATED
+def test_status_default_is_unverified():
+    """A model that declares no status is UNVERIFIED."""
+    assert Model.STATUS is ModelStatus.UNVERIFIED
+    assert _make_model().STATUS is ModelStatus.UNVERIFIED
 
 
 def test_status_is_not_inherited():
-    """Subclassing a validated model resets the status (and note) to the safe default."""
-    parent = _make_model(STATUS=ModelStatus.VALIDATED, STATUS_NOTE="checked against X")
+    """Subclassing a verified model resets the status (and note) to the safe default."""
+    parent = _make_model(STATUS=ModelStatus.VERIFIED, STATUS_NOTE="checked against X")
     child = type("_Child", (parent,), {})
-    assert parent.STATUS is ModelStatus.VALIDATED
-    assert child.STATUS is ModelStatus.UNVALIDATED
+    assert parent.STATUS is ModelStatus.VERIFIED
+    assert child.STATUS is ModelStatus.UNVERIFIED
     assert child.STATUS_NOTE == ""
 
 
 def test_status_string_coercion_and_validation():
     """Strings are accepted case-insensitively; unknown ones are rejected at class definition."""
-    assert _make_model(STATUS="Validated").STATUS is ModelStatus.VALIDATED
+    assert _make_model(STATUS="Verified").STATUS is ModelStatus.VERIFIED
     with pytest.raises(ValueError):
         _make_model(STATUS="finished")
 
@@ -379,9 +379,9 @@ def test_status_warns_on_instantiation(status):
         cls()
 
 
-@pytest.mark.parametrize("status", [ModelStatus.VALIDATED, ModelStatus.UNVALIDATED])
+@pytest.mark.parametrize("status", [ModelStatus.VERIFIED, ModelStatus.NOVEL, ModelStatus.UNVERIFIED])
 def test_status_silent_otherwise(status):
-    """Validated and unvalidated models do not warn."""
+    """Verified, novel and unverified models do not warn."""
     import warnings
 
     cls = _make_model(STATUS=status)

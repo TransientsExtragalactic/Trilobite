@@ -333,7 +333,7 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     # -------------------------------------------------- #
     # Output Definition                                  #
@@ -773,7 +773,7 @@ class SSA_SynchrotronSEDModel(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     # -------------------------------------------------- #
     # Output Definition                                  #
@@ -1216,7 +1216,7 @@ class Cooling_SynchrotronSEDModel(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     # -------------------------------------------------- #
     # Output Definition                                  #
@@ -1649,7 +1649,7 @@ class SynchrotronSEDModel(Model):
         plt.show()
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     # -------------------------------------------------- #
     # Output Definition                                  #
@@ -1943,7 +1943,7 @@ class Synchrotron_SSA_SBPL_Model(Model):
     sparse data.
     """
 
-    STATUS = ModelStatus.UNVALIDATED
+    STATUS = ModelStatus.UNVERIFIED
 
     # ============================================== #
     # Model Initialization                           #

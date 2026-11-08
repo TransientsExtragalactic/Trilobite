@@ -2,9 +2,9 @@
 Development-stage markers for Trilobite models.
 
 Every :class:`~trilobite.models.core.base.Model` carries a ``STATUS`` class attribute, a member of
-:class:`ModelStatus`, which records how far along its development and verification the model is. The status is
-surfaced in the documentation (model directory badges and API pages) and, for the stages that warrant caution,
-at runtime.
+:class:`ModelStatus`, which records how far along its development the model is and whether it has been verified.
+The status is surfaced in the documentation (model directory badges and API pages) and, for the stages that warrant
+caution, at runtime.
 """
 
 import warnings
@@ -22,31 +22,36 @@ class ModelStatus(Enum):
     .. code-block:: python
 
         class MyModel(Model):
-            STATUS = ModelStatus.VALIDATED
-            STATUS_NOTE = "Reproduces the closed-form solution of Chevalier (1982) to 1e-6."
+            STATUS = ModelStatus.VERIFIED
+            STATUS_NOTE = "Reproduces the light curves of Author et al. (2016)."
 
     Each member's value is the short lower-case key used in the documentation search index. Members also expose
     a human-readable :attr:`label` and :attr:`description`.
 
     The members, in order of increasing caution:
 
-    - ``VALIDATED``: verified against analytic limits, independent codes, or published results.
-    - ``UNVALIDATED``: implemented and tested, but not yet independently verified. This is the default for any
-      model that does not declare a status.
+    - ``VERIFIED``: backed by a verification test (see ``tests/verification``) that compares the model with
+      published results or another independent reference. A model may only be marked ``VERIFIED`` if such a test
+      exists; whether the test is suitable is judged when the change is reviewed.
+    - ``NOVEL``: new physics with no published counterpart to check against, so it cannot be verified against the
+      literature yet.
+    - ``UNVERIFIED``: implemented and tested, but not yet verified. This is the default for any model that does not
+      declare a status.
     - ``EXPERIMENTAL``: under active development; the physics, parameters or API may change without notice.
       Instantiating an experimental model emits a :class:`UserWarning`.
     - ``DEPRECATED``: scheduled for removal; prefer the replacement named in ``STATUS_NOTE``. Instantiating a
       deprecated model emits a :class:`UserWarning`.
     """
 
-    VALIDATED = "validated"
-    UNVALIDATED = "unvalidated"
+    VERIFIED = "verified"
+    NOVEL = "novel"
+    UNVERIFIED = "unverified"
     EXPERIMENTAL = "experimental"
     DEPRECATED = "deprecated"
 
     @property
     def label(self) -> str:
-        """str: Display name, e.g. ``"Validated"``."""
+        """str: Display name, e.g. ``"Verified"``."""
         return self.value.capitalize()
 
     @property
@@ -72,7 +77,7 @@ class ModelStatus(Enum):
         Parameters
         ----------
         value : ModelStatus or str
-            The status, or its string key (e.g. ``"validated"``).
+            The status, or its string key (e.g. ``"verified"``).
 
         Returns
         -------
@@ -94,15 +99,17 @@ class ModelStatus(Enum):
 
 
 _DESCRIPTIONS = {
-    ModelStatus.VALIDATED: "Verified against analytic limits, independent codes, or published results.",
-    ModelStatus.UNVALIDATED: "Implemented and tested, but not yet independently verified.",
+    ModelStatus.VERIFIED: "Backed by a verification test against published results or an independent reference.",
+    ModelStatus.NOVEL: "New physics with no published counterpart to verify against.",
+    ModelStatus.UNVERIFIED: "Implemented and tested, but not yet verified.",
     ModelStatus.EXPERIMENTAL: "Under active development; physics, parameters or API may change without notice.",
     ModelStatus.DEPRECATED: "Scheduled for removal; prefer the suggested replacement.",
 }
 
 _BADGE_COLORS = {
-    ModelStatus.VALIDATED: "success",
-    ModelStatus.UNVALIDATED: "secondary",
+    ModelStatus.VERIFIED: "success",
+    ModelStatus.NOVEL: "info",
+    ModelStatus.UNVERIFIED: "secondary",
     ModelStatus.EXPERIMENTAL: "warning",
     ModelStatus.DEPRECATED: "danger",
 }

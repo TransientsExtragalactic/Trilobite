@@ -121,7 +121,7 @@ Resources
         Models
         ^^^^^^
         Looking for a ready-made model of a GRB, supernova, TDE or LFBOT? The model directory is a searchable catalog
-        of every forward model in ``Trilobite``, each labeled with its development status (validated, experimental,
+        of every forward model in ``Trilobite``, each labeled with its development status (verified, novel, experimental,
         etc.).
 
         +++
