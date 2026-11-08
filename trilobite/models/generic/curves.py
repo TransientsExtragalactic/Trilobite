@@ -614,7 +614,7 @@ class BrokenPowerLaw(Model):
 
         import numpy as np
         import matplotlib.pyplot as plt
-        from trilobite.models.generic.bpl import BrokenPowerLaw
+        from trilobite.models.generic.curves import BrokenPowerLaw
 
         model = BrokenPowerLaw()
 
@@ -797,7 +797,7 @@ class SmoothedBrokenPowerLaw(Model):
 
         import numpy as np
         import matplotlib.pyplot as plt
-        from trilobite.models.generic.bpl import SmoothedBrokenPowerLaw
+        from trilobite.models.generic.curves import SmoothedBrokenPowerLaw
 
         model = SmoothedBrokenPowerLaw()
 
@@ -973,7 +973,7 @@ class TripleBrokenPowerLaw(Model):
 
         import numpy as np
         import matplotlib.pyplot as plt
-        from trilobite.models.generic.bpl import TripleBrokenPowerLaw
+        from trilobite.models.generic.curves import TripleBrokenPowerLaw
 
         model = TripleBrokenPowerLaw()
 
@@ -1113,7 +1113,7 @@ class SmoothedTripleBrokenPowerLaw(Model):
 
         import numpy as np
         import matplotlib.pyplot as plt
-        from trilobite.models.generic.bpl import SmoothedTripleBrokenPowerLaw
+        from trilobite.models.generic.curves import SmoothedTripleBrokenPowerLaw
 
         model = SmoothedTripleBrokenPowerLaw()
 
