@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -473,7 +490,7 @@
 
 
 <div class="viewcode-block" id="GreyOpacityLaw">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.GreyOpacityLaw">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GreyOpacityLaw</span><span class="p">(</span><span class="n">OpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Abstract base class for grey (frequency-averaged) opacity laws.</span>
 
@@ -488,7 +505,8 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    ~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity : Concrete constant-opacity implementation.</span>
+<span class="sd">    :obj:`~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity` :</span>
+<span class="sd">        Concrete constant-opacity implementation.</span>
 <span class="sd">    trilobite.radiation.opacity.opacity_base.C_GreyOpacityBase : C-level companion.</span>
 <span class="sd">    """</span>
 
@@ -559,7 +577,7 @@
     <span class="c1"># ================================================================ #</span>
 
 <div class="viewcode-block" id="GreyOpacityLaw.opacity">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.opacity.html#trilobite.radiation.opacity.GreyOpacityLaw.opacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.opacity.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.opacity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">opacity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Return opacity :math:`\kappa(\rho, T)` (:math:`\mathrm{cm^2\,g^{-1}}`).</span>
 
@@ -584,7 +602,7 @@
 
 
 <div class="viewcode-block" id="GreyOpacityLaw.dlogkappa_dlogrho">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogrho.html#trilobite.radiation.opacity.GreyOpacityLaw.dlogkappa_dlogrho">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogrho.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogrho">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dlogkappa_dlogrho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Return :math:`\partial\ln\kappa/\partial\ln\rho` (dimensionless).</span>
 
@@ -594,7 +612,13 @@
 <span class="sd">            Mass density.</span>
 <span class="sd">        T : `~astropy.units.Quantity`</span>
 <span class="sd">            Temperature.</span>
-<span class="sd">        nu : any, optional</span>
+<span class="sd">        nu : object, optional</span>
+<span class="sd">            Ignored; accepted for compatibility with frequency-dependent opacity laws.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or ~numpy.ndarray</span>
+<span class="sd">            The logarithmic derivative :math:`\partial\ln\kappa/\partial\ln \rho` (dimensionless).</span>
 <span class="sd">        """</span>
         <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
         <span class="n">log_rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span>
@@ -602,7 +626,7 @@
 
 
 <div class="viewcode-block" id="GreyOpacityLaw.dlogkappa_dlogT">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogT.html#trilobite.radiation.opacity.GreyOpacityLaw.dlogkappa_dlogT">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogT.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogT">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dlogkappa_dlogT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Return :math:`\partial\ln\kappa/\partial\ln T` (dimensionless).</span>
 
@@ -612,7 +636,13 @@
 <span class="sd">            Mass density.</span>
 <span class="sd">        T : `~astropy.units.Quantity`</span>
 <span class="sd">            Temperature.</span>
-<span class="sd">        nu : any, optional</span>
+<span class="sd">        nu : object, optional</span>
+<span class="sd">            Ignored; accepted for compatibility with frequency-dependent opacity laws.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or ~numpy.ndarray</span>
+<span class="sd">            The logarithmic derivative :math:`\partial\ln\kappa/\partial\ln T` (dimensionless).</span>
 <span class="sd">        """</span>
         <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
         <span class="n">log_rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span>
@@ -620,16 +650,32 @@
 
 
 <div class="viewcode-block" id="GreyOpacityLaw.dlogkappa_dlognu">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlognu.html#trilobite.radiation.opacity.GreyOpacityLaw.dlogkappa_dlognu">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlognu.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlognu">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dlogkappa_dlognu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""Return :math:`\partial\ln\kappa/\partial\ln\nu` = 0 (grey law)."""</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Return :math:`\partial\ln\kappa/\partial\ln\nu` = 0 (grey law).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : `~astropy.units.Quantity`</span>
+<span class="sd">            Mass density.</span>
+<span class="sd">        T : `~astropy.units.Quantity`</span>
+<span class="sd">            Temperature.</span>
+<span class="sd">        nu : object, optional</span>
+<span class="sd">            Ignored; accepted for compatibility with frequency-dependent opacity laws.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Zero, since a grey opacity law does not depend on frequency.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="mf">0.0</span></div>
 </div>
 
 
 
 <div class="viewcode-block" id="ConstantGreyOpacity">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity.html#trilobite.radiation.opacity.ConstantGreyOpacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity.html#trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConstantGreyOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Grey opacity law with a fixed, composition- and state-independent value.</span>
 
@@ -671,6 +717,19 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">mean_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Initialize the constant opacity law.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kappa : float or `~astropy.units.Quantity`</span>
+<span class="sd">            Opacity value. A plain float is interpreted as :math:`\mathrm{cm^2\,g^{-1}}`. An</span>
+<span class="sd">            :class:`~astropy.units.Quantity` is converted to :math:`\mathrm{cm^2\,g^{-1}}` on construction.</span>
+<span class="sd">        mean_type : str or None, optional</span>
+<span class="sd">            Averaging prescription (e.g. ``"rosseland"`` or ``"planck"``). ``None`` (default) leaves the type</span>
+<span class="sd">            unspecified, which is appropriate when the opacity is used in a context that doesn't require a specific</span>
+<span class="sd">            mean type.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kappa</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
             <span class="n">kappa_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">kappa</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -683,7 +742,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kappa</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""Opacity value as a :class:`~astropy.units.Quantity` in :math:`\mathrm{cm^2\,g^{-1}}`."""</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""~astropy.units.Quantity: Opacity value in :math:`\mathrm{cm^2\,g^{-1}}`."""</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_log_opacity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_rho</span><span class="p">):</span>

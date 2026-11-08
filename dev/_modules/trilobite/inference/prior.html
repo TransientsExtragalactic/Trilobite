@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -463,8 +480,8 @@
 <span class="sd">analytic marginalizations), but they are **not required** for standard</span>
 <span class="sd">MCMC-based inference.</span>
 
-<span class="sd">Usage within Trilobite</span>
-<span class="sd">------------------------</span>
+<span class="sd">.. rubric:: Usage within Trilobite</span>
+
 <span class="sd">When defining an :class:`~trilobite.inference.problem.InferenceProblem`,</span>
 <span class="sd">users may specify priors in one of two ways:</span>
 
@@ -475,8 +492,8 @@
 <span class="sd">The inference machinery treats both options equivalently, enabling</span>
 <span class="sd">flexibility without sacrificing clarity or performance.</span>
 
-<span class="sd">Design principles</span>
-<span class="sd">-----------------</span>
+<span class="sd">.. rubric:: Design principles</span>
+
 <span class="sd">The design of this module follows a few core principles:</span>
 
 <span class="sd">- **Lightweight**: Priors are simple, stateless callable objects.</span>
@@ -539,8 +556,8 @@
 <span class="sd">    while allowing optional extensions (PDFs and CDFs) for more advanced</span>
 <span class="sd">    inference workflows.</span>
 
-<span class="sd">    Design philosophy</span>
-<span class="sd">    -----------------</span>
+<span class="sd">    .. rubric:: Design philosophy</span>
+
 <span class="sd">    - Priors are lightweight, callable objects.</span>
 <span class="sd">    - The *log-prior* is the primary quantity used during inference.</span>
 <span class="sd">    - All priors operate in **physical parameter space**.</span>
@@ -553,6 +570,12 @@
 <span class="sd">    - Accept any required parameters at construction time</span>
 <span class="sd">    - Implement ``_generate_log_prior``</span>
 <span class="sd">    - Optionally implement ``_generate_prior`` and ``_generate_cum_prior``</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **parameters : dict</span>
+<span class="sd">        Keyword arguments defining the parameters of the prior distribution. They are stored and passed to the</span>
+<span class="sd">        generator methods so that subclasses can define their behavior.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -569,10 +592,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        parameters</span>
-<span class="sd">            Keyword arguments defining the parameters of the prior distribution.</span>
-<span class="sd">            These are stored and passed to the generator methods so that subclasses</span>
-<span class="sd">            may flexibly define their behavior.</span>
+<span class="sd">        **parameters : dict</span>
+<span class="sd">            Keyword arguments defining the parameters of the prior distribution. They are stored and passed to the</span>
+<span class="sd">            generator methods so that subclasses can define their behavior.</span>
 <span class="sd">        """</span>
         <span class="c1"># Store the defining parameters for introspection and debugging.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">parameters</span>
@@ -673,6 +695,16 @@
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Evaluate the probability density function at a given value.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : float</span>
+<span class="sd">            Value at which to evaluate the density.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The probability density at ``x``.</span>
+
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        NotImplementedError</span>
@@ -688,6 +720,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Evaluate the cumulative distribution function at a given value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : float</span>
+<span class="sd">            Value at which to evaluate the distribution function.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The cumulative probability at ``x``.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -737,17 +779,43 @@
     <span class="c1"># ------------------------------------------------------------ #</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Alias for :meth:`logp`.</span>
+<span class="sd">        Evaluate the log-prior, as an alias for :meth:`logp`.</span>
 
 <span class="sd">        This allows prior instances to be used as callable log-priors.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : float</span>
+<span class="sd">            Value at which to evaluate the log-prior.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The log-prior density at ``x``.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return an unambiguous representation of the prior.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The class name with the prior's parameters.</span>
+<span class="sd">        """</span>
         <span class="n">params</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a readable description of the prior.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The class name with the prior's parameters.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> with parameters (</span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">)"</span>
@@ -772,6 +840,11 @@
 <span class="sd">                module.submodule:ClassName</span>
 
 <span class="sd">            If it is not, an error is raised. Additionally, all constructor parameters must be JSON-serializable.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A JSON-safe dictionary describing the prior.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -903,9 +976,26 @@
 
 <span class="sd">    This allows custom priors without requiring users to subclass `Prior`,</span>
 <span class="sd">    while preserving introspection and serialization metadata.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_prior_callable : callable</span>
+<span class="sd">        Function mapping a value to its log-prior density.</span>
+<span class="sd">    parameters : dict, optional</span>
+<span class="sd">        Metadata describing the prior, stored for introspection and serialization.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_prior_callable</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the prior.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        log_prior_callable : callable</span>
+<span class="sd">            Function mapping a value to its log-prior density.</span>
+<span class="sd">        parameters : dict, optional</span>
+<span class="sd">            Metadata describing the prior, stored for introspection and serialization.</span>
+<span class="sd">        """</span>
         <span class="c1"># Ensure that the callable is valid.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">log_prior_callable</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"log_prior_callable must be callable."</span><span class="p">)</span>
@@ -944,33 +1034,50 @@
 
 <span class="sd">    where :math:`a` is the lower bound and :math:`b` is the upper bound.</span>
 
-<span class="sd">    Support</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Support</span>
+
 <span class="sd">    :math:`x \in [a,b]`</span>
 
-<span class="sd">    Interpretation</span>
-<span class="sd">    --------------</span>
+<span class="sd">    .. rubric:: Interpretation</span>
+
 <span class="sd">    The uniform prior represents *complete prior ignorance* **within a</span>
 <span class="sd">    specified range**, but it still encodes strong assumptions:</span>
 
 <span class="sd">    - Values outside the bounds are *impossible*</span>
 <span class="sd">    - All values inside the bounds are equally likely</span>
 
-<span class="sd">    Typical uses</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Typical uses</span>
+
 <span class="sd">    - Poorly constrained parameters with known physical limits</span>
 <span class="sd">    - Bounding parameters to prevent unphysical solutions</span>
 <span class="sd">    - Simple exploratory modeling</span>
 
-<span class="sd">    Caveats</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Caveats</span>
+
 <span class="sd">    - Uniform priors are **not invariant under reparameterization**</span>
 <span class="sd">      (e.g., uniform in ``x`` is not uniform in ``log x``).</span>
 <span class="sd">    - For scale parameters spanning orders of magnitude, a log-uniform</span>
 <span class="sd">      prior is usually more appropriate.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lower : float</span>
+<span class="sd">        Lower bound of the support.</span>
+<span class="sd">    upper : float</span>
+<span class="sd">        Upper bound of the support. Must be larger than ``lower``.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lower</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the prior.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lower : float</span>
+<span class="sd">            Lower bound of the support.</span>
+<span class="sd">        upper : float</span>
+<span class="sd">            Upper bound of the support. Must be larger than ``lower``.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">lower</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"UniformPrior requires upper &gt; lower."</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">lower</span><span class="p">),</span> <span class="n">upper</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">upper</span><span class="p">))</span>
@@ -1011,30 +1118,47 @@
 
 <span class="sd">    where :math:`a &gt; 0` and :math:`b &gt; a`.</span>
 
-<span class="sd">    Support</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Support</span>
+
 <span class="sd">    :math:`x \in [a,b]` , with ``x &gt; 0``</span>
 
-<span class="sd">    Interpretation</span>
-<span class="sd">    --------------</span>
+<span class="sd">    .. rubric:: Interpretation</span>
+
 <span class="sd">    This prior expresses ignorance over *orders of magnitude* rather than</span>
 <span class="sd">    linear differences. Equal probability mass is assigned to intervals</span>
 <span class="sd">    like ``[1, 10]`` and ``[10, 100]``.</span>
 
-<span class="sd">    Typical uses</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Typical uses</span>
+
 <span class="sd">    - Normalization parameters</span>
 <span class="sd">    - Scale parameters (luminosity, mass, density)</span>
 <span class="sd">    - Any strictly positive quantity spanning many decades</span>
 
-<span class="sd">    Caveats</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Caveats</span>
+
 <span class="sd">    - Requires explicit lower and upper bounds</span>
 <span class="sd">    - Diverges as :math:`x\to 0` without a lower cutoff</span>
 <span class="sd">    - Should not be used for parameters that can take zero or negative values</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lower : float</span>
+<span class="sd">        Lower bound of the support. Must be positive.</span>
+<span class="sd">    upper : float</span>
+<span class="sd">        Upper bound of the support. Must be larger than ``lower``.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lower</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the prior.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lower : float</span>
+<span class="sd">            Lower bound of the support. Must be positive.</span>
+<span class="sd">        upper : float</span>
+<span class="sd">            Upper bound of the support. Must be larger than ``lower``.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">lower</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">upper</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"LogUniformPrior bounds must be &gt; 0."</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">lower</span><span class="p">:</span>
@@ -1076,9 +1200,25 @@
 <span class="sd">        -\frac{(x - \mu)^2}{2\sigma^2}</span>
 <span class="sd">        \right]</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mean : float</span>
+<span class="sd">        Mean of the distribution.</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        Standard deviation. Must be positive.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the prior.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mean : float</span>
+<span class="sd">            Mean of the distribution.</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            Standard deviation. Must be positive.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"NormalPrior requires sigma &gt; 0."</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">mean</span><span class="p">),</span> <span class="n">sigma</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
@@ -1121,28 +1261,53 @@
 
 <span class="sd">    where :math:`Z` is the normalization constant.</span>
 
-<span class="sd">    Support</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Support</span>
+
 <span class="sd">    :math:`x \in [a,b]`</span>
 
-<span class="sd">    Interpretation</span>
-<span class="sd">    --------------</span>
+<span class="sd">    .. rubric:: Interpretation</span>
+
 <span class="sd">    This prior combines informative Gaussian beliefs with hard physical</span>
 <span class="sd">    bounds.</span>
 
-<span class="sd">    Typical uses</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Typical uses</span>
+
 <span class="sd">    - Parameters with known physical limits</span>
 <span class="sd">    - Regularizing weakly constrained fits</span>
 <span class="sd">    - Quantities that must remain finite or positive</span>
 
-<span class="sd">    Caveats</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Caveats</span>
+
 <span class="sd">    - Behavior near the boundaries can influence inference</span>
 <span class="sd">    - Poorly chosen bounds can introduce bias</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mean : float</span>
+<span class="sd">        Mean of the underlying normal distribution.</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        Standard deviation of the underlying normal distribution. Must be positive.</span>
+<span class="sd">    lower : float</span>
+<span class="sd">        Lower bound of the support.</span>
+<span class="sd">    upper : float</span>
+<span class="sd">        Upper bound of the support. Must be larger than ``lower``.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lower</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the prior.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mean : float</span>
+<span class="sd">            Mean of the underlying normal distribution.</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            Standard deviation of the underlying normal distribution. Must be positive.</span>
+<span class="sd">        lower : float</span>
+<span class="sd">            Lower bound of the support.</span>
+<span class="sd">        upper : float</span>
+<span class="sd">            Upper bound of the support. Must be larger than ``lower``.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"TruncatedNormalPrior requires sigma &gt; 0."</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">lower</span><span class="p">:</span>
@@ -1209,28 +1374,41 @@
 <span class="sd">            0 &amp; \text{otherwise}</span>
 <span class="sd">        \end{cases}</span>
 
-<span class="sd">    Support</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Support</span>
+
 <span class="sd">    :math:`x \ge 0`</span>
 
-<span class="sd">    Interpretation</span>
-<span class="sd">    --------------</span>
+<span class="sd">    .. rubric:: Interpretation</span>
+
 <span class="sd">    The half-normal prior favors small positive values while allowing</span>
 <span class="sd">    occasional large excursions.</span>
 
-<span class="sd">    Typical uses</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Typical uses</span>
+
 <span class="sd">    - Noise amplitudes</span>
 <span class="sd">    - Scatter or variance parameters</span>
 <span class="sd">    - Regularization terms</span>
 
-<span class="sd">    Caveats</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Caveats</span>
+
 <span class="sd">    - Strongly informative near zero</span>
 <span class="sd">    - Scale parameter must be chosen carefully</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        Scale (standard deviation) of the underlying normal distribution. Must be positive.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the prior.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            Scale (standard deviation) of the underlying normal distribution. Must be positive.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"HalfNormalPrior requires sigma &gt; 0."</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
@@ -1278,9 +1456,25 @@
 <span class="sd">        -\frac{(\ln x - \mu)^2}{2\sigma^2}</span>
 <span class="sd">        \right]</span>
 
-<span class="sd">    Support</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Support</span>
+
 <span class="sd">    :math:`x &gt; 0`</span>
+
+<span class="sd">    .. rubric:: Interpretation</span>
+
+<span class="sd">    The log-normal prior models multiplicative uncertainty and naturally</span>
+<span class="sd">    describes quantities spanning orders of magnitude.</span>
+
+<span class="sd">    .. rubric:: Typical uses</span>
+
+<span class="sd">    - Scale parameters with asymmetric uncertainty</span>
+<span class="sd">    - Physical quantities constrained to be positive</span>
+<span class="sd">    - Growth or decay processes</span>
+
+<span class="sd">    .. rubric:: Caveats</span>
+
+<span class="sd">    - Mean and variance are not intuitive in linear space</span>
+<span class="sd">    - Strongly asymmetric for large :math:`\sigma`</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1293,25 +1487,19 @@
 <span class="sd">    sigma : float</span>
 <span class="sd">        Standard deviation :math:`\sigma` of the natural logarithm. This is dimensionless and independent of</span>
 <span class="sd">        the reference unit. To convert from a width in dex, use :math:`\sigma = \sigma_{\rm dex}\ln 10`.</span>
-
-<span class="sd">    Interpretation</span>
-<span class="sd">    --------------</span>
-<span class="sd">    The log-normal prior models multiplicative uncertainty and naturally</span>
-<span class="sd">    describes quantities spanning orders of magnitude.</span>
-
-<span class="sd">    Typical uses</span>
-<span class="sd">    ------------</span>
-<span class="sd">    - Scale parameters with asymmetric uncertainty</span>
-<span class="sd">    - Physical quantities constrained to be positive</span>
-<span class="sd">    - Growth or decay processes</span>
-
-<span class="sd">    Caveats</span>
-<span class="sd">    -------</span>
-<span class="sd">    - Mean and variance are not intuitive in linear space</span>
-<span class="sd">    - Strongly asymmetric for large :math:`\sigma`</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the prior.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mean : float</span>
+<span class="sd">            Mean of the natural logarithm of the variable.</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            Standard deviation of the natural logarithm of the variable. Must be positive.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"LogNormalPrior requires sigma &gt; 0."</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">mean</span><span class="p">),</span> <span class="n">sigma</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
@@ -1356,28 +1544,45 @@
 <span class="sd">    where :math:`k &gt; 0` is the shape parameter and :math:`\theta &gt; 0`</span>
 <span class="sd">    is the scale parameter.</span>
 
-<span class="sd">    Support</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Support</span>
+
 <span class="sd">    :math:`x &gt; 0`</span>
 
-<span class="sd">    Interpretation</span>
-<span class="sd">    --------------</span>
+<span class="sd">    .. rubric:: Interpretation</span>
+
 <span class="sd">    The Gamma prior is flexible and can interpolate between exponential-like</span>
 <span class="sd">    and approximately Gaussian behavior.</span>
 
-<span class="sd">    Typical uses</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Typical uses</span>
+
 <span class="sd">    - Rates and intensities</span>
 <span class="sd">    - Variance or precision parameters</span>
 <span class="sd">    - Hierarchical scale parameters</span>
 
-<span class="sd">    Caveats</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Caveats</span>
+
 <span class="sd">    - Shape and scale parameters may be unintuitive</span>
 <span class="sd">    - Can become highly informative if poorly chosen</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    shape : float</span>
+<span class="sd">        Shape parameter of the distribution. Must be positive.</span>
+<span class="sd">    scale : float</span>
+<span class="sd">        Scale parameter of the distribution. Must be positive.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the prior.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shape : float</span>
+<span class="sd">            Shape parameter of the distribution. Must be positive.</span>
+<span class="sd">        scale : float</span>
+<span class="sd">            Scale parameter of the distribution. Must be positive.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">shape</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">scale</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"GammaPrior requires shape &gt; 0 and scale &gt; 0."</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">scale</span><span class="p">))</span>
@@ -1422,29 +1627,46 @@
 
 <span class="sd">    where :math:`\alpha &gt; 0` and :math:`\beta &gt; 0`.</span>
 
-<span class="sd">    Support</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Support</span>
+
 <span class="sd">    :math:`x \in [0,1]`</span>
 
-<span class="sd">    Interpretation</span>
-<span class="sd">    --------------</span>
+<span class="sd">    .. rubric:: Interpretation</span>
+
 <span class="sd">    The Beta prior is highly flexible and can represent uniform, peaked,</span>
 <span class="sd">    or boundary-favoring beliefs.</span>
 
-<span class="sd">    Typical uses</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Typical uses</span>
+
 <span class="sd">    - Efficiencies</span>
 <span class="sd">    - Fractions</span>
 <span class="sd">    - Probabilities</span>
 
-<span class="sd">    Caveats</span>
-<span class="sd">    -------</span>
+<span class="sd">    .. rubric:: Caveats</span>
+
 <span class="sd">    - Singular behavior at boundaries when :math:`\alpha &lt; 1` or</span>
 <span class="sd">      :math:`\beta &lt; 1`</span>
 <span class="sd">    - Must not be used outside the unit interval</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    alpha : float</span>
+<span class="sd">        First shape parameter. Must be positive.</span>
+<span class="sd">    beta : float</span>
+<span class="sd">        Second shape parameter. Must be positive.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the prior.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            First shape parameter. Must be positive.</span>
+<span class="sd">        beta : float</span>
+<span class="sd">            Second shape parameter. Must be positive.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">alpha</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">beta</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"BetaPrior requires alpha &gt; 0 and beta &gt; 0."</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="n">beta</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">beta</span><span class="p">))</span>

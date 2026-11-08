@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -62,6 +62,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -159,6 +162,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api.html">
     API
   </a>
@@ -168,13 +185,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -303,6 +313,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api.html">
     API
   </a>
@@ -312,13 +336,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -447,20 +464,19 @@
                   
   <section id="forward-modeling">
 <span id="modeling-gallery"></span><h1>Forward Modeling<a class="headerlink" href="#forward-modeling" title="Link to this heading">#</a></h1>
-<p>These examples show how to evaluate Trilobite’ high-level physical models directly — without
-running inference — to generate synthetic light curves and SEDs, visualize model parameter
-sensitivity, and compare model predictions to observations.</p>
-<p>All models inherit from <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> and share a common interface:
-declare <code class="docutils literal notranslate"><span class="pre">PARAMETERS</span></code> (fixed or free) and call <code class="xref py py-meth docutils literal notranslate"><span class="pre">__call__()</span></code>
-to evaluate. Examples range from Chevalier self-similar shock models for radio supernovae through
-phenomenological light-curve fitters and TDE radio afterglow models.</p>
+<p>These examples evaluate Trilobite’s physical models directly, without running inference, and compare the
+predictions with published observations of real transients. Each one is anchored to a specific source, with
+shock, wind and microphysics parameters taken from the literature, so the output can be checked against
+measured values.</p>
+<p>The radio supernova examples follow the same pipeline: a shock model gives the radius and speed, the
+strong-shock jump conditions give the magnetic field, the cooling engine gives the cooling break, and the
+numerical synchrotron engine produces the SED. Absorption by the unshocked wind is added where it matters.</p>
 <p class="rubric">What you’ll find here</p>
 <ul class="simple">
-<li><p>Evaluating a Chevalier shock-synchrotron model with radiative cooling</p></li>
-<li><p>Modeling free-free absorption (FFA) fadeout in the evolving SED of a dense-CSM supernova</p></li>
-<li><p>Fitting a phenomenological light curve with a FRED-like model</p></li>
-<li><p>Generating TDE radio afterglow predictions</p></li>
-<li><p>Modeling a Type IIn supernova embedded in dense circumstellar material</p></li>
+<li><p>A radio supernova in a red-supergiant wind (SN 1993J): shock speed, magnetic field and light curves</p></li>
+<li><p>Free-free absorption in an extremely dense wind (SN 2010jl): when each radio band turns on</p></li>
+<li><p>Fitting radio light curves with a phenomenological function to read off peak times and slopes</p></li>
+<li><p>A TDE radio afterglow from a freely expanding outflow</p></li>
 </ul>
 <p class="rubric">API reference</p>
 <p><a class="reference internal" href="../../_as_gen/trilobite.models.html#module-trilobite.models" title="trilobite.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.models</span></code></a> — <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>,

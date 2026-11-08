@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -451,8 +468,8 @@
 <span class="sd">specifically for evaluating an `InferenceProblem` in parallel</span>
 <span class="sd">(e.g. for use with `emcee`).</span>
 
-<span class="sd">Design Overview</span>
-<span class="sd">---------------</span>
+<span class="sd">.. rubric:: Design Overview</span>
+
 <span class="sd">`emcee` expects a pool object that implements:</span>
 
 <span class="sd">    pool.map(func, iterable) -&gt; sequence</span>
@@ -471,8 +488,8 @@
 <span class="sd">This dramatically reduces serialization overhead and avoids</span>
 <span class="sd">common multiprocessing pitfalls.</span>
 
-<span class="sd">Interrupt Handling</span>
-<span class="sd">------------------</span>
+<span class="sd">.. rubric:: Interrupt Handling</span>
+
 <span class="sd">Workers ignore SIGINT so that Ctrl+C is handled cleanly by the</span>
 <span class="sd">parent process. The parent polls with a timeout so KeyboardInterrupt</span>
 <span class="sd">is not swallowed by blocking waits.</span>
@@ -578,8 +595,8 @@
 <span class="sd">        - close()</span>
 <span class="sd">        - context manager support</span>
 
-<span class="sd">    Important</span>
-<span class="sd">    ---------</span>
+<span class="sd">    .. rubric:: Important</span>
+
 <span class="sd">    The `func` argument to `map()` is intentionally ignored.</span>
 <span class="sd">    We always evaluate `_worker_log_prob`, since the problem</span>
 <span class="sd">    is stored inside each worker process.</span>
@@ -606,6 +623,15 @@
 
 <span class="sd">        The problem is serialized once in the parent and reconstructed</span>
 <span class="sd">        once per worker process.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        problem : InferenceProblem</span>
+<span class="sd">            Problem to evaluate.</span>
+<span class="sd">        processes : int, optional</span>
+<span class="sd">            Number of worker processes. Defaults to `cpu_count()`.</span>
+<span class="sd">        wait_timeout : int, optional</span>
+<span class="sd">            Timeout (seconds) used when polling async results. This allows KeyboardInterrupt to be caught properly.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">processes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">processes</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
@@ -630,7 +656,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Number of worker processes."""</span>
+<span class="w">        </span><span class="sd">"""int: Number of worker processes."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span>
 
     <span class="c1"># ------------------------------------------------------------------</span>
@@ -650,9 +676,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        func</span>
+<span class="sd">        func : object</span>
 <span class="sd">            Ignored. Present only for compatibility with `emcee`.</span>
-<span class="sd">        iterable</span>
+<span class="sd">        iterable : ~collections.abc.Iterable</span>
 <span class="sd">            Iterable of parameter vectors (`theta`).</span>
 <span class="sd">        callback : callable, optional</span>
 <span class="sd">            Called with each result after collection. Fired once per element</span>
@@ -726,6 +752,14 @@
     <span class="c1"># ------------------------------------------------------------------</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"LikelihoodMPPool"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Enter the pool's context.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.parallel.mp.LikelihoodMPPool</span>
+<span class="sd">            The pool itself.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -734,6 +768,15 @@
 
 <span class="sd">        If exiting due to an exception, terminate immediately.</span>
 <span class="sd">        Otherwise close gracefully.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        exc_type : type or None</span>
+<span class="sd">            Type of the exception raised in the context, if any.</span>
+<span class="sd">        exc : BaseException or None</span>
+<span class="sd">            The exception raised in the context, if any.</span>
+<span class="sd">        tb : traceback or None</span>
+<span class="sd">            Traceback of the exception raised in the context, if any.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>

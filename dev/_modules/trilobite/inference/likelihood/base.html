@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -495,8 +512,8 @@
 <span class="sd">    Those responsibilities belong to the data ingestion layer</span>
 <span class="sd">    (e.g. :class:`~trilobite.data.core.DataContainer` → :class:`~trilobite.data.core.InferenceData`).</span>
 
-<span class="sd">    Architectural Role</span>
-<span class="sd">    ------------------</span>
+<span class="sd">    .. rubric:: Architectural Role</span>
+
 <span class="sd">    The inference stack is intentionally layered:</span>
 
 <span class="sd">    1. **DataContainer**</span>
@@ -515,16 +532,16 @@
 <span class="sd">    The :class:`~trilobite.inference.likelihood.base.Likelihood` layer is therefore a **pure statistical engine**</span>
 <span class="sd">    operating on already-validated numerical data.</span>
 
-<span class="sd">    Design Principles</span>
-<span class="sd">    -----------------</span>
+<span class="sd">    .. rubric:: Design Principles</span>
+
 <span class="sd">    - The likelihood should contain *only statistical logic*.</span>
 <span class="sd">    - All unit validation and shape checking must already be complete.</span>
 <span class="sd">    - Model–data compatibility must be explicitly validated.</span>
 <span class="sd">    - The likelihood evaluation itself must be stateless with respect</span>
 <span class="sd">      to model parameters.</span>
 
-<span class="sd">    Extending Likelihood</span>
-<span class="sd">    --------------------</span>
+<span class="sd">    .. rubric:: Extending Likelihood</span>
+
 <span class="sd">    Concrete likelihood implementations must implement:</span>
 
 <span class="sd">    - :meth:`_configure`</span>
@@ -538,14 +555,8 @@
 <span class="sd">    - Calling the appropriate numerical backend</span>
 <span class="sd">    - Implementing the statistical form of the likelihood</span>
 
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    - This class makes no assumptions about priors or sampling strategies.</span>
-<span class="sd">    - Parameter coercion is delegated to the model.</span>
-<span class="sd">    - Data validation is delegated to :class:`InferenceData`.</span>
+<span class="sd">    .. rubric:: Nuisance Parameters</span>
 
-<span class="sd">    Nuisance Parameters</span>
-<span class="sd">    -------------------</span>
 <span class="sd">    A likelihood may own parameters of its own, such as a free systematic error term, which are sampled</span>
 <span class="sd">    alongside the model parameters but belong to the statistical description of the data rather than to the</span>
 <span class="sd">    physics. They are declared in the class-level :attr:`NUISANCE_PARAMETERS` tuple, which mirrors</span>
@@ -557,6 +568,23 @@
 <span class="sd">    model and the nuisance parameters through their own :class:`~trilobite.models.core.parameters.ModelParameter`</span>
 <span class="sd">    definitions, and calls ``_log_likelihood(parameters)`` or, when nuisance parameters are declared,</span>
 <span class="sd">    ``_log_likelihood(parameters, nuisance)``. The model therefore never sees nuisance values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : ~trilobite.models.core.base.Model</span>
+<span class="sd">        The forward model used to generate predicted observables. Must be an instance of</span>
+<span class="sd">        :class:`~trilobite.models.core.base.Model`.</span>
+<span class="sd">    data : InferenceData</span>
+<span class="sd">        Fully validated, immutable dataset containing numerical arrays required for likelihood evaluation. All unit</span>
+<span class="sd">        coercion and shape validation must already have been performed.</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        Additional keyword arguments forwarded to :meth:`_configure`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This class makes no assumptions about priors or sampling strategies.</span>
+<span class="sd">    - Parameter coercion is delegated to the model.</span>
+<span class="sd">    - Data validation is delegated to :class:`InferenceData`.</span>
 <span class="sd">    """</span>
 
     <span class="n">NUISANCE_PARAMETERS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
@@ -574,7 +602,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        model : Model</span>
+<span class="sd">        model : ~trilobite.models.core.base.Model</span>
 <span class="sd">            The forward model used to generate predicted observables.</span>
 <span class="sd">            Must be an instance of :class:`~trilobite.models.core.base.Model`.</span>
 
@@ -836,16 +864,14 @@
 <span class="sd">    The summation is taken over **all data points and all observables**.</span>
 <span class="sd">    Observables are stacked along the final axis.</span>
 
-<span class="sd">    Assumptions</span>
-<span class="sd">    -----------</span>
+<span class="sd">    .. rubric:: Assumptions</span>
 
 <span class="sd">    - All observations are detections (no censoring).</span>
 <span class="sd">    - Symmetric Gaussian uncertainties are provided.</span>
 <span class="sd">    - Model output shape matches observed data shape.</span>
 <span class="sd">    - Errors are independent (diagonal covariance).</span>
 
-<span class="sd">    Shape Conventions</span>
-<span class="sd">    -----------------</span>
+<span class="sd">    .. rubric:: Shape Conventions</span>
 
 <span class="sd">    If there are:</span>
 
@@ -860,8 +886,7 @@
 
 <span class="sd">    These arrays are cached during initialization for efficiency.</span>
 
-<span class="sd">    Performance Notes</span>
-<span class="sd">    -----------------</span>
+<span class="sd">    .. rubric:: Performance Notes</span>
 
 <span class="sd">    - All data extraction occurs once during initialization.</span>
 <span class="sd">    - The hot loop in :meth:`_log_likelihood` performs only:</span>
@@ -873,7 +898,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    ~trilobite.inference.likelihood.gaussian.gaussian_loglikelihood : Low-level numerical backend.</span>
+<span class="sd">    :obj:`~trilobite.inference.likelihood.gaussian.gaussian_loglikelihood` : Low-level numerical backend.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ============================================================</span>
@@ -1025,16 +1050,15 @@
 
 <span class="sd">    The total log-likelihood is the sum over all data points and observables.</span>
 
-<span class="sd">    Assumptions</span>
-<span class="sd">    -----------</span>
+<span class="sd">    .. rubric:: Assumptions</span>
 
 <span class="sd">    - Symmetric 1-sigma uncertainties are defined for all entries.</span>
 <span class="sd">    - Censoring is indicated via `upper` and/or `lower` arrays.</span>
 <span class="sd">    - Non-censored entries contain `np.nan` in the corresponding limit arrays.</span>
 <span class="sd">    - Observables are independent (diagonal covariance).</span>
 
-<span class="sd">    Shape Conventions</span>
-<span class="sd">    -----------------</span>
+<span class="sd">    .. rubric:: Shape Conventions</span>
+
 <span class="sd">    If there are:</span>
 
 <span class="sd">    - `N` data points</span>
@@ -1049,8 +1073,7 @@
 <span class="sd">    - ``y_lower`` has shape `(N, P)`</span>
 <span class="sd">    - mask arrays have shape `(N, P)`</span>
 
-<span class="sd">    Performance Notes</span>
-<span class="sd">    -----------------</span>
+<span class="sd">    .. rubric:: Performance Notes</span>
 
 <span class="sd">    - All data extraction and mask construction occurs once</span>
 <span class="sd">      during initialization.</span>
@@ -1059,7 +1082,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    ~trilobite.inference.likelihood.gaussian.censored_gaussian_loglikelihood : Low-level numerical backend.</span>
+<span class="sd">    :obj:`~trilobite.inference.likelihood.gaussian.censored_gaussian_loglikelihood` : Low-level numerical backend.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ============================================================</span>
@@ -1214,8 +1237,8 @@
 <span class="sd">        +</span>
 <span class="sd">        \sigma_{\rm sys}^2 .</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
+<span class="sd">    .. rubric:: Parameters</span>
+
 <span class="sd">    model : ~trilobite.models.core.base.Model</span>
 <span class="sd">        The forward model. All of its outputs must be strictly positive.</span>
 <span class="sd">    data : ~trilobite.data.core.InferenceData</span>
@@ -1224,6 +1247,10 @@
 <span class="sd">        Systematic uncertainty floor in dex (:math:`\sigma_{\rm sys}`), added in quadrature to the</span>
 <span class="sd">        propagated measurement error of every entry, including the censoring width of limits.</span>
 <span class="sd">        Default is ``0``. If ``0``, every entry must have a nonzero reported error.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :obj:`~trilobite.inference.likelihood.base.GaussianCensoredLikelihood` : The linear-space version.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1237,10 +1264,6 @@
 <span class="sd">      comparable to those of the linear-space likelihoods (the parameter dependence, and hence</span>
 <span class="sd">      all posteriors, are unaffected).</span>
 <span class="sd">    - **Positivity.** Every observable in the dataset is assumed to be strictly positive.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    ~trilobite.inference.likelihood.base.GaussianCensoredLikelihood : The linear-space version.</span>
 <span class="sd">    """</span>
 
     <span class="c1">#: Floor applied to non-negative model output before taking the logarithm.</span>
@@ -1373,8 +1396,8 @@
 <span class="sd">    configured exactly as for a model parameter. Its starting value is set through</span>
 <span class="sd">    ``problem.parameters["sys_dex"].initial_value``.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
+<span class="sd">    .. rubric:: Parameters</span>
+
 <span class="sd">    model : ~trilobite.models.core.base.Model</span>
 <span class="sd">        Forward model producing strictly positive predictions.</span>
 <span class="sd">    data : ~trilobite.data.core.InferenceData</span>

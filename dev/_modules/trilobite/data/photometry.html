@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -498,8 +515,8 @@
 <span class="sd">    (upper limits), optional epoch grouping, and safe conversion to NumPy arrays</span>
 <span class="sd">    for numerical backends.</span>
 
-<span class="sd">    Key features</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Key features</span>
+
 <span class="sd">    - **Schema enforcement**</span>
 <span class="sd">        Input tables are validated against a predefined schema specifying required</span>
 <span class="sd">        and optional columns, expected dtypes, and physical units. Missing or</span>
@@ -531,8 +548,8 @@
 <span class="sd">        (via :meth:`to_cgs_array`), for use in likelihoods, samplers, or compiled</span>
 <span class="sd">        backends.</span>
 
-<span class="sd">    Intended use</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Intended use</span>
+
 <span class="sd">    This class is intended to represent **observed radio photometry**, not model</span>
 <span class="sd">    predictions or simulated data. It deliberately avoids embedding any source-</span>
 <span class="sd">    specific physical interpretation (e.g., supernovae, jets, or shocks), and</span>
@@ -544,6 +561,18 @@
 <span class="sd">    - Grouping observations into epochs for joint modeling</span>
 <span class="sd">    - Passing data to likelihood functions or samplers</span>
 <span class="sd">    - Quick-look visualization of multi-frequency light curves</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table : ~astropy.table.Table</span>
+<span class="sd">        The photometry table. It must conform to the container schema.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    astropy.table.Table</span>
+<span class="sd">        Underlying data structure used for storage.</span>
+<span class="sd">    trilobite.inference.likelihood</span>
+<span class="sd">        Likelihood implementations that consume this container.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -561,13 +590,6 @@
 <span class="sd">    to convert absolute times (e.g. JD) to relative times. This ensures that all internal handling</span>
 <span class="sd">    of time is consistent and relative, which is important for modeling and inference. If the input table</span>
 <span class="sd">    already contains relative times, the user can simply omit the `time_starts` parameter.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    astropy.table.Table</span>
-<span class="sd">        Underlying data structure used for storage.</span>
-<span class="sd">    trilobite.inference.likelihood</span>
-<span class="sd">        Likelihood implementations that consume this container.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ========================= SCHEMA DEFINITION ========================= #</span>
@@ -650,7 +672,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        table: astropy.table.Table</span>
+<span class="sd">        table : astropy.table.Table</span>
 <span class="sd">            Input table containing radio photometry data. The input data must conform</span>
 <span class="sd">            to the schema defined in ``COLUMNS``.</span>
 <span class="sd">        """</span>
@@ -711,44 +733,44 @@
     <span class="c1"># These are core properties and basic task methods.</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detection_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a table containing only detections."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.table.Table: Return a table containing only detections."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__detection_mask__</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">non_detection_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a table containing only non-detections (upper limits)."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.table.Table: Return a table containing only non-detections (upper limits)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__non_detection_mask__</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detection_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Boolean mask selecting detections (i.e. non-upper-limits)."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Boolean mask selecting detections (i.e. non-upper-limits)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__detection_mask__</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">non_detection_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Boolean mask selecting upper limits."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Boolean mask selecting upper limits."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__non_detection_mask__</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return the number of observations."""</span>
+<span class="w">        </span><span class="sd">"""int: Return the number of observations."""</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_epochs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return True if epochs have been defined."""</span>
+<span class="w">        </span><span class="sd">"""bool: Return True if epochs have been defined."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_ids__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">epoch_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a copy of the epoch IDs array."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Return a copy of the epoch IDs array."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_ids__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"No epochs defined."</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_ids__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_epochs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Return the number of unique epochs, or None if epochs are not defined."""</span>
+<span class="w">        </span><span class="sd">"""`int` or `None`: Return the number of unique epochs, or None if epochs are not defined."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_ids__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__epoch_ids__</span><span class="p">)))</span>
@@ -756,7 +778,19 @@
 <div class="viewcode-block" id="RadioPhotometryContainer.get_epoch_mask">
 <a class="viewcode-back" href="../../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.get_epoch_mask.html#trilobite.data.photometry.RadioPhotometryContainer.get_epoch_mask">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_epoch_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a boolean mask selecting observations in the specified epoch."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a boolean mask selecting observations in the specified epoch.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epoch : int</span>
+<span class="sd">            Epoch identifier.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~numpy.ndarray</span>
+<span class="sd">            Boolean mask selecting the observations in ``epoch``.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_ids__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"No epochs defined."</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_ids__</span> <span class="o">==</span> <span class="n">epoch</span></div>
@@ -765,77 +799,101 @@
 <div class="viewcode-block" id="RadioPhotometryContainer.get_epoch_table">
 <a class="viewcode-back" href="../../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.get_epoch_table.html#trilobite.data.photometry.RadioPhotometryContainer.get_epoch_table">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_epoch_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a table containing only observations in the specified epoch."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a table containing only observations in the specified epoch.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epoch : int</span>
+<span class="sd">            Epoch identifier.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~astropy.table.Table</span>
+<span class="sd">            Table containing only the observations in ``epoch``.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_epoch_mask</span><span class="p">(</span><span class="n">epoch</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="RadioPhotometryContainer.get_epoch">
 <a class="viewcode-back" href="../../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.get_epoch.html#trilobite.data.photometry.RadioPhotometryContainer.get_epoch">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"RadioPhotometryEpochContainer"</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a RadioPhotometryContainer for the specified epoch."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"RadioPhotometryEpoch"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a RadioPhotometryEpoch for the specified epoch.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epoch : int</span>
+<span class="sd">            Epoch identifier.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.photometry.RadioPhotometryEpoch</span>
+<span class="sd">            Photometry container holding only the observations in ``epoch``.</span>
+<span class="sd">        """</span>
         <span class="n">epoch_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_epoch_table</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">RadioPhotometryEpochContainer</span><span class="p">(</span><span class="n">epoch_table</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">RadioPhotometryEpoch</span><span class="p">(</span><span class="n">epoch_table</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_detections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return the number of detections."""</span>
+<span class="w">        </span><span class="sd">"""int: Return the number of detections."""</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__detection_mask__</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_non_detections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return the number of non-detections (upper limits)."""</span>
+<span class="w">        </span><span class="sd">"""int: Return the number of non-detections (upper limits)."""</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__non_detection_mask__</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return observation times as an Astropy Quantity array."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Return observation times as an Astropy Quantity array."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">freq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return observation frequencies as an Astropy Quantity array."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Return observation frequencies as an Astropy Quantity array."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"freq"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_density</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return flux densities as an Astropy Quantity array."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Return flux densities as an Astropy Quantity array."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"flux_density"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_density_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return flux density errors as an Astropy Quantity array."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Return flux density errors as an Astropy Quantity array."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"flux_density_error"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_upper_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return flux upper limits as an Astropy Quantity array."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Return flux upper limits as an Astropy Quantity array."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"flux_upper_limit"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">obs_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return observation names."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Return observation names."""</span>
         <span class="k">if</span> <span class="s2">"obs_name"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"Column 'obs_name' not found in the table."</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"obs_name"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">obs_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return observation durations as an Astropy Quantity array."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Return observation durations as an Astropy Quantity array."""</span>
         <span class="k">if</span> <span class="s2">"obs_time"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"Column 'obs_time' not found in the table."</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"obs_time"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">band</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return observation band identifiers."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Return observation band identifiers."""</span>
         <span class="k">if</span> <span class="s2">"band"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"Column 'band' not found in the table."</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"band"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">comments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return observation comments."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Return observation comments."""</span>
         <span class="k">if</span> <span class="s2">"comments"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"Column 'comments' not found in the table."</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"comments"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
@@ -989,8 +1047,8 @@
 <span class="sd">        supplied model and constructs a fully validated</span>
 <span class="sd">        :class:`InferenceData` instance.</span>
 
-<span class="sd">        Default behavior</span>
-<span class="sd">        ----------------</span>
+<span class="sd">        .. rubric:: Default behavior</span>
+
 <span class="sd">        If ``variables`` and/or ``observables`` are not provided, sensible</span>
 <span class="sd">        defaults are inferred from the model's declared interface:</span>
 
@@ -1084,7 +1142,7 @@
 <span class="sd">                \sigma = \frac{F_{\rm upper}}{\text{detection_threshold}}.</span>
 
 <span class="sd">            This parameter has no effect unless ``infer_errors=True``.</span>
-<span class="sd">        mask: np.ndarray, optional</span>
+<span class="sd">        mask : np.ndarray, optional</span>
 <span class="sd">            Optional boolean mask to apply to the data before conversion. Only rows where</span>
 <span class="sd">            the mask is True will be included in the resulting InferenceData. This allows</span>
 <span class="sd">            users to easily subset the data (e.g. by epoch, frequency, or detection status</span>
@@ -1102,6 +1160,13 @@
 <span class="sd">            If automatic mapping fails because the model declares unknown</span>
 <span class="sd">            variables or multiple observables without explicit mapping.</span>
 
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        InferenceData.from_table</span>
+<span class="sd">            Lower-level constructor used internally.</span>
+<span class="sd">        trilobite.inference.likelihood</span>
+<span class="sd">            Likelihood classes that consume :class:`InferenceData`.</span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        This method does not perform any statistical validation. It</span>
@@ -1111,13 +1176,6 @@
 <span class="sd">        Advanced workflows may bypass this method and construct</span>
 <span class="sd">        :class:`InferenceData` objects manually via</span>
 <span class="sd">        :meth:`~trilobite.data.core.InferenceData.from_table` for full control.</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        InferenceData.from_table</span>
-<span class="sd">            Lower-level constructor used internally.</span>
-<span class="sd">        trilobite.inference.likelihood</span>
-<span class="sd">            Likelihood classes that consume :class:`InferenceData`.</span>
 <span class="sd">        """</span>
         <span class="c1"># ------------------------------------------------------------</span>
         <span class="c1"># Default variable mapping</span>
@@ -1361,7 +1419,6 @@
 <span class="sd">                internal_time_format="relative",</span>
 <span class="sd">            )</span>
 
-
 <span class="sd">        Case 2 — Absolute times in MJD</span>
 
 <span class="sd">        .. code-block:: python</span>
@@ -1376,7 +1433,6 @@
 <span class="sd">                time_starts=t0,</span>
 <span class="sd">            )</span>
 
-
 <span class="sd">        Case 3 — Absolute times in JD</span>
 
 <span class="sd">        .. code-block:: python</span>
@@ -1390,7 +1446,6 @@
 <span class="sd">                internal_time_format="jd",</span>
 <span class="sd">                time_starts=t0,</span>
 <span class="sd">            )</span>
-
 
 <span class="sd">        Case 4 — Relative times with offset</span>
 
@@ -1523,11 +1578,10 @@
 <span class="sd">            - ``"relative"`` → time column already represents elapsed time.</span>
 <span class="sd">            - Any valid Astropy time format (e.g., ``"mjd"``, ``"jd"``,</span>
 <span class="sd">              ``"iso"``, ``"unix"``).</span>
-
 <span class="sd">        internal_time_scale : str, default="utc"</span>
 <span class="sd">            Astropy time scale to use when interpreting absolute times.</span>
 <span class="sd">            Only used if ``internal_time_format != "relative"``.</span>
-<span class="sd">        **kwargs:</span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">            Additional keyword arguments to pass to `astropy.table.Table.read`.</span>
 
 <span class="sd">        Returns</span>
@@ -1555,7 +1609,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        path : str or pathlib.Path</span>
 <span class="sd">            The file path where the FITS file will be saved.</span>
-<span class="sd">        **kwargs:</span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">            Additional keyword arguments to pass to `astropy.table.Table.write`.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -1579,19 +1633,19 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        fig: matplotlib.figure.Figure, optional</span>
+<span class="sd">        fig : matplotlib.figure.Figure, optional</span>
 <span class="sd">            Figure to plot on. If None, a new figure will be created.</span>
-<span class="sd">        axes: matplotlib.axes.Axes, optional</span>
-<span class="sd">            Axes to plot on. If None, axes will be created or retrieved from the figure</span>
-<span class="sd">        show_upper_limits: bool, optional</span>
+<span class="sd">        axes : matplotlib.axes.Axes, optional</span>
+<span class="sd">            Axes to plot on. If None, axes will be created or retrieved from the figure.</span>
+<span class="sd">        show_upper_limits : bool, optional</span>
 <span class="sd">            Whether to show upper limits in the plot. Default is True.</span>
-<span class="sd">        color: str, optional</span>
+<span class="sd">        color : str, optional</span>
 <span class="sd">            If provided, use this color for all points instead of a colormap.</span>
-<span class="sd">        cmap: str, optional</span>
+<span class="sd">        cmap : str, optional</span>
 <span class="sd">            Colormap to use for coloring points by time. Ignored if `color` is provided.</span>
-<span class="sd">        show_colorbar: bool, optional</span>
+<span class="sd">        show_colorbar : bool, optional</span>
 <span class="sd">            Whether to show a colorbar when using a colormap. Default is True.</span>
-<span class="sd">        kwargs:</span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">            Additional keyword arguments for customizing the plot appearance.</span>
 <span class="sd">            Supported kwargs include:</span>
 
@@ -1609,9 +1663,9 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        fig: matplotlib.figure.Figure</span>
+<span class="sd">        fig : matplotlib.figure.Figure</span>
 <span class="sd">            The figure containing the plot.</span>
-<span class="sd">        axes: matplotlib.axes.Axes</span>
+<span class="sd">        axes : matplotlib.axes.Axes</span>
 <span class="sd">            The axes containing the plot.</span>
 <span class="sd">        """</span>
         <span class="c1"># Import matplotlib and our various plotting utilities.</span>
@@ -1738,6 +1792,13 @@
 <span class="sd">            Matplotlib style kwargs for detections.</span>
 <span class="sd">        upper_limit_style : dict, optional</span>
 <span class="sd">            Matplotlib style kwargs for upper limits.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fig : ~matplotlib.figure.Figure</span>
+<span class="sd">            The figure containing the plot.</span>
+<span class="sd">        axes : ~matplotlib.axes.Axes</span>
+<span class="sd">            The axes containing the plot.</span>
 <span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
@@ -1807,8 +1868,8 @@
 <span class="sd">    ``(x, y)`` interface with optional uncertainties and censoring while retaining</span>
 <span class="sd">    domain-specific column semantics relevant to radio astronomy.</span>
 
-<span class="sd">    Key features</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Key features</span>
+
 <span class="sd">    - **Frequency-domain data**:</span>
 <span class="sd">      The independent variable is observing frequency (``freq``), exposed via</span>
 <span class="sd">      the :attr:`x` and :attr:`frequency` properties.</span>
@@ -1826,8 +1887,8 @@
 <span class="sd">      The underlying data table cannot be modified in place. All accessors return</span>
 <span class="sd">      copies to ensure reproducibility during inference.</span>
 
-<span class="sd">    Intended use</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Intended use</span>
+
 <span class="sd">    This container is intended to be consumed by likelihood classes that compare</span>
 <span class="sd">    model-predicted spectra to observed radio photometry, including:</span>
 
@@ -1835,6 +1896,15 @@
 <span class="sd">    - broadband spectral index estimation,</span>
 <span class="sd">    - forward modeling of physical emission models,</span>
 <span class="sd">    - inference with censored data (upper limits).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    XYDataContainer</span>
+<span class="sd">        Base class providing generic ``(x, y)`` data access and censoring logic.</span>
+<span class="sd">    RadioLightCurveContainer</span>
+<span class="sd">        Container for single-frequency, time-domain radio observations.</span>
+<span class="sd">    trilobite.inference.likelihood</span>
+<span class="sd">        Likelihood implementations that operate on photometry containers.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1847,15 +1917,6 @@
 <span class="sd">    - This class makes no assumptions about the statistical treatment of</span>
 <span class="sd">      detections or upper limits; such logic is handled entirely by the</span>
 <span class="sd">      corresponding likelihood.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    XYDataContainer</span>
-<span class="sd">        Base class providing generic ``(x, y)`` data access and censoring logic.</span>
-<span class="sd">    RadioLightCurveContainer</span>
-<span class="sd">        Container for single-frequency, time-domain radio observations.</span>
-<span class="sd">    trilobite.inference.likelihood</span>
-<span class="sd">        Likelihood implementations that operate on photometry containers.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ========================= SCHEMA DEFINITION ========================= #</span>
@@ -1920,59 +1981,59 @@
     <span class="c1"># ========================= METADATA ========================= #</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">freq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Observing frequency of the light curve."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Observing frequency of the light curve."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
 
     <span class="c1"># ========================= DATA ACCESS ========================= #</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_density</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Flux density measurements."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Flux density measurements."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"flux_density"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_density_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Flux density uncertainties."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Flux density uncertainties."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"flux_density_error"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_upper_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Flux density upper limits."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Flux density upper limits."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"flux_upper_limit"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="c1"># ========================= DETECTION LOGIC ========================= #</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detection_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Boolean mask selecting detections."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Boolean mask selecting detections."""</span>
         <span class="k">return</span> <span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">y_lim_mask</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">non_detection_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Boolean mask selecting upper limits."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Boolean mask selecting upper limits."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_lim_mask</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_detections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return the number of detections."""</span>
+<span class="w">        </span><span class="sd">"""int: Return the number of detections."""</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detection_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_non_detections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return the number of non-detections (upper limits)."""</span>
+<span class="w">        </span><span class="sd">"""int: Return the number of non-detections (upper limits)."""</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">non_detection_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detection_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a table containing only detections."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.table.Table: Return a table containing only detections."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">detection_mask</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">non_detection_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a table containing only non-detections (upper limits)."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.table.Table: Return a table containing only non-detections (upper limits)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">non_detection_mask</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Number of observations."""</span>
+<span class="w">        </span><span class="sd">"""int: Number of observations."""</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="c1"># ========================= CONSTRUCTORS ========================= #</span>
@@ -1985,7 +2046,21 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">column_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Construct a :class:`RadioPhotometryEpoch` from an Astropy table."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Construct a :class:`RadioPhotometryEpoch` from an Astropy table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : ~astropy.table.Table</span>
+<span class="sd">            The epoch's photometry table.</span>
+<span class="sd">        column_map : dict, optional</span>
+<span class="sd">            Mapping from existing column names to the schema's column names.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.photometry.RadioPhotometryEpoch</span>
+<span class="sd">            The constructed epoch.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">column_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">table</span><span class="o">.</span><span class="n">rename_columns</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">column_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">column_map</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
@@ -2001,7 +2076,21 @@
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Construct a :class:`RadioPhotometryEpoch` from a file on disk."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Construct a :class:`RadioPhotometryEpoch` from a file on disk.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or ~pathlib.Path</span>
+<span class="sd">            Path to the file to read.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments passed to ``astropy.table.Table.read``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.photometry.RadioPhotometryEpoch</span>
+<span class="sd">            The constructed epoch.</span>
+<span class="sd">        """</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span>
@@ -2048,7 +2137,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        InferenceData</span>
+<span class="sd">        ~trilobite.data.core.InferenceData</span>
+<span class="sd">            The inference dataset built from this epoch.</span>
 <span class="sd">        """</span>
         <span class="c1"># ------------------------------------------------------------</span>
         <span class="c1"># Default variable mapping</span>
@@ -2160,6 +2250,13 @@
 <span class="sd">            Matplotlib style kwargs for detections.</span>
 <span class="sd">        upper_limit_style : dict, optional</span>
 <span class="sd">            Matplotlib style kwargs for upper limits.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fig : ~matplotlib.figure.Figure</span>
+<span class="sd">            The figure containing the plot.</span>
+<span class="sd">        axes : ~matplotlib.axes.Axes</span>
+<span class="sd">            The axes containing the plot.</span>
 <span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
@@ -2215,9 +2312,28 @@
 <div class="viewcode-block" id="RadioPhotometryEpochContainer">
 <a class="viewcode-back" href="../../../_as_gen/trilobite.data.photometry.RadioPhotometryEpochContainer.html#trilobite.data.photometry.RadioPhotometryEpochContainer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RadioPhotometryEpochContainer</span><span class="p">(</span><span class="n">RadioPhotometryEpoch</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Deprecated alias for :class:`RadioPhotometryEpoch`. Use that name instead."""</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Deprecated alias for :class:`RadioPhotometryEpoch`. Use that name instead.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *args : tuple</span>
+<span class="sd">        Positional arguments forwarded to :class:`RadioPhotometryEpoch`.</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Keyword arguments forwarded to :class:`RadioPhotometryEpoch`.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the deprecated alias, emitting a :class:`DeprecationWarning`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args : tuple</span>
+<span class="sd">            Positional arguments forwarded to :class:`RadioPhotometryEpoch`.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Keyword arguments forwarded to :class:`RadioPhotometryEpoch`.</span>
+<span class="sd">        """</span>
         <span class="n">_warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">"RadioPhotometryEpochContainer is deprecated and will be removed in a future release. "</span>
             <span class="s2">"Use RadioPhotometryEpoch instead."</span><span class="p">,</span>

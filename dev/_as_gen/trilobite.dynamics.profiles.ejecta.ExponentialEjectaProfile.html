@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -63,6 +63,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../_static/logo.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -162,6 +165,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api.html">
     API
   </a>
@@ -171,13 +188,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -304,6 +314,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api.html">
     API
   </a>
@@ -313,13 +337,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -423,10 +440,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/inference_data.html">Inference Data Containers</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../reference/models/overview.html">Trilobite Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/models/directory.html">Trilobite Model Directory</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../reference/inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1126,15 +1139,16 @@
 \[\rho_{\rm ej}(r, t) = t^{-3}\,G(r/t).\]</div>
 <p>Setting <code class="docutils literal notranslate"><span class="pre">v_min=0</span></code> and <code class="docutils literal notranslate"><span class="pre">v_max=np.inf</span></code> recovers the standard untruncated
 exponential profile.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>K</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Kernel normalization in <span class="math notranslate nohighlight">\(\mathrm{g\,s^3\,cm^{-3}}\)</span>.</p></li>
-<li><p><strong>v_e</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Exponential velocity scale. Bare values interpreted as cm/s.</p></li>
-<li><p><strong>v_min</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Lower velocity cutoff. Bare values interpreted as cm/s. Default is 0.</p></li>
-<li><p><strong>v_max</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Upper velocity cutoff. Bare values interpreted as cm/s.
-Default is <code class="docutils literal notranslate"><span class="pre">np.inf</span></code> (untruncated).</p></li>
-</ul>
+<p class="rubric">Parameters</p>
+<dl class="simple">
+<dt>K<span class="classifier">float or ~astropy.units.Quantity</span></dt><dd><p>Kernel normalization in <span class="math notranslate nohighlight">\(\mathrm{g\,s^3\,cm^{-3}}\)</span>.</p>
+</dd>
+<dt>v_e<span class="classifier">float or ~astropy.units.Quantity</span></dt><dd><p>Exponential velocity scale. Bare values interpreted as cm/s.</p>
+</dd>
+<dt>v_min<span class="classifier">float or ~astropy.units.Quantity, optional</span></dt><dd><p>Lower velocity cutoff. Bare values interpreted as cm/s. Default is 0.</p>
+</dd>
+<dt>v_max<span class="classifier">float or ~astropy.units.Quantity, optional</span></dt><dd><p>Upper velocity cutoff. Bare values interpreted as cm/s.
+Default is <code class="docutils literal notranslate"><span class="pre">np.inf</span></code> (untruncated).</p>
 </dd>
 </dl>
 <div class="admonition seealso">

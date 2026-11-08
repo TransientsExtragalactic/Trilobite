@@ -18,37 +18,28 @@
 .. _sphx_glr_auto_examples_synchrotron_d_closures_plot_inverse_closure.py:
 
 
-Recovering Physical Parameters from an Observed SED: the Inverse Closure
-=========================================================================
+Analytic Inverse Closure: Recovering B and R from an SED Peak
+==============================================================
 
-The **inverse closure** maps observed SED parameters — peak flux
-:math:`F_{\rm peak}`, peak frequency :math:`\nu_{\rm peak}`, and spectral
-regime — back to the physical properties of the emitting region:
-magnetic field :math:`B`, emitting radius :math:`R`, and electron
-distribution parameters.
+**Objective:** use the *analytic* inverse closure of
+:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED` to turn an observed
+SED peak into a magnetic field :math:`B` and radius :math:`R`, and check the result against a source of known
+properties.
 
-This procedure underlies most analyses of synchrotron radio afterglows.
-Broadband observations constrain spectral breaks and flux normalization,
-and closure relations are then used to infer the underlying shock
-parameters.
+.. note::
 
-.. warning::
+    This is the closure of the analytic one-zone SED classes, which are being phased out in favor of the numerical
+    engines because the numerical engines are more accurate. To test the closure independently of its own forward
+    model, the SED here is generated with the numerical engine, the peak is extracted by a fit, and the extracted
+    peak is then inverted. For production analyses use the inversions in
+    :mod:`trilobite.radiation.synchrotron.spectral_inversion`, which are tested in the same way in the
+    :ref:`spectral inversion examples <sphx_glr_auto_examples_synchrotron_e_inversions>`.
 
-    Closure relations assume a **single homogeneous emission region**
-    with a uniform magnetic field and a single power-law electron
-    population. Real sources may deviate from this idealization, so the
-    inferred :math:`B` and :math:`R` should be interpreted as effective
-    single-zone quantities.
+The closure takes the peak flux and frequency, the electron index :math:`p`, the microphysics
+:math:`(\epsilon_E, \epsilon_B)` and the filling factors, and returns :math:`B` and :math:`R`. Closure relations
+assume a single homogeneous emission region, so the results are effective one-zone quantities.
 
-This example demonstrates:
-
-1. Generating synthetic SED observables from a grid of :math:`(B,R)`
-   values (forward closure).
-2. Recovering the physical parameters from those observables
-   (inverse closure).
-3. Testing the round-trip accuracy of the inversion.
-
-.. GENERATED FROM PYTHON SOURCE LINES 32-45
+.. GENERATED FROM PYTHON SOURCE LINES 23-36
 
 .. code-block:: Python
 
@@ -56,11 +47,11 @@ This example demonstrates:
     import matplotlib.pyplot as plt
     import numpy as np
     from astropy import units as u
+    from scipy.optimize import curve_fit
 
-    from trilobite.radiation.synchrotron.SEDs import (
-        PowerLaw_Cooling_SSA_SynchrotronSED,
-        PowerLaw_SynchrotronSED,
-    )
+    from trilobite.radiation.synchrotron.electron_distributions import PowerLaw
+    from trilobite.radiation.synchrotron.SEDs import PowerLaw_SSA_SynchrotronSED
+    from trilobite.radiation.synchrotron.SEDs.numerical import NonRelativisticSphericalSynchrotronEngine
     from trilobite.utils.plot_utils import set_plot_style
 
     set_plot_style()
@@ -72,92 +63,36 @@ This example demonstrates:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-48
+.. GENERATED FROM PYTHON SOURCE LINES 37-43
 
-Fixed Microphysics
-------------------
+Numerical SEDs for a Grid of Sources
+------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-62
+We take nine supernova shells at 20 Mpc, with :math:`B` of 0.3, 1 and 3 G and :math:`R` of
+:math:`5\times10^{15}`, :math:`10^{16}` and :math:`3\times10^{16}` cm. The electron normalization is set by
+equipartition, so each :math:`(B, R)` pair gives one SED.
 
-.. code-block:: Python
-
-
-    gamma_min = 1.0
-    gamma_c = 3000.0
-    p = 3
-
-    epsilon_E = 0.1
-    epsilon_B = 0.1
-
-    D_L = 100 * u.Mpc
-
-    sed_pl = PowerLaw_SynchrotronSED()
-    sed_full = PowerLaw_Cooling_SSA_SynchrotronSED()
-
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 63-65
-
-Forward Closure: Physical → Observable
---------------------------------------
-
-.. GENERATED FROM PYTHON SOURCE LINES 65-114
+.. GENERATED FROM PYTHON SOURCE LINES 43-62
 
 .. code-block:: Python
 
 
-    B_grid = np.geomspace(0.01, 1.0, 8) * u.G
-    R_grid = np.geomspace(1e15, 1e17, 8) * u.cm
+    engine = NonRelativisticSphericalSynchrotronEngine()
+    engine.load_avg_first_kernel()
 
-    B_flat = []
-    R_flat = []
+    D, p = 20.0 * u.Mpc, 3.0
+    micro = dict(epsilon_E=0.1, epsilon_B=0.1, gamma_min=1.0, gamma_max=1e6)
+    geometry = dict(f_A=0.5, f_V=0.5)
 
-    nu_peak_pl_fwd = []
-    F_peak_pl_fwd = []
+    nu = np.geomspace(0.1, 500.0, 60) * u.GHz
+    gamma = np.geomspace(micro["gamma_min"], micro["gamma_max"], 400)
 
-    nu_peak_full_fwd = []
-    F_peak_full_fwd = []
-    regime_full_fwd = []
 
-    base_kwargs = dict(
-        gamma_min=gamma_min,
-        p=p,
-        epsilon_E=epsilon_E,
-        epsilon_B=epsilon_B,
-        luminosity_distance=D_L,
-        gamma_max=1e8,
-        f_V=1.0,
-        pitch_average=True,
-    )
-
-    for B in B_grid:
-        for R in R_grid:
-            B_flat.append(B.to_value(u.G))
-            R_flat.append(R.to_value(u.cm))
-
-            pars_pl = sed_pl.from_physics_to_params(B=B, R=R, **base_kwargs)
-            nu_peak_pl_fwd.append(pars_pl["nu_m"])
-            F_peak_pl_fwd.append(pars_pl["F_peak"])
-
-            pars_full = sed_full.from_physics_to_params(B=B, R=R, f_A=1.0, gamma_c=gamma_c, **base_kwargs)
-            nu_peak_full_fwd.append(pars_full["nu_peak"])
-            F_peak_full_fwd.append(pars_full["F_peak"])
-            regime_full_fwd.append(pars_full["regime"])
-
-    B_flat = np.array(B_flat)
-    R_flat = np.array(R_flat)
-
-    nu_peak_pl_fwd = u.Quantity(nu_peak_pl_fwd)
-    F_peak_pl_fwd = u.Quantity(F_peak_pl_fwd)
-
-    nu_peak_full_fwd = u.Quantity(nu_peak_full_fwd)
-    F_peak_full_fwd = u.Quantity(F_peak_full_fwd)
+    def numerical_sed(B, R):
+        """Numerical flux density of an uncooled shell."""
+        N0 = PowerLaw.normalize_from_magnetic_field(B, p=p, **micro)
+        N = N0.to_value(u.cm**-3) * PowerLaw.pdf(gamma, p=p, gamma_min=gamma[0], gamma_max=gamma[-1])
+        return engine.compute_flux_density(nu, R=R, B=B, N=N, gamma=gamma, luminosity_distance=D, **geometry).to(u.mJy)
 
 
 
@@ -167,121 +102,88 @@ Forward Closure: Physical → Observable
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-117
+.. GENERATED FROM PYTHON SOURCE LINES 63-68
 
-Inverse Closure: Observable → Physical
---------------------------------------
-
-.. GENERATED FROM PYTHON SOURCE LINES 117-167
-
-.. code-block:: Python
-
-
-    B_rec_pl = []
-    R_rec_pl = []
-
-    B_rec_full = []
-    R_rec_full = []
-
-    for i in range(len(B_flat)):
-        phys_pl = sed_pl.from_params_to_physics(
-            F_peak=F_peak_pl_fwd[i],
-            nu_peak=nu_peak_pl_fwd[i],
-            gamma_min=gamma_min,
-            gamma_max=1e8,
-            f_V=1.0,
-            p=p,
-            epsilon_E=epsilon_E,
-            epsilon_B=epsilon_B,
-            luminosity_distance=D_L,
-            pitch_average=True,
-        )
-
-        B_rec_pl.append(phys_pl["B"].to_value(u.G))
-        R_rec_pl.append(phys_pl["R"].to_value(u.cm))
-
-        phys_full = sed_full.from_params_to_physics(
-            regime=regime_full_fwd[i],
-            F_peak=F_peak_full_fwd[i],
-            nu_peak=nu_peak_full_fwd[i],
-            gamma_min=gamma_min,
-            gamma_c=gamma_c,
-            gamma_max=1e8,
-            f_V=1.0,
-            f_A=1.0,
-            p=p,
-            epsilon_E=epsilon_E,
-            epsilon_B=epsilon_B,
-            luminosity_distance=D_L,
-            pitch_average=True,
-        )
-
-        B_rec_full.append(phys_full["B"].to_value(u.G))
-        R_rec_full.append(phys_full["R"].to_value(u.cm))
-
-    B_rec_pl = np.array(B_rec_pl)
-    R_rec_pl = np.array(R_rec_pl)
-
-    B_rec_full = np.array(B_rec_full)
-    R_rec_full = np.array(R_rec_full)
-
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 168-172
-
-Round-Trip Fidelity
+Extracting the Peak
 -------------------
 
-Points lying on the dashed diagonal recover the input exactly.
+A smoothly broken power law with a :math:`\nu^{5/2}` thick slope and a free thin slope gives the peak
+frequency and flux as the intersection of its asymptotes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 172-205
+.. GENERATED FROM PYTHON SOURCE LINES 68-83
 
 .. code-block:: Python
 
 
-    fig, axes = plt.subplots(2, 2, figsize=(10, 9))
 
-    cases = [
-        (B_rec_pl, R_rec_pl, "Simple Power-Law"),
-        (B_rec_full, R_rec_full, "Cooling + SSA"),
-    ]
+    def sbpl(log_nu, log_F, log_nu_pk, beta, s):
+        x = (log_nu - log_nu_pk) * np.log(10)
+        return log_F + s * np.logaddexp(2.5 * x / s, beta * x / s) / np.log(10)
 
-    for row, (B_rec, R_rec, label) in enumerate(cases):
-        ax_B = axes[row, 0]
-        ax_R = axes[row, 1]
 
-        lim_B = [B_flat.min() * 0.5, B_flat.max() * 2]
-        lim_R = [R_flat.min() * 0.5, R_flat.max() * 2]
+    def extract_peak(flux):
+        """Fit the SED and return ``(nu_pk, F_pk)``."""
+        log_nu, log_F = np.log10(nu.to_value(u.Hz)), np.log10(flux.to_value(u.Jy))
+        guess = [log_F.max(), log_nu[np.argmax(log_F)], -1.0, -1.0]
+        fit, _ = curve_fit(sbpl, log_nu, log_F, p0=guess, bounds=([-20, 7, -4, -10], [5, 12, 0, -0.05]))
+        return 10 ** fit[1] * u.Hz, 10 ** fit[0] * u.Jy
 
-        ax_B.loglog(B_flat, B_rec, "o", ms=4, alpha=0.75)
-        ax_B.loglog(lim_B, lim_B, "k--", lw=1)
-        ax_B.set_xlabel(r"Input $B$ [G]")
-        ax_B.set_ylabel(r"Recovered $B$ [G]")
-        ax_B.set_title(f"Magnetic Field Round-Trip ({label})")
-        ax_B.grid(True, which="both", ls="--", alpha=0.3)
 
-        ax_R.loglog(R_flat, R_rec, "s", ms=4, alpha=0.75, color="C1")
-        ax_R.loglog(lim_R, lim_R, "k--", lw=1)
-        ax_R.set_xlabel(r"Input $R$ [cm]")
-        ax_R.set_ylabel(r"Recovered $R$ [cm]")
-        ax_R.set_title(f"Radius Round-Trip ({label})")
-        ax_R.grid(True, which="both", ls="--", alpha=0.3)
 
-    plt.tight_layout()
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 84-88
+
+Applying the Closure
+--------------------
+
+The source is uncooled with :math:`\nu_a > \nu_m`, which is the ``"optically_thick"`` regime of the SED class.
+
+.. GENERATED FROM PYTHON SOURCE LINES 88-120
+
+.. code-block:: Python
+
+
+    sed = PowerLaw_SSA_SynchrotronSED()
+
+    B_true = np.array([0.3, 1.0, 3.0]) * u.G
+    R_true = np.array([5e15, 1e16, 3e16]) * u.cm
+
+    B_in, R_in, B_out, R_out = [], [], [], []
+    for B in B_true:
+        for R in R_true:
+            nu_pk, F_pk = extract_peak(numerical_sed(B, R))
+            inv = sed.from_params_to_physics(
+                "optically_thick",
+                F_peak=F_pk,
+                nu_peak=nu_pk,
+                p=p,
+                luminosity_distance=D,
+                pitch_average=True,
+                **micro,
+                **geometry,
+            )
+            B_in.append(B.value), R_in.append(R.value)
+            B_out.append(inv["B"].to_value(u.G)), R_out.append(inv["R"].to_value(u.cm))
+
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4.2), constrained_layout=True)
+    for ax, x, y, label, unit in zip(axes, [B_in, R_in], [B_out, R_out], ["B", "R"], ["G", "cm"]):
+        lim = [0.5 * min(x), 2 * max(x)]
+        ax.loglog(x, y, "o")
+        ax.loglog(lim, lim, "k--", lw=1, label="Recovered = true")
+        ax.set(xlabel=rf"True ${label}$ [{unit}]", ylabel=rf"Recovered ${label}$ [{unit}]", title=f"Recovered ${label}$")
+    axes[0].legend()
     plt.show()
 
 
 
 
-
 .. image-sg:: /auto_examples/synchrotron/d_closures/images/sphx_glr_plot_inverse_closure_001.png
-   :alt: Magnetic Field Round-Trip (Simple Power-Law), Radius Round-Trip (Simple Power-Law), Magnetic Field Round-Trip (Cooling + SSA), Radius Round-Trip (Cooling + SSA)
+   :alt: Recovered $B$, Recovered $R$
    :srcset: /auto_examples/synchrotron/d_closures/images/sphx_glr_plot_inverse_closure_001.png
    :class: sphx-glr-single-img
 
@@ -289,35 +191,17 @@ Points lying on the dashed diagonal recover the input exactly.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 206-228
+.. GENERATED FROM PYTHON SOURCE LINES 121-125
 
-Discussion: The Role of the Spectral Regime
--------------------------------------------
-
-The full Cooling+SSA synchrotron model contains several distinct spectral
-regimes corresponding to different orderings of the characteristic break
-frequencies :math:`\nu_a`, :math:`\nu_m`, and :math:`\nu_c`. Each regime
-corresponds to a different analytic closure relation linking the observed
-SED parameters to the underlying physical parameters.
-
-Passing the wrong regime into the inverse closure will therefore produce
-incorrect values of :math:`B` and :math:`R`. In practice, the regime is
-determined observationally from the measured ordering of the spectral
-breaks in the broadband SED.
-
-The simpler
-:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED`
-has only a single break and therefore no regime ambiguity. It is
-appropriate when the source is optically thin and uncooled across the
-observed band.
-
-See the forward-closure example for how the characteristic break
-frequencies scale with the physical parameters.
+**Outcome:** the analytic closure does not reproduce the numerical sources. The recovered field is about
+50% too high and the radius about 50% too low, by nearly the same factor for every source in the grid. The
+offset is a property of the analytic closure rather than of any one source, which is why the numerical
+engines and the inversions in :mod:`~trilobite.radiation.synchrotron.spectral_inversion` are preferred.
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.073 seconds)
+   **Total running time of the script:** (0 minutes 0.566 seconds)
 
 
 .. _sphx_glr_download_auto_examples_synchrotron_d_closures_plot_inverse_closure.py:

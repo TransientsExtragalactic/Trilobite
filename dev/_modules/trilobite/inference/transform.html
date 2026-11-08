@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -553,6 +570,12 @@
 <span class="sd">    Transformations must be deterministic and reconstructible, as they</span>
 <span class="sd">    may cross process boundaries (e.g., MPI workers) or be written to disk.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **parameters : dict</span>
+<span class="sd">        Keyword arguments specifying the parameters of the transformation. The specific parameters depend on the type</span>
+<span class="sd">        of transformation and are defined by the concrete subclasses.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    - The prior is always defined in physical parameter space.</span>
@@ -568,7 +591,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        parameters:</span>
+<span class="sd">        **parameters : dict</span>
 <span class="sd">            Keyword arguments specifying the parameters of the transformation. The specific parameters</span>
 <span class="sd">            depend on the type of transformation and are defined by the concrete subclasses.</span>
 <span class="sd">        """</span>
@@ -630,7 +653,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        theta:</span>
+<span class="sd">        theta : float or ~numpy.ndarray</span>
 <span class="sd">            The parameter value to transform.</span>
 
 <span class="sd">        Returns</span>
@@ -649,7 +672,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        z:</span>
+<span class="sd">        z : float or ~numpy.ndarray</span>
 <span class="sd">            The transformed parameter value to invert.</span>
 
 <span class="sd">        Returns</span>
@@ -668,7 +691,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        theta:</span>
+<span class="sd">        theta : float or ~numpy.ndarray</span>
 <span class="sd">            The parameter value at which to evaluate the jacobian.</span>
 
 <span class="sd">        Returns</span>
@@ -688,7 +711,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        x: float</span>
+<span class="sd">        x : float</span>
 <span class="sd">            The parameter value to transform.</span>
 
 <span class="sd">        Returns</span>
@@ -699,10 +722,26 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return an unambiguous representation of the transform.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The class name with the transform's parameters.</span>
+<span class="sd">        """</span>
         <span class="n">params</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a readable description of the transform.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The class name with the transform's parameters.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> with parameters (</span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">)"</span>
@@ -723,6 +762,11 @@
 <span class="sd">            module.submodule:ClassName</span>
 
 <span class="sd">        All constructor parameters must be JSON-serializable.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A JSON-safe dictionary describing the transform.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -857,8 +901,8 @@
 
 <span class="sd">        \left| \frac{d\theta}{dz} \right| = 1.</span>
 
-<span class="sd">    Use Cases</span>
-<span class="sd">    ---------</span>
+<span class="sd">    .. rubric:: Use Cases</span>
+
 <span class="sd">    - Unconstrained parameters</span>
 <span class="sd">    - Parameters already well-behaved in sampling space</span>
 <span class="sd">    - Default transform when no reparameterization is needed</span>
@@ -907,8 +951,8 @@
 <span class="sd">        =</span>
 <span class="sd">        \theta.</span>
 
-<span class="sd">    Role in Inference</span>
-<span class="sd">    -----------------</span>
+<span class="sd">    .. rubric:: Role in Inference</span>
+
 <span class="sd">    This transform is commonly used for:</span>
 
 <span class="sd">    - Scale parameters</span>
@@ -918,8 +962,8 @@
 <span class="sd">    Sampling in log-space typically improves convergence</span>
 <span class="sd">    when the posterior is broad in linear space.</span>
 
-<span class="sd">    Domain</span>
-<span class="sd">    ------</span>
+<span class="sd">    .. rubric:: Domain</span>
+
 <span class="sd">    :math:`\theta &gt; 0`</span>
 
 <span class="sd">    Notes</span>
@@ -965,13 +1009,13 @@
 <span class="sd">        =</span>
 <span class="sd">        \theta \ln(10).</span>
 
-<span class="sd">    Role in Inference</span>
-<span class="sd">    -----------------</span>
+<span class="sd">    .. rubric:: Role in Inference</span>
+
 <span class="sd">    Useful when parameters are naturally interpreted</span>
 <span class="sd">    in decades (e.g., luminosities, masses, densities).</span>
 
-<span class="sd">    Domain</span>
-<span class="sd">    ------</span>
+<span class="sd">    .. rubric:: Domain</span>
+
 <span class="sd">    :math:`\theta &gt; 0`</span>
 
 <span class="sd">    Notes</span>
@@ -1021,15 +1065,8 @@
 <span class="sd">        =</span>
 <span class="sd">        \frac{(b - a) e^{-z}}{(1 + e^{-z})^{2}}.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    lower : float</span>
-<span class="sd">        Lower bound :math:`a`.</span>
-<span class="sd">    upper : float</span>
-<span class="sd">        Upper bound :math:`b`.</span>
+<span class="sd">    .. rubric:: Role in Inference</span>
 
-<span class="sd">    Role in Inference</span>
-<span class="sd">    -----------------</span>
 <span class="sd">    Useful for:</span>
 
 <span class="sd">    - Parameters constrained to finite intervals</span>
@@ -1037,9 +1074,16 @@
 <span class="sd">    - Fractions</span>
 <span class="sd">    - Probabilities</span>
 
-<span class="sd">    Domain</span>
-<span class="sd">    ------</span>
+<span class="sd">    .. rubric:: Domain</span>
+
 <span class="sd">    :math:`a &lt; \theta &lt; b`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lower : float</span>
+<span class="sd">        Lower bound :math:`a`.</span>
+<span class="sd">    upper : float</span>
+<span class="sd">        Upper bound :math:`b`.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1051,6 +1095,16 @@
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lower</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the transform.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lower : float</span>
+<span class="sd">            Lower bound :math:`a`.</span>
+<span class="sd">        upper : float</span>
+<span class="sd">            Upper bound :math:`b`. Must be larger than ``lower``.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">lower</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"LogisticTransform requires upper &gt; lower."</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">lower</span><span class="p">),</span> <span class="n">upper</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">upper</span><span class="p">))</span>
@@ -1112,13 +1166,13 @@
 <span class="sd">        =</span>
 <span class="sd">        \frac{e^{z}}{1 + e^{z}}.</span>
 
-<span class="sd">    Role in Inference</span>
-<span class="sd">    -----------------</span>
+<span class="sd">    .. rubric:: Role in Inference</span>
+
 <span class="sd">    The softplus transform is smoother near zero than the logarithmic</span>
 <span class="sd">    transform and may improve numerical stability in some cases.</span>
 
-<span class="sd">    Domain</span>
-<span class="sd">    ------</span>
+<span class="sd">    .. rubric:: Domain</span>
+
 <span class="sd">    :math:`\theta &gt; 0`</span>
 
 <span class="sd">    Notes</span>

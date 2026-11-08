@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -450,8 +467,8 @@
 <span class="sd">This module provides two APIs for computing thermodynamic quantities</span>
 <span class="sd">(pressure, sound speed) under common astrophysical equations of state.</span>
 
-<span class="sd">Module-level functions</span>
-<span class="sd">----------------------</span>
+<span class="sd">.. rubric:: Module-level functions</span>
+
 <span class="sd">A lightweight functional API that operates without instantiating a class.</span>
 <span class="sd">Private ``_log_*`` functions take bare log-CGS floats and return ``ln(quantity)``;</span>
 <span class="sd">public wrappers accept :class:`~astropy.units.Quantity` and return</span>
@@ -467,8 +484,8 @@
 <span class="sd">| ``_log_radiative_ideal_gas_disk_sound_speed``| :func:`radiative_ideal_gas_disk_sound_speed` |</span>
 <span class="sd">+----------------------------------------------+----------------------------------------------+</span>
 
-<span class="sd">Class hierarchy</span>
-<span class="sd">---------------</span>
+<span class="sd">.. rubric:: Class hierarchy</span>
+
 <span class="sd">For use in model objects that need to store EOS parameters:</span>
 
 <span class="sd">.. code-block:: text</span>
@@ -481,6 +498,13 @@
 <span class="sd">overhead) and ``compute_*`` wrappers (:class:`~astropy.units.Quantity`).</span>
 <span class="sd">Both delegate to the module-level private functions above.</span>
 
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">:mod:`trilobite.physics_utils.composition` : Mean molecular weight helpers used to set ``mu``.</span>
+<span class="sd">:mod:`trilobite.physics_utils.constants` : CGS constants consumed internally.</span>
+<span class="sd">:mod:`~trilobite.dynamics.accretion.one_zone.physics._eos` : Cython EOS</span>
+<span class="sd">    primitives used in the hot-loop integrator.</span>
+
 <span class="sd">Notes</span>
 <span class="sd">-----</span>
 <span class="sd">*Isothermal vs. adiabatic*: disk vertical-structure calculations use the</span>
@@ -491,13 +515,6 @@
 <span class="sd">**effective adiabatic** sound speed derived from :math:`\gamma_{\rm eff}`,</span>
 <span class="sd">which is appropriate for general thermodynamic calculations where the</span>
 <span class="sd">density is known directly.</span>
-
-<span class="sd">See Also</span>
-<span class="sd">--------</span>
-<span class="sd">:mod:`trilobite.physics_utils.composition` : Mean molecular weight helpers used to set ``mu``.</span>
-<span class="sd">:mod:`trilobite.physics_utils.constants` : CGS constants consumed internally.</span>
-<span class="sd">:mod:`~trilobite.dynamics.accretion.one_zone.physics._eos` : Cython EOS</span>
-<span class="sd">    primitives used in the hot-loop integrator.</span>
 <span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
@@ -858,6 +875,11 @@
 <span class="sd">        EOS-specific parameters (e.g. mean molecular weight ``mu``).</span>
 <span class="sd">        Stored as :attr:`params`.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`IdealGasEOS`, :class:`RadiativeIdealGas`</span>
+<span class="sd">        Ideal gas equation of state, and its radiation-including counterpart :class:`RadiativeIdealGas`.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The two-level API mirrors the rest of the Trilobite codebase:</span>
@@ -870,10 +892,6 @@
 <span class="sd">    Both levels delegate to the module-level private functions in this</span>
 <span class="sd">    module (e.g. :func:`_log_ideal_gas_disk_sound_speed`), so the</span>
 <span class="sd">    standalone functional API and the class API are always consistent.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`IdealGasEOS`, :class:`RadiativeIdealGas`</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
@@ -937,6 +955,14 @@
     <span class="c1"># -------------------------------------------------------------- #</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return an unambiguous representation of the equation of state.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The class name with its parameters.</span>
+<span class="sd">        """</span>
         <span class="n">param_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">param_str</span><span class="si">}</span><span class="s2">)"</span></div>
 
@@ -969,9 +995,17 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    mu : float, optional</span>
-<span class="sd">        Mean molecular weight per particle (dimensionless).  For solar</span>
-<span class="sd">        composition use :func:`~.composition.compute_mean_molecular_weight`</span>
-<span class="sd">        or pass ``mu=0.62`` directly.  Default ``0.6``.</span>
+<span class="sd">        Mean molecular weight of the gas (dimensionless). Controls the conversion between temperature and thermal</span>
+<span class="sd">        energy via the ideal gas law. Default ``0.6`` is appropriate for a fully ionized plasma with primordial</span>
+<span class="sd">        composition.</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        Additional keyword arguments passed to :class:`EquationOfState`.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`ideal_gas_sound_speed` : Standalone functional equivalent.</span>
+<span class="sd">    :func:`~trilobite.physics_utils.composition.compute_mean_molecular_weight` : Derive ``mu`` from</span>
+<span class="sd">        hydrogen/helium/metal mass fractions.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -984,12 +1018,6 @@
 
 <span class="sd">    For a fully ionised hydrogen-helium plasma with mass fractions</span>
 <span class="sd">    :math:`X = 0.70,\, Y = 0.28`, :math:`\mu \approx 0.62`.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :func:`ideal_gas_sound_speed` : standalone functional equivalent.</span>
-<span class="sd">    :func:`~.composition.compute_mean_molecular_weight` : derive ``mu`` from</span>
-<span class="sd">        hydrogen/helium/metal mass fractions.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1187,7 +1215,19 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    mu : float, optional</span>
-<span class="sd">        Mean molecular weight per particle (dimensionless).  Default ``0.6``.</span>
+<span class="sd">        Mean molecular weight per particle (dimensionless). Controls the gas pressure contribution. Default ``0.6``.</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        Additional keyword arguments passed to :class:`EquationOfState`.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`IdealGasEOS` : Gas-only limit.</span>
+<span class="sd">    :func:`radiative_ideal_gas_sound_speed` : Standalone functional equivalent</span>
+<span class="sd">        for the adiabatic sound speed.</span>
+<span class="sd">    :func:`radiative_ideal_gas_disk_sound_speed` : Standalone functional</span>
+<span class="sd">        equivalent for the disk sound speed.</span>
+<span class="sd">    :func:`~trilobite.physics_utils.composition.compute_mean_molecular_weight` : Derive ``mu`` from</span>
+<span class="sd">        composition.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1208,16 +1248,6 @@
 
 <span class="sd">    interpolates between :math:`5/3` (gas-dominated) and :math:`4/3`</span>
 <span class="sd">    (radiation-dominated).</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`IdealGasEOS` : gas-only limit.</span>
-<span class="sd">    :func:`radiative_ideal_gas_sound_speed` : standalone functional equivalent</span>
-<span class="sd">        for the adiabatic sound speed.</span>
-<span class="sd">    :func:`radiative_ideal_gas_disk_sound_speed` : standalone functional</span>
-<span class="sd">        equivalent for the disk sound speed.</span>
-<span class="sd">    :func:`~.composition.compute_mean_molecular_weight` : derive ``mu`` from</span>
-<span class="sd">        composition.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>

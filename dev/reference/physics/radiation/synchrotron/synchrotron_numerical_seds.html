@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -63,6 +63,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -162,6 +165,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -171,13 +188,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../../../user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -304,6 +314,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -313,13 +337,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../../../user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -423,10 +440,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Trilobite Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Trilobite Model Directory</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1392,14 +1405,14 @@ and converts the <span class="math notranslate nohighlight">\(8\pi\)</span> deno
 <span class="math notranslate nohighlight">\(F(x)\)</span> grows no faster than <span class="math notranslate nohighlight">\(x^{1/3}\)</span> (log-slope <span class="math notranslate nohighlight">\(1/3\)</span>) at small <span class="math notranslate nohighlight">\(x\)</span> and falls
 exponentially (log-slope <span class="math notranslate nohighlight">\(\approx -x \ll 0\)</span>) at large <span class="math notranslate nohighlight">\(x\)</span>, so the log-derivative is bounded above by
 <span class="math notranslate nohighlight">\(1/3 &lt; 1\)</span> across the entire domain. A positive definite integrand means the sum can be evaluated directly in
-log-space via <code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code> without any sign-handling — the same strategy used for the emissivity.</p>
+log-space via <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.logsumexp.html#scipy.special.logsumexp" title="(in SciPy v1.18.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code></a> without any sign-handling — the same strategy used for the emissivity.</p>
 <p>The practical evaluation is identical in structure to the emissivity: one builds the <span class="math notranslate nohighlight">\((n_\nu \times n_\gamma)\)</span>
 matrix of <span class="math notranslate nohighlight">\(x_{ij}\)</span> values, looks up <span class="math notranslate nohighlight">\(\ln F(x_{ij})\)</span> and the derivative <span class="math notranslate nohighlight">\(d\ln F/d\ln x\big|_{x_{ij}}\)</span>
 from their respective splines, computes the IBP kernel</p>
 <div class="math notranslate nohighlight">
 \[\ln\bigl(F(x_{ij}) - x_{ij} F'(x_{ij})\bigr)
 = \ln F(x_{ij}) + \ln\!\left(1 - \frac{d\ln F}{d\ln x}\bigg|_{x_{ij}}\right),\]</div>
-<p>and then sums over <span class="math notranslate nohighlight">\(\gamma\)</span> with <code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code>. The final result is</p>
+<p>and then sums over <span class="math notranslate nohighlight">\(\gamma\)</span> with <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.logsumexp.html#scipy.special.logsumexp" title="(in SciPy v1.18.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code></a>. The final result is</p>
 <div class="math notranslate nohighlight">
 \[\ln|\alpha_\nu| = \ln\!\left(\frac{\chi}{m_e}\right) + \ln B + \ln\sin\alpha - 2\ln\nu
            + \mathrm{logsumexp}_i\!\left[\ln(F - xF')_{\nu i} + n_i + \tilde{w}_i - \ln\gamma_i\right],\]</div>
@@ -1633,7 +1646,7 @@ density is given by</p>
 <section id="the-off-axis-axisymmetric-shell-model">
 <span id="synch-off-axis-model"></span><h3><a class="toc-backref" href="#id33" role="doc-backlink">The Off-Axis Axisymmetric Shell Model</a><a class="headerlink" href="#the-off-axis-axisymmetric-shell-model" title="Link to this heading">#</a></h3>
 <p>The on-axis restriction <span class="math notranslate nohighlight">\(\theta_\mathrm{obs} = 0\)</span> is lifted in the <strong>off-axis axisymmetric shell model</strong>,
-implemented by <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.OffAxisAsymmetricSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.OffAxisAsymmetricSynchrotronEngine" title="trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">OffAxisAsymmetricSynchrotronEngine</span></code></a>.
+implemented by <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine" title="trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">OffAxisAsymmetricSynchrotronEngine</span></code></a>.
 The outflow retains axial symmetry — physical properties depend only on the zone polar angle
 <span class="math notranslate nohighlight">\(\theta_\mathrm{jet}\)</span> — but the observer may be located at an arbitrary polar angle
 <span class="math notranslate nohighlight">\(\theta_\mathrm{obs}\)</span> relative to the symmetry axis.</p>
@@ -1690,7 +1703,7 @@ grazing zones contribute negligible flux.</p>
 <p>The parameter name differs between the on-axis and off-axis engines to reflect this geometric
 distinction. <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.OnAxisAsymmetricSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.OnAxisAsymmetricSynchrotronEngine" title="trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OnAxisAsymmetricSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">OnAxisAsymmetricSynchrotronEngine</span></code></a>
 accepts <code class="docutils literal notranslate"><span class="pre">slab_depth</span></code>, the direct LOS depth per zone (the caller is responsible for any angular
-correction). <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.OffAxisAsymmetricSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.OffAxisAsymmetricSynchrotronEngine" title="trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">OffAxisAsymmetricSynchrotronEngine</span></code></a>
+correction). <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine" title="trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">OffAxisAsymmetricSynchrotronEngine</span></code></a>
 accepts <code class="docutils literal notranslate"><span class="pre">shell_thickness</span></code>, the perpendicular depth <span class="math notranslate nohighlight">\(\Delta r'\)</span>, and applies the
 <span class="math notranslate nohighlight">\(1/\max(\mu_\mathrm{obs}, \mu_\mathrm{min})\)</span> correction internally.</p>
 </div>

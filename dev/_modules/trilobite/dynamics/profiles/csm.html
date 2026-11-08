@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -472,7 +489,6 @@
 <span class="sd">Bare numerical inputs are interpreted as CGS values. Unit-bearing inputs are</span>
 <span class="sd">converted once in the validation layer before optimized numerical evaluation.</span>
 
-
 <span class="sd">.. rubric:: Module Design</span>
 
 <span class="sd">Profiles are implemented as **stateless, classmethod-based evaluators**. Physical</span>
@@ -553,17 +569,17 @@
 <span class="sd">    ``_opt_eval``</span>
 <span class="sd">        Evaluate the density using already-processed unit-free inputs.</span>
 
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    This class assumes the two-argument signature ``(r, t)`` for compatibility</span>
-<span class="sd">    with shock-engine source terms. Stationary profiles (see</span>
-<span class="sd">    :class:`StationaryCSMDensityProfile`) may ignore ``t`` internally.</span>
-
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    StationaryCSMDensityProfile : ABC for time-independent CSM profiles.</span>
 <span class="sd">    WindCSMProfile : Steady wind-like CSM.</span>
 <span class="sd">    UniformCSMProfile : Uniform CSM density.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This class assumes the two-argument signature ``(r, t)`` for compatibility</span>
+<span class="sd">    with shock-engine source terms. Stationary profiles (see</span>
+<span class="sd">    :class:`StationaryCSMDensityProfile`) may ignore ``t`` internally.</span>
 <span class="sd">    """</span>
 
     <span class="n">OUTPUT_UNITS</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span>
@@ -775,7 +791,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.</span>
 
 <span class="sd">        Raises</span>
@@ -831,7 +847,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A_star : float</span>
+<span class="sd">        float</span>
 <span class="sd">            Dimensionless wind-density parameter.</span>
 <span class="sd">        """</span>
         <span class="n">A</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span>
@@ -860,7 +876,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.</span>
 
 <span class="sd">        Raises</span>
@@ -938,7 +954,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        mass_loss_rate : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Progenitor mass-loss rate in :math:`\mathrm{g\,s^{-1}}`.</span>
 <span class="sd">        """</span>
         <span class="n">A</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
@@ -989,7 +1005,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        mass : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Enclosed CSM mass in grams.</span>
 <span class="sd">        """</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span>
@@ -1044,7 +1060,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        mass : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Shell mass in grams.</span>
 
 <span class="sd">        Raises</span>
@@ -1103,7 +1119,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        column : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Column density in :math:`\mathrm{g\,cm^{-2}}`.</span>
 <span class="sd">        """</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span>
@@ -1759,7 +1775,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">WindCSMProfile</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">mass_loss_rate</span><span class="p">,</span> <span class="n">wind_velocity</span><span class="p">)</span></div>
@@ -1908,7 +1924,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">WindCSMProfile</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">mass_loss_rate</span><span class="p">,</span> <span class="n">wind_velocity</span><span class="p">)</span></div>
@@ -2083,7 +2099,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">WindCSMProfile</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">mass_loss_rate</span><span class="p">,</span> <span class="n">wind_velocity</span><span class="p">)</span></div>
@@ -2654,7 +2670,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">WindCSMProfile</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">mass_loss_rate</span><span class="p">,</span> <span class="n">wind_velocity</span><span class="p">)</span></div>
@@ -2889,7 +2905,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">WindCSMProfile</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">mass_loss_rate</span><span class="p">,</span> <span class="n">wind_velocity</span><span class="p">)</span></div>
@@ -3243,6 +3259,12 @@
 <span class="sd">       ax.legend()</span>
 <span class="sd">       plt.tight_layout()</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    WindCSMProfile : Single steady-wind CSM profile.</span>
+<span class="sd">    SmoothTruncatedWindCSMProfile : Smooth transition from a wind to a floor.</span>
+<span class="sd">    SmoothBPLCSMProfile : Smooth transition between two power-law slopes.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The density is asymptotically wind-like on both sides of the transition:</span>
@@ -3259,12 +3281,6 @@
 
 <span class="sd">    Inside the transition region, the effective local slope differs from</span>
 <span class="sd">    :math:`-2` because :math:`A(r)` varies with radius.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    WindCSMProfile : Single steady-wind CSM profile.</span>
-<span class="sd">    SmoothTruncatedWindCSMProfile : Smooth transition from a wind to a floor.</span>
-<span class="sd">    SmoothBPLCSMProfile : Smooth transition between two power-law slopes.</span>
 <span class="sd">    """</span>
 
 <div class="viewcode-block" id="TwoWindCSMProfile.normalize">
@@ -3287,7 +3303,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">WindCSMProfile</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">mass_loss_rate</span><span class="p">,</span> <span class="n">wind_velocity</span><span class="p">)</span></div>
@@ -3301,7 +3317,23 @@
         <span class="n">mass_loss_rate</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
         <span class="n">wind_velocity</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""Compute the dimensionless wind-density parameter :math:`A_*`."""</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Compute the dimensionless wind-density parameter :math:`A_*`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mass_loss_rate : float or ~astropy.units.Quantity</span>
+<span class="sd">            Progenitor mass-loss rate. Unit-bearing inputs are converted to :math:`\mathrm{g\,s^{-1}}`; bare values</span>
+<span class="sd">            are interpreted as :math:`\mathrm{g\,s^{-1}}`.</span>
+<span class="sd">        wind_velocity : float or ~astropy.units.Quantity</span>
+<span class="sd">            Wind velocity. Unit-bearing inputs are converted to :math:`\mathrm{cm\,s^{-1}}`; bare values are</span>
+<span class="sd">            interpreted as :math:`\mathrm{cm\,s^{-1}}`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The dimensionless wind-density parameter :math:`A_*`.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">WindCSMProfile</span><span class="o">.</span><span class="n">normalize_A_star</span><span class="p">(</span><span class="n">mass_loss_rate</span><span class="p">,</span> <span class="n">wind_velocity</span><span class="p">)</span></div>
 
 
@@ -3312,7 +3344,19 @@
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">A_star</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""Compute :math:`A` from the dimensionless wind-density parameter."""</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Compute :math:`A` from the dimensionless wind-density parameter.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        A_star : float</span>
+<span class="sd">            Dimensionless wind-density parameter, defined by :math:`A = 5\times10^{11}A_*\ {\rm g\,cm^{-1}}`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~astropy.units.Quantity</span>
+<span class="sd">            The wind normalization :math:`A`, in g/cm.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">WindCSMProfile</span><span class="o">.</span><span class="n">normalize_from_A_star</span><span class="p">(</span><span class="n">A_star</span><span class="p">)</span></div>
 
 
@@ -3647,6 +3691,11 @@
 <span class="sd">       ax.legend()</span>
 <span class="sd">       plt.tight_layout()</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    PowerLawCSMProfile : Spherical single power law.</span>
+<span class="sd">    BrokenPowerLawCSMProfile : Spherical broken power law.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    - The density is symmetric under :math:`\theta \to \pi - \theta` and :math:`\theta \to -\theta`.</span>
@@ -3658,11 +3707,6 @@
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    .. footbibliography::</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    PowerLawCSMProfile : Spherical single power law.</span>
-<span class="sd">    BrokenPowerLawCSMProfile : Spherical broken power law.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ------------------------------------------------------------------ #</span>
@@ -3873,6 +3917,16 @@
 <span class="sd">        every call, and scalar radii are evaluated with plain scalar arithmetic. ODE right-hand sides call the</span>
 <span class="sd">        density at a single radius thousands of times, where the array machinery dominates the cost. Array radii take</span>
 <span class="sd">        the usual vectorized path.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **parameters : dict</span>
+<span class="sd">            Profile parameters, as accepted by :meth:`eval`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        callable</span>
+<span class="sd">            A function of ``(r, t)`` returning the unit-free density.</span>
 <span class="sd">        """</span>
         <span class="n">p</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
 

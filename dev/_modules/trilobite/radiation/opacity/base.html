@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -471,7 +488,7 @@
 
 
 <div class="viewcode-block" id="OpacityLaw">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.html#trilobite.radiation.opacity.OpacityLaw">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.html#trilobite.radiation.opacity.base.OpacityLaw">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OpacityLaw</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Base class for opacity laws :math:`\kappa(\nu, \rho, T)`.</span>
 
@@ -485,6 +502,17 @@
 <span class="sd">        This is an abstract base class and should not be instantiated directly.  Use</span>
 <span class="sd">        one of the concrete subclasses provided in the library, or create a custom</span>
 <span class="sd">        subclass that implements the required log-space methods.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **parameters : dict</span>
+<span class="sd">        Model-specific parameters forwarded to the C backend when :attr:`IS_C_BACKED` is ``True``.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :obj:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` : Subclass for frequency-averaged</span>
+<span class="sd">     (grey) opacity laws.</span>
+<span class="sd">    :obj:`~trilobite.radiation.opacity.opacity_base.C_OpacityBase` : C-level companion class.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -521,12 +549,6 @@
 <span class="sd">    ``IS_C_BACKED = True`` and overriding :meth:`_initialize_C_object`.</span>
 <span class="sd">    The private methods then automatically dispatch to the corresponding</span>
 <span class="sd">    methods on the Cython object (see :mod:`trilobite.radiation.opacity.opacity_base`).</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    ~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw : Subclass for frequency-averaged</span>
-<span class="sd">     (grey) opacity laws.</span>
-<span class="sd">    ~trilobite.radiation.opacity.opacity_base.C_OpacityBase : C-level companion class.</span>
 <span class="sd">    """</span>
 
     <span class="n">IS_C_BACKED</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -647,7 +669,7 @@
     <span class="c1"># ================================================================ #</span>
 
 <div class="viewcode-block" id="OpacityLaw.opacity">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.opacity.html#trilobite.radiation.opacity.OpacityLaw.opacity">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.opacity.html#trilobite.radiation.opacity.base.OpacityLaw.opacity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">opacity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span>
@@ -698,7 +720,7 @@
 
 
 <div class="viewcode-block" id="OpacityLaw.dlogkappa_dlogrho">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogrho.html#trilobite.radiation.opacity.OpacityLaw.dlogkappa_dlogrho">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogrho.html#trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogrho">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dlogkappa_dlogrho</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span>
@@ -749,7 +771,7 @@
 
 
 <div class="viewcode-block" id="OpacityLaw.dlogkappa_dlogT">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogT.html#trilobite.radiation.opacity.OpacityLaw.dlogkappa_dlogT">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogT.html#trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogT">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dlogkappa_dlogT</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span>
@@ -800,7 +822,7 @@
 
 
 <div class="viewcode-block" id="OpacityLaw.load_default">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.load_default.html#trilobite.radiation.opacity.OpacityLaw.load_default">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.load_default.html#trilobite.radiation.opacity.base.OpacityLaw.load_default">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_default</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"OpacityLaw"</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Construct an instance with default settings.</span>
@@ -835,7 +857,7 @@
 
 
 <div class="viewcode-block" id="OpacityLaw.dlogkappa_dlognu">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlognu.html#trilobite.radiation.opacity.OpacityLaw.dlogkappa_dlognu">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlognu.html#trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlognu">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dlogkappa_dlognu</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span>

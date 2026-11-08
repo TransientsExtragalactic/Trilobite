@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -62,6 +62,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -161,6 +164,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api.html">
     API
   </a>
@@ -170,13 +187,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -303,6 +313,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api.html">
     API
   </a>
@@ -312,13 +336,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -422,10 +439,6 @@
 <li class="toctree-l1"><a class="reference internal" href="filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="light_curve.html">Light Curves</a></li>
 <li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Inference Data Containers</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../models/overview.html">Trilobite Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/directory.html">Trilobite Model Directory</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1363,18 +1376,17 @@ structural reshaping occurs at likelihood evaluation time.</p>
 dimensional structure of the dataset (for example <code class="docutils literal notranslate"><span class="pre">(N,)</span></code> for a
 one-dimensional dataset or <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">M)</span></code> for a grid). Likelihoods may
 derive stacked views from this base shape but do not modify it.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>) – <p>Mapping from model variable names to arrays.</p>
-<ul>
+<p class="rubric">Attributes</p>
+<dl>
+<dt>x<span class="classifier">dict of str to numpy.ndarray</span></dt><dd><p>Mapping from model variable names to arrays.</p>
+<ul class="simple">
 <li><p>Keys must match the model’s declared variable names.</p></li>
 <li><p>All arrays must share identical shape.</p></li>
 <li><p>Arrays must already be expressed in the model’s base units.</p></li>
 <li><p>No unit coercion is performed during initialization.</p></li>
 </ul>
-</p></li>
-<li><p><strong>observables</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference internal" href="../../_as_gen/trilobite.data.core.Observable.html#trilobite.data.core.Observable" title="trilobite.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a>) – <p>Mapping from observable names to <a class="reference internal" href="../../_as_gen/trilobite.data.core.Observable.html#trilobite.data.core.Observable" title="trilobite.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a> objects.</p>
+</dd>
+<dt>observables<span class="classifier">dict of str to Observable</span></dt><dd><p>Mapping from observable names to <a class="reference internal" href="../../_as_gen/trilobite.data.core.Observable.html#trilobite.data.core.Observable" title="trilobite.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a> objects.</p>
 <p>Each <a class="reference internal" href="../../_as_gen/trilobite.data.core.Observable.html#trilobite.data.core.Observable" title="trilobite.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a> contains:</p>
 <ul>
 <li><dl>
@@ -1399,20 +1411,31 @@ derive stacked views from this base shape but do not modify it.</p>
 </li>
 </ul>
 <p>All observable arrays must match the shape of the independent variables.</p>
-</p></li>
-<li><p><strong>x_error</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <em>optional</em>) – <p>Symmetric uncertainties on independent variables.</p>
-<ul>
+</dd>
+<dt>x_error<span class="classifier">dict of str to numpy.ndarray, optional</span></dt><dd><p>Symmetric uncertainties on independent variables.</p>
+<ul class="simple">
 <li><p>Must contain entries for <em>all</em> independent variables if provided.</p></li>
 <li><p>Arrays must match the base shape of <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p></li>
 </ul>
-</p></li>
-<li><p><strong>x_upper</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <em>optional</em>) – Upper limits on independent variables.
-Missing entries are interpreted as no censoring.</p></li>
-<li><p><strong>x_lower</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <em>optional</em>) – Lower limits on independent variables.
-Missing entries are interpreted as no censoring.</p></li>
-</ul>
+</dd>
+<dt>x_upper<span class="classifier">dict of str to numpy.ndarray, optional</span></dt><dd><p>Upper limits on independent variables.
+Missing entries are interpreted as no censoring.</p>
+</dd>
+<dt>x_lower<span class="classifier">dict of str to numpy.ndarray, optional</span></dt><dd><p>Lower limits on independent variables.
+Missing entries are interpreted as no censoring.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.DataContainer.html#trilobite.data.core.DataContainer" title="trilobite.data.core.DataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.data.core.DataContainer</span></code></a></dt><dd><p>High-level data ingestion and column resolution.</p>
+</dd>
+<dt><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html#trilobite.inference.likelihood.base.Likelihood" title="trilobite.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.inference.likelihood.base.Likelihood</span></code></a></dt><dd><p>Statistical layer that consumes <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a>.</p>
+</dd>
+<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.Observable.html#trilobite.data.core.Observable" title="trilobite.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a></dt><dd><p>Lightweight container representing a single dependent variable.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Notes</p>
 <ul class="simple">
 <li><p>This class performs <strong>no statistical interpretation</strong>.</p></li>
@@ -1464,17 +1487,6 @@ uncertainties or censoring).</p></li>
     <span class="p">},</span>
 <span class="p">)</span>
 </pre></div>
-</div>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.DataContainer.html#trilobite.data.core.DataContainer" title="trilobite.data.core.DataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.data.core.DataContainer</span></code></a></dt><dd><p>High-level data ingestion and column resolution.</p>
-</dd>
-<dt><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html#trilobite.inference.likelihood.base.Likelihood" title="trilobite.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.inference.likelihood.base.Likelihood</span></code></a></dt><dd><p>Statistical layer that consumes <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a>.</p>
-</dd>
-<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.Observable.html#trilobite.data.core.Observable" title="trilobite.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a></dt><dd><p>Lightweight container representing a single dependent variable.</p>
-</dd>
-</dl>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py">
@@ -1645,9 +1657,6 @@ dictionary representation.</p>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the file extension is unsupported.</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>This is a convenience wrapper around <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_json.html#trilobite.data.core.InferenceData.from_json" title="trilobite.data.core.InferenceData.from_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_json()</span></code></a>
-and <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_hdf5.html#trilobite.data.core.InferenceData.from_hdf5" title="trilobite.data.core.InferenceData.from_hdf5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_hdf5()</span></code></a>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
@@ -1655,6 +1664,9 @@ and <a class="reference internal" href="../../_as_gen/trilobite.data.core.Infere
 </dd>
 </dl>
 </div>
+<p class="rubric">Notes</p>
+<p>This is a convenience wrapper around <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_json.html#trilobite.data.core.InferenceData.from_json" title="trilobite.data.core.InferenceData.from_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_json()</span></code></a>
+and <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_hdf5.html#trilobite.data.core.InferenceData.from_hdf5" title="trilobite.data.core.InferenceData.from_hdf5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_hdf5()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1678,6 +1690,13 @@ and <a class="reference internal" href="../../_as_gen/trilobite.data.core.Infere
 </ul>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.to_hdf5.html#trilobite.data.core.InferenceData.to_hdf5" title="trilobite.data.core.InferenceData.to_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_hdf5</span></code></a></dt><dd><p>HDF5 serialization method.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Notes</p>
 <ul class="simple">
 <li><p>The file must contain a root attribute <code class="docutils literal notranslate"><span class="pre">format=&quot;InferenceData&quot;</span></code>.</p></li>
@@ -1686,13 +1705,6 @@ and <a class="reference internal" href="../../_as_gen/trilobite.data.core.Infere
 <li><p>Metadata stored in HDF5 attributes is not automatically
 attached to the returned object.</p></li>
 </ul>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.to_hdf5.html#trilobite.data.core.InferenceData.to_hdf5" title="trilobite.data.core.InferenceData.to_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_hdf5</span></code></a></dt><dd><p>HDF5 serialization method.</p>
-</dd>
-</dl>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -1719,13 +1731,6 @@ to <a class="reference internal" href="../../_as_gen/trilobite.data.core.Inferen
 </ul>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>All arrays are restored as NumPy arrays.</p></li>
-<li><p>Shape and structural validation occur during object construction.</p></li>
-<li><p>Metadata stored in the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> block is not automatically
-attached to the returned object but remains available in the file.</p></li>
-</ul>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
@@ -1735,6 +1740,13 @@ attached to the returned object but remains available in the file.</p></li>
 </dd>
 </dl>
 </div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>All arrays are restored as NumPy arrays.</p></li>
+<li><p>Shape and structural validation occur during object construction.</p></li>
+<li><p>Metadata stored in the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> block is not automatically
+attached to the returned object but remains available in the file.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -1760,11 +1772,14 @@ and unit coercion, and delegates validation to
 Same format as <cite>variables</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The assembled inference dataset.</p>
 </dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If required columns are missing or incompatible.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If required columns are missing or incompatible.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1780,6 +1795,17 @@ Same format as <cite>variables</cite>.</p></li>
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">get_observable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/trilobite.data.core.Observable.html#trilobite.data.core.Observable" title="trilobite.data.core.Observable"><span class="pre">Observable</span></a></span></span><a class="reference internal" href="../../_modules/trilobite/data/core.html#InferenceData.get_observable"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Return a specific observable by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of the observable.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The observable called <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/trilobite.data.core.Observable.html#trilobite.data.core.Observable" title="trilobite.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1971,12 +1997,22 @@ Raises if any observable lacks uncertainty information.</p>
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_observables</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></dt>
 <dd><p>Number of dependent variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">observable_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></dt>
 <dd><p>List of observable names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1988,12 +2024,22 @@ Raises if any observable lacks uncertainty information.</p>
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">shape</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></dt>
 <dd><p>Shape of the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple of <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">size</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></dt>
 <dd><p>Total number of data points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2026,6 +2072,15 @@ and may be used to store provenance or contextual metadata
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_dict.html#trilobite.data.core.InferenceData.from_dict" title="trilobite.data.core.InferenceData.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a></dt><dd><p>Reconstruct an <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance from a dictionary.</p>
+</dd>
+<dt><a class="reference external" href="https://docs.python.org/3/library/json.html#json.dumps" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">json.dumps</span></code></a></dt><dd><p>Serialize dictionary to JSON.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Notes</p>
 <p>The dictionary structure has the following canonical form:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{
@@ -2065,15 +2120,6 @@ included if present.</p></li>
 <li><p>Optional observable fields (<code class="docutils literal notranslate"><span class="pre">error</span></code>, <code class="docutils literal notranslate"><span class="pre">upper</span></code>, <code class="docutils literal notranslate"><span class="pre">lower</span></code>)
 are only included when defined.</p></li>
 </ul>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_dict.html#trilobite.data.core.InferenceData.from_dict" title="trilobite.data.core.InferenceData.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a></dt><dd><p>Reconstruct an <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance from a dictionary.</p>
-</dd>
-<dt><a class="reference external" href="https://docs.python.org/3/library/json.html#json.dumps" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">json.dumps</span></code></a></dt><dd><p>Serialize dictionary to JSON.</p>
-</dd>
-</dl>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -2100,9 +2146,6 @@ extension.</p>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the file extension is unsupported.</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>This is a convenience wrapper around <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.to_json.html#trilobite.data.core.InferenceData.to_json" title="trilobite.data.core.InferenceData.to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_json()</span></code></a>
-and <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.to_hdf5.html#trilobite.data.core.InferenceData.to_hdf5" title="trilobite.data.core.InferenceData.to_hdf5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_hdf5()</span></code></a>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
@@ -2110,6 +2153,9 @@ and <a class="reference internal" href="../../_as_gen/trilobite.data.core.Infere
 </dd>
 </dl>
 </div>
+<p class="rubric">Notes</p>
+<p>This is a convenience wrapper around <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.to_json.html#trilobite.data.core.InferenceData.to_json" title="trilobite.data.core.InferenceData.to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_json()</span></code></a>
+and <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.to_hdf5.html#trilobite.data.core.InferenceData.to_hdf5" title="trilobite.data.core.InferenceData.to_hdf5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_hdf5()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2132,6 +2178,15 @@ a <a class="reference external" href="https://docs.python.org/3/builtins/excepti
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#FileExistsError" title="(in Python v3.15)"><strong>FileExistsError</strong></a> – If the file exists and <code class="docutils literal notranslate"><span class="pre">overwrite=False</span></code>.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_hdf5.html#trilobite.data.core.InferenceData.from_hdf5" title="trilobite.data.core.InferenceData.from_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_hdf5</span></code></a></dt><dd><p>Inverse operation.</p>
+</dd>
+<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.to_dict.html#trilobite.data.core.InferenceData.to_dict" title="trilobite.data.core.InferenceData.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a></dt><dd><p>JSON serialization backend.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Notes</p>
 <ul class="simple">
 <li><p>Independent variables are stored under <code class="docutils literal notranslate"><span class="pre">/x</span></code>.</p></li>
@@ -2142,15 +2197,6 @@ are created only if present.</p></li>
 <li><p>Arrays are written in native NumPy format (no conversion to lists).</p></li>
 <li><p>This method is suitable for large datasets and high-performance workflows.</p></li>
 </ul>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_hdf5.html#trilobite.data.core.InferenceData.from_hdf5" title="trilobite.data.core.InferenceData.from_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_hdf5</span></code></a></dt><dd><p>Inverse operation.</p>
-</dd>
-<dt><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.to_dict.html#trilobite.data.core.InferenceData.to_dict" title="trilobite.data.core.InferenceData.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a></dt><dd><p>JSON serialization backend.</p>
-</dd>
-</dl>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -2174,14 +2220,6 @@ stored in the <code class="docutils literal notranslate"><span class="pre">attrs
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#FileExistsError" title="(in Python v3.15)"><strong>FileExistsError</strong></a> – If the file exists and <code class="docutils literal notranslate"><span class="pre">overwrite=False</span></code>.</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>Output is fully JSON-safe (pure Python types only).</p></li>
-<li><p>NumPy arrays are stored as nested lists.</p></li>
-<li><p>NaN values are preserved according to Python’s JSON encoding rules.</p></li>
-<li><p>The resulting file is human-readable.</p></li>
-<li><p>This method does not modify the object state.</p></li>
-</ul>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
@@ -2191,12 +2229,25 @@ stored in the <code class="docutils literal notranslate"><span class="pre">attrs
 </dd>
 </dl>
 </div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Output is fully JSON-safe (pure Python types only).</p></li>
+<li><p>NumPy arrays are stored as nested lists.</p></li>
+<li><p>NaN values are preserved according to Python’s JSON encoding rules.</p></li>
+<li><p>The resulting file is human-readable.</p></li>
+<li><p>This method does not modify the object state.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">variable_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></dt>
 <dd><p>List of independent variable names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2238,16 +2289,17 @@ should be performed upstream in reference to the generating
 model or data container. This allows likelihood implementations to
 interpret the data according to the needs of the problem at hand while
 being agnostic about the physical meaning of the observable.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Measured values of the observable. This should be provided
-as a <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> array where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of observations.</p></li>
-<li><p><strong>error</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <em>optional</em>) – Symmetric 1-sigma uncertainties. Must be finite. Should be
-the same shape as <code class="docutils literal notranslate"><span class="pre">value</span></code>. Use <code class="docutils literal notranslate"><span class="pre">None</span></code> if not provided.</p></li>
-<li><p><strong>upper</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <em>optional</em>) – Upper limit values. Use NaN where not applicable.</p></li>
-<li><p><strong>lower</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <em>optional</em>) – Lower limit values. Use NaN where not applicable.</p></li>
-</ul>
+<p class="rubric">Attributes</p>
+<dl class="simple">
+<dt>value<span class="classifier">np.ndarray</span></dt><dd><p>Measured values of the observable. This should be provided
+as a <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> array where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of observations.</p>
+</dd>
+<dt>error<span class="classifier">np.ndarray, optional</span></dt><dd><p>Symmetric 1-sigma uncertainties. Must be finite. Should be
+the same shape as <code class="docutils literal notranslate"><span class="pre">value</span></code>. Use <code class="docutils literal notranslate"><span class="pre">None</span></code> if not provided.</p>
+</dd>
+<dt>upper<span class="classifier">np.ndarray, optional</span></dt><dd><p>Upper limit values. Use NaN where not applicable.</p>
+</dd>
+<dt>lower<span class="classifier">np.ndarray, optional</span></dt><dd><p>Lower limit values. Use NaN where not applicable.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -2266,24 +2318,44 @@ finite values in the <code class="docutils literal notranslate"><span class="pre
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_censoring</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></dt>
 <dd><p>True if any censoring exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></dt>
 <dd><p>True if uncertainties are provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_lower_limits</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></dt>
 <dd><p>True if any lower-censored points exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_upper_limits</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></dt>
 <dd><p>True if any upper-censored points exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2295,18 +2367,33 @@ finite values in the <code class="docutils literal notranslate"><span class="pre
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">lower_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></dt>
 <dd><p>Boolean mask of lower-censored points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">shape</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></dt>
 <dd><p>Shape of the observable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple of <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">size</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></dt>
 <dd><p>Number of observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2318,6 +2405,11 @@ finite values in the <code class="docutils literal notranslate"><span class="pre
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upper_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></dt>
 <dd><p>Boolean mask of upper-censored points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">

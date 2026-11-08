@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -63,6 +63,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../_static/logo.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -162,6 +165,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api.html">
     API
   </a>
@@ -171,13 +188,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -304,6 +314,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api.html">
     API
   </a>
@@ -313,13 +337,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -423,10 +440,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/inference_data.html">Inference Data Containers</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../reference/models/overview.html">Trilobite Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/models/directory.html">Trilobite Model Directory</a></li>
 </ul>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../reference/inference/overview.html">Parameter Inference and Model Comparison</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -1138,17 +1151,14 @@ uncertainties <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\)
 \right].\]</div>
 <p>The summation is taken over <strong>all data points and all observables</strong>.
 Observables are stacked along the final axis.</p>
-<section id="assumptions">
-<h2>Assumptions<a class="headerlink" href="#assumptions" title="Link to this heading">#</a></h2>
+<p class="rubric">Assumptions</p>
 <ul class="simple">
 <li><p>All observations are detections (no censoring).</p></li>
 <li><p>Symmetric Gaussian uncertainties are provided.</p></li>
 <li><p>Model output shape matches observed data shape.</p></li>
 <li><p>Errors are independent (diagonal covariance).</p></li>
 </ul>
-</section>
-<section id="shape-conventions">
-<h2>Shape Conventions<a class="headerlink" href="#shape-conventions" title="Link to this heading">#</a></h2>
+<p class="rubric">Shape Conventions</p>
 <p>If there are:</p>
 <ul class="simple">
 <li><p><cite>N</cite> data points</p></li>
@@ -1161,9 +1171,7 @@ Observables are stacked along the final axis.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">y_err</span></code> has shape <cite>(N, P)</cite></p></li>
 </ul>
 <p>These arrays are cached during initialization for efficiency.</p>
-</section>
-<section id="performance-notes">
-<h2>Performance Notes<a class="headerlink" href="#performance-notes" title="Link to this heading">#</a></h2>
+<p class="rubric">Performance Notes</p>
 <ul class="simple">
 <li><p>All data extraction occurs once during initialization.</p></li>
 <li><p>The hot loop in <code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_likelihood()</span></code> performs only:
@@ -1206,7 +1214,6 @@ Observables are stacked along the final axis.</p>
 </tbody>
 </table>
 </div>
-</section>
 </dd></dl>
 
 </section>

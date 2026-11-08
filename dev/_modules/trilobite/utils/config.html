@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -487,17 +504,26 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    path: str or `Path`</span>
+<span class="sd">    path : str or `Path`</span>
 <span class="sd">        Path to the YAML configuration file.</span>
-<span class="sd">    autosave: bool</span>
+<span class="sd">    autosave : bool</span>
 <span class="sd">        If True, automatically save changes to disk. Defaults to True.</span>
-
 <span class="sd">    """</span>
 
     <span class="n">__YAML__</span> <span class="o">=</span> <span class="n">unit_compatible_yaml</span>
 <span class="w">    </span><span class="sd">""" The YAML manager."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">autosave</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the manager and load the configuration file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or `Path`</span>
+<span class="sd">            Path to the YAML configuration file.</span>
+<span class="sd">        autosave : bool</span>
+<span class="sd">            If True, automatically save changes to disk. Defaults to True.</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_autosave</span> <span class="o">=</span> <span class="n">autosave</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load</span><span class="p">()</span>
@@ -563,7 +589,6 @@
 <span class="sd">        ------</span>
 <span class="sd">        KeyError</span>
 <span class="sd">            If the specified key does not exist.</span>
-
 <span class="sd">        """</span>
         <span class="n">node</span><span class="p">,</span> <span class="n">final_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traverse</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">node</span><span class="p">[</span><span class="n">final_key</span><span class="p">]</span>
@@ -581,7 +606,6 @@
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        If `autosave` is enabled, the configuration will be written to disk after setting.</span>
-
 <span class="sd">        """</span>
         <span class="n">node</span><span class="p">,</span> <span class="n">final_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traverse</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">create_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">node</span><span class="p">[</span><span class="n">final_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
@@ -604,7 +628,6 @@
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        If `autosave` is enabled, the change is written to disk immediately.</span>
-
 <span class="sd">        """</span>
         <span class="n">node</span><span class="p">,</span> <span class="n">final_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traverse</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">del</span> <span class="n">node</span><span class="p">[</span><span class="n">final_key</span><span class="p">]</span>
@@ -618,7 +641,6 @@
 <span class="sd">        -------</span>
 <span class="sd">        Iterator[str]</span>
 <span class="sd">            An iterator over the top-level keys in the root configuration dictionary.</span>
-
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
 
@@ -629,7 +651,6 @@
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
 <span class="sd">            Number of top-level entries in the configuration.</span>
-
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
 
@@ -640,21 +661,36 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            A string showing the path to the config file and current in-memory state.</span>
-
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;ConfigManager path=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="si">}</span><span class="s2"> data=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="si">}</span><span class="s2">&gt;"</span>
 
 <div class="viewcode-block" id="ConfigManager.to_dict">
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.config.ConfigManager.to_dict.html#trilobite.utils.config.ConfigManager.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return the full configuration data as a dictionary."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the full configuration data as a dictionary.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The full configuration data.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
 
 
 <div class="viewcode-block" id="ConfigManager.update">
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.config.ConfigManager.update.html#trilobite.utils.config.ConfigManager.update">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Update the configuration with another dictionary."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Update the configuration with another dictionary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mapping : dict</span>
+<span class="sd">            Mapping of configuration entries to merge into the configuration.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional entries to merge, as for :meth:`dict.update`.</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autosave</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">()</span></div>
@@ -669,7 +705,14 @@
 <div class="viewcode-block" id="get_config">
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.config.get_config.html#trilobite.utils.config.get_config">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ConfigManager</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Return global trilobite configuration following precedence."""</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Return global trilobite configuration following precedence.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~trilobite.utils.config.ConfigManager</span>
+<span class="sd">        The global configuration manager.</span>
+<span class="sd">    """</span>
     <span class="c1"># Seek out a global configuration in the</span>
     <span class="c1"># name space.</span>
     <span class="k">global</span> <span class="n">__PCONFIG__</span>

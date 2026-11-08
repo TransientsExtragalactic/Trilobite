@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from trilobite.models.generic.bpl import TripleBrokenPowerLaw
+from trilobite.models.generic.curves import TripleBrokenPowerLaw
 
 model = TripleBrokenPowerLaw()
 

@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -63,6 +63,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../_static/logo.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -162,6 +165,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api.html">
     API
   </a>
@@ -171,13 +188,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -304,6 +314,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api.html">
     API
   </a>
@@ -313,13 +337,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -423,10 +440,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/inference_data.html">Inference Data Containers</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../reference/models/overview.html">Trilobite Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/models/directory.html">Trilobite Model Directory</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../reference/inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1170,8 +1183,14 @@ override them via the Cython companion object.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rho</strong> (<cite>~astropy.units.Quantity</cite>) – Mass density.</p></li>
 <li><p><strong>T</strong> (<cite>~astropy.units.Quantity</cite>) – Temperature.</p></li>
-<li><p><strong>nu</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">any</span></code>, <em>optional</em>)</p></li>
+<li><p><strong>nu</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a>, <em>optional</em>) – Ignored; accepted for compatibility with frequency-dependent opacity laws.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The logarithmic derivative <span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln T\)</span> (dimensionless).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1180,6 +1199,21 @@ override them via the Cython companion object.</p>
 <dt class="sig sig-object py" id="trilobite.radiation.opacity.GreyOpacityLaw.dlogkappa_dlognu">
 <span class="sig-name descname"><span class="pre">dlogkappa_dlognu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../_modules/trilobite/radiation/opacity/grey_opacity/base.html#GreyOpacityLaw.dlogkappa_dlognu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.opacity.GreyOpacityLaw.dlogkappa_dlognu" title="Link to this definition">#</a></dt>
 <dd><p>Return <span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln\nu\)</span> = 0 (grey law).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rho</strong> (<cite>~astropy.units.Quantity</cite>) – Mass density.</p></li>
+<li><p><strong>T</strong> (<cite>~astropy.units.Quantity</cite>) – Temperature.</p></li>
+<li><p><strong>nu</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a>, <em>optional</em>) – Ignored; accepted for compatibility with frequency-dependent opacity laws.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Zero, since a grey opacity law does not depend on frequency.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1191,8 +1225,14 @@ override them via the Cython companion object.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rho</strong> (<cite>~astropy.units.Quantity</cite>) – Mass density.</p></li>
 <li><p><strong>T</strong> (<cite>~astropy.units.Quantity</cite>) – Temperature.</p></li>
-<li><p><strong>nu</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">any</span></code>, <em>optional</em>)</p></li>
+<li><p><strong>nu</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a>, <em>optional</em>) – Ignored; accepted for compatibility with frequency-dependent opacity laws.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The logarithmic derivative <span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln \rho\)</span> (dimensionless).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>

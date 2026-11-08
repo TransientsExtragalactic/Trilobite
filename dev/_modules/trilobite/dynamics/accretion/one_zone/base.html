@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -730,6 +747,20 @@
 <span class="sd">    via a **declarative closure pipeline** whose steps are defined by subclass</span>
 <span class="sd">    implementations.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **context_parameters : dict</span>
+<span class="sd">        Context parameters of the disk model, stored verbatim in :attr:`_context_parameters`.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    gP_esDisk :</span>
+<span class="sd">        The canonical concrete implementation of this base class.</span>
+<span class="sd">    OneZoneAccretionResult :</span>
+<span class="sd">        The result container returned by :meth:`solve`.</span>
+<span class="sd">    :ref:`one_zone_disk`, :ref:`one_zone_disk_theory`</span>
+<span class="sd">        Overview and theory of the one-zone accretion disk model.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    **The ODE system**</span>
@@ -789,14 +820,6 @@
 <span class="sd">        print(result.success, result.n_steps)</span>
 <span class="sd">        data = result.data</span>
 <span class="sd">        result.to_hdf5("disk_run.h5", overwrite=True)</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    gP_esDisk :</span>
-<span class="sd">        The canonical concrete implementation of this base class.</span>
-<span class="sd">    OneZoneAccretionResult :</span>
-<span class="sd">        The result container returned by :meth:`solve`.</span>
-<span class="sd">    :ref:`one_zone_disk`, :ref:`one_zone_disk_theory`</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ==================================================== #</span>
@@ -938,17 +961,15 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            ``ClassName(param1=val1, param2=val2, ...)``</span>
+<span class="sd">            The class name followed by the context parameters as keyword arguments.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            $ disk = gP_esDisk(mu=0.62)</span>
 <span class="sd">            $ repr(disk)</span>
 <span class="sd">            'gP_esDisk(mu=0.62)'</span>
-
 <span class="sd">        """</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">!r}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">ctx</span><span class="si">}</span><span class="s2">)"</span>
@@ -973,7 +994,6 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            $ print(disk)</span>
@@ -1385,6 +1405,11 @@
 <span class="sd">            Result containing the raw Cython result array, the processed</span>
 <span class="sd">            runtime parameters, and solver metadata.</span>
 
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        OneZoneAccretionResult :</span>
+<span class="sd">            The object returned by this method.</span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        .. code-block:: python</span>
@@ -1414,11 +1439,6 @@
 <span class="sd">            print(result.success, result.n_steps)</span>
 <span class="sd">            data = result.data</span>
 <span class="sd">            print(data["T_c"][[0, -1]])</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        OneZoneAccretionResult :</span>
-<span class="sd">            The object returned by this method.</span>
 <span class="sd">        """</span>
         <span class="c1"># --- Process time span --- #</span>
         <span class="n">t_start</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">t_span</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"s"</span><span class="p">))</span>
@@ -1667,8 +1687,8 @@
 <span class="sd">        check is reported as a ``(passed, value, note)`` tuple so the caller</span>
 <span class="sd">        can decide how to react.</span>
 
-<span class="sd">        Checks performed</span>
-<span class="sd">        ----------------</span>
+<span class="sd">        .. rubric:: Checks performed</span>
+
 <span class="sd">        - **finite** — every result field is finite and non-NaN.</span>
 <span class="sd">        - **T_c_positive** — midplane temperature is positive.</span>
 <span class="sd">        - **tau_thick** — optical depth :math:`\tau \geq 1` (thick-disk</span>
@@ -1929,8 +1949,8 @@
 <span class="sd">            "disk_run.h5"</span>
 <span class="sd">        )</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
+<span class="sd">    .. rubric:: Attributes</span>
+
 <span class="sd">    model : OneZoneAccretionDiskBase</span>
 <span class="sd">        The disk model instance that produced this result.</span>
 <span class="sd">    result_array : np.ndarray</span>
@@ -1962,6 +1982,7 @@
     <span class="n">_extra_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Validate the result array against the model's declared result fields."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"result_array must be 2-D, got shape </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_array</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
@@ -1971,42 +1992,42 @@
     <span class="c1"># ---------------------------------------------- #</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">t</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Integration times in seconds, shape ``(N,)``."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Integration times in seconds, shape ``(N,)``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_array</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">M_D</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Disk mass :math:`M_D` in grams, shape ``(N,)``."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Disk mass :math:`M_D` in grams, shape ``(N,)``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_array</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">M_D_solar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Disk mass :math:`M_D` in solar masses, shape ``(N,)``."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Disk mass :math:`M_D` in solar masses, shape ``(N,)``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">M_D</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">J_D</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""Disk angular momentum :math:`J_D` in g cm² s⁻¹, shape ``(N,)``."""</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""~astropy.units.Quantity: Disk angular momentum :math:`J_D` in g cm² s⁻¹, shape ``(N,)``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_array</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">t_quantity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Integration times as a unit-bearing Quantity in seconds."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Integration times as a unit-bearing Quantity in seconds."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Number of stored time steps ``N``."""</span>
+<span class="w">        </span><span class="sd">"""int: Number of stored time steps ``N``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">field_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Field names declared in :attr:`~OneZoneAccretionDiskBase.RESULT_FIELDS`."""</span>
+<span class="w">        </span><span class="sd">"""List of str: Field names declared in :attr:`~OneZoneAccretionDiskBase.RESULT_FIELDS`."""</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">RESULT_FIELDS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">derived_field_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Declared field names plus user-added field names, sorted."""</span>
+<span class="w">        </span><span class="sd">"""List of str: Declared field names plus user-added field names, sorted."""</span>
         <span class="n">available</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field_list</span><span class="p">)</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"t"</span><span class="p">,</span> <span class="s2">"M_D"</span><span class="p">,</span> <span class="s2">"J_D"</span><span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">:</span>
             <span class="n">available</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -2095,7 +2116,6 @@
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
 <span class="sd">            Equivalent to :attr:`n_steps`.</span>
-
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span>
 
@@ -2105,7 +2125,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            ``OneZoneAccretionResult(model=..., n_steps=N, success=True/False)``</span>
+<span class="sd">            The model, number of stored steps and success flag.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"OneZoneAccretionResult(model=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">!r}</span><span class="s2">, n_steps=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span><span class="si">}</span><span class="s2">, success=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="si">!r}</span><span class="s2">)"</span>
 
@@ -2120,7 +2140,6 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            print(result)</span>
@@ -2146,7 +2165,19 @@
         <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return ``True`` if *other* is an equivalent result."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return ``True`` if *other* is an equivalent result.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : object</span>
+<span class="sd">            The object to compare with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Whether ``other`` is an equivalent result.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">OneZoneAccretionResult</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -2158,7 +2189,19 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return ``True`` if *key* is present in :attr:`data`."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return ``True`` if *key* is present in :attr:`data`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        key : str</span>
+<span class="sd">            Field name to look for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Whether ``key`` is present in :attr:`data`.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_FieldValue</span><span class="p">:</span>
@@ -2171,7 +2214,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `~astropy.units.Quantity` or `numpy.ndarray`</span>
+<span class="sd">        ~astropy.units.Quantity or ~numpy.ndarray</span>
+<span class="sd">            The requested field.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -2183,7 +2227,14 @@
 <div class="viewcode-block" id="OneZoneAccretionResult.keys">
 <a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.keys.html#trilobite.dynamics.accretion.one_zone.core.OneZoneAccretionResult.keys">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Return all field names present in :attr:`data`, sorted."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return all field names present in :attr:`data`, sorted.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of str</span>
+<span class="sd">            The sorted field names.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
 
 
@@ -2228,6 +2279,12 @@
 <span class="sd">        FileExistsError</span>
 <span class="sd">            If *filename* already exists and ``overwrite=False``.</span>
 
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        from_hdf5 :</span>
+<span class="sd">            Class method to load a result from a file written by this</span>
+<span class="sd">            method.</span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        .. code-block:: python</span>
@@ -2236,12 +2293,6 @@
 
 <span class="sd">            # Overwrite a previous run:</span>
 <span class="sd">            result.to_hdf5("disk_run.h5", overwrite=True)</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        from_hdf5 :</span>
-<span class="sd">            Class method to load a result from a file written by this</span>
-<span class="sd">            method.</span>
 <span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 
@@ -2297,6 +2348,11 @@
 <span class="sd">            If the file's ``"format"`` attribute does not equal</span>
 <span class="sd">            :attr:`FORMAT` (``"OneZoneAccretionResult"``).</span>
 
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        to_hdf5 :</span>
+<span class="sd">            Instance method that writes the file this class method reads.</span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        .. code-block:: python</span>
@@ -2310,11 +2366,6 @@
 <span class="sd">            )</span>
 <span class="sd">            print(loaded.M_D_solar)</span>
 <span class="sd">            data = loaded.data</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        to_hdf5 :</span>
-<span class="sd">            Instance method that writes the file this class method reads.</span>
 <span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 
@@ -2373,8 +2424,10 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        fig : `~matplotlib.figure.Figure`</span>
-<span class="sd">        axes : `numpy.ndarray` of `~matplotlib.axes.Axes`</span>
+<span class="sd">        fig : ~matplotlib.figure.Figure</span>
+<span class="sd">            The figure containing the plot.</span>
+<span class="sd">        axes : ~numpy.ndarray of ~matplotlib.axes.Axes</span>
+<span class="sd">            The axes for disk mass and angular momentum.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -2429,8 +2482,10 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        fig : `~matplotlib.figure.Figure`</span>
-<span class="sd">        ax : `~matplotlib.axes.Axes`</span>
+<span class="sd">        fig : ~matplotlib.figure.Figure</span>
+<span class="sd">            The figure containing the plot.</span>
+<span class="sd">        ax : ~matplotlib.axes.Axes</span>
+<span class="sd">            The axes containing the plot.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -2483,8 +2538,10 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        fig : `~matplotlib.figure.Figure`</span>
-<span class="sd">        axes : `numpy.ndarray` of `~matplotlib.axes.Axes`</span>
+<span class="sd">        fig : ~matplotlib.figure.Figure</span>
+<span class="sd">            The figure containing the plot.</span>
+<span class="sd">        axes : ~numpy.ndarray of ~matplotlib.axes.Axes</span>
+<span class="sd">            The axes, one per field.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -2561,7 +2618,6 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            &gt; result.get_field("T_c")</span>
@@ -2578,7 +2634,19 @@
 <div class="viewcode-block" id="OneZoneAccretionResult.has_field">
 <a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.has_field.html#trilobite.dynamics.accretion.one_zone.core.OneZoneAccretionResult.has_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return ``True`` if *name* is present in :attr:`data`."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return ``True`` if *name* is present in :attr:`data`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Field name to look for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Whether ``name`` is present in :attr:`data`.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
 
 

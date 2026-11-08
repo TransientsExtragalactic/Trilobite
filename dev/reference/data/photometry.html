@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -63,6 +63,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -162,6 +165,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api.html">
     API
   </a>
@@ -171,13 +188,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -304,6 +314,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api.html">
     API
   </a>
@@ -313,13 +337,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -423,10 +440,6 @@
 <li class="toctree-l1"><a class="reference internal" href="filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inference_data.html">Inference Data Containers</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../models/overview.html">Trilobite Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/directory.html">Trilobite Model Directory</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1402,8 +1415,7 @@ observational data and downstream modeling, inference, and visualization
 routines. It supports explicit handling of detections versus non-detections
 (upper limits), optional epoch grouping, and safe conversion to NumPy arrays
 for numerical backends.</p>
-<section id="key-features">
-<h4>Key features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h4>
+<p class="rubric">Key features</p>
 <ul class="simple">
 <li><dl class="simple">
 <dt><strong>Schema enforcement</strong></dt><dd><p>Input tables are validated against a predefined schema specifying required
@@ -1449,9 +1461,7 @@ backends.</p>
 </dl>
 </li>
 </ul>
-</section>
-<section id="intended-use">
-<h4>Intended use<a class="headerlink" href="#intended-use" title="Link to this heading">#</a></h4>
+<p class="rubric">Intended use</p>
 <p>This class is intended to represent <strong>observed radio photometry</strong>, not model
 predictions or simulated data. It deliberately avoids embedding any source-
 specific physical interpretation (e.g., supernovae, jets, or shocks), and
@@ -1462,6 +1472,20 @@ higher-level emission models and inference pipelines.</p>
 - Grouping observations into epochs for joint modeling
 - Passing data to likelihood functions or samplers
 - Quick-look visualization of multi-frequency light curves</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>table</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a>) – The photometry table. It must conform to the container schema.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a></dt><dd><p>Underlying data structure used for storage.</p>
+</dd>
+<dt><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.html#module-trilobite.inference.likelihood" title="trilobite.inference.likelihood"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trilobite.inference.likelihood</span></code></a></dt><dd><p>Likelihood implementations that consume this container.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Notes</p>
 <ul class="simple">
 <li><p>Detection status is inferred from <code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code> being NaN for
@@ -1477,15 +1501,6 @@ the user can specify a <cite>time_starts</cite> parameter, which is subtracted f
 to convert absolute times (e.g. JD) to relative times. This ensures that all internal handling
 of time is consistent and relative, which is important for modeling and inference. If the input table
 already contains relative times, the user can simply omit the <cite>time_starts</cite> parameter.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a></dt><dd><p>Underlying data structure used for storage.</p>
-</dd>
-<dt><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.html#module-trilobite.inference.likelihood" title="trilobite.inference.likelihood"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trilobite.inference.likelihood</span></code></a></dt><dd><p>Likelihood implementations that consume this container.</p>
-</dd>
-</dl>
-</div>
 <dl class="py attribute">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">COLUMNS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[{'description':</span> <span class="pre">'Observation</span> <span class="pre">identifier</span> <span class="pre">(e.g.</span> <span class="pre">telescope</span> <span class="pre">+</span> <span class="pre">epoch).',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'obs_name',</span> <span class="pre">'required':</span> <span class="pre">False},</span> <span class="pre">{'description':</span> <span class="pre">'Measured</span> <span class="pre">flux</span> <span class="pre">density</span> <span class="pre">for</span> <span class="pre">detections.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'flux_density',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;Jy&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'1-Sigma</span> <span class="pre">uncertainty</span> <span class="pre">on</span> <span class="pre">``flux_density``.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'flux_density_error',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;Jy&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'Upper</span> <span class="pre">limit</span> <span class="pre">on</span> <span class="pre">flux</span> <span class="pre">density</span> <span class="pre">for</span> <span class="pre">non-detections.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'flux_upper_limit',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;Jy&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'The</span> <span class="pre">*relative*</span> <span class="pre">time</span> <span class="pre">of</span> <span class="pre">each</span> <span class="pre">data</span> <span class="pre">point.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'time',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;d&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'Total</span> <span class="pre">integration</span> <span class="pre">time</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">observation.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'obs_time',</span> <span class="pre">'required':</span> <span class="pre">False,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;d&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'Central</span> <span class="pre">observing</span> <span class="pre">frequency.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'freq',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;GHz&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'Integer</span> <span class="pre">band</span> <span class="pre">identifier</span> <span class="pre">(instrument-specific).',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'band',</span> <span class="pre">'required':</span> <span class="pre">False},</span> <span class="pre">{'description':</span> <span class="pre">'Free-form</span> <span class="pre">comments</span> <span class="pre">or</span> <span class="pre">metadata.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'comments',</span> <span class="pre">'required':</span> <span class="pre">False},</span> <span class="pre">{'description':</span> <span class="pre">'Integer</span> <span class="pre">epoch</span> <span class="pre">identifier</span> <span class="pre">for</span> <span class="pre">grouping</span> <span class="pre">observations.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'epoch_id',</span> <span class="pre">'required':</span> <span class="pre">False}]</span></span></dt>
@@ -1516,30 +1531,55 @@ they are propagated to the returned container.</p>
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">band</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></dt>
 <dd><p>Return observation band identifiers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">comments</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></dt>
 <dd><p>Return observation comments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">detection_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></dt>
 <dd><p>Boolean mask selecting detections (i.e. non-upper-limits).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">detection_table</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><span class="pre">Table</span></a></span></dt>
 <dd><p>Return a table containing only detections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><em>Table</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">epoch_ids</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></dt>
 <dd><p>Return a copy of the epoch IDs array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1571,24 +1611,44 @@ and returns them as a <a class="reference internal" href="../../_as_gen/trilobit
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux_density</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></dt>
 <dd><p>Return flux densities as an Astropy Quantity array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux_density_error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></dt>
 <dd><p>Return flux density errors as an Astropy Quantity array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux_upper_limit</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></dt>
 <dd><p>Return flux upper limits as an Astropy Quantity array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">freq</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></dt>
 <dd><p>Return observation frequencies as an Astropy Quantity array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1617,7 +1677,7 @@ absolute times to relative times.</p></li>
 </p></li>
 <li><p><strong>internal_time_scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">&quot;utc&quot;</span></code>) – Astropy time scale to use when interpreting absolute times.
 Only used if <code class="docutils literal notranslate"><span class="pre">internal_time_format</span> <span class="pre">!=</span> <span class="pre">&quot;relative&quot;</span></code>.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to <cite>astropy.table.Table.read</cite>.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – Additional keyword arguments to pass to <cite>astropy.table.Table.read</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1724,74 +1784,152 @@ its format and scale are preserved.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">get_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpochContainer.html#trilobite.data.photometry.RadioPhotometryEpochContainer" title="trilobite.data.photometry.RadioPhotometryEpochContainer"><span class="pre">RadioPhotometryEpochContainer</span></a></span></span><a class="reference internal" href="../../_modules/trilobite/data/photometry.html#RadioPhotometryContainer.get_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Return a RadioPhotometryContainer for the specified epoch.</p>
+<span class="sig-name descname"><span class="pre">get_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpoch.html#trilobite.data.photometry.RadioPhotometryEpoch" title="trilobite.data.photometry.RadioPhotometryEpoch"><span class="pre">RadioPhotometryEpoch</span></a></span></span><a class="reference internal" href="../../_modules/trilobite/data/photometry.html#RadioPhotometryContainer.get_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return a RadioPhotometryEpoch for the specified epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>epoch</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Epoch identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Photometry container holding only the observations in <code class="docutils literal notranslate"><span class="pre">epoch</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpoch.html#trilobite.data.photometry.RadioPhotometryEpoch" title="trilobite.data.photometry.RadioPhotometryEpoch"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">get_epoch_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/trilobite/data/photometry.html#RadioPhotometryContainer.get_epoch_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Return a boolean mask selecting observations in the specified epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>epoch</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Epoch identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Boolean mask selecting the observations in <code class="docutils literal notranslate"><span class="pre">epoch</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">get_epoch_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><span class="pre">Table</span></a></span></span><a class="reference internal" href="../../_modules/trilobite/data/photometry.html#RadioPhotometryContainer.get_epoch_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Return a table containing only observations in the specified epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>epoch</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Epoch identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Table containing only the observations in <code class="docutils literal notranslate"><span class="pre">epoch</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_epochs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></dt>
 <dd><p>Return True if epochs have been defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_detections</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></dt>
 <dd><p>Return the number of detections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_epochs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></dt>
 <dd><p>Return the number of unique epochs, or None if epochs are not defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>int</cite> or <cite>None</cite></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_non_detections</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></dt>
 <dd><p>Return the number of non-detections (upper limits).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_obs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></dt>
 <dd><p>Return the number of observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">non_detection_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></dt>
 <dd><p>Boolean mask selecting upper limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">non_detection_table</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><span class="pre">Table</span></a></span></dt>
 <dd><p>Return a table containing only non-detections (upper limits).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><em>Table</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">obs_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></dt>
 <dd><p>Return observation names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">obs_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></dt>
 <dd><p>Return observation durations as an Astropy Quantity array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1813,6 +1951,13 @@ epoch using a single color and adds a single legend entry.</p>
 <li><p><strong>upper_limit_style</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – Matplotlib style kwargs for upper limits.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></a>) – The figure containing the plot.</p></li>
+<li><p><strong>axes</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></a>) – The axes containing the plot.</p></li>
+</ul>
+</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1824,12 +1969,12 @@ epoch using a single color and adds a single legend entry.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.figure.Figure</span></code></a>, <em>optional</em>) – Figure to plot on. If None, a new figure will be created.</p></li>
-<li><p><strong>axes</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code></a>, <em>optional</em>) – Axes to plot on. If None, axes will be created or retrieved from the figure</p></li>
+<li><p><strong>axes</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code></a>, <em>optional</em>) – Axes to plot on. If None, axes will be created or retrieved from the figure.</p></li>
 <li><p><strong>show_upper_limits</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether to show upper limits in the plot. Default is True.</p></li>
 <li><p><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>) – If provided, use this color for all points instead of a colormap.</p></li>
 <li><p><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>) – Colormap to use for coloring points by time. Ignored if <cite>color</cite> is provided.</p></li>
 <li><p><strong>show_colorbar</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether to show a colorbar when using a colormap. Default is True.</p></li>
-<li><p><strong>kwargs</strong> – <p>Additional keyword arguments for customizing the plot appearance.
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – <p>Additional keyword arguments for customizing the plot appearance.
 Supported kwargs include:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">detection_fmt</span></code>: Format string for detection markers (default: ‘o’).</p></li>
@@ -1937,6 +2082,11 @@ same epoch. Must be convertible to the units of the <code class="docutils litera
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></dt>
 <dd><p>Return observation times as an Astropy Quantity array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1947,7 +2097,7 @@ same epoch. Must be convertible to the units of the <code class="docutils litera
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) – The file path where the FITS file will be saved.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to <cite>astropy.table.Table.write</cite>.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – Additional keyword arguments to pass to <cite>astropy.table.Table.write</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1962,8 +2112,7 @@ photometry data and the inference pipeline. It maps table columns
 onto the independent variables and observables expected by the
 supplied model and constructs a fully validated
 <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> instance.</p>
-<section id="default-behavior">
-<h5>Default behavior<a class="headerlink" href="#default-behavior" title="Link to this heading">#</a></h5>
+<p class="rubric">Default behavior</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">variables</span></code> and/or <code class="docutils literal notranslate"><span class="pre">observables</span></code> are not provided, sensible
 defaults are inferred from the model’s declared interface:</p>
 <ul>
@@ -1988,38 +2137,26 @@ censored likelihoods.</p>
 </ul>
 <p>If the model declares multiple observables, the mapping must be
 provided explicitly via the <code class="docutils literal notranslate"><span class="pre">observables</span></code> argument.</p>
-<dl class="field-list">
-<dt class="field-odd">param model<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The model instance for which inference will be performed.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>) – The model instance for which inference will be performed.
 Its declared <code class="docutils literal notranslate"><span class="pre">variable_names</span></code> and <code class="docutils literal notranslate"><span class="pre">observable_names</span></code> are
-used to determine default mappings.</p>
-</dd>
-<dt class="field-even">type model<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
-</dd>
-<dt class="field-odd">param variables<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Mapping from model variable names to table column names.</p>
+used to determine default mappings.</p></li>
+<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>) – <p>Mapping from model variable names to table column names.</p>
 <p>Each key must correspond to a name in
 <code class="docutils literal notranslate"><span class="pre">model.variable_names</span></code>. Each value is a tuple of column names
 in this photometry table used to construct that variable.</p>
 <p>If not provided, defaults are inferred as described above.</p>
-</dd>
-<dt class="field-even">type variables<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em></p>
-</dd>
-<dt class="field-odd">param observables<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Mapping from model observable names to photometry table columns.</p>
+</p></li>
+<li><p><strong>observables</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>) – <p>Mapping from model observable names to photometry table columns.</p>
 <p>Each tuple should follow the convention expected by
 <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_table.html#trilobite.data.core.InferenceData.from_table" title="trilobite.data.core.InferenceData.from_table"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_table()</span></code></a>, typically:</p>
 <p><code class="docutils literal notranslate"><span class="pre">(value_column,</span> <span class="pre">error_column,</span> <span class="pre">upper_column,</span> <span class="pre">lower_column)</span></code></p>
 <p>If not provided and the model declares exactly one observable,
 a default mapping to the flux density columns is inferred.</p>
-</dd>
-<dt class="field-even">type observables<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em></p>
-</dd>
-<dt class="field-odd">param infer_errors<span class="colon">:</span></dt>
-<dd class="field-odd"><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, missing uncertainties for non-detections will be inferred
+</p></li>
+<li><p><strong>infer_errors</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, missing uncertainties for non-detections will be inferred
 from their reported upper limits under the assumption that the upper
 limit corresponds to an <span class="math notranslate nohighlight">\(N\sigma\)</span> detection threshold.</p>
 <p>Specifically, for an upper limit <span class="math notranslate nohighlight">\(F_{\rm upper}\)</span> and detection
@@ -2034,12 +2171,8 @@ Any explicitly provided <code class="docutils literal notranslate"><span class="
 and never overwritten.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">False</span></code> (default), the likelihood will raise an error if
 non-detections lack associated uncertainties.</p>
-</dd>
-<dt class="field-even">type infer_errors<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em></p>
-</dd>
-<dt class="field-odd">param detection_threshold<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The number of standard deviations corresponding to the reported
+</p></li>
+<li><p><strong>detection_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – <p>The number of standard deviations corresponding to the reported
 upper limits when <code class="docutils literal notranslate"><span class="pre">infer_errors=True</span></code>.</p>
 <p>For example, if upper limits are quoted at the 3σ level, set</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">detection_threshold</span> <span class="o">=</span> <span class="mf">3.0</span>
@@ -2049,38 +2182,25 @@ upper limits when <code class="docutils literal notranslate"><span class="pre">i
 <div class="math notranslate nohighlight">
 \[\sigma = \frac{F_{\rm upper}}{\text{detection_threshold}}.\]</div>
 <p>This parameter has no effect unless <code class="docutils literal notranslate"><span class="pre">infer_errors=True</span></code>.</p>
-</dd>
-<dt class="field-even">type detection_threshold<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em></p>
-</dd>
-<dt class="field-odd">param mask<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional boolean mask to apply to the data before conversion. Only rows where
+</p></li>
+<li><p><strong>mask</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <em>optional</em>) – Optional boolean mask to apply to the data before conversion. Only rows where
 the mask is True will be included in the resulting InferenceData. This allows
 users to easily subset the data (e.g. by epoch, frequency, or detection status
-before conversion.</p>
+before conversion.</p></li>
+</ul>
 </dd>
-<dt class="field-even">type mask<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <em>optional</em></p>
-</dd>
-<dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A validated, immutable inference data object ready to be
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A validated, immutable inference data object ready to be
 consumed by a likelihood.</p>
 </dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></p>
 </dd>
-<dt class="field-odd">raises ValueError<span class="colon">:</span></dt>
-<dd class="field-odd"><p>If automatic mapping fails because the model declares unknown
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If automatic mapping fails because the model declares unknown
     variables or multiple observables without explicit mapping.</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>This method does not perform any statistical validation. It
-strictly handles structural mapping between this container and the
-inference interface.</p>
-<p>Advanced workflows may bypass this method and construct
-<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> objects manually via
-<a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_table.html#trilobite.data.core.InferenceData.from_table" title="trilobite.data.core.InferenceData.from_table"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_table()</span></code></a> for full control.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
@@ -2090,10 +2210,15 @@ inference interface.</p>
 </dd>
 </dl>
 </div>
-</section>
+<p class="rubric">Notes</p>
+<p>This method does not perform any statistical validation. It
+strictly handles structural mapping between this container and the
+inference interface.</p>
+<p>Advanced workflows may bypass this method and construct
+<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> objects manually via
+<a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_table.html#trilobite.data.core.InferenceData.from_table" title="trilobite.data.core.InferenceData.from_table"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_table()</span></code></a> for full control.</p>
 </dd></dl>
 
-</section>
 </dd></dl>
 
 </section>
@@ -2119,8 +2244,7 @@ the dependent variable.</p>
 <p>The container inherits from <a class="reference internal" href="../../_as_gen/trilobite.data.core.XYDataContainer.html#trilobite.data.core.XYDataContainer" title="trilobite.data.core.XYDataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">XYDataContainer</span></code></a>, exposing a standardized
 <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y)</span></code> interface with optional uncertainties and censoring while retaining
 domain-specific column semantics relevant to radio astronomy.</p>
-<section id="id2">
-<h3>Key features<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p class="rubric">Key features</p>
 <ul class="simple">
 <li><p><strong>Frequency-domain data</strong>:
 The independent variable is observing frequency (<code class="docutils literal notranslate"><span class="pre">freq</span></code>), exposed via
@@ -2136,9 +2260,7 @@ construction time.</p></li>
 The underlying data table cannot be modified in place. All accessors return
 copies to ensure reproducibility during inference.</p></li>
 </ul>
-</section>
-<section id="id3">
-<h3>Intended use<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p class="rubric">Intended use</p>
 <p>This container is intended to be consumed by likelihood classes that compare
 model-predicted spectra to observed radio photometry, including:</p>
 <ul class="simple">
@@ -2146,18 +2268,6 @@ model-predicted spectra to observed radio photometry, including:</p>
 <li><p>broadband spectral index estimation,</p></li>
 <li><p>forward modeling of physical emission models,</p></li>
 <li><p>inference with censored data (upper limits).</p></li>
-</ul>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>All rows are assumed to correspond to the same observing epoch.
-Time information, if needed, should be handled by a higher-level container
-(e.g., a light curve or epoch-grouping container).</p></li>
-<li><p>Detection status is inferred from finite values in
-<code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code>; rows with finite upper limits are treated as
-non-detections.</p></li>
-<li><p>This class makes no assumptions about the statistical treatment of
-detections or upper limits; such logic is handled entirely by the
-corresponding likelihood.</p></li>
 </ul>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -2170,6 +2280,18 @@ corresponding likelihood.</p></li>
 </dd>
 </dl>
 </div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>All rows are assumed to correspond to the same observing epoch.
+Time information, if needed, should be handled by a higher-level container
+(e.g., a light curve or epoch-grouping container).</p></li>
+<li><p>Detection status is inferred from finite values in
+<code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code>; rows with finite upper limits are treated as
+non-detections.</p></li>
+<li><p>This class makes no assumptions about the statistical treatment of
+detections or upper limits; such logic is handled entirely by the
+corresponding likelihood.</p></li>
+</ul>
 <dl class="py attribute">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">COLUMNS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[{'description':</span> <span class="pre">'Observation</span> <span class="pre">identifier</span> <span class="pre">(e.g.</span> <span class="pre">telescope</span> <span class="pre">+</span> <span class="pre">epoch).',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'obs_name',</span> <span class="pre">'required':</span> <span class="pre">False},</span> <span class="pre">{'description':</span> <span class="pre">'Measured</span> <span class="pre">flux</span> <span class="pre">density</span> <span class="pre">for</span> <span class="pre">detections.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'flux_density',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;Jy&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'1-Sigma</span> <span class="pre">uncertainty</span> <span class="pre">on</span> <span class="pre">``flux_density``.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'flux_density_error',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;Jy&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'Upper</span> <span class="pre">limit</span> <span class="pre">on</span> <span class="pre">flux</span> <span class="pre">density</span> <span class="pre">for</span> <span class="pre">non-detections.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'flux_upper_limit',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;Jy&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'Central</span> <span class="pre">observing</span> <span class="pre">frequency.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'freq',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;GHz&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'Integer</span> <span class="pre">band</span> <span class="pre">identifier</span> <span class="pre">(instrument-specific).',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'band',</span> <span class="pre">'required':</span> <span class="pre">False},</span> <span class="pre">{'description':</span> <span class="pre">'Free-form</span> <span class="pre">comments</span> <span class="pre">or</span> <span class="pre">metadata.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'comments',</span> <span class="pre">'required':</span> <span class="pre">False}]</span></span></dt>
@@ -2235,78 +2357,161 @@ the y-axis upper limit data. This is generally used to indicate non-detections.<
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">detection_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></dt>
 <dd><p>Boolean mask selecting detections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">detection_table</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><span class="pre">Table</span></a></span></dt>
 <dd><p>Return a table containing only detections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><em>Table</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux_density</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></dt>
 <dd><p>Flux density measurements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux_density_error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></dt>
 <dd><p>Flux density uncertainties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux_upper_limit</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></dt>
 <dd><p>Flux density upper limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">freq</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></dt>
 <dd><p>Observing frequency of the light curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/trilobite/data/photometry.html#RadioPhotometryEpoch.from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Construct a <a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpoch.html#trilobite.data.photometry.RadioPhotometryEpoch" title="trilobite.data.photometry.RadioPhotometryEpoch"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code></a> from a file on disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>) – Path to the file to read.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – Additional keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">astropy.table.Table.read</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The constructed epoch.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpoch.html#trilobite.data.photometry.RadioPhotometryEpoch" title="trilobite.data.photometry.RadioPhotometryEpoch"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><span class="pre">Table</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/trilobite/data/photometry.html#RadioPhotometryEpoch.from_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Construct a <a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpoch.html#trilobite.data.photometry.RadioPhotometryEpoch" title="trilobite.data.photometry.RadioPhotometryEpoch"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code></a> from an Astropy table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a>) – The epoch’s photometry table.</p></li>
+<li><p><strong>column_map</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – Mapping from existing column names to the schema’s column names.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The constructed epoch.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpoch.html#trilobite.data.photometry.RadioPhotometryEpoch" title="trilobite.data.photometry.RadioPhotometryEpoch"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_detections</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></dt>
 <dd><p>Return the number of detections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_non_detections</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></dt>
 <dd><p>Return the number of non-detections (upper limits).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_obs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></dt>
 <dd><p>Number of observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">non_detection_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></dt>
 <dd><p>Boolean mask selecting upper limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">non_detection_table</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><span class="pre">Table</span></a></span></dt>
 <dd><p>Return a table containing only non-detections (upper limits).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><em>Table</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2326,6 +2531,13 @@ epoch using a single color and adds a single legend entry.</p>
 <li><p><strong>detection_style</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – Matplotlib style kwargs for detections.</p></li>
 <li><p><strong>upper_limit_style</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – Matplotlib style kwargs for upper limits.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></a>) – The figure containing the plot.</p></li>
+<li><p><strong>axes</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></a>) – The axes containing the plot.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2353,13 +2565,15 @@ upper limits: <span class="math notranslate nohighlight">\(\sigma = F_\mathrm{up
 <li><p><strong>mask</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> of <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Optional row mask applied before building the InferenceData.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The inference dataset built from this epoch.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
-</section>
 </dd></dl>
 
 </section>

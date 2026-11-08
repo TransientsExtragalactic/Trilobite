@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -461,8 +478,7 @@
 <span class="sd">    F_{\rm rad} =</span>
 <span class="sd">        -\frac{4acT^3}{3\kappa_R\rho}\,\nabla T.</span>
 
-<span class="sd">Analytic Opacity Laws</span>
-<span class="sd">---------------------</span>
+<span class="sd">.. rubric:: Analytic Opacity Laws</span>
 
 <span class="sd">Closed-form power-law fits suited for diffusive, fully ionised plasmas.</span>
 <span class="sd">All analytic opacities are Cython-backed for performance.</span>
@@ -492,8 +508,7 @@
 <span class="sd">| :class:`KramersESOpacity`                     | Combined Kramers opacity with electron-scattering floor.     |</span>
 <span class="sd">+-----------------------------------------------+--------------------------------------------------------------+</span>
 
-<span class="sd">Tabulated Opacity Laws</span>
-<span class="sd">----------------------</span>
+<span class="sd">.. rubric:: Tabulated Opacity Laws</span>
 
 <span class="sd">Numerical Rosseland mean tables for arbitrary compositions, including</span>
 <span class="sd">metal-line blanketing that is inaccessible to simple power laws.</span>
@@ -508,7 +523,6 @@
 <span class="sd">|                          | :func:`~trilobite.radiation.opacity.utils.load_opal_opacity`  |</span>
 <span class="sd">|                          | to construct instances from the bundled tables.                 |</span>
 <span class="sd">+--------------------------+-----------------------------------------------------------------+</span>
-
 <span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -543,7 +557,7 @@
 <span class="c1">#  Analytic Rosseland mean opacity laws                            #</span>
 <span class="c1"># ================================================================ #</span>
 <div class="viewcode-block" id="ElectronScatteringOpacity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity.html#trilobite.radiation.opacity.ElectronScatteringOpacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ElectronScatteringOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Thomson electron-scattering opacity.</span>
 
@@ -576,7 +590,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    ~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity : Generic constant opacity without</span>
+<span class="sd">    :obj:`~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity` : Generic constant opacity without</span>
 <span class="sd">     the electron-scattering context.</span>
 <span class="sd">    KramersESOpacity : Adds a :math:`\rho T^{-3.5}` Kramers term on top of this floor.</span>
 <span class="sd">    OPALOpacity : Tabulated opacity that includes Thomson scattering automatically.</span>
@@ -609,6 +623,14 @@
     <span class="n">kappa_es</span><span class="p">:</span> <span class="nb">float</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa_es</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.34</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Initialize the opacity law.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kappa_es : float, optional</span>
+<span class="sd">            Thomson opacity in :math:`\mathrm{cm^2\,g^{-1}}`. Default ``0.34`` (solar composition, :math:`X = 0.70`).</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_es</span> <span class="o">=</span> <span class="n">kappa_es</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span>
 
@@ -623,7 +645,7 @@
 
 
 <div class="viewcode-block" id="KramersFFOpacity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html#trilobite.radiation.opacity.KramersFFOpacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KramersFFOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Free-free (bremsstrahlung) Kramers opacity.</span>
 
@@ -681,6 +703,15 @@
     <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">"rosseland"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_FF_0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Initialize the opacity law.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kappa0 : float, optional</span>
+<span class="sd">            Free-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``3.68e22`` (solar composition,</span>
+<span class="sd">            :math:`X = 0.70`, no Gaunt-factor correction; :footcite:t:`Rybicki1986`).</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">)</span>
 
@@ -693,7 +724,7 @@
 
 
 <div class="viewcode-block" id="KramersBFOpacity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity.html#trilobite.radiation.opacity.KramersBFOpacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KramersBFOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Bound-free (photoionisation) Kramers opacity.</span>
 
@@ -749,6 +780,15 @@
     <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">"rosseland"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_BF_0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Initialize the opacity law.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kappa0 : float, optional</span>
+<span class="sd">            Bound-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``4.34e25`` (solar</span>
+<span class="sd">            composition, :math:`X = 0.70`, :math:`Z = 0.02`, no Gaunt-factor correction; :footcite:t:`Rybicki1986`).</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">)</span>
 
@@ -761,7 +801,7 @@
 
 
 <div class="viewcode-block" id="KramersOpacity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html#trilobite.radiation.opacity.KramersOpacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KramersOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Combined free-free and bound-free Kramers opacity.</span>
 
@@ -819,6 +859,15 @@
     <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">"rosseland"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_KR_0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Initialize the opacity law.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kappa0 : float, optional</span>
+<span class="sd">            Combined normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``4.38e25`` (:math:`\kappa_{\rm</span>
+<span class="sd">            ff,0} + \kappa_{\rm bf,0}`, solar composition; :footcite:t:`Rybicki1986`).</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">)</span>
 
@@ -831,7 +880,7 @@
 
 
 <div class="viewcode-block" id="KramersFFESOpacity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html#trilobite.radiation.opacity.KramersFFESOpacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KramersFFESOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Free-free Kramers opacity with an electron-scattering floor.</span>
 
@@ -891,6 +940,18 @@
     <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">"rosseland"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_FF_0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.34</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Initialize the opacity law.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kappa0 : float, optional</span>
+<span class="sd">            Free-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``3.68e22`` (solar composition,</span>
+<span class="sd">            :math:`X = 0.70`).</span>
+<span class="sd">        kappa_es : float, optional</span>
+<span class="sd">            Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`. Default ``0.34`` (solar composition, fully</span>
+<span class="sd">            ionised).</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_es</span> <span class="o">=</span> <span class="n">kappa_es</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span>
@@ -903,7 +964,7 @@
 
 
 <div class="viewcode-block" id="KramersBFESOpacity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity.html#trilobite.radiation.opacity.KramersBFESOpacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KramersBFESOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Bound-free Kramers opacity with an electron-scattering floor.</span>
 
@@ -964,6 +1025,18 @@
     <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">"rosseland"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_BF_0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.34</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Initialize the opacity law.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kappa0 : float, optional</span>
+<span class="sd">            Bound-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``4.34e25`` (solar</span>
+<span class="sd">            composition, :math:`X = 0.70`, :math:`Z = 0.02`).</span>
+<span class="sd">        kappa_es : float, optional</span>
+<span class="sd">            Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`. Default ``0.34`` (solar composition, fully</span>
+<span class="sd">            ionised).</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_es</span> <span class="o">=</span> <span class="n">kappa_es</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span>
@@ -976,7 +1049,7 @@
 
 
 <div class="viewcode-block" id="KramersESOpacity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity.html#trilobite.radiation.opacity.KramersESOpacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KramersESOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Combined Kramers opacity with an electron-scattering floor.</span>
 
@@ -1039,6 +1112,18 @@
     <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">"rosseland"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_KR_0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.34</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Initialize the opacity law.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kappa0 : float, optional</span>
+<span class="sd">            Combined Kramers normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``4.38e25``</span>
+<span class="sd">            (:math:`\kappa_{\rm ff,0} + \kappa_{\rm bf,0}`, solar composition).</span>
+<span class="sd">        kappa_es : float, optional</span>
+<span class="sd">            Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`. Default ``0.34`` (solar composition,</span>
+<span class="sd">            :math:`X = 0.70`, fully ionised).</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_es</span> <span class="o">=</span> <span class="n">kappa_es</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span>
@@ -1059,7 +1144,7 @@
 
 
 <div class="viewcode-block" id="OPALOpacity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OPALOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Rosseland mean opacity from bilinear interpolation on a 2-D OPAL table.</span>
 
@@ -1101,7 +1186,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    ~trilobite.radiation.opacity.utils.load_opal_opacity : Convenience loader for the bundled table.</span>
+<span class="sd">    :obj:`~trilobite.radiation.opacity.utils.load_opal_opacity` : Convenience loader for the bundled table.</span>
 <span class="sd">    KramersESOpacity : Analytic alternative for rough estimates.</span>
 
 <span class="sd">    Examples</span>
@@ -1166,7 +1251,7 @@
         <span class="k">return</span> <span class="n">ns</span>
 
 <div class="viewcode-block" id="OPALOpacity.get_tables">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity.get_tables">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.get_tables.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.get_tables">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_tables</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"SimpleNamespace"</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Return the full OPAL table set, loading from disk on first call.</span>
@@ -1199,7 +1284,7 @@
 
 
 <div class="viewcode-block" id="OPALOpacity.find">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity.find">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.find.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.find">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">table_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Return the unique composition index matching *(X, Z)*.</span>
@@ -1245,7 +1330,7 @@
 
 
 <div class="viewcode-block" id="OPALOpacity.where">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity.where">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.where.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.where">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">where</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">table_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">conditions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Return indices of tables satisfying all composition conditions.</span>
@@ -1309,6 +1394,21 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">out_of_bounds</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"raise"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Initialize the opacity law.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        grid_T : ~numpy.ndarray</span>
+<span class="sd">            :math:`\log_{10}(T\,[\mathrm{K}])` grid values (strictly increasing).</span>
+<span class="sd">        grid_R : ~numpy.ndarray</span>
+<span class="sd">            :math:`\log_{10}(R)` grid values (strictly increasing).</span>
+<span class="sd">        kappa : ~numpy.ndarray</span>
+<span class="sd">            :math:`\log_{10}(\kappa\,[\mathrm{cm^2\,g^{-1}}])`. ``NaN`` marks out-of-range cells.</span>
+<span class="sd">        out_of_bounds : {'raise', 'clamp', 'nan'}, optional</span>
+<span class="sd">            Behaviour when a query :math:`(T, \rho)` falls outside the table grid or lands on a NaN-flagged cell.</span>
+<span class="sd">            Default ``'raise'``.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">out_of_bounds</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_OOB_MODES</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"out_of_bounds must be one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">_OOB_MODES</span><span class="p">)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">out_of_bounds</span><span class="si">!r}</span><span class="s2">."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_of_bounds</span> <span class="o">=</span> <span class="n">out_of_bounds</span>
@@ -1325,7 +1425,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OPALOpacity.load_default">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity.load_default">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.load_default.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.load_default">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_default</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1354,7 +1454,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        OPALOpacity</span>
+<span class="sd">        ~trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity</span>
+<span class="sd">            The opacity law built from the bundled OPAL table.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1409,7 +1510,7 @@
     <span class="c1"># ------------------------------------------------------------------ #</span>
 
 <div class="viewcode-block" id="OPALOpacity.read_from_opal_txt">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity.read_from_opal_txt">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.read_from_opal_txt.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.read_from_opal_txt">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_from_opal_txt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">txt_path</span><span class="p">,</span> <span class="n">h5_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""Parse an OPAL fixed-width text file and write it to HDF5.</span>
@@ -1542,6 +1643,14 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return an unambiguous representation of the opacity law.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The class name with the table dimensions and composition.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"OPALOpacity(out_of_bounds=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">out_of_bounds</span><span class="si">!r}</span><span class="s2">)"</span></div>
 
 </pre></div>

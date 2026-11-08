@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -63,6 +63,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../_static/logo.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -162,6 +165,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api.html">
     API
   </a>
@@ -171,13 +188,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -304,6 +314,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api.html">
     API
   </a>
@@ -313,13 +337,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -423,10 +440,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/inference_data.html">Inference Data Containers</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../reference/models/overview.html">Trilobite Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/models/directory.html">Trilobite Model Directory</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../reference/inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1141,16 +1154,18 @@ CGS) and exposes derived quantities via the <a class="reference internal" href="
 <span class="p">)</span>
 </pre></div>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html#trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneZoneAccretionDiskBase</span></code></a>) – The disk model instance that produced this result.</p></li>
-<li><p><strong>result_array</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Raw Cython result array, shape <code class="docutils literal notranslate"><span class="pre">(n_result_fields,</span> <span class="pre">N)</span></code>, linear CGS.</p></li>
-<li><p><strong>run_params</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – Processed runtime parameters as returned by
-<a class="reference internal" href="trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html#trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.process_runtime_parameters" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.process_runtime_parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">process_runtime_parameters()</span></code></a>.</p></li>
-<li><p><strong>success</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether the integration completed successfully.</p></li>
-<li><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Integrator status message.</p></li>
-</ul>
+<p class="rubric">Attributes</p>
+<dl class="simple">
+<dt>model<span class="classifier">OneZoneAccretionDiskBase</span></dt><dd><p>The disk model instance that produced this result.</p>
+</dd>
+<dt>result_array<span class="classifier">np.ndarray</span></dt><dd><p>Raw Cython result array, shape <code class="docutils literal notranslate"><span class="pre">(n_result_fields,</span> <span class="pre">N)</span></code>, linear CGS.</p>
+</dd>
+<dt>run_params<span class="classifier">dict</span></dt><dd><p>Processed runtime parameters as returned by
+<a class="reference internal" href="trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html#trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.process_runtime_parameters" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.process_runtime_parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">process_runtime_parameters()</span></code></a>.</p>
+</dd>
+<dt>success<span class="classifier">bool</span></dt><dd><p>Whether the integration completed successfully.</p>
+</dd>
+<dt>message<span class="classifier">str</span></dt><dd><p>Integrator status message.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -1287,18 +1302,33 @@ CGS) and exposes derived quantities via the <a class="reference internal" href="
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.J_D">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">J_D</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.J_D" title="Link to this definition">#</a></dt>
 <dd><p>Disk angular momentum <span class="math notranslate nohighlight">\(J_D\)</span> in g cm² s⁻¹, shape <code class="docutils literal notranslate"><span class="pre">(N,)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.M_D">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">M_D</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.M_D" title="Link to this definition">#</a></dt>
 <dd><p>Disk mass <span class="math notranslate nohighlight">\(M_D\)</span> in grams, shape <code class="docutils literal notranslate"><span class="pre">(N,)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.M_D_solar">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">M_D_solar</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.M_D_solar" title="Link to this definition">#</a></dt>
 <dd><p>Disk mass <span class="math notranslate nohighlight">\(M_D\)</span> in solar masses, shape <code class="docutils literal notranslate"><span class="pre">(N,)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1669,12 +1699,22 @@ user-added fields.</p>
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.derived_field_list">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">derived_field_list</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.derived_field_list" title="Link to this definition">#</a></dt>
 <dd><p>Declared field names plus user-added field names, sorted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.field_list">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">field_list</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.field_list" title="Link to this definition">#</a></dt>
 <dd><p>Field names declared in <a class="reference internal" href="trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html#trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.RESULT_FIELDS" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.RESULT_FIELDS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RESULT_FIELDS</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -1718,6 +1758,13 @@ restored.</p>
     <code class="xref py py-attr docutils literal notranslate"><span class="pre">FORMAT</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;OneZoneAccretionResult&quot;</span></code>).</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.to_hdf5" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.to_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_hdf5</span></code></a></dt><dd><p>Instance method that writes the file this class method reads.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">OneZoneAccretionResult</span><span class="p">,</span>
@@ -1729,13 +1776,6 @@ restored.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">loaded</span><span class="o">.</span><span class="n">M_D_solar</span><span class="p">)</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">loaded</span><span class="o">.</span><span class="n">data</span>
 </pre></div>
-</div>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.to_hdf5" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.to_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_hdf5</span></code></a></dt><dd><p>Instance method that writes the file this class method reads.</p>
-</dd>
-</dl>
 </div>
 </dd></dl>
 
@@ -1775,7 +1815,7 @@ declared.</p>
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.get_field_interpolator">
 <span class="sig-name descname"><span class="pre">get_field_interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/trilobite/dynamics/accretion/one_zone/base.html#OneZoneAccretionResult.get_field_interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.get_field_interpolator" title="Link to this definition">#</a></dt>
 <dd><p>Return a cubic spline interpolator for a result field as a function of time.</p>
-<p>Builds an <code class="xref py py-class docutils literal notranslate"><span class="pre">InterpolatedUnivariateSpline</span></code>
+<p>Builds an <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.InterpolatedUnivariateSpline.html#scipy.interpolate.InterpolatedUnivariateSpline" title="(in SciPy v1.18.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">InterpolatedUnivariateSpline</span></code></a>
 (default <code class="docutils literal notranslate"><span class="pre">k=3</span></code>, <code class="docutils literal notranslate"><span class="pre">ext=2</span></code>) on the stored time grid.  The returned
 callable accepts time in seconds and returns raw float values (units
 must be looked up separately from
@@ -1790,7 +1830,7 @@ boundary value.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>field_name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of a field in <a class="reference internal" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.data" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> (<code class="docutils literal notranslate"><span class="pre">&quot;t&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;M_D&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;J_D&quot;</span></code>,
 or any <a class="reference internal" href="trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html#trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.RESULT_FIELDS" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.RESULT_FIELDS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RESULT_FIELDS</span></code></a> key).</p></li>
-<li><p><strong>**kwargs</strong> – Forwarded to <code class="xref py py-class docutils literal notranslate"><span class="pre">InterpolatedUnivariateSpline</span></code>
+<li><p><strong>**kwargs</strong> – Forwarded to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.InterpolatedUnivariateSpline.html#scipy.interpolate.InterpolatedUnivariateSpline" title="(in SciPy v1.18.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">InterpolatedUnivariateSpline</span></code></a>
 (e.g. <code class="docutils literal notranslate"><span class="pre">k=1</span></code> for linear interpolation, <code class="docutils literal notranslate"><span class="pre">ext=0</span></code> to allow
 extrapolation beyond the simulation time range).</p></li>
 </ul>
@@ -1821,6 +1861,17 @@ extrapolation beyond the simulation time range).</p></li>
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.has_field">
 <span class="sig-name descname"><span class="pre">has_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/trilobite/dynamics/accretion/one_zone/base.html#OneZoneAccretionResult.has_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.has_field" title="Link to this definition">#</a></dt>
 <dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if <em>name</em> is present in <a class="reference internal" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.data" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Field name to look for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Whether <code class="docutils literal notranslate"><span class="pre">name</span></code> is present in <a class="reference internal" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.data" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -1890,12 +1941,25 @@ them in <a class="reference internal" href="trilobite.dynamics.accretion.one_zon
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.keys">
 <span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/trilobite/dynamics/accretion/one_zone/base.html#OneZoneAccretionResult.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.keys" title="Link to this definition">#</a></dt>
 <dd><p>Return all field names present in <a class="reference internal" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.data" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>, sorted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The sorted field names.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.n_steps">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_steps</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.n_steps" title="Link to this definition">#</a></dt>
 <dd><p>Number of stored time steps <code class="docutils literal notranslate"><span class="pre">N</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1915,8 +1979,8 @@ created from <em>fig</em>.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>fig</strong> (<cite>~matplotlib.figure.Figure</cite>)</p></li>
-<li><p><strong>axes</strong> (<cite>numpy.ndarray</cite> of <cite>~matplotlib.axes.Axes</cite>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></a>) – The figure containing the plot.</p></li>
+<li><p><strong>axes</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></a>) – The axes, one per field.</p></li>
 </ul>
 </p>
 </dd>
@@ -1948,8 +2012,8 @@ built-in state keys <code class="docutils literal notranslate"><span class="pre"
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>fig</strong> (<cite>~matplotlib.figure.Figure</cite>)</p></li>
-<li><p><strong>ax</strong> (<cite>~matplotlib.axes.Axes</cite>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></a>) – The figure containing the plot.</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></a>) – The axes containing the plot.</p></li>
 </ul>
 </p>
 </dd>
@@ -1981,8 +2045,8 @@ are created from <em>fig</em>.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>fig</strong> (<cite>~matplotlib.figure.Figure</cite>)</p></li>
-<li><p><strong>axes</strong> (<cite>numpy.ndarray</cite> of <cite>~matplotlib.axes.Axes</cite>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></a>) – The figure containing the plot.</p></li>
+<li><p><strong>axes</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></a>) – The axes for disk mass and angular momentum.</p></li>
 </ul>
 </p>
 </dd>
@@ -2016,12 +2080,22 @@ protected field from <code class="docutils literal notranslate"><span class="pre
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.t">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">t</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.t" title="Link to this definition">#</a></dt>
 <dd><p>Integration times in seconds, shape <code class="docutils literal notranslate"><span class="pre">(N,)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.t_quantity">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">t_quantity</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.t_quantity" title="Link to this definition">#</a></dt>
 <dd><p>Integration times as a unit-bearing Quantity in seconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><em>Quantity</em></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2072,19 +2146,19 @@ already exist.</p></li>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#FileExistsError" title="(in Python v3.15)"><strong>FileExistsError</strong></a> – If <em>filename</em> already exists and <code class="docutils literal notranslate"><span class="pre">overwrite=False</span></code>.</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s2">"disk_run.h5"</span><span class="p">)</span>
-
-<span class="c1"># Overwrite a previous run:</span>
-<span class="n">result</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s2">"disk_run.h5"</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
 <dt><a class="reference internal" href="#trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.from_hdf5" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.from_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_hdf5</span></code></a></dt><dd><p>Class method to load a result from a file written by this method.</p>
 </dd>
 </dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s2">"disk_run.h5"</span><span class="p">)</span>
+
+<span class="c1"># Overwrite a previous run:</span>
+<span class="n">result</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s2">"disk_run.h5"</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
 </div>
 </dd></dl>
 

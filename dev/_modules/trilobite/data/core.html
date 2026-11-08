@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -483,7 +500,7 @@
 <span class="c1"># Base Data Container</span>
 <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="DataContainer">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.html#trilobite.data.photometry.DataContainer">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.html#trilobite.data.light_curve.DataContainer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DataContainer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Abstract base class for validated, immutable data containers in Trilobite.</span>
@@ -512,8 +529,8 @@
 <span class="sd">    domain-specific preprocessing (e.g., detection logic, epoch grouping, masking,</span>
 <span class="sd">    or derived quantities).</span>
 
-<span class="sd">    Design principles</span>
-<span class="sd">    -----------------</span>
+<span class="sd">    .. rubric:: Design principles</span>
+
 <span class="sd">    - **Schema-driven**:</span>
 <span class="sd">      Each subclass declares a formal column schema describing required and optional</span>
 <span class="sd">      columns, expected dtypes, and physical units. Validation occurs eagerly at</span>
@@ -531,8 +548,8 @@
 <span class="sd">      Containers support NumPy coercion (``np.asarray(container)``) and explicit CGS</span>
 <span class="sd">      conversion via :meth:`to_cgs_array` for efficient numerical evaluation.</span>
 
-<span class="sd">    Role in the Trilobite pipeline</span>
-<span class="sd">    --------------------------------</span>
+<span class="sd">    .. rubric:: Role in the Trilobite pipeline</span>
+
 <span class="sd">    DataContainer objects are typically consumed by likelihood classes, which</span>
 <span class="sd">    define how model predictions are statistically compared to data. Models and</span>
 <span class="sd">    samplers **never interact with raw tables directly**—all data access flows</span>
@@ -542,13 +559,12 @@
 <span class="sd">    (e.g., photometry, spectra, time series, generic ``(x, y)`` datasets) while</span>
 <span class="sd">    maintaining a consistent and robust inference API.</span>
 
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    - This class is abstract and cannot be instantiated directly.</span>
-<span class="sd">    - Subclasses should call ``super().__init__`` to ensure schema validation.</span>
-<span class="sd">    - Equality comparisons compare the underlying tables.</span>
-<span class="sd">    - This class deliberately does **not** subclass :class:`astropy.table.Table`</span>
-<span class="sd">      in order to strictly control mutability and invariants.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table : ~astropy.table.Table</span>
+<span class="sd">        The data table to be contained. It must conform to the schema defined in :attr:`COLUMNS`.</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Additional keyword arguments for subclass-specific configuration.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -556,6 +572,14 @@
 <span class="sd">        Likelihood classes that consume DataContainer instances.</span>
 <span class="sd">    astropy.table.Table</span>
 <span class="sd">        Underlying data structure used for storage.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This class is abstract and cannot be instantiated directly.</span>
+<span class="sd">    - Subclasses should call ``super().__init__`` to ensure schema validation.</span>
+<span class="sd">    - Equality comparisons compare the underlying tables.</span>
+<span class="sd">    - This class deliberately does **not** subclass :class:`astropy.table.Table`</span>
+<span class="sd">      in order to strictly control mutability and invariants.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ========================= SCHEMA DEFINITION ========================= #</span>
@@ -602,10 +626,10 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        table: ~astropy.table.Table</span>
+<span class="sd">        table : ~astropy.table.Table</span>
 <span class="sd">            The data table to be contained. This must conform to the schema defined in the</span>
 <span class="sd">            :attr:`COLUMNS`` class attribute.</span>
-<span class="sd">        kwargs:</span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">            Additional keyword arguments for subclass-specific configuration.</span>
 <span class="sd">        """</span>
         <span class="c1"># Assign the table to the data class.</span>
@@ -709,9 +733,30 @@
     <span class="n">__array_priority__</span> <span class="o">=</span> <span class="mi">1000</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the number of rows in the container.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of rows in the underlying table.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a copy of a column, row or slice of the underlying table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item : str or int or slice or ~numpy.ndarray</span>
+<span class="sd">            Column name, row index, slice or mask selecting the part of the table to return.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~astropy.table.Table or ~astropy.table.Column</span>
+<span class="sd">            A copy of the selected part of the table.</span>
+<span class="sd">        """</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -719,21 +764,79 @@
             <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Iterate over the rows of a copy of the underlying table.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        iterator</span>
+<span class="sd">            An iterator over the table rows.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the string form of the underlying table.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The formatted table.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a short representation giving the class name and the number of observations.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The representation string.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> n_obs=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check whether a column name is present in the table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item : str</span>
+<span class="sd">            The column name to look for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            ``True`` if ``item`` is a column of the table.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check whether the container holds any rows.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            ``True`` if the container is non-empty.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compare this container with another container of the same class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : object</span>
+<span class="sd">            The object to compare with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool or NotImplemented</span>
+<span class="sd">            Whether the underlying tables are equal, or ``NotImplemented`` if ``other`` is of a different class.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">__table__</span>
@@ -789,7 +892,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Return a copy of the underlying Astropy table.</span>
+<span class="sd">        ~astropy.table.Table: Return a copy of the underlying Astropy table.</span>
 
 <span class="sd">        This prevents mutation of the internal container state.</span>
 <span class="sd">        """</span>
@@ -814,14 +917,21 @@
         <span class="k">return</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="DataContainer.copy">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.copy.html#trilobite.data.photometry.DataContainer.copy">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.copy.html#trilobite.data.light_curve.DataContainer.copy">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Create a copy of this container."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Create a copy of this container.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.core.DataContainer</span>
+<span class="sd">            A new container of the same class holding a copy of the table.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_copy_kwargs</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="DataContainer.apply_mask">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.apply_mask.html#trilobite.data.photometry.DataContainer.apply_mask">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.apply_mask.html#trilobite.data.light_curve.DataContainer.apply_mask">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">apply_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"DataContainer"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return a new container containing only the rows selected by *mask*.</span>
 
@@ -856,7 +966,7 @@
 
 
 <div class="viewcode-block" id="DataContainer.to_cgs_array">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.to_cgs_array.html#trilobite.data.photometry.DataContainer.to_cgs_array">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.to_cgs_array.html#trilobite.data.light_curve.DataContainer.to_cgs_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_cgs_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Convert the container to a NumPy array, converted to CGS base units.</span>
@@ -901,7 +1011,7 @@
 
 
 <div class="viewcode-block" id="DataContainer.from_table">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.from_table.html#trilobite.data.photometry.DataContainer.from_table">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.from_table.html#trilobite.data.light_curve.DataContainer.from_table">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_table</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -914,7 +1024,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        table : ~astropy.table.Table</span>
 <span class="sd">            The input table containing the data.</span>
-<span class="sd">        kwargs:</span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">            Additional keyword arguments for subclass-specific configuration.</span>
 
 <span class="sd">        Returns</span>
@@ -926,7 +1036,7 @@
 
 
 <div class="viewcode-block" id="DataContainer.from_file">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.from_file.html#trilobite.data.photometry.DataContainer.from_file">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.from_file.html#trilobite.data.light_curve.DataContainer.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">read_kws</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -938,8 +1048,8 @@
 <span class="sd">            The file path to the FITS file containing the data.</span>
 <span class="sd">        read_kws : dict</span>
 <span class="sd">            Additional keyword arguments to pass to ``astropy.table.Table.read()``.</span>
-<span class="sd">        kwargs:</span>
-<span class="sd">            Additional keyword arguments to pass to :meth:`from_table`.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments passed to :meth:`from_table`.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -956,7 +1066,7 @@
 
 
 <div class="viewcode-block" id="DataContainer.to_file">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.to_file.html#trilobite.data.photometry.DataContainer.to_file">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.to_file.html#trilobite.data.light_curve.DataContainer.to_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">write_kws</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Write the RadioPhotometryContainer's table to a file.</span>
@@ -967,8 +1077,8 @@
 <span class="sd">            The file path where the FITS file will be saved.</span>
 <span class="sd">        write_kws : dict</span>
 <span class="sd">            Additional keyword arguments to pass to ``astropy.table.Table.write()``.</span>
-<span class="sd">        **kwargs:</span>
-<span class="sd">            Additional keyword arguments to be used in subclasses.</span>
+<span class="sd">        **_ : dict</span>
+<span class="sd">            Ignored; accepted so that subclasses can take additional keyword arguments.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">write_kws</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">write_kws</span> <span class="o">=</span> <span class="p">{}</span>
@@ -979,7 +1089,7 @@
     <span class="c1"># Converter Methods</span>
     <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="DataContainer.to_inference_data">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.to_inference_data.html#trilobite.data.photometry.DataContainer.to_inference_data">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.DataContainer.to_inference_data.html#trilobite.data.light_curve.DataContainer.to_inference_data">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_inference_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="s2">"Model"</span><span class="p">,</span>
@@ -1014,7 +1124,6 @@
 <span class="sd">            - Required independent variable names</span>
 <span class="sd">            - Required observable names</span>
 <span class="sd">            - Expected units for each quantity</span>
-
 <span class="sd">        variables : dict[str, tuple[str, ...]] or str, optional</span>
 <span class="sd">            Manual overrides for independent variable column resolution.</span>
 
@@ -1028,13 +1137,14 @@
 
 <span class="sd">            If not provided, default column names are assumed to match</span>
 <span class="sd">            the model variable names directly.</span>
-
 <span class="sd">        observables : dict[str, tuple[str, ...]] or str, optional</span>
 <span class="sd">            Manual overrides for observable column resolution.</span>
 
 <span class="sd">            Keys must match model observable names.</span>
 
 <span class="sd">            Same tuple formats as ``variables``.</span>
+<span class="sd">        **_ : dict</span>
+<span class="sd">            Ignored; accepted so that subclasses can take additional keyword arguments.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1049,19 +1159,19 @@
 <span class="sd">        ~astropy.units.UnitsError</span>
 <span class="sd">            If table column units cannot be coerced to model-declared units.</span>
 
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        - No transformations (e.g., log-scaling) are applied.</span>
-<span class="sd">        - No statistical assumptions are imposed.</span>
-<span class="sd">        - All validation logic is centralized in :class:`InferenceData`.</span>
-<span class="sd">        - This method is intentionally thin and deterministic.</span>
-
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        InferenceData.from_table :</span>
 <span class="sd">            Lower-level table ingestion logic.</span>
 <span class="sd">        InferenceData.from_arrays :</span>
 <span class="sd">            Direct array-based ingestion.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - No transformations (e.g., log-scaling) are applied.</span>
+<span class="sd">        - No statistical assumptions are imposed.</span>
+<span class="sd">        - All validation logic is centralized in :class:`InferenceData`.</span>
+<span class="sd">        - This method is intentionally thin and deterministic.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
@@ -1077,7 +1187,7 @@
 <span class="c1"># Inference Data Structures</span>
 <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="Observable">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.Observable.html#trilobite.data.photometry.Observable">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.Observable.html#trilobite.data.light_curve.Observable">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Observable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
@@ -1096,8 +1206,8 @@
 <span class="sd">    interpret the data according to the needs of the problem at hand while</span>
 <span class="sd">    being agnostic about the physical meaning of the observable.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
+<span class="sd">    .. rubric:: Attributes</span>
+
 <span class="sd">    value : np.ndarray</span>
 <span class="sd">        Measured values of the observable. This should be provided</span>
 <span class="sd">        as a ``(n,)`` array where ``n`` is the number of observations.</span>
@@ -1129,6 +1239,7 @@
     <span class="c1"># resulting object is correctly generated and does not</span>
     <span class="c1"># have any foundational issues.</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Validate the arrays and coerce them to a consistent form."""</span>
         <span class="c1"># Coerce the input object to an array so that we</span>
         <span class="c1"># are guaranteed to have a consistent interface for the rest of the code.</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -1187,9 +1298,25 @@
     <span class="n">__array_priority__</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># ensure numpy defers properly</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a short representation of the observable.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The representation string.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;Observable shape=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> error=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_error</span><span class="si">}</span><span class="s2"> censoring=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_censoring</span><span class="si">}</span><span class="s2">&gt;"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a readable summary of the observable.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The number of points and the error and censoring flags.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">"Observable(n=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">, "</span>
             <span class="sa">f</span><span class="s2">"error=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_error</span><span class="si">}</span><span class="s2">, "</span>
@@ -1198,10 +1325,25 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the number of observations.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of observations.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Truthiness defined as non-empty."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Truthiness defined as non-empty.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            ``True`` if the observable contains at least one point.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__array__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -1210,13 +1352,30 @@
 
 <span class="sd">        This allows:</span>
 <span class="sd">            np.asarray(observable)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dtype : ~numpy.dtype, optional</span>
+<span class="sd">            Requested dtype of the returned array.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~numpy.ndarray</span>
+<span class="sd">            The observable values.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Iterate over values."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Iterate over values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        iterator</span>
+<span class="sd">            An iterator over the observable values.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
@@ -1224,6 +1383,16 @@
 <span class="sd">        Return a sliced Observable.</span>
 
 <span class="sd">        This preserves error and censoring information.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item : int or slice or ~numpy.ndarray</span>
+<span class="sd">            Index, slice or mask selecting the points to keep.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.core.Observable</span>
+<span class="sd">            A new observable restricted to the selected points.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">Observable</span><span class="p">(</span>
             <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">item</span><span class="p">],</span>
@@ -1233,6 +1402,19 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compare this observable with another one.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : object</span>
+<span class="sd">            The object to compare with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool or NotImplemented</span>
+<span class="sd">            Whether all arrays are equal, or ``NotImplemented`` if ``other`` is not an observable.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Observable</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
@@ -1255,14 +1437,14 @@
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">upper_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Boolean mask of upper-censored points."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray or None: Boolean mask of upper-censored points."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">lower_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Boolean mask of lower-censored points."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray or None: Boolean mask of lower-censored points."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
@@ -1272,38 +1454,38 @@
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Shape of the observable."""</span>
+<span class="w">        </span><span class="sd">"""Tuple of int: Shape of the observable."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Number of observations."""</span>
+<span class="w">        </span><span class="sd">"""int: Number of observations."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">size</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""True if uncertainties are provided."""</span>
+<span class="w">        </span><span class="sd">"""bool: True if uncertainties are provided."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_upper_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""True if any upper-censored points exist."""</span>
+<span class="w">        </span><span class="sd">"""bool: True if any upper-censored points exist."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper_mask</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_lower_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""True if any lower-censored points exist."""</span>
+<span class="w">        </span><span class="sd">"""bool: True if any lower-censored points exist."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower_mask</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_censoring</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""True if any censoring exists."""</span>
+<span class="w">        </span><span class="sd">"""bool: True if any censoring exists."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_upper_limits</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_lower_limits</span></div>
 
 
 
 <div class="viewcode-block" id="InferenceData">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.photometry.InferenceData">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.light_curve.InferenceData">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">InferenceData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
@@ -1341,8 +1523,8 @@
 <span class="sd">    one-dimensional dataset or ``(N, M)`` for a grid). Likelihoods may</span>
 <span class="sd">    derive stacked views from this base shape but do not modify it.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
+<span class="sd">    .. rubric:: Attributes</span>
+
 <span class="sd">    x : dict of str to numpy.ndarray</span>
 <span class="sd">        Mapping from model variable names to arrays.</span>
 
@@ -1380,6 +1562,17 @@
 <span class="sd">    x_lower : dict of str to numpy.ndarray, optional</span>
 <span class="sd">        Lower limits on independent variables.</span>
 <span class="sd">        Missing entries are interpreted as no censoring.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`trilobite.data.core.DataContainer`</span>
+<span class="sd">        High-level data ingestion and column resolution.</span>
+
+<span class="sd">    :class:`trilobite.inference.likelihood.base.Likelihood`</span>
+<span class="sd">        Statistical layer that consumes :class:`InferenceData`.</span>
+
+<span class="sd">    :class:`Observable`</span>
+<span class="sd">        Lightweight container representing a single dependent variable.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1437,17 +1630,6 @@
 <span class="sd">                )</span>
 <span class="sd">            },</span>
 <span class="sd">        )</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`trilobite.data.core.DataContainer`</span>
-<span class="sd">        High-level data ingestion and column resolution.</span>
-
-<span class="sd">    :class:`trilobite.inference.likelihood.base.Likelihood`</span>
-<span class="sd">        Statistical layer that consumes :class:`InferenceData`.</span>
-
-<span class="sd">    :class:`Observable`</span>
-<span class="sd">        Lightweight container representing a single dependent variable.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ----------------------------------------------------------------</span>
@@ -1463,6 +1645,7 @@
     <span class="c1"># Initialization / Validation</span>
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Validate the variables and observables and check that their shapes are consistent."""</span>
         <span class="c1"># Validate the independent variable exists and is in the</span>
         <span class="c1"># correct format before doing anything else.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -1567,6 +1750,14 @@
     <span class="c1"># Dunder Methods</span>
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a multi-line representation of the dataset.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The representation string.</span>
+<span class="sd">        """</span>
         <span class="n">has_x_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">any_censored</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">upper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">obs</span><span class="o">.</span><span class="n">lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span>
@@ -1579,10 +1770,18 @@
         <span class="k">return</span> <span class="s2">"InferenceData(</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the same string as :meth:`__repr__`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The representation string.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
 <div class="viewcode-block" id="InferenceData.describe">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.describe.html#trilobite.data.photometry.InferenceData.describe">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.describe.html#trilobite.data.light_curve.InferenceData.describe">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return a human-readable summary of this :class:`InferenceData` object.</span>
@@ -1651,9 +1850,31 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the number of data points.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of data points.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compare this dataset with another one.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : object</span>
+<span class="sd">            The object to compare with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool or NotImplemented</span>
+<span class="sd">            Whether variables, errors and observables are all equal, or ``NotImplemented`` if ``other`` is not an</span>
+<span class="sd">            inference dataset.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">InferenceData</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
@@ -1704,36 +1925,48 @@
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Shape of the dataset."""</span>
+<span class="w">        </span><span class="sd">"""Tuple of int: Shape of the dataset."""</span>
         <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">shape</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Total number of data points."""</span>
+<span class="w">        </span><span class="sd">"""int: Total number of data points."""</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">variable_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""List of independent variable names."""</span>
+<span class="w">        </span><span class="sd">"""List of str: List of independent variable names."""</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">observable_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""List of observable names."""</span>
+<span class="w">        </span><span class="sd">"""List of str: List of observable names."""</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_observables</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Number of dependent variables."""</span>
+<span class="w">        </span><span class="sd">"""int: Number of dependent variables."""</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Helper Methods</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 <div class="viewcode-block" id="InferenceData.get_observable">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_observable.html#trilobite.data.photometry.InferenceData.get_observable">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_observable.html#trilobite.data.light_curve.InferenceData.get_observable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_observable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Observable</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a specific observable by name."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a specific observable by name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Name of the observable.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.core.Observable</span>
+<span class="sd">            The observable called ``name``.</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
@@ -1741,7 +1974,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.has_x_uncertainty">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.has_x_uncertainty.html#trilobite.data.photometry.InferenceData.has_x_uncertainty">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.has_x_uncertainty.html#trilobite.data.light_curve.InferenceData.has_x_uncertainty">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_x_uncertainty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Determine if independent variable uncertainties are provided.</span>
@@ -1755,7 +1988,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_x_array">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_x_array.html#trilobite.data.photometry.InferenceData.get_x_array">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_x_array.html#trilobite.data.light_curve.InferenceData.get_x_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_x_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return stacked independent-variable values.</span>
@@ -1795,7 +2028,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_y_array">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_y_array.html#trilobite.data.photometry.InferenceData.get_y_array">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_y_array.html#trilobite.data.light_curve.InferenceData.get_y_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_y_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return stacked observable values.</span>
@@ -1829,7 +2062,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_y_error_array">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_y_error_array.html#trilobite.data.photometry.InferenceData.get_y_error_array">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_y_error_array.html#trilobite.data.light_curve.InferenceData.get_y_error_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_y_error_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return stacked observable uncertainties.</span>
@@ -1869,7 +2102,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_y_lower_array">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_y_lower_array.html#trilobite.data.photometry.InferenceData.get_y_lower_array">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_y_lower_array.html#trilobite.data.light_curve.InferenceData.get_y_lower_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_y_lower_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return stacked observable lower limits.</span>
@@ -1906,7 +2139,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_y_upper_array">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_y_upper_array.html#trilobite.data.photometry.InferenceData.get_y_upper_array">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_y_upper_array.html#trilobite.data.light_curve.InferenceData.get_y_upper_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_y_upper_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return stacked observable upper limits.</span>
@@ -1943,7 +2176,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_x_error_array">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_x_error_array.html#trilobite.data.photometry.InferenceData.get_x_error_array">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_x_error_array.html#trilobite.data.light_curve.InferenceData.get_x_error_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_x_error_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return stacked independent-variable uncertainties.</span>
@@ -1986,7 +2219,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_x_upper_array">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_x_upper_array.html#trilobite.data.photometry.InferenceData.get_x_upper_array">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_x_upper_array.html#trilobite.data.light_curve.InferenceData.get_x_upper_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_x_upper_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return stacked independent-variable upper limits.</span>
@@ -2022,7 +2255,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_x_lower_array">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_x_lower_array.html#trilobite.data.photometry.InferenceData.get_x_lower_array">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.get_x_lower_array.html#trilobite.data.light_curve.InferenceData.get_x_lower_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_x_lower_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return stacked independent-variable lower limits.</span>
@@ -2061,7 +2294,7 @@
     <span class="c1"># Initialization</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 <div class="viewcode-block" id="InferenceData.from_arrays">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_arrays.html#trilobite.data.photometry.InferenceData.from_arrays">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_arrays.html#trilobite.data.light_curve.InferenceData.from_arrays">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_arrays</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -2164,7 +2397,6 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            x = {"time": np.linspace(0, 10, 100)}</span>
@@ -2385,7 +2617,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.from_table">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_table.html#trilobite.data.photometry.InferenceData.from_table">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_table.html#trilobite.data.light_curve.InferenceData.from_table">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_table</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -2405,10 +2637,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        model : ~trilobite.models.core.base.Model</span>
 <span class="sd">            Model defining required variable and observable names and units.</span>
-
 <span class="sd">        table : astropy.table.Table</span>
 <span class="sd">            Input data table.</span>
-
 <span class="sd">        variables : dict[str, tuple or str], optional</span>
 <span class="sd">            Manual column specifications for independent variables.</span>
 
@@ -2418,14 +2648,14 @@
 <span class="sd">            - "column_name"</span>
 <span class="sd">            - ("column", "error")</span>
 <span class="sd">            - ("column", "error", "upper", "lower")</span>
-
 <span class="sd">        observables : dict[str, tuple or str], optional</span>
 <span class="sd">            Manual column specifications for observables.</span>
 <span class="sd">            Same format as `variables`.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        InferenceData</span>
+<span class="sd">        ~trilobite.data.core.InferenceData</span>
+<span class="sd">            The assembled inference dataset.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -2542,7 +2772,7 @@
     <span class="c1"># the object can read / write to HDF5 as a standard format and that we can</span>
     <span class="c1"># serialize to something like JSON.</span>
 <div class="viewcode-block" id="InferenceData.to_dict">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.to_dict.html#trilobite.data.photometry.InferenceData.to_dict">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.to_dict.html#trilobite.data.light_curve.InferenceData.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Convert this instance to a JSON-serializable dictionary.</span>
@@ -2573,6 +2803,13 @@
 <span class="sd">        dict</span>
 <span class="sd">            JSON-safe dictionary representation of this</span>
 <span class="sd">            :class:`InferenceData` instance.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        from_dict :</span>
+<span class="sd">            Reconstruct an :class:`InferenceData` instance from a dictionary.</span>
+<span class="sd">        json.dumps :</span>
+<span class="sd">            Serialize dictionary to JSON.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -2614,13 +2851,6 @@
 <span class="sd">          included if present.</span>
 <span class="sd">        - Optional observable fields (``error``, ``upper``, ``lower``)</span>
 <span class="sd">          are only included when defined.</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        from_dict :</span>
-<span class="sd">            Reconstruct an :class:`InferenceData` instance from a dictionary.</span>
-<span class="sd">        json.dumps :</span>
-<span class="sd">            Serialize dictionary to JSON.</span>
 <span class="sd">        """</span>
         <span class="c1"># Construct the scaffold dictionary for the eventual serialized array.</span>
         <span class="n">out</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -2658,7 +2888,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.from_dict">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_dict.html#trilobite.data.photometry.InferenceData.from_dict">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_dict.html#trilobite.data.light_curve.InferenceData.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"InferenceData"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -2747,7 +2977,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.to_json">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.to_json.html#trilobite.data.photometry.InferenceData.to_json">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.to_json.html#trilobite.data.light_curve.InferenceData.to_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_json</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
@@ -2777,6 +3007,13 @@
 <span class="sd">        FileExistsError</span>
 <span class="sd">            If the file exists and ``overwrite=False``.</span>
 
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        from_json :</span>
+<span class="sd">            Inverse operation.</span>
+<span class="sd">        to_dict :</span>
+<span class="sd">            Canonical serialization backend.</span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        - Output is fully JSON-safe (pure Python types only).</span>
@@ -2784,13 +3021,6 @@
 <span class="sd">        - NaN values are preserved according to Python's JSON encoding rules.</span>
 <span class="sd">        - The resulting file is human-readable.</span>
 <span class="sd">        - This method does not modify the object state.</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        from_json :</span>
-<span class="sd">            Inverse operation.</span>
-<span class="sd">        to_dict :</span>
-<span class="sd">            Canonical serialization backend.</span>
 <span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
@@ -2806,7 +3036,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.from_json">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_json.html#trilobite.data.photometry.InferenceData.from_json">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_json.html#trilobite.data.light_curve.InferenceData.from_json">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"InferenceData"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -2833,19 +3063,19 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If the file contents are not a valid InferenceData structure.</span>
 
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        - All arrays are restored as NumPy arrays.</span>
-<span class="sd">        - Shape and structural validation occur during object construction.</span>
-<span class="sd">        - Metadata stored in the ``attrs`` block is not automatically</span>
-<span class="sd">          attached to the returned object but remains available in the file.</span>
-
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        to_json :</span>
 <span class="sd">            JSON serialization method.</span>
 <span class="sd">        from_dict :</span>
 <span class="sd">            Canonical reconstruction backend.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - All arrays are restored as NumPy arrays.</span>
+<span class="sd">        - Shape and structural validation occur during object construction.</span>
+<span class="sd">        - Metadata stored in the ``attrs`` block is not automatically</span>
+<span class="sd">          attached to the returned object but remains available in the file.</span>
 <span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
@@ -2861,7 +3091,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.to_hdf5">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.to_hdf5.html#trilobite.data.photometry.InferenceData.to_hdf5">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.to_hdf5.html#trilobite.data.light_curve.InferenceData.to_hdf5">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_hdf5</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
@@ -2890,6 +3120,13 @@
 <span class="sd">        FileExistsError</span>
 <span class="sd">            If the file exists and ``overwrite=False``.</span>
 
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        from_hdf5 :</span>
+<span class="sd">            Inverse operation.</span>
+<span class="sd">        to_dict :</span>
+<span class="sd">            JSON serialization backend.</span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        - Independent variables are stored under ``/x``.</span>
@@ -2899,13 +3136,6 @@
 <span class="sd">        - Root attributes include ``format`` and ``version``.</span>
 <span class="sd">        - Arrays are written in native NumPy format (no conversion to lists).</span>
 <span class="sd">        - This method is suitable for large datasets and high-performance workflows.</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        from_hdf5 :</span>
-<span class="sd">            Inverse operation.</span>
-<span class="sd">        to_dict :</span>
-<span class="sd">            JSON serialization backend.</span>
 <span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 
@@ -2962,7 +3192,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.from_hdf5">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_hdf5.html#trilobite.data.photometry.InferenceData.from_hdf5">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_hdf5.html#trilobite.data.light_curve.InferenceData.from_hdf5">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_hdf5</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"InferenceData"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -2985,6 +3215,11 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If the file does not conform to the expected format.</span>
 
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        to_hdf5 :</span>
+<span class="sd">            HDF5 serialization method.</span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        - The file must contain a root attribute ``format="InferenceData"``.</span>
@@ -2992,11 +3227,6 @@
 <span class="sd">        - Structural validation occurs during object construction.</span>
 <span class="sd">        - Metadata stored in HDF5 attributes is not automatically</span>
 <span class="sd">          attached to the returned object.</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        to_hdf5 :</span>
-<span class="sd">            HDF5 serialization method.</span>
 <span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 
@@ -3048,7 +3278,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.to_file">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.to_file.html#trilobite.data.photometry.InferenceData.to_file">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.to_file.html#trilobite.data.light_curve.InferenceData.to_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_file</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
@@ -3081,15 +3311,15 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If the file extension is unsupported.</span>
 
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        This is a convenience wrapper around :meth:`to_json`</span>
-<span class="sd">        and :meth:`to_hdf5`.</span>
-
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        from_file :</span>
 <span class="sd">            Inverse operation.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is a convenience wrapper around :meth:`to_json`</span>
+<span class="sd">        and :meth:`to_hdf5`.</span>
 <span class="sd">        """</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">suffix</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -3105,7 +3335,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.from_file">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_file.html#trilobite.data.photometry.InferenceData.from_file">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.InferenceData.from_file.html#trilobite.data.light_curve.InferenceData.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"InferenceData"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -3134,15 +3364,15 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If the file extension is unsupported.</span>
 
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        This is a convenience wrapper around :meth:`from_json`</span>
-<span class="sd">        and :meth:`from_hdf5`.</span>
-
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        to_file :</span>
 <span class="sd">            Generic serialization method.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is a convenience wrapper around :meth:`from_json`</span>
+<span class="sd">        and :meth:`from_hdf5`.</span>
 <span class="sd">        """</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">suffix</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -3163,7 +3393,7 @@
 <span class="c1"># Generic Containers for (x, y) Data</span>
 <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="XYDataContainer">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.html#trilobite.data.photometry.XYDataContainer">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.html#trilobite.data.light_curve.XYDataContainer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">XYDataContainer</span><span class="p">(</span><span class="n">DataContainer</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Abstract base class for two-dimensional ``(x, y)`` datasets with optional uncertainties and censoring.</span>
@@ -3191,8 +3421,8 @@
 <span class="sd">    Interpretation of errors and censoring is entirely delegated to likelihood</span>
 <span class="sd">    implementations.</span>
 
-<span class="sd">    Key features</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Key features</span>
+
 <span class="sd">    - **Axis abstraction**:</span>
 <span class="sd">      Independent and dependent variables are identified via class attributes</span>
 <span class="sd">      rather than hard-coded column names.</span>
@@ -3211,8 +3441,8 @@
 <span class="sd">    - **Immutable**:</span>
 <span class="sd">      Like all :class:`~trilobite.data.core.DataContainer` subclasses, this container is read-only.</span>
 
-<span class="sd">    Detection and censoring model</span>
-<span class="sd">    -----------------------------</span>
+<span class="sd">    .. rubric:: Detection and censoring model</span>
+
 <span class="sd">    Censoring is inferred purely from the presence of *finite values* in</span>
 <span class="sd">    declared limit columns:</span>
 
@@ -3232,8 +3462,8 @@
 <span class="sd">    No assumptions are made about how these limits should enter a likelihood</span>
 <span class="sd">    (e.g., one-sided Gaussian, survival analysis, hard truncation).</span>
 
-<span class="sd">    Intended use</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Intended use</span>
+
 <span class="sd">    :class:`~trilobite.data.core.XYDataContainer` is intended to serve as a *common interface* between</span>
 <span class="sd">    diverse data products and inference machinery, including:</span>
 
@@ -3248,6 +3478,20 @@
 <span class="sd">    - setting axis column attributes (``X_COLUMN``, ``Y_COLUMN``, etc.),</span>
 <span class="sd">    - adding domain-specific convenience properties if needed.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table : ~astropy.table.Table</span>
+<span class="sd">        The data table to be contained. It must conform to the schema defined in :attr:`COLUMNS`.</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Additional keyword arguments for subclass-specific configuration.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :obj:`~trilobite.data.core.DataContainer`</span>
+<span class="sd">     Base class providing schema validation and immutability.</span>
+<span class="sd">    trilobite.inference.likelihood.base.Likelihood</span>
+<span class="sd">     Likelihood classes that interpret uncertainties and censoring.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    - This class is abstract and cannot be instantiated directly.</span>
@@ -3255,13 +3499,6 @@
 <span class="sd">    interpreted by the likelihood.</span>
 <span class="sd">    - If both upper and lower limits are present for the same axis and</span>
 <span class="sd">    observation, the data point is considered interval-censored.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    ~trilobite.data.core.DataContainer</span>
-<span class="sd">     Base class providing schema validation and immutability.</span>
-<span class="sd">    trilobite.inference.likelihood.base.Likelihood</span>
-<span class="sd">     Likelihood classes that interpret uncertainties and censoring.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ========================= SCHEMA DEFINITION ========================= #</span>
@@ -3363,10 +3600,10 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        table: ~astropy.table.Table</span>
+<span class="sd">        table : ~astropy.table.Table</span>
 <span class="sd">            The data table to be contained. This must conform to the schema defined in the</span>
 <span class="sd">            :attr:`COLUMNS`` class attribute.</span>
-<span class="sd">        kwargs:</span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">            Additional keyword arguments for subclass-specific configuration.</span>
 <span class="sd">        """</span>
         <span class="c1"># Pass off to the super class to instantiate the</span>
@@ -3551,50 +3788,92 @@
     <span class="c1"># Utility Functions</span>
     <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="XYDataContainer.class_has_x_column">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_x_column.html#trilobite.data.photometry.XYDataContainer.class_has_x_column">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_x_column.html#trilobite.data.light_curve.XYDataContainer.class_has_x_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_x_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Check if the class defines an x-axis column."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check if the class defines an x-axis column.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            ``True`` if the class defines an x-axis column.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">X_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="XYDataContainer.class_has_y_column">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_y_column.html#trilobite.data.photometry.XYDataContainer.class_has_y_column">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_y_column.html#trilobite.data.light_curve.XYDataContainer.class_has_y_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_y_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Check if the class defines a y-axis column."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check if the class defines a y-axis column.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            ``True`` if the class defines a y-axis column.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Y_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="XYDataContainer.class_has_y_error_column">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_y_error_column.html#trilobite.data.photometry.XYDataContainer.class_has_y_error_column">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_y_error_column.html#trilobite.data.light_curve.XYDataContainer.class_has_y_error_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_y_error_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Check if the class defines a y-axis error column."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check if the class defines a y-axis error column.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            ``True`` if the class defines a y-axis error column.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Y_ERROR_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="XYDataContainer.class_has_y_upper_limit_column">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_y_upper_limit_column.html#trilobite.data.photometry.XYDataContainer.class_has_y_upper_limit_column">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_y_upper_limit_column.html#trilobite.data.light_curve.XYDataContainer.class_has_y_upper_limit_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_y_upper_limit_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Check if the class defines a y-axis upper limit column."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check if the class defines a y-axis upper limit column.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            ``True`` if the class defines a y-axis upper-limit column.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Y_UPPER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="XYDataContainer.class_has_x_error_column">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_x_error_column.html#trilobite.data.photometry.XYDataContainer.class_has_x_error_column">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_x_error_column.html#trilobite.data.light_curve.XYDataContainer.class_has_x_error_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_x_error_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Check if the class defines an x-axis error column."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check if the class defines an x-axis error column.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            ``True`` if the class defines an x-axis error column.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">X_ERROR_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="XYDataContainer.class_has_x_upper_limit_column">
-<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_x_upper_limit_column.html#trilobite.data.photometry.XYDataContainer.class_has_x_upper_limit_column">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.core.XYDataContainer.class_has_x_upper_limit_column.html#trilobite.data.light_curve.XYDataContainer.class_has_x_upper_limit_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_x_upper_limit_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Check if the class defines an x-axis upper limit column."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check if the class defines an x-axis upper limit column.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            ``True`` if the class defines an x-axis upper-limit column.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">X_UPPER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 </div>
 

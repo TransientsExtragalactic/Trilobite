@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -486,7 +503,7 @@
 <span class="c1"># Base Class Definition</span>
 <span class="c1"># =============================================== #</span>
 <div class="viewcode-block" id="EvolvingSEDModel">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.html#trilobite.models.generic.evolving_seds.base.EvolvingSEDModel">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.html#trilobite.models.generic.evolving_seds.evolving_sbpl.EvolvingSEDModel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EvolvingSEDModel</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Abstract base class for separable, time-evolving spectral energy distribution (SED) models evaluated in log-space.</span>
@@ -754,7 +771,7 @@
     <span class="c1"># ============================================================</span>
 
 <div class="viewcode-block" id="EvolvingSEDModel.compute_sed_shape">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.compute_sed_shape.html#trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.compute_sed_shape">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.compute_sed_shape.html#trilobite.models.generic.evolving_seds.evolving_sbpl.EvolvingSEDModel.compute_sed_shape">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_sed_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the dimensionless spectral shape :math:`\Phi(\nu,t)`.</span>
@@ -776,7 +793,6 @@
 
 <span class="sd">            The arrays will be broadcast following</span>
 <span class="sd">            :func:`numpy.broadcast_arrays`.</span>
-
 <span class="sd">        parameters : dict</span>
 <span class="sd">            Model parameters. May include units. Values are coerced to the</span>
 <span class="sd">            model's base units before evaluation.</span>
@@ -794,6 +810,15 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If required variables or parameters are missing, or if any</span>
 <span class="sd">            bounds checks fail.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        compute_sed_norm</span>
+<span class="sd">            Evaluate the time-dependent normalization.</span>
+<span class="sd">        compute_sed_breaks</span>
+<span class="sd">            Evaluate the evolving spectral breaks.</span>
+<span class="sd">        :obj:`~trilobite.models.core.base.Model.forward_model`</span>
+<span class="sd">            Evaluate the full model.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -823,19 +848,13 @@
 <span class="sd">            shape = model.compute_sed_shape(</span>
 <span class="sd">                {"frequency": nu, "time": t}, parameters</span>
 <span class="sd">            )</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        compute_sed_norm</span>
-<span class="sd">        compute_sed_breaks</span>
-<span class="sd">        ~trilobite.models.core.base.Model.forward_model</span>
 <span class="sd">        """</span>
         <span class="n">vars_</span><span class="p">,</span> <span class="n">pars_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_inputs</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_model_sed_shape</span><span class="p">(</span><span class="n">vars_</span><span class="p">,</span> <span class="n">pars_</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="EvolvingSEDModel.compute_sed_norm">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.compute_sed_norm.html#trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.compute_sed_norm">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.compute_sed_norm.html#trilobite.models.generic.evolving_seds.evolving_sbpl.EvolvingSEDModel.compute_sed_norm">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_sed_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the time-dependent normalization :math:`N(t)`.</span>
@@ -853,7 +872,6 @@
 <span class="sd">              Time since explosion.</span>
 
 <span class="sd">            If ``"frequency"`` is provided, it is ignored.</span>
-
 <span class="sd">        parameters : dict</span>
 <span class="sd">            Model parameters. May include units. Values are coerced to base</span>
 <span class="sd">            units prior to evaluation.</span>
@@ -871,6 +889,13 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If required variables or parameters are missing, or if bounds</span>
 <span class="sd">            validation fails.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        compute_sed_shape</span>
+<span class="sd">            Evaluate the dimensionless spectral shape.</span>
+<span class="sd">        :obj:`~trilobite.models.core.base.Model.forward_model`</span>
+<span class="sd">            Evaluate the full model.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -896,11 +921,6 @@
 <span class="sd">            norm = model.compute_sed_norm(</span>
 <span class="sd">                {"time": 5.0 * u.day}, parameters</span>
 <span class="sd">            )</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        compute_sed_shape</span>
-<span class="sd">        ~trilobite.models.core.base.Model.forward_model</span>
 <span class="sd">        """</span>
         <span class="n">vars_</span><span class="p">,</span> <span class="n">pars_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_inputs</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
         <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_model_norm</span><span class="p">(</span><span class="n">vars_</span><span class="p">,</span> <span class="n">pars_</span><span class="p">)</span>
@@ -910,7 +930,7 @@
 
 
 <div class="viewcode-block" id="EvolvingSEDModel.compute_sed_breaks">
-<a class="viewcode-back" href="../../../../../_as_gen/trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.compute_sed_breaks.html#trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.compute_sed_breaks">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.compute_sed_breaks.html#trilobite.models.generic.evolving_seds.evolving_sbpl.EvolvingSEDModel.compute_sed_breaks">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_sed_breaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Evaluate evolving spectral break parameters.</span>
@@ -926,7 +946,6 @@
 
 <span class="sd">            - ``"time"`` : array-like or `~astropy.units.Quantity`</span>
 <span class="sd">              Time since explosion.</span>
-
 <span class="sd">        parameters : dict</span>
 <span class="sd">            Model parameters. May include units. Values are coerced to base</span>
 <span class="sd">            units before evaluation.</span>
@@ -945,6 +964,13 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If required variables or parameters are missing, or if bounds</span>
 <span class="sd">            validation fails.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        compute_sed_norm</span>
+<span class="sd">            Evaluate the time-dependent normalization.</span>
+<span class="sd">        compute_sed_shape</span>
+<span class="sd">            Evaluate the dimensionless spectral shape.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -975,11 +1001,6 @@
 <span class="sd">            )</span>
 
 <span class="sd">            nu_brk = breaks["nu_brk"]</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        compute_sed_norm</span>
-<span class="sd">        compute_sed_shape</span>
 <span class="sd">        """</span>
         <span class="n">vars_</span><span class="p">,</span> <span class="n">pars_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_inputs</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
         <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_model_breaks</span><span class="p">(</span><span class="n">vars_</span><span class="p">,</span> <span class="n">pars_</span><span class="p">)</span>

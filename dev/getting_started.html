@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -62,10 +62,13 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="_static/gallery_search.js?v=1fa25899"></script>
+    <script src="_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="_static/logo.svg"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Fitting a Multi-Band Optical Light Curve with MCMC" href="auto_examples/inference/plot_optical_lc_inference.html" />
+    <link rel="prev" title="Pool API Reference" href="reference/parallel/pools.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -160,6 +163,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="api.html">
     API
   </a>
@@ -169,13 +186,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -302,6 +312,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="api.html">
     API
   </a>
@@ -311,13 +335,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -461,47 +478,15 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <style>
-  .bd-article h1 {
-      font-size: 2.6rem;
-      color: #1f7a8c;
-      margin-bottom: 0.5rem;
-  }
-</style>
-
-<div style="
- display: flex;
- align-items: center;
- gap: 2.5rem;
- padding: 2.5rem 0 2.4rem 0;
- border-bottom: 1px solid #e5e7eb;
- margin-bottom: 1.8rem;
- ">
-
-    <img src="_images/logo.svg" style="width: 25%; height: auto;">
-
-    <div style="max-width: 620px;"><section id="quickstart-guide">
-<h1>Quickstart Guide<a class="headerlink" href="#quickstart-guide" title="Link to this heading">#</a></h1>
-        <p style="
-            margin: 0.4rem 0 0 0;
-            font-size: 1rem;
-            color: #666;
-        ">
-            Get up and running with Trilobite.
-        </p>
-
-        <p style="
-            margin: 1rem 0 0 0;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #3a4a52;
-        ">
-            Install the package, explore worked examples, and understand
-            how the library is structured — everything you need to start
-            modeling astrophysical transients.
-        </p>
-
-    </div>
+  <div class="page-header"><img alt="Trilobite logo" class="page-header-logo" src="_images/logo.svg" />
+<div class="page-header-text"><section id="quickstart-guide">
+<span id="getting-started"></span><h1>Quickstart Guide<a class="headerlink" href="#quickstart-guide" title="Link to this heading">#</a></h1>
+<p class="page-header-tagline">Get up and running with Trilobite.</p>
+<p class="page-header-lede">
+   Install the package, explore worked examples, and understand how the library is structured &mdash;
+   everything you need to start modeling astrophysical transients.
+</p>
+</div>
 </div><section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <div class="sd-tab-set docutils">
@@ -560,7 +545,7 @@ Example Gallery</div>
 <p class="sd-card-text">Explore end-to-end workflows: loading data, fitting shock models,
 computing synchrotron SEDs, and running MCMC inference.</p>
 </div>
-<span class="sd-stretched-link sd-hide-link-text">gallery_examples</span></div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="examples.html#gallery-examples"><span class="std std-ref">Example Gallery</span></a></div>
 </div>
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
@@ -608,12 +593,12 @@ Contributions are welcome at all skill levels.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="auto_examples/inference/plot_optical_lc_inference.html"
+       href="reference/parallel/pools.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Fitting a Multi-Band Optical Light Curve with MCMC</p>
+        <p class="prev-next-title">Pool API Reference</p>
       </div>
     </a>
 </div>

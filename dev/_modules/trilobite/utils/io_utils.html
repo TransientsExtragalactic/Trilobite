@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -578,6 +595,21 @@
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.io_utils.AstropyQuantityHandler.to_yaml.html#trilobite.utils.io_utils.AstropyQuantityHandler.to_yaml">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_yaml</span><span class="p">(</span><span class="n">representer</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Represent a Quantity as a YAML mapping of its value and unit.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        representer : ruamel.yaml.representer.BaseRepresenter</span>
+<span class="sd">            YAML representer used to emit the node.</span>
+<span class="sd">        obj : ~astropy.units.Quantity</span>
+<span class="sd">            The quantity to serialize.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ruamel.yaml.nodes.MappingNode</span>
+<span class="sd">            The YAML mapping node representing the object.</span>
+<span class="sd">        """</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">value</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"tolist"</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -595,6 +627,21 @@
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.io_utils.AstropyQuantityHandler.from_yaml.html#trilobite.utils.io_utils.AstropyQuantityHandler.from_yaml">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_yaml</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Reconstruct a Quantity from a YAML mapping of its value and unit.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        loader : ruamel.yaml.constructor.BaseConstructor</span>
+<span class="sd">            YAML constructor used to build the mapping.</span>
+<span class="sd">        node : ruamel.yaml.nodes.MappingNode</span>
+<span class="sd">            The YAML mapping node to convert.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~astropy.units.Quantity</span>
+<span class="sd">            The reconstructed quantity.</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">CommentedMap</span><span class="p">()</span>
         <span class="n">loader</span><span class="o">.</span><span class="n">construct_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">maptyp</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -624,6 +671,21 @@
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.io_utils.AstropyCosmologyHandler.to_yaml.html#trilobite.utils.io_utils.AstropyCosmologyHandler.to_yaml">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_yaml</span><span class="p">(</span><span class="n">representer</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">FLRW</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Represent a named cosmology as a YAML mapping holding its name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        representer : ruamel.yaml.representer.BaseRepresenter</span>
+<span class="sd">            YAML representer used to emit the node.</span>
+<span class="sd">        obj : ~astropy.cosmology.FLRW</span>
+<span class="sd">            The cosmology to serialize. It must be named.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ruamel.yaml.nodes.MappingNode</span>
+<span class="sd">            The YAML mapping node representing the object.</span>
+<span class="sd">        """</span>
         <span class="c1"># Require that cosmology has a name</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Only named cosmologies can be serialized. Custom cosmologies are not supported."</span><span class="p">)</span>
@@ -638,6 +700,21 @@
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.io_utils.AstropyCosmologyHandler.from_yaml.html#trilobite.utils.io_utils.AstropyCosmologyHandler.from_yaml">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_yaml</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Reconstruct a cosmology from its name using the Astropy cosmology registry.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        loader : ruamel.yaml.constructor.BaseConstructor</span>
+<span class="sd">            YAML constructor used to build the mapping.</span>
+<span class="sd">        node : ruamel.yaml.nodes.MappingNode</span>
+<span class="sd">            The YAML mapping node to convert.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~astropy.cosmology.FLRW</span>
+<span class="sd">            The cosmology registered under the stored name.</span>
+<span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">cosmology</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">CommentedMap</span><span class="p">()</span>
@@ -665,6 +742,21 @@
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.io_utils.NumpyArrayHandler.to_yaml.html#trilobite.utils.io_utils.NumpyArrayHandler.to_yaml">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_yaml</span><span class="p">(</span><span class="n">representer</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Represent an array as a YAML mapping of its dtype, shape and data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        representer : ruamel.yaml.representer.BaseRepresenter</span>
+<span class="sd">            YAML representer used to emit the node.</span>
+<span class="sd">        obj : ~numpy.ndarray</span>
+<span class="sd">            The array to serialize.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ruamel.yaml.nodes.MappingNode</span>
+<span class="sd">            The YAML mapping node representing the object.</span>
+<span class="sd">        """</span>
         <span class="c1"># We store both dtype and shape to ensure safe reconstruction</span>
         <span class="k">return</span> <span class="n">representer</span><span class="o">.</span><span class="n">represent_mapping</span><span class="p">(</span>
             <span class="n">NumpyArrayHandler</span><span class="o">.</span><span class="n">__tag__</span><span class="p">,</span> <span class="p">{</span><span class="s2">"dtype"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="s2">"shape"</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">tolist</span><span class="p">()}</span>
@@ -675,6 +767,21 @@
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.io_utils.NumpyArrayHandler.from_yaml.html#trilobite.utils.io_utils.NumpyArrayHandler.from_yaml">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_yaml</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Reconstruct an array from a YAML mapping of its dtype, shape and data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        loader : ruamel.yaml.constructor.BaseConstructor</span>
+<span class="sd">            YAML constructor used to build the mapping.</span>
+<span class="sd">        node : ruamel.yaml.nodes.MappingNode</span>
+<span class="sd">            The YAML mapping node to convert.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~numpy.ndarray</span>
+<span class="sd">            The reconstructed array.</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">CommentedMap</span><span class="p">()</span>
         <span class="n">loader</span><span class="o">.</span><span class="n">construct_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">maptyp</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -708,6 +815,21 @@
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.io_utils.PathHandler.to_yaml.html#trilobite.utils.io_utils.PathHandler.to_yaml">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_yaml</span><span class="p">(</span><span class="n">representer</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Represent a path as a YAML mapping of its parts.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        representer : ruamel.yaml.representer.BaseRepresenter</span>
+<span class="sd">            YAML representer used to emit the node.</span>
+<span class="sd">        obj : ~pathlib.Path</span>
+<span class="sd">            The path to serialize.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ruamel.yaml.nodes.MappingNode</span>
+<span class="sd">            The YAML mapping node representing the object.</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"absolute"</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">(),</span> <span class="s2">"parts"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">parts</span><span class="p">)}</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">drive</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">"drive"</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">drive</span>
@@ -718,6 +840,21 @@
 <a class="viewcode-back" href="../../../_as_gen/trilobite.utils.io_utils.PathHandler.from_yaml.html#trilobite.utils.io_utils.PathHandler.from_yaml">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_yaml</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Reconstruct a path from a YAML mapping of its parts.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        loader : ruamel.yaml.constructor.BaseConstructor</span>
+<span class="sd">            YAML constructor used to build the mapping.</span>
+<span class="sd">        node : ruamel.yaml.nodes.MappingNode</span>
+<span class="sd">            The YAML mapping node to convert.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~pathlib.Path</span>
+<span class="sd">            The reconstructed path.</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">CommentedMap</span><span class="p">()</span>
         <span class="n">loader</span><span class="o">.</span><span class="n">construct_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">maptyp</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"parts"</span><span class="p">,</span> <span class="p">[])</span>

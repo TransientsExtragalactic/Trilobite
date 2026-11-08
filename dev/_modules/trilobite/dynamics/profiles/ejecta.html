@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -796,7 +813,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        G : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Kernel value in :math:`\mathrm{g\,s^3\,cm^{-3}}`.</span>
 <span class="sd">        """</span>
         <span class="n">v_cgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
@@ -824,7 +841,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        G : float or ~numpy.ndarray</span>
+<span class="sd">        float or ~numpy.ndarray</span>
 <span class="sd">            Kernel value in :math:`\mathrm{g\,s^3\,cm^{-3}}`.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_eval_kernel</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span></div>
@@ -875,8 +892,8 @@
 <span class="sd">    Setting ``v_max=np.inf`` recovers the standard untruncated Chevalier profile</span>
 <span class="sd">    :footcite:p:`chevalierSelfsimilarSolutionsInteraction1982`.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
+<span class="sd">    .. rubric:: Parameters</span>
+
 <span class="sd">    K : float or ~astropy.units.Quantity</span>
 <span class="sd">        Inner-branch kernel normalization in</span>
 <span class="sd">        :math:`\mathrm{g\,cm^{\delta-3}\,s^{3-\delta}}`.</span>
@@ -997,6 +1014,16 @@
 <span class="sd">        but evaluates scalar ``(r, t)`` arguments with plain scalar arithmetic instead of building</span>
 <span class="sd">        arrays. ODE right-hand sides call the density at a single point thousands of times, where the array</span>
 <span class="sd">        machinery dominates the cost. Array arguments take the usual vectorized path.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **parameters : dict</span>
+<span class="sd">            Profile parameters, as accepted by :meth:`eval`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        callable</span>
+<span class="sd">            A function of ``(r, t)`` returning the unit-free density.</span>
 <span class="sd">        """</span>
         <span class="n">p</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">K_inner</span><span class="p">,</span> <span class="n">K_outer</span><span class="p">,</span> <span class="n">v_t</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">v_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"K_inner"</span><span class="p">,</span> <span class="s2">"K_outer"</span><span class="p">,</span> <span class="s2">"v_t"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">,</span> <span class="s2">"delta"</span><span class="p">,</span> <span class="s2">"v_max"</span><span class="p">))</span>
@@ -1055,8 +1082,8 @@
 <span class="sd">    Setting ``v_min=0`` and ``v_max=np.inf`` recovers the standard untruncated</span>
 <span class="sd">    exponential profile.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
+<span class="sd">    .. rubric:: Parameters</span>
+
 <span class="sd">    K : float or ~astropy.units.Quantity</span>
 <span class="sd">        Kernel normalization in :math:`\mathrm{g\,s^3\,cm^{-3}}`.</span>
 <span class="sd">    v_e : float or ~astropy.units.Quantity</span>

@@ -1,0 +1,95 @@
+
+
+.. _sphx_glr_auto_examples_synchrotron_e_inversions:
+
+Spectral Inversions
+===================
+
+These examples test the closed-form SSA inversions in
+:mod:`trilobite.radiation.synchrotron.spectral_inversion`. Each one follows the same round trip:
+build a synchrotron SED with the numerical engine from known :math:`B` and :math:`R`,
+extract the break frequency and flux with a smoothly broken power-law fit, and invert those two numbers.
+Because the SED is generated independently of the inversion, the recovered values measure the
+accuracy of the inversion itself.
+
+**Theory:** :ref:`synchrotron_spectral_inversion`
+
+**API:** :ref:`synchrotron_core`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Objective: test how accurately invert_ssa_DeMarchi22, the SSA inversion of demarchiRadioAnalysisSN2004C2022, recovers the magnetic field B and radius R, and compare it with invert_ssa_Diggins26.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/e_inversions/images/thumb/sphx_glr_plot_inversion_demarchi22_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/e_inversions/plot_inversion_demarchi22`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Recovering B and R from an SSA Peak: the De Marchi22 Inversion</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Objective: test how accurately invert_ssa_Diggins26 recovers the magnetic field B and radius R of a source from its self-absorption peak.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/e_inversions/images/thumb/sphx_glr_plot_inversion_diggins26_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/e_inversions/plot_inversion_diggins26`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Recovering B and R from an SSA Peak: the Diggins26 Inversion</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Objective: show that invert_ssa_with_cooling_Diggins26 recovers B and R whether the electrons at the SSA break are uncooled, cooled by synchrotron losses, or cooled by inverse Compton (IC) losses, and that ignoring cooling biases the result.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/e_inversions/images/thumb/sphx_glr_plot_inversion_cooling_diggins26_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/e_inversions/plot_inversion_cooling_diggins26`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Inverting a Cooled Source: Diggins26 with Cooling Branch Selection</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/synchrotron/e_inversions/plot_inversion_demarchi22
+   /auto_examples/synchrotron/e_inversions/plot_inversion_diggins26
+   /auto_examples/synchrotron/e_inversions/plot_inversion_cooling_diggins26
+

@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -493,6 +510,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelParameter</span><span class="p">,</span> <span class="n">ModelVariable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..core.status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelStatus</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">"FRED"</span><span class="p">,</span>
@@ -602,15 +620,29 @@
 <span class="sd">             - :math:`F(t)`</span>
 <span class="sd">             - Flux evaluated at time :math:`t`.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`GeneralizedFRED`</span>
+<span class="sd">        Generalized fast-rise exponential-decay pulse.</span>
+
+<span class="sd">    :class:`GaussianPulse`</span>
+<span class="sd">        Symmetric Gaussian pulse.</span>
+
+<span class="sd">    :class:`NorrisPulse`</span>
+<span class="sd">        Norris GRB pulse.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The peak time depends non-trivially on the ratio :math:`\tau_r/\tau_d`.</span>
 <span class="sd">    The model reduces to a simple exponential decay when</span>
 <span class="sd">    :math:`\tau_r \rightarrow 0`.</span>
 
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. footbibliography::</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
 
@@ -636,17 +668,9 @@
 <span class="sd">        plt.title("FRED Model Example")</span>
 <span class="sd">        plt.legend()</span>
 <span class="sd">        plt.show()</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`GeneralizedFRED`</span>
-<span class="sd">    :class:`GaussianPulse`</span>
-<span class="sd">    :class:`NorrisPulse`</span>
-
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    .. footbibliography::</span>
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">ModelVariable</span><span class="p">(</span>
@@ -793,6 +817,17 @@
 <span class="sd">             - :math:`F(t)`</span>
 <span class="sd">             - Flux evaluated at time :math:`t`.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`FRED`</span>
+<span class="sd">        Fast-rise exponential-decay pulse.</span>
+
+<span class="sd">    :class:`NorrisPulse`</span>
+<span class="sd">        Norris GRB pulse.</span>
+
+<span class="sd">    :class:`LogNormalPulse`</span>
+<span class="sd">        Asymmetric log-normal pulse.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    - The peak time depends on both :math:`n` and the ratio</span>
@@ -806,9 +841,12 @@
 <span class="sd">    physically, as this model does not enforce energy conservation or</span>
 <span class="sd">    radiative transfer consistency.</span>
 
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. footbibliography::</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
 
@@ -834,17 +872,9 @@
 <span class="sd">        plt.title("Generalized FRED Example")</span>
 <span class="sd">        plt.legend()</span>
 <span class="sd">        plt.show()</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`FRED`</span>
-<span class="sd">    :class:`NorrisPulse`</span>
-<span class="sd">    :class:`LogNormalPulse`</span>
-
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    .. footbibliography::</span>
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
 
@@ -977,6 +1007,14 @@
 <span class="sd">             - :math:`F(t)`</span>
 <span class="sd">             - Flux evaluated at time :math:`t`.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`FRED`</span>
+<span class="sd">        Fast-rise exponential-decay pulse.</span>
+
+<span class="sd">    :class:`LogNormalPulse`</span>
+<span class="sd">        Asymmetric log-normal pulse.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The full width at half maximum (FWHM) is given by</span>
@@ -990,7 +1028,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
 
@@ -1016,13 +1053,9 @@
 <span class="sd">        plt.title("Gaussian Pulse Example")</span>
 <span class="sd">        plt.legend()</span>
 <span class="sd">        plt.show()</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`FRED`</span>
-<span class="sd">    :class:`LogNormalPulse`</span>
-
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
 
@@ -1140,6 +1173,14 @@
 <span class="sd">             - :math:`F(t)`</span>
 <span class="sd">             - Flux at time :math:`t`.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`FRED`</span>
+<span class="sd">        Fast-rise exponential-decay pulse.</span>
+
+<span class="sd">    :class:`NorrisPulse`</span>
+<span class="sd">        Norris GRB pulse.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The peak time occurs at</span>
@@ -1153,7 +1194,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
 
@@ -1179,13 +1219,9 @@
 <span class="sd">        plt.title("Log-Normal Pulse Example")</span>
 <span class="sd">        plt.legend()</span>
 <span class="sd">        plt.show()</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`FRED`</span>
-<span class="sd">    :class:`NorrisPulse`</span>
-
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
 
@@ -1304,6 +1340,11 @@
 <span class="sd">             - :math:`F(t)`</span>
 <span class="sd">             - Flux value.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`SmoothedBrokenPowerLawTime`</span>
+<span class="sd">        Smoothly broken power-law temporal model.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The derivative is discontinuous at :math:`t_b`. This model is therefore</span>
@@ -1311,7 +1352,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
 
@@ -1337,12 +1377,9 @@
 <span class="sd">        plt.title("Broken Power Law Time Example")</span>
 <span class="sd">        plt.legend()</span>
 <span class="sd">        plt.show()</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`SmoothedBrokenPowerLawTime`</span>
-
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
 
@@ -1473,6 +1510,11 @@
 <span class="sd">             - :math:`F(t)`</span>
 <span class="sd">             - Flux evaluated at time :math:`t`.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`BrokenPowerLawTime`</span>
+<span class="sd">        Sharp broken power-law temporal model.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    This model is continuous and differentiable for all</span>
@@ -1480,7 +1522,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
 
@@ -1506,12 +1547,9 @@
 <span class="sd">        plt.title("Smoothed Broken Power Law Time Example")</span>
 <span class="sd">        plt.legend()</span>
 <span class="sd">        plt.show()</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`BrokenPowerLawTime`</span>
-
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
 
@@ -1632,6 +1670,10 @@
 <span class="sd">             - :math:`F(t)`</span>
 <span class="sd">             - Flux evaluated at time :math:`t`.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`BrokenPowerLawTime`</span>
+<span class="sd">        Sharp broken power-law temporal model.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1640,7 +1682,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
 
@@ -1666,12 +1707,9 @@
 <span class="sd">        plt.title("Exponential Rise Power-Law Decay Example")</span>
 <span class="sd">        plt.legend()</span>
 <span class="sd">        plt.show()</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`BrokenPowerLawTime`</span>
-
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
 
@@ -1789,6 +1827,13 @@
 <span class="sd">             - :math:`F(t)`</span>
 <span class="sd">             - Flux evaluated at time :math:`t`.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`FRED`</span>
+<span class="sd">        Fast-rise exponential-decay pulse.</span>
+
+<span class="sd">    :class:`LogNormalPulse`</span>
+<span class="sd">        Asymmetric log-normal pulse.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1798,9 +1843,12 @@
 
 <span class="sd">        t_{\rm peak} = t_s + \sqrt{\tau_1 \tau_2}.</span>
 
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. footbibliography::</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
 
@@ -1826,16 +1874,9 @@
 <span class="sd">        plt.title("Norris Pulse Example")</span>
 <span class="sd">        plt.legend()</span>
 <span class="sd">        plt.show()</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`FRED`</span>
-<span class="sd">    :class:`LogNormalPulse`</span>
-
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    .. footbibliography::</span>
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
 
@@ -1951,6 +1992,13 @@
 <span class="sd">             - :math:`F(t)`</span>
 <span class="sd">             - Flux evaluated at time :math:`t`.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`NorrisPulse`</span>
+<span class="sd">        Norris GRB pulse.</span>
+
+<span class="sd">    :class:`LogNormalPulse`</span>
+<span class="sd">        Asymmetric log-normal pulse.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1958,7 +2006,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
 
@@ -1984,13 +2031,9 @@
 <span class="sd">        plt.title("Weibull Pulse Example")</span>
 <span class="sd">        plt.legend()</span>
 <span class="sd">        plt.show()</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`NorrisPulse`</span>
-<span class="sd">    :class:`LogNormalPulse`</span>
-
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
 
@@ -2097,6 +2140,10 @@
 <span class="sd">             - :math:`F(t)`</span>
 <span class="sd">             - Flux evaluated at time :math:`t`.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :class:`GaussianPulse`</span>
+<span class="sd">        Symmetric Gaussian pulse.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -2110,7 +2157,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
 
@@ -2136,12 +2182,9 @@
 <span class="sd">        plt.title("Logistic Transition Example")</span>
 <span class="sd">        plt.legend()</span>
 <span class="sd">        plt.show()</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :class:`GaussianPulse`</span>
-
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
 

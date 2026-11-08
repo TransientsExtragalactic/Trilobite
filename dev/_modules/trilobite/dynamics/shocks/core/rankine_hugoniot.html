@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -525,6 +542,14 @@
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Build the named-tuple result type from the subclass's ``OUTPUT_FIELDS``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Forwarded to ``super().__init_subclass__``.</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">OUTPUT_FIELDS</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_result_type</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
@@ -578,6 +603,13 @@
 <span class="sd">        Subclasses define the explicit input signature. The return type is the named tuple</span>
 <span class="sd">        auto-generated from :attr:`OUTPUT_FIELDS`, with physical quantities as</span>
 <span class="sd">        :class:`~astropy.units.Quantity` and dimensionless fields as bare floats.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args : tuple</span>
+<span class="sd">            Positional arguments; defined by each subclass.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Keyword arguments; defined by each subclass.</span>
 <span class="sd">        """</span>
         <span class="o">...</span></div>
 </div>
@@ -2219,6 +2251,11 @@
 <span class="sd">    Because the upstream thermal state is neglected, no upstream pressure or</span>
 <span class="sd">    temperature needs to be provided.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    StrongShockConditions : Strong shocks with a finite upstream thermal state.</span>
+<span class="sd">    WeakShockConditions : General finite-Mach-number shock solver.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    - This is the **simplest and most commonly used strong-shock model** for</span>
@@ -2227,11 +2264,6 @@
 <span class="sd">      solution returns only kinematic quantities.</span>
 <span class="sd">    - Compared to :class:`StrongShockConditions`, this class removes all</span>
 <span class="sd">      dependence on upstream pressure and temperature.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    StrongShockConditions : Strong shocks with a finite upstream thermal state.</span>
-<span class="sd">    WeakShockConditions : General finite-Mach-number shock solver.</span>
 <span class="sd">    """</span>
 
     <span class="n">OUTPUT_FIELDS</span> <span class="o">=</span> <span class="p">(</span>
@@ -2559,6 +2591,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        StrongColdShockConditionsResult or StrongColdShockConditionsUpstreamResult</span>
+<span class="sd">            Named tuple of the post-shock quantities, or, if ``upstream`` is ``True``, of the pre-shock kinematic</span>
+<span class="sd">            quantities.</span>
 <span class="sd">        """</span>
         <span class="n">v_sh</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">shock_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
         <span class="n">rho</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">flow_density</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
@@ -3575,6 +3609,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float or ~numpy.ndarray</span>
+<span class="sd">            The compression ratio :math:`R = \rho_2/\rho_1`.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_compression_ratio</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">upstream_mach_number</span><span class="p">),</span> <span class="n">gamma</span><span class="p">)</span></div>
 
@@ -4308,6 +4343,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        WeakShockConditionsResult or WeakShockConditionsUpstreamResult</span>
+<span class="sd">            Named tuple of the post-shock quantities, or, if ``upstream`` is ``True``, of the pre-shock kinematic</span>
+<span class="sd">            quantities.</span>
 <span class="sd">        """</span>
         <span class="n">v_sh</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">shock_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
         <span class="n">rho</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">flow_density</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
@@ -4706,6 +4743,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        WeakColdShockConditionsResult or WeakColdShockConditionsUpstreamResult</span>
+<span class="sd">            Named tuple of the post-shock quantities, or, if ``upstream`` is ``True``, of the pre-shock kinematic</span>
+<span class="sd">            quantities.</span>
 <span class="sd">        """</span>
         <span class="n">v_sh</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">shock_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
         <span class="n">rho</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">flow_density</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>

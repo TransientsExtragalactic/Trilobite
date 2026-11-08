@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -480,6 +497,13 @@
 <span class="sd">    The container provides a validated, unit-aware, read-only interface</span>
 <span class="sd">    suitable for likelihood evaluation, inference, and visualization.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table : ~astropy.table.Table</span>
+<span class="sd">        The radio photometry table. It must conform to the container schema.</span>
+<span class="sd">    frequency : float or ~astropy.units.Quantity</span>
+<span class="sd">        Observing frequency of the light curve. Bare floats are interpreted as GHz.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    - Detection status is inferred from ``flux_upper_limit`` being NaN</span>
@@ -535,64 +559,64 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Observing frequency of the light curve."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Observing frequency of the light curve."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frequency__</span>
 
     <span class="c1"># ========================= DATA ACCESS ========================= #</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Observation times."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Observation times."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_density</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Flux density measurements."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Flux density measurements."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"flux_density"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_density_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Flux density uncertainties."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Flux density uncertainties."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"flux_density_error"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_upper_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Flux density upper limits."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Flux density upper limits."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"flux_upper_limit"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="c1"># ========================= DETECTION LOGIC ========================= #</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detection_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""True where the row is a detection; False for upper limits."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: True where the row is a detection; False for upper limits."""</span>
         <span class="k">return</span> <span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">y_lim_mask</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">non_detection_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""True where the row is an upper limit; False for detections."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: True where the row is an upper limit; False for detections."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_lim_mask</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_detections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return the number of detections."""</span>
+<span class="w">        </span><span class="sd">"""int: Return the number of detections."""</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detection_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_non_detections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return the number of non-detections (upper limits)."""</span>
+<span class="w">        </span><span class="sd">"""int: Return the number of non-detections (upper limits)."""</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">non_detection_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detection_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a table containing only detections."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.table.Table: Return a table containing only detections."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">detection_mask</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">non_detection_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return a table containing only non-detections (upper limits)."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.table.Table: Return a table containing only non-detections (upper limits)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">non_detection_mask</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Number of observations."""</span>
+<span class="w">        </span><span class="sd">"""int: Number of observations."""</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="c1"># ========================= NUMERICAL BACKENDS ========================= #</span>
@@ -661,7 +685,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        InferenceData</span>
+<span class="sd">        ~trilobite.data.core.InferenceData</span>
+<span class="sd">            The inference dataset built from the light curve.</span>
 <span class="sd">        """</span>
         <span class="c1"># ------------------------------------------------------------</span>
         <span class="c1"># Default variable mapping</span>
@@ -748,7 +773,23 @@
         <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
         <span class="n">column_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Construct a RadioLightCurveContainer from an Astropy table."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Construct a RadioLightCurveContainer from an Astropy table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : ~astropy.table.Table</span>
+<span class="sd">            The radio photometry table. It must conform to the container schema.</span>
+<span class="sd">        frequency : float or ~astropy.units.Quantity</span>
+<span class="sd">            Observing frequency of the light curve. Bare floats are interpreted as GHz.</span>
+<span class="sd">        column_map : dict, optional</span>
+<span class="sd">            Mapping from existing column names to the schema's column names.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.light_curve.RadioLightCurveContainer</span>
+<span class="sd">            The constructed light curve.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">column_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">table</span><span class="o">.</span><span class="n">rename_columns</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">column_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">column_map</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
@@ -769,7 +810,23 @@
         <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Construct a RadioLightCurveContainer from a file on disk."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Construct a RadioLightCurveContainer from a file on disk.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or ~pathlib.Path</span>
+<span class="sd">            Path to the file to read.</span>
+<span class="sd">        frequency : float or ~astropy.units.Quantity</span>
+<span class="sd">            Observing frequency of the light curve. Bare floats are interpreted as GHz.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments passed to ``astropy.table.Table.read``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.light_curve.RadioLightCurveContainer</span>
+<span class="sd">            The constructed light curve.</span>
+<span class="sd">        """</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span>
@@ -799,8 +856,8 @@
 <span class="sd">    for detections and finite for non-detections. If only magnitude columns</span>
 <span class="sd">    are present, ``mag_ab_upper_limit`` is used instead.</span>
 
-<span class="sd">    Schema</span>
-<span class="sd">    ------</span>
+<span class="sd">    .. rubric:: Schema</span>
+
 <span class="sd">    Required:</span>
 
 <span class="sd">    - ``time`` [day]</span>
@@ -817,11 +874,18 @@
 <span class="sd">    - ``obs_name`` [str]</span>
 <span class="sd">    - ``comments`` [str]</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table : ~astropy.table.Table</span>
+<span class="sd">        The optical photometry table. It must conform to the container schema.</span>
+<span class="sd">    band : str</span>
+<span class="sd">        Name of the photometric band of the light curve.</span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    RadioLightCurveContainer</span>
 <span class="sd">        Equivalent container for single-frequency radio observations.</span>
-<span class="sd">    ~trilobite.data.optical_photometry.OpticalPhotometryContainer</span>
+<span class="sd">    :obj:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`</span>
 <span class="sd">        Multi-band optical photometry container.</span>
 <span class="sd">    """</span>
 
@@ -882,7 +946,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">band</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Band name for this light curve."""</span>
+<span class="w">        </span><span class="sd">"""str: Band name for this light curve."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__band__</span>
 
     <span class="c1"># ========================= HELPERS ========================= #</span>
@@ -897,12 +961,12 @@
     <span class="c1"># ========================= DATA ACCESS ========================= #</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Observation times in days."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Observation times in days."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Flux density F_ν in erg/s/cm²/Hz (converted from mag if needed)."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Flux density F_ν in erg/s/cm²/Hz (converted from mag if needed)."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_flux_column</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"flux_density"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ab_mag_to_flux</span>
@@ -912,7 +976,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""1-sigma uncertainty on F_ν (propagated from mag error if needed)."""</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""~astropy.units.Quantity: 1-sigma uncertainty on F_ν (propagated from mag error if needed)."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_flux_column</span> <span class="ow">and</span> <span class="s2">"flux_density_error"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"flux_density_error"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
         <span class="n">mag_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"mag_ab_error"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -920,7 +984,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">flux_upper_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Upper limit on F_ν (NaN for detections, converted from mag if needed)."""</span>
+<span class="w">        </span><span class="sd">"""~astropy.units.Quantity: Upper limit on F_ν (NaN for detections, converted from mag if needed)."""</span>
         <span class="k">if</span> <span class="s2">"flux_upper_limit"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"flux_upper_limit"</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
         <span class="k">if</span> <span class="s2">"mag_ab_upper_limit"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
@@ -932,7 +996,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">mag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""AB magnitude (dimensionless; converted from flux if needed)."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: AB magnitude (dimensionless; converted from flux if needed)."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_mag_column</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"mag_ab"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">flux_to_ab_mag</span>
@@ -941,14 +1005,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">mag_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">"""1-sigma uncertainty on AB magnitude (propagated from flux if needed)."""</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""~numpy.ndarray: 1-sigma uncertainty on AB magnitude (propagated from flux if needed)."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_mag_column</span> <span class="ow">and</span> <span class="s2">"mag_ab_error"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"mag_ab_error"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">1.0857</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">flux_error</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">mag_upper_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""AB magnitude upper limit (NaN for detections; converted from flux if needed)."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: AB magnitude upper limit (NaN for detections; converted from flux if needed)."""</span>
         <span class="k">if</span> <span class="s2">"mag_ab_upper_limit"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="s2">"mag_ab_upper_limit"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">flux_to_ab_mag</span>
@@ -958,24 +1022,27 @@
     <span class="c1"># ========================= DETECTION LOGIC ========================= #</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detection_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""True where the row is a detection; False for upper limits."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: True where the row is a detection; False for upper limits."""</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flux_upper_limit</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">non_detection_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""True where the row is an upper limit; False for detections."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: True where the row is an upper limit; False for detections."""</span>
         <span class="k">return</span> <span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">detection_mask</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_detections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""int: Number of detections."""</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detection_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_non_detections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""int: Number of non-detections (upper limits)."""</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">non_detection_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""int: Number of observations."""</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="c1"># ========================= Inference Data Conversion ========================= #</span>
@@ -1020,7 +1087,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        InferenceData</span>
+<span class="sd">        ~trilobite.data.core.InferenceData</span>
+<span class="sd">            The inference dataset built from the light curve.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1122,7 +1190,23 @@
         <span class="n">band</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">column_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Construct an OpticalLightCurveContainer from an Astropy table."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Construct an OpticalLightCurveContainer from an Astropy table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : ~astropy.table.Table</span>
+<span class="sd">            The optical photometry table. It must conform to the container schema.</span>
+<span class="sd">        band : str</span>
+<span class="sd">            Name of the photometric band of the light curve.</span>
+<span class="sd">        column_map : dict, optional</span>
+<span class="sd">            Mapping from existing column names to the schema's column names.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.light_curve.OpticalLightCurveContainer</span>
+<span class="sd">            The constructed light curve.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">column_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">table</span><span class="o">.</span><span class="n">rename_columns</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">column_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">column_map</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
@@ -1139,7 +1223,23 @@
         <span class="n">band</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Construct an OpticalLightCurveContainer from a file on disk."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Construct an OpticalLightCurveContainer from a file on disk.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or ~pathlib.Path</span>
+<span class="sd">            Path to the file to read.</span>
+<span class="sd">        band : str</span>
+<span class="sd">            Name of the photometric band of the light curve.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments passed to ``astropy.table.Table.read``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.light_curve.OpticalLightCurveContainer</span>
+<span class="sd">            The constructed light curve.</span>
+<span class="sd">        """</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span></div>
 </div>

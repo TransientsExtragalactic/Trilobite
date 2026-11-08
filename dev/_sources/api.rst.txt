@@ -1,11 +1,29 @@
-.. image:: ./images/logo.svg
-   :width: 200px
-   :align: center
+.. raw:: html
+
+   <div class="page-header">
+
+.. image:: /images/logo.svg
+   :class: page-header-logo
+   :alt: Trilobite logo
+
+.. raw:: html
+
+   <div class="page-header-text">
 
 .. _api:
 
+==================
 API
-===
+==================
+
+.. raw:: html
+
+   <p class="page-header-tagline">The complete reference for Trilobite's public interface.</p>
+   <p class="page-header-lede">
+      Every public class, function and module, with signatures, type hints and source links.
+   </p>
+   </div>
+   </div>
 
 This page provides the complete reference for all public classes, functions, and modules in the Trilobite codebase.
 

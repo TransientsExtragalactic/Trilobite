@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -530,7 +547,7 @@
 <span class="c1"># Core Synchrotron Engine Class                    #</span>
 <span class="c1"># ================================================ #</span>
 <div class="viewcode-block" id="NumericalSynchrotronEngine">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NumericalSynchrotronEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Numerical synchrotron engine base class.</span>
@@ -601,6 +618,17 @@
 <span class="sd">    one-zone synchrotron calculations and more sophisticated multi-zone or</span>
 <span class="sd">    structured outflow models.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :mod:`trilobite.radiation.synchrotron.core`</span>
+<span class="sd">        Low-level synchrotron kernel implementations and asymptotic approximations.</span>
+
+<span class="sd">    :mod:`trilobite.radiation.synchrotron.SEDs.one_zone`</span>
+<span class="sd">        Analytic one-zone synchrotron SED models.</span>
+
+<span class="sd">    scipy.interpolate.InterpolatedUnivariateSpline</span>
+<span class="sd">        Spline interpolator used for synchrotron kernel tabulation.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    All local radiative quantities are assumed to be defined in the comoving frame</span>
@@ -620,17 +648,6 @@
 <span class="sd">    The engine itself is geometry-agnostic. Higher-level SED classes are responsible</span>
 <span class="sd">    for specifying emitting areas, angular structure, viewing geometry, and</span>
 <span class="sd">    multi-zone integration strategies.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :mod:`trilobite.radiation.synchrotron.core`</span>
-<span class="sd">        Low-level synchrotron kernel implementations and asymptotic approximations.</span>
-
-<span class="sd">    :mod:`trilobite.radiation.synchrotron.SEDs.one_zone`</span>
-<span class="sd">        Analytic one-zone synchrotron SED models.</span>
-
-<span class="sd">    scipy.interpolate.InterpolatedUnivariateSpline</span>
-<span class="sd">        Spline interpolator used for synchrotron kernel tabulation.</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -713,16 +730,46 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_first_kernel_loaded</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_avg_first_kernel_loaded</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Enter the numerical synchrotron engine context."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Enter the numerical synchrotron engine context.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine</span>
+<span class="sd">            The engine itself.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Exit the numerical synchrotron engine context and clear interpolator caches."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Exit the numerical synchrotron engine context and clear interpolator caches.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        exc_type : type or None</span>
+<span class="sd">            Type of the exception raised in the context, if any.</span>
+<span class="sd">        exc_val : BaseException or None</span>
+<span class="sd">            The exception raised in the context, if any.</span>
+<span class="sd">        exc_tb : traceback or None</span>
+<span class="sd">            Traceback of the exception raised in the context, if any.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Always ``False``, so exceptions raised in the context are not suppressed.</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Return a shallow copy of the synchrotron engine."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a shallow copy of the synchrotron engine.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine</span>
+<span class="sd">            A shallow copy of the engine that shares the loaded kernel caches.</span>
+<span class="sd">        """</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
         <span class="n">new</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="n">new</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
@@ -733,131 +780,131 @@
     <span class="c1"># --- Properties --- #</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_first_kernel_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Whether the first synchrotron kernel interpolator is loaded."""</span>
+<span class="w">        </span><span class="sd">"""bool: Whether the first synchrotron kernel interpolator is loaded."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_first_kernel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_avg_first_kernel_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Whether the pitch-angle-averaged kernel interpolator is loaded."""</span>
+<span class="w">        </span><span class="sd">"""bool: Whether the pitch-angle-averaged kernel interpolator is loaded."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_avg_first_kernel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_first_kernel_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Natural-log x-grid for the first synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Natural-log x-grid for the first synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_x_first_kernel</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">first_kernel_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Linear x-grid for the first synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Linear x-grid for the first synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_x_first_kernel</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_first_kernel_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Natural-log values of the first synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Natural-log values of the first synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_first_kernel</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">first_kernel_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Linear values of the first synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Linear values of the first synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_first_kernel</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_first_kernel_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Logarithmic derivative of the first synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Logarithmic derivative of the first synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_dfirst_kernel_dlog_x</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">first_kernel_interpolator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InterpolatedUnivariateSpline</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Spline interpolator for the first synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~scipy.interpolate.InterpolatedUnivariateSpline: Spline interpolator for the first synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_first_kernel</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">first_kernel_derivative_interpolator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InterpolatedUnivariateSpline</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Spline interpolator for the first kernel logarithmic derivative."""</span>
+<span class="w">        </span><span class="sd">"""~scipy.interpolate.InterpolatedUnivariateSpline: Spline interpolator for the first kernel log-derivative."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_dfirst_kernel_dlog_x</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">first_kernel_min_x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Minimum x-value tabulated for the first synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""float: Minimum x-value tabulated for the first synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_x_first_kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">first_kernel_max_x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Maximum x-value tabulated for the first synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""float: Maximum x-value tabulated for the first synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_x_first_kernel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">first_kernel_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Number of tabulated points in the first synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""int: Number of tabulated points in the first synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_x_first_kernel</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_avg_first_kernel_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Natural-log x-grid for the averaged synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Natural-log x-grid for the averaged synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_avg_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_x_avg_first_kernel</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">avg_first_kernel_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Linear x-grid for the averaged synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Linear x-grid for the averaged synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_avg_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_x_avg_first_kernel</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_avg_first_kernel_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Natural-log values of the averaged synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Natural-log values of the averaged synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_avg_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_avg_first_kernel</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">avg_first_kernel_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Linear values of the averaged synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Linear values of the averaged synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_avg_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_avg_first_kernel</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_avg_first_kernel_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Logarithmic derivative of the averaged synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Logarithmic derivative of the averaged synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_avg_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_davg_first_kernel_dlog_x</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">avg_first_kernel_interpolator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InterpolatedUnivariateSpline</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Spline interpolator for the averaged synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""~scipy.interpolate.InterpolatedUnivariateSpline: Spline interpolator for the averaged kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_avg_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_avg_first_kernel</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">avg_first_kernel_derivative_interpolator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InterpolatedUnivariateSpline</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Spline interpolator for the averaged kernel logarithmic derivative."""</span>
+<span class="w">        </span><span class="sd">"""~scipy.interpolate.InterpolatedUnivariateSpline: Spline for the averaged kernel log-derivative."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_avg_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_davg_first_kernel_dlog_x</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">avg_first_kernel_min_x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Minimum x-value tabulated for the averaged synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""float: Minimum x-value tabulated for the averaged synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_avg_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_x_avg_first_kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">avg_first_kernel_max_x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Maximum x-value tabulated for the averaged synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""float: Maximum x-value tabulated for the averaged synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_avg_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_x_avg_first_kernel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">avg_first_kernel_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Number of tabulated points in the averaged synchrotron kernel."""</span>
+<span class="w">        </span><span class="sd">"""int: Number of tabulated points in the averaged synchrotron kernel."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_avg_first_kernel_loaded</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_x_avg_first_kernel</span><span class="p">)</span>
 
@@ -865,7 +912,7 @@
     <span class="c1"># Utility Functions                          #</span>
     <span class="c1"># ------------------------------------------ #</span>
 <div class="viewcode-block" id="NumericalSynchrotronEngine.clear">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.clear.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.clear">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.clear.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.clear">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Clear all cached synchrotron kernel tables and interpolators."""</span>
         <span class="c1"># First kernel caches.</span>
@@ -884,7 +931,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.load_first_kernel">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.load_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.load_first_kernel">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.load_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.load_first_kernel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_first_kernel</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -916,9 +963,8 @@
 <span class="sd">        method : {"exact", "lu"}, optional</span>
 <span class="sd">            Kernel evaluation method passed to :func:`_log_first_synchrotron_kernel`.</span>
 <span class="sd">            Default is ``"exact"``.</span>
-<span class="sd">        derivative : bool, optional</span>
-<span class="sd">            Whether to compute and cache the derivative of the kernel with respect to log(x).</span>
-<span class="sd">            Passed to :func:`_log_first_synchrotron_kernel`. Default is True.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments passed to :class:`scipy.interpolate.InterpolatedUnivariateSpline`.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">x_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -940,7 +986,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.load_avg_first_kernel">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.load_avg_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.load_avg_first_kernel">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.load_avg_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.load_avg_first_kernel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_avg_first_kernel</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -972,9 +1018,8 @@
 <span class="sd">        method : {"exact", "lu"}, optional</span>
 <span class="sd">            Kernel evaluation method passed to</span>
 <span class="sd">            :func:`_log_averaged_first_synchrotron_kernel`. Default is ``"exact"``.</span>
-<span class="sd">        derivative : bool, optional</span>
-<span class="sd">            Whether to compute and cache the logarithmic derivative of the kernel.</span>
-<span class="sd">            Passed to :func:`_log_averaged_first_synchrotron_kernel`. Default is True.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments passed to :class:`scipy.interpolate.InterpolatedUnivariateSpline`.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">x_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -1064,7 +1109,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_davg_first_kernel_dlog_x</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.ensure_first_kernel_loaded">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.ensure_first_kernel_loaded.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.ensure_first_kernel_loaded">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.ensure_first_kernel_loaded.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.ensure_first_kernel_loaded">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ensure_first_kernel_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Ensure that the first kernel interpolator is loaded. Raises if not.</span>
@@ -1079,7 +1124,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.ensure_avg_first_kernel_loaded">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.ensure_avg_first_kernel_loaded.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.ensure_avg_first_kernel_loaded">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.ensure_avg_first_kernel_loaded.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.ensure_avg_first_kernel_loaded">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ensure_avg_first_kernel_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Ensure that the pitch-angle averaged first kernel interpolator is loaded. Raises if not.</span>
@@ -1096,7 +1141,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_first_kernel">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_first_kernel">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_first_kernel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_first_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the first synchrotron kernel :math:`F(x)`.</span>
@@ -1115,7 +1160,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        F : float or ~numpy.ndarray</span>
+<span class="sd">        float or ~numpy.ndarray</span>
 <span class="sd">            :math:`F(x)` at each input point.</span>
 
 <span class="sd">        Raises</span>
@@ -1154,7 +1199,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_first_kernel_derivative">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_first_kernel_derivative.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_first_kernel_derivative">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_first_kernel_derivative.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_first_kernel_derivative">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_first_kernel_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the logarithmic derivative of the first synchrotron kernel.</span>
@@ -1180,7 +1225,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        dlogF_dlogx : float or ~numpy.ndarray</span>
+<span class="sd">        float or ~numpy.ndarray</span>
 <span class="sd">            Logarithmic derivative :math:`d\log F/d\log x`.</span>
 
 <span class="sd">        Raises</span>
@@ -1216,7 +1261,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_avg_first_kernel">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_avg_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_avg_first_kernel">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_avg_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_avg_first_kernel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_avg_first_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the pitch-angle-averaged synchrotron kernel :math:`\bar{F}(x)`.</span>
@@ -1234,7 +1279,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        F_avg : float or ~numpy.ndarray</span>
+<span class="sd">        float or ~numpy.ndarray</span>
 <span class="sd">            Pitch-angle-averaged synchrotron kernel :math:`\bar{F}(x)`.</span>
 
 <span class="sd">        Raises</span>
@@ -1273,7 +1318,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_avg_first_kernel_derivative">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_avg_first_kernel_derivative.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_avg_first_kernel_derivative">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_avg_first_kernel_derivative.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_avg_first_kernel_derivative">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_avg_first_kernel_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the logarithmic derivative of the pitch-angle-averaged synchrotron kernel.</span>
@@ -1299,7 +1344,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        dlogFavg_dlogx : float or ~numpy.ndarray</span>
+<span class="sd">        float or ~numpy.ndarray</span>
 <span class="sd">            Logarithmic derivative :math:`d\log \bar{F}/d\log x`.</span>
 
 <span class="sd">        Raises</span>
@@ -3067,7 +3112,7 @@
     <span class="c1"># Public Radiative Quantities API</span>
     <span class="c1"># ------------------------------------------ #</span>
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_emissivity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_emissivity.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_emissivity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_emissivity.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_emissivity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_emissivity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3114,7 +3159,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        j_nu : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Comoving-frame emissivity, in</span>
 <span class="sd">            :math:`\mathrm{erg\,s^{-1}\,cm^{-3}\,Hz^{-1}\,sr^{-1}}`.</span>
 <span class="sd">        """</span>
@@ -3148,7 +3193,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_absorption">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_absorption.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_absorption">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_absorption.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_absorption">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_absorption</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3194,7 +3239,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        alpha_nu : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Comoving-frame absorption coefficient,</span>
 <span class="sd">            in :math:`\mathrm{cm^{-1}}`.</span>
 <span class="sd">        """</span>
@@ -3228,7 +3273,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_source_function">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_source_function.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_source_function">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_source_function.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_source_function">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_source_function</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3274,7 +3319,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        S_nu : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Comoving-frame source function, in</span>
 <span class="sd">            :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.</span>
 <span class="sd">        """</span>
@@ -3308,7 +3353,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_rest_frame_specific_intensity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_rest_frame_specific_intensity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3361,7 +3406,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        I_nu : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Comoving-frame specific intensity,</span>
 <span class="sd">            in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.</span>
 <span class="sd">        """</span>
@@ -3398,7 +3443,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_specific_intensity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_specific_intensity.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_specific_intensity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_specific_intensity.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_specific_intensity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_specific_intensity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3461,7 +3506,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        I_nu : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Observer-frame specific intensity,</span>
 <span class="sd">            in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.</span>
 <span class="sd">        """</span>
@@ -3505,7 +3550,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_flux_density">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_flux_density.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_flux_density">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_flux_density.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_flux_density">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_flux_density</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3590,7 +3635,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        F_nu : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Observer-frame spectral flux density,</span>
 <span class="sd">            in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.</span>
 <span class="sd">        """</span>
@@ -3653,7 +3698,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_brightness_temperature">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_brightness_temperature.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_brightness_temperature">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_brightness_temperature.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_brightness_temperature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_brightness_temperature</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3738,7 +3783,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        T_B : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Observer-frame brightness temperature, shape</span>
 <span class="sd">            ``(*nu_shape, *zone_shape)``, in Kelvin.</span>
 <span class="sd">        """</span>
@@ -3794,7 +3839,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_rest_frame_luminosity_density">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_rest_frame_luminosity_density.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_rest_frame_luminosity_density">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_rest_frame_luminosity_density.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_rest_frame_luminosity_density">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_rest_frame_luminosity_density</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3859,7 +3904,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        L_nu : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Comoving-frame spectral luminosity density, shape</span>
 <span class="sd">            ``(*nu_shape, *zone_shape)``, in :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.</span>
 <span class="sd">        """</span>
@@ -3906,7 +3951,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_luminosity_density">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_luminosity_density.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_luminosity_density">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_luminosity_density.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_luminosity_density">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_luminosity_density</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3988,7 +4033,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        L_nu : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Observer-frame spectral luminosity density, shape</span>
 <span class="sd">            ``(*nu_shape, *zone_shape)``, in :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.</span>
 <span class="sd">        """</span>
@@ -4042,7 +4087,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_isotropic_luminosity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_isotropic_luminosity.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_isotropic_luminosity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_isotropic_luminosity.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_isotropic_luminosity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_isotropic_luminosity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -4135,7 +4180,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        L_iso : ~astropy.units.Quantity</span>
+<span class="sd">        ~astropy.units.Quantity</span>
 <span class="sd">            Isotropic-equivalent spectral luminosity, shape</span>
 <span class="sd">            ``(*nu_shape, *zone_shape)``, in :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.</span>
 <span class="sd">        """</span>

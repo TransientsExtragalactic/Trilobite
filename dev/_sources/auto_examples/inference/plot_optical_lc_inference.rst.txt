@@ -23,9 +23,8 @@ Fitting a Multi-Band Optical Light Curve with MCMC
 
 This example performs a complete round-trip:
 
-1. **Forward model** — generate synthetic SDSS *ugriz* photometry from a
-   ``FREDBlackbodyModel``
-   with known parameters.
+1. **Forward model** — define a simple blackbody model whose luminosity follows a FRED profile and whose
+   temperature cools as a power law, and generate synthetic SDSS *ugriz* photometry from it with known parameters.
 2. **Load** — package the noisy observations into an
    :class:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`,
    demonstrating the standard data pipeline described in :ref:`data_overview`.
@@ -41,45 +40,84 @@ This example performs a complete round-trip:
 6. **Posterior predictive check** — draw light curves from the posterior and
    overlay them on the data in all five bands.
 
-The coupled optical model architecture is detailed in
-:ref:`sphx_glr_auto_examples_modeling_plot_fred_blackbody_optical_lc.py`.
-
 See Also
 --------
-- ``FREDBlackbodyModel``
+- :class:`~trilobite.models.core.optical.OpticalModel`
 - :class:`trilobite.data.optical_photometry.OpticalPhotometryContainer`
 - :class:`trilobite.inference.likelihood.base.GaussianCensoredLikelihood`
 - :class:`trilobite.inference.sampling.mcmc.EmceeSampler`
 - :ref:`data_overview` — data pipeline overview
 - :ref:`data_to_inference` — step-by-step guide to ``to_inference_data()``
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-51
+.. GENERATED FROM PYTHON SOURCE LINES 35-54
 
 Step 1 — Forward Model
 -----------------------
 
-We assemble the SDSS *ugriz* filter bundle and instantiate the
-``FREDBlackbodyModel``.
-The bundle's ``filter_names`` list defines the mapping
-``band_name → band_idx`` that is used automatically when the data container
-calls :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`.
+We define the model inline by subclassing :class:`~trilobite.models.core.optical.OpticalModel`. A subclass only
+has to declare its parameters and implement ``_compute_sed``, which returns the flux density on the filter
+bundle's frequency grid at a set of times. The base class handles the filter convolution and the band indexing.
 
-Trilobite loads real SDSS response curves via ``speclite``.  See
+The transient is a blackbody with two time dependences:
+
+- the bolometric luminosity follows a fast-rise exponential-decay (FRED) profile, normalized so that
+  ``L_peak`` is the peak luminosity, and
+- the temperature cools as a power law, :math:`T = T_{10}\,[(t - t_0)/10\,{\rm d}]^{-\alpha}`.
+
+The flux density at a distance :math:`D` follows from :math:`F_\nu = B_\nu(T)\,L/(4\sigma T^4 D^2)`, which
+conserves :math:`L = 4\pi R^2 \sigma T^4`. The distance is fixed at 100 Mpc.
+
+Trilobite loads real SDSS response curves via ``speclite``. See
 :ref:`sphx_glr_auto_examples_photometry_plot_filter_bundle.py` for details
 on filter construction.
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-88
+.. GENERATED FROM PYTHON SOURCE LINES 54-127
 
 .. code-block:: Python
 
 
     import matplotlib.pyplot as plt
     import numpy as np
+    from astropy import constants as const
     from astropy import units as u
     from astropy.table import Table
 
-    from trilobite.models.generic.optical_photometry import FREDBlackbodyModel
+    from trilobite.models.core.optical import OpticalModel
+    from trilobite.models.core.parameters import ModelParameter
     from trilobite.utils.phot_utils import FilterBundle, flux_to_ab_mag, load_filter_from_speclite
+
+    DAY = 86400.0
+    _H, _K, _C, _SIGMA = (const.h.cgs.value, const.k_B.cgs.value, const.c.cgs.value, const.sigma_sb.cgs.value)
+    _D = (100.0 * u.Mpc).to_value(u.cm)
+
+
+    class FREDPowerLawBlackbody(OpticalModel):
+        """Blackbody with a FRED luminosity and a power-law cooling temperature."""
+
+        PARAMETERS = (
+            ModelParameter("t_0", 1.0 * DAY, base_units=u.s, description="Onset time.", bounds=(0.0, None)),
+            ModelParameter("tau_r", 2.0 * DAY, base_units=u.s, description="Rise time.", bounds=(0.0, None)),
+            ModelParameter("tau_d", 10.0 * DAY, base_units=u.s, description="Decay time.", bounds=(0.0, None)),
+            ModelParameter("L_peak", 1e43, base_units=u.erg / u.s, description="Peak luminosity.", bounds=(0.0, None)),
+            ModelParameter("T_10", 1e4, base_units=u.K, description="Temperature 10 days after onset.", bounds=(0.0, None)),
+            ModelParameter("alpha", 0.2, base_units=u.dimensionless_unscaled, description="Cooling index."),
+        )
+
+        def _compute_sed(self, nu_grid, t_unique, parameters):
+            dt = np.maximum(t_unique - parameters["t_0"], 1e-3 * DAY)
+            tau_r, tau_d = parameters["tau_r"], parameters["tau_d"]
+
+            # FRED profile, divided by its value at its maximum so that L_peak is the peak luminosity.
+            fred = (1.0 - np.exp(-dt / tau_r)) * np.exp(-dt / tau_d)
+            dt_pk = tau_r * np.log(1.0 + tau_d / tau_r)
+            fred_pk = (1.0 - np.exp(-dt_pk / tau_r)) * np.exp(-dt_pk / tau_d)
+            L = np.where(t_unique > parameters["t_0"], parameters["L_peak"] * fred / fred_pk, 0.0)
+
+            T = parameters["T_10"] * (dt / (10.0 * DAY)) ** -parameters["alpha"]
+            x = _H * nu_grid[None, :] / (_K * T[:, None])
+            B_nu = 2 * _H * nu_grid[None, :] ** 3 / _C**2 / np.expm1(np.minimum(x, 700.0))
+            return B_nu * L[:, None] / (4 * _SIGMA * T[:, None] ** 4 * _D**2)
+
 
     # ---- Build SDSS ugriz filter bundle ----------------------------------------
     SDSS_BANDS = {
@@ -91,7 +129,7 @@ on filter construction.
     }
     filters = {short: load_filter_from_speclite(sp) for short, sp in SDSS_BANDS.items()}
     bundle = FilterBundle(filters)
-    model = FREDBlackbodyModel(bundle)
+    model = FREDPowerLawBlackbody(bundle)
 
     print(f"Model variables : {model.variable_names}")
     print(f"Model parameters: {model.parameter_names}")
@@ -99,37 +137,39 @@ on filter construction.
 
     # ---- True parameters for the synthetic transient ---------------------------
     #
-    # All physical time parameters are stored in seconds internally (the model's
-    # base units for ``time``).  We express them as days for readability.
+    # All times are in seconds internally (the model's base units for ``time``).
+    # We express them as days for readability.
     TRUE_PARAMS = {
-        "t_0": 1.0 * 86400,  # onset at day 1  [s]
-        "tau_r": 2.0 * 86400,  # 2-day rise       [s]
-        "tau_d": 10.0 * 86400,  # 10-day decay     [s]
-        "T_eff": 12_000.0,  # colour temperature [K]
-        "amplitude": 5e-28,  # peak F_nu at V-pivot [erg/s/cm²/Hz]
+        "t_0": 1.0 * DAY,  # onset at day 1
+        "tau_r": 2.0 * DAY,  # 2-day rise
+        "tau_d": 10.0 * DAY,  # 10-day decay
+        "L_peak": 1e43,  # peak luminosity [erg/s]
+        "T_10": 1.0e4,  # temperature 10 days after onset [K]
+        "alpha": 0.2,  # cooling index
     }
+
+
 
 
 
 .. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+ .. code-block:: none
 
-    Traceback (most recent call last):
-      File "/home/runner/work/Trilobite/Trilobite/docs/source/galleries/inference/plot_optical_lc_inference.py", line 57, in <module>
-        from trilobite.models.generic.optical_photometry import FREDBlackbodyModel
-    ModuleNotFoundError: No module named 'trilobite.models.generic.optical_photometry'
-
+    Model variables : ('band_index', 'time')
+    Model parameters: ('t_0', 'tau_r', 'tau_d', 'L_peak', 'T_10', 'alpha')
+    Model outputs   : ('flux',)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-92
+
+.. GENERATED FROM PYTHON SOURCE LINES 128-131
 
 Observation grid: 9 epochs × 5 bands (ugriz) = 45 synthetic measurements.
 We observe at the same five bands per epoch — a realistic cadence for
 multi-band transient follow-up.
 
-.. GENERATED FROM PYTHON SOURCE LINES 92-120
+.. GENERATED FROM PYTHON SOURCE LINES 131-159
 
 .. code-block:: Python
 
@@ -150,8 +190,8 @@ multi-band transient follow-up.
     t_all_s = t_all_days * 86400.0
 
     # ---- Evaluate the forward model to get noise-free fluxes -------------------
-    variables_true = {"time": t_all_s, "band_idx": band_idx_all}
-    flux_true = model.forward_model(variables_true, TRUE_PARAMS).flux_density.value
+    variables_true = {"time": t_all_s, "band_index": band_idx_all}
+    flux_true = model.forward_model(variables_true, TRUE_PARAMS).flux.value
 
     # Add 5 % Gaussian noise
     noise_frac = 0.05
@@ -162,7 +202,21 @@ multi-band transient follow-up.
     print(f"Noise level: {noise_frac * 100:.0f}% Gaussian (S/N ~ {1 / noise_frac:.0f})")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 121-133
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    45 synthetic observations generated across 9 epochs and 5 bands.
+    Noise level: 5% Gaussian (S/N ~ 20)
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 160-172
 
 Step 2 — Load into OpticalPhotometryContainer
 ----------------------------------------------
@@ -177,7 +231,7 @@ The ``flux_upper_limit`` column is ``NaN`` for all rows because all
 observations are detections.  Censored data workflows (upper limits) follow
 the same pipeline but set finite values in the ``flux_upper_limit`` column.
 
-.. GENERATED FROM PYTHON SOURCE LINES 133-153
+.. GENERATED FROM PYTHON SOURCE LINES 172-192
 
 .. code-block:: Python
 
@@ -202,11 +256,27 @@ the same pipeline but set finite values in the ``flux_upper_limit`` column.
     print(f"  Upper limits : {container.n_non_detections}")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 154-155
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    OpticalPhotometryContainer
+      Observations : 45
+      Detections   : 45
+      Upper limits : 0
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 193-194
 
 Quick look at the data before inference.
 
-.. GENERATED FROM PYTHON SOURCE LINES 155-215
+.. GENERATED FROM PYTHON SOURCE LINES 194-253
 
 .. code-block:: Python
 
@@ -226,9 +296,9 @@ Quick look at the data before inference.
 
         # True model
         out_dense = model.forward_model(
-            {"time": t_dense_s, "band_idx": np.full(len(t_dense_s), idx, dtype=int)}, TRUE_PARAMS
+            {"time": t_dense_s, "band_index": np.full(len(t_dense_s), idx, dtype=int)}, TRUE_PARAMS
         )
-        f_dense = out_dense.flux_density.value
+        f_dense = out_dense.flux.value
 
         # Observed data for this band
         mask = band_names_all == band_name
@@ -262,16 +332,26 @@ Quick look at the data before inference.
     ax_mag.legend(ncol=2, fontsize=9)
 
     fig.suptitle(
-        rf"FREDBlackbodyModel  ($T_\mathrm{{eff}} = {TRUE_PARAMS['T_eff'] / 1000:.0f}$ kK, "
-        rf"$\tau_r = {TRUE_PARAMS['tau_r'] / 86400:.0f}$ d, "
-        rf"$\tau_d = {TRUE_PARAMS['tau_d'] / 86400:.0f}$ d)",
+        rf"FRED + power-law blackbody  ($\tau_r = {TRUE_PARAMS['tau_r'] / DAY:.0f}$ d, "
+        rf"$\tau_d = {TRUE_PARAMS['tau_d'] / DAY:.0f}$ d, $\alpha = {TRUE_PARAMS['alpha']:.1f}$)",
         y=1.01,
     )
     plt.tight_layout()
     plt.show()
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 216-231
+
+
+.. image-sg:: /auto_examples/inference/images/sphx_glr_plot_optical_lc_inference_001.png
+   :alt: FRED + power-law blackbody  ($\tau_r = 2$ d, $\tau_d = 10$ d, $\alpha = 0.2$), Synthetic photometry — flux, Synthetic photometry — AB magnitude
+   :srcset: /auto_examples/inference/images/sphx_glr_plot_optical_lc_inference_001.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 254-269
 
 Step 3 — Convert to InferenceData
 ----------------------------------
@@ -279,7 +359,7 @@ Step 3 — Convert to InferenceData
 :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`
 performs three operations in a single call:
 
-1. Resolves each ``band_name`` string to an integer ``band_idx`` by looking
+1. Resolves each ``band_name`` string to an integer ``band_index`` by looking
    up ``model.bundle.filter_names``.
 2. Converts time to seconds (the model's ``base_units`` for ``time``).
 3. Returns an :class:`~trilobite.data.core.InferenceData` object containing
@@ -289,7 +369,7 @@ performs three operations in a single call:
 See :ref:`inference_data` for a full description of the ``InferenceData``
 interface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 231-235
+.. GENERATED FROM PYTHON SOURCE LINES 269-273
 
 .. code-block:: Python
 
@@ -298,7 +378,44 @@ interface.
     print(inference_data.describe())
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 236-256
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    InferenceData — 45 observations
+    ──────────────────────────────────────────────────
+    Independent Variables
+      band_index  : min=0  max=4  (shape=(45,))
+      time        : min=1.296e+05  max=3.629e+06  (shape=(45,))
+    ──────────────────────────────────────────────────
+    Observables
+      flux
+        detections    : 45
+        upper limits  : 0
+        lower limits  : 0
+        value range   : 1.943e-28 … 7.358e-27
+        error present : True
+    InferenceData — 45 observations
+    ──────────────────────────────────────────────────
+    Independent Variables
+      band_index  : min=0  max=4  (shape=(45,))
+      time        : min=1.296e+05  max=3.629e+06  (shape=(45,))
+    ──────────────────────────────────────────────────
+    Observables
+      flux
+        detections    : 45
+        upper limits  : 0
+        lower limits  : 0
+        value range   : 1.943e-28 … 7.358e-27
+        error present : True
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 274-294
 
 Step 4 — Likelihood and InferenceProblem
 -----------------------------------------
@@ -317,11 +434,11 @@ limits would contribute a complementary CDF term, but this dataset contains
 only detections.
 
 :class:`~trilobite.inference.problem.InferenceProblem` wraps the likelihood
-together with priors on the free parameters.  All five parameters are
+together with priors on the free parameters.  All six parameters are
 sampled; log-uniform (``loguniform``) priors are appropriate for
 scale-invariant quantities.
 
-.. GENERATED FROM PYTHON SOURCE LINES 256-282
+.. GENERATED FROM PYTHON SOURCE LINES 294-319
 
 .. code-block:: Python
 
@@ -343,16 +460,30 @@ scale-invariant quantities.
     problem.set_prior("t_0", "loguniform", lower=0.1 * u.day, upper=30.0 * u.day)
     problem.set_prior("tau_r", "loguniform", lower=0.1 * u.day, upper=20.0 * u.day)
     problem.set_prior("tau_d", "loguniform", lower=0.5 * u.day, upper=100.0 * u.day)
-    problem.set_prior("T_eff", "loguniform", lower=1_000.0 * u.K, upper=50_000.0 * u.K)
-    problem.set_prior(
-        "amplitude", "loguniform", lower=1e-30 * u.Unit("erg/(s cm2 Hz)"), upper=1e-24 * u.Unit("erg/(s cm2 Hz)")
-    )
+    problem.set_prior("L_peak", "loguniform", lower=1e41 * u.Unit("erg/s"), upper=1e45 * u.Unit("erg/s"))
+    problem.set_prior("T_10", "loguniform", lower=1_000.0 * u.K, upper=50_000.0 * u.K)
+    problem.set_prior("alpha", "uniform", lower=0.0, upper=1.0)
 
     print(f"\nFree parameters  : {problem.free_parameter_names}")
     print(f"Initial log-posterior: {problem.initial_log_posterior:.1f}")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 283-293
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    log-likelihood at true parameters: 2841.1
+
+    Free parameters  : ('t_0', 'tau_r', 'tau_d', 'L_peak', 'T_10', 'alpha')
+    Initial log-posterior: 2687.1
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 320-330
 
 Step 5 — Run MCMC
 ------------------
@@ -365,7 +496,7 @@ parameter packing/unpacking and result serialization.
 remaining 800 steps are thinned by 10 to reduce autocorrelation.  Run
 longer chains (≥ 5 000 steps) for publication-quality posteriors.
 
-.. GENERATED FROM PYTHON SOURCE LINES 293-308
+.. GENERATED FROM PYTHON SOURCE LINES 330-345
 
 .. code-block:: Python
 
@@ -385,13 +516,27 @@ longer chains (≥ 5 000 steps) for publication-quality posteriors.
         print("\nAcceptance fraction: not recorded by sampler.")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 309-312
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+      0% |          | 🦖 0/1200 [00:00<?, ?it/s]      0% |          | 🦖 6/1200 [00:00<00:22, 52.00it/s]      1% |          | 🦖 12/1200 [00:00<00:22, 51.93it/s]      2% |▏         | 🦖 18/1200 [00:00<00:22, 52.05it/s]      2% |▏         | 🦖 24/1200 [00:00<00:22, 51.99it/s]      2% |▎         | 🦖 30/1200 [00:00<00:22, 52.22it/s]      3% |▎         | 🦖 36/1200 [00:00<00:22, 52.29it/s]      4% |▎         | 🦖 42/1200 [00:00<00:22, 52.37it/s]      4% |▍         | 🦖 48/1200 [00:00<00:21, 52.37it/s]      4% |▍         | 🦖 54/1200 [00:01<00:21, 52.40it/s]      5% |▌         | 🦖 60/1200 [00:01<00:21, 52.45it/s]      6% |▌         | 🦖 66/1200 [00:01<00:21, 52.46it/s]      6% |▌         | 🦖 72/1200 [00:01<00:21, 52.44it/s]      6% |▋         | 🦖 78/1200 [00:01<00:21, 52.39it/s]      7% |▋         | 🦖 84/1200 [00:01<00:21, 52.44it/s]      8% |▊         | 🦖 90/1200 [00:01<00:21, 52.49it/s]      8% |▊         | 🦖 96/1200 [00:01<00:21, 52.43it/s]      8% |▊         | 🦖 102/1200 [00:01<00:20, 52.40it/s]      9% |▉         | 🦖 108/1200 [00:02<00:20, 52.35it/s]     10% |▉         | 🦖 114/1200 [00:02<00:20, 52.30it/s]     10% |█         | 🦖 120/1200 [00:02<00:20, 52.35it/s]     10% |█         | 🦖 126/1200 [00:02<00:20, 52.38it/s]     11% |█         | 🦖 132/1200 [00:02<00:20, 52.24it/s]     12% |█▏        | 🦖 138/1200 [00:02<00:20, 52.31it/s]     12% |█▏        | 🦖 144/1200 [00:02<00:20, 52.37it/s]     12% |█▎        | 🦖 150/1200 [00:02<00:20, 52.33it/s]     13% |█▎        | 🦖 156/1200 [00:02<00:19, 52.32it/s]     14% |█▎        | 🦖 162/1200 [00:03<00:19, 52.36it/s]     14% |█▍        | 🦖 168/1200 [00:03<00:19, 52.37it/s]     14% |█▍        | 🦖 174/1200 [00:03<00:19, 52.35it/s]     15% |█▌        | 🦖 180/1200 [00:03<00:19, 52.36it/s]     16% |█▌        | 🦖 186/1200 [00:03<00:19, 52.29it/s]     16% |█▌        | 🦖 192/1200 [00:03<00:19, 52.34it/s]     16% |█▋        | 🦖 198/1200 [00:03<00:19, 52.37it/s]     17% |█▋        | 🦖 204/1200 [00:03<00:19, 52.28it/s]     18% |█▊        | 🦖 210/1200 [00:04<00:18, 52.27it/s]     18% |█▊        | 🦖 216/1200 [00:04<00:18, 52.28it/s]     18% |█▊        | 🦖 222/1200 [00:04<00:18, 52.27it/s]     19% |█▉        | 🦖 228/1200 [00:04<00:18, 52.26it/s]     20% |█▉        | 🦖 234/1200 [00:04<00:18, 52.21it/s]     20% |██        | 🦖 240/1200 [00:04<00:18, 52.29it/s]     20% |██        | 🦖 246/1200 [00:04<00:18, 52.28it/s]     21% |██        | 🦖 252/1200 [00:04<00:18, 52.25it/s]     22% |██▏       | 🦖 258/1200 [00:04<00:18, 52.31it/s]     22% |██▏       | 🦖 264/1200 [00:05<00:17, 52.33it/s]     22% |██▎       | 🦖 270/1200 [00:05<00:17, 52.05it/s]     23% |██▎       | 🦖 276/1200 [00:05<00:17, 52.09it/s]     24% |██▎       | 🦖 282/1200 [00:05<00:17, 52.17it/s]     24% |██▍       | 🦖 288/1200 [00:05<00:17, 52.13it/s]     24% |██▍       | 🦖 294/1200 [00:05<00:17, 52.21it/s]     25% |██▌       | 🦖 300/1200 [00:05<00:17, 52.27it/s]     26% |██▌       | 🦖 306/1200 [00:05<00:17, 52.29it/s]     26% |██▌       | 🦖 312/1200 [00:05<00:16, 52.27it/s]     26% |██▋       | 🦖 318/1200 [00:06<00:16, 52.27it/s]     27% |██▋       | 🦖 324/1200 [00:06<00:16, 52.24it/s]     28% |██▊       | 🦖 330/1200 [00:06<00:16, 52.28it/s]     28% |██▊       | 🦖 336/1200 [00:06<00:16, 52.33it/s]     28% |██▊       | 🦖 342/1200 [00:06<00:16, 52.28it/s]     29% |██▉       | 🦖 348/1200 [00:06<00:16, 52.34it/s]     30% |██▉       | 🦖 354/1200 [00:06<00:16, 52.35it/s]     30% |███       | 🦖 360/1200 [00:06<00:16, 52.36it/s]     30% |███       | 🦖 366/1200 [00:06<00:15, 52.40it/s]     31% |███       | 🦖 372/1200 [00:07<00:15, 52.39it/s]     32% |███▏      | 🦖 378/1200 [00:07<00:15, 52.37it/s]     32% |███▏      | 🦖 384/1200 [00:07<00:15, 52.38it/s]     32% |███▎      | 🦖 390/1200 [00:07<00:15, 52.35it/s]     33% |███▎      | 🦖 396/1200 [00:07<00:15, 52.30it/s]     34% |███▎      | 🦖 402/1200 [00:07<00:15, 52.31it/s]     34% |███▍      | 🦖 408/1200 [00:07<00:15, 52.29it/s]     34% |███▍      | 🦖 414/1200 [00:07<00:15, 52.28it/s]     35% |███▌      | 🦖 420/1200 [00:08<00:14, 52.30it/s]     36% |███▌      | 🦖 426/1200 [00:08<00:14, 52.18it/s]     36% |███▌      | 🦖 432/1200 [00:08<00:14, 52.22it/s]     36% |███▋      | 🦖 438/1200 [00:08<00:14, 52.30it/s]     37% |███▋      | 🦖 444/1200 [00:08<00:14, 52.31it/s]     38% |███▊      | 🦖 450/1200 [00:08<00:14, 52.35it/s]     38% |███▊      | 🦖 456/1200 [00:08<00:14, 52.34it/s]     38% |███▊      | 🦖 462/1200 [00:08<00:14, 52.34it/s]     39% |███▉      | 🦖 468/1200 [00:08<00:13, 52.41it/s]     40% |███▉      | 🦖 474/1200 [00:09<00:13, 52.47it/s]     40% |████      | 🦖 480/1200 [00:09<00:13, 52.40it/s]     40% |████      | 🦖 486/1200 [00:09<00:13, 52.44it/s]     41% |████      | 🦖 492/1200 [00:09<00:13, 52.42it/s]     42% |████▏     | 🦖 498/1200 [00:09<00:13, 52.44it/s]     42% |████▏     | 🦖 504/1200 [00:09<00:13, 52.44it/s]     42% |████▎     | 🦖 510/1200 [00:09<00:13, 52.46it/s]     43% |████▎     | 🦖 516/1200 [00:09<00:13, 52.37it/s]     44% |████▎     | 🦖 522/1200 [00:09<00:12, 52.42it/s]     44% |████▍     | 🦖 528/1200 [00:10<00:12, 52.40it/s]     44% |████▍     | 🦖 534/1200 [00:10<00:12, 52.38it/s]     45% |████▌     | 🦖 540/1200 [00:10<00:12, 52.28it/s]     46% |████▌     | 🦖 546/1200 [00:10<00:12, 52.33it/s]     46% |████▌     | 🦖 552/1200 [00:10<00:12, 52.28it/s]     46% |████▋     | 🦖 558/1200 [00:10<00:12, 52.36it/s]     47% |████▋     | 🦖 564/1200 [00:10<00:12, 52.39it/s]     48% |████▊     | 🦖 570/1200 [00:10<00:12, 52.39it/s]     48% |████▊     | 🦖 576/1200 [00:11<00:11, 52.45it/s]     48% |████▊     | 🦖 582/1200 [00:11<00:11, 52.41it/s]     49% |████▉     | 🦖 588/1200 [00:11<00:11, 52.38it/s]     50% |████▉     | 🦖 594/1200 [00:11<00:11, 52.30it/s]     50% |█████     | 🦖 600/1200 [00:11<00:11, 52.31it/s]     50% |█████     | 🦖 606/1200 [00:11<00:11, 52.32it/s]     51% |█████     | 🦖 612/1200 [00:11<00:11, 52.41it/s]     52% |█████▏    | 🦖 618/1200 [00:11<00:11, 52.44it/s]     52% |█████▏    | 🦖 624/1200 [00:11<00:10, 52.43it/s]     52% |█████▎    | 🦖 630/1200 [00:12<00:10, 52.22it/s]     53% |█████▎    | 🦖 636/1200 [00:12<00:10, 52.18it/s]     54% |█████▎    | 🦖 642/1200 [00:12<00:10, 52.27it/s]     54% |█████▍    | 🦖 648/1200 [00:12<00:10, 52.31it/s]     55% |█████▍    | 🦖 654/1200 [00:12<00:10, 52.30it/s]     55% |█████▌    | 🦖 660/1200 [00:12<00:10, 52.27it/s]     56% |█████▌    | 🦖 666/1200 [00:12<00:10, 52.31it/s]     56% |█████▌    | 🦖 672/1200 [00:12<00:10, 52.25it/s]     56% |█████▋    | 🦖 678/1200 [00:12<00:09, 52.25it/s]     57% |█████▋    | 🦖 684/1200 [00:13<00:09, 52.23it/s]     57% |█████▊    | 🦖 690/1200 [00:13<00:09, 52.26it/s]     58% |█████▊    | 🦖 696/1200 [00:13<00:09, 52.29it/s]     58% |█████▊    | 🦖 702/1200 [00:13<00:09, 52.33it/s]     59% |█████▉    | 🦖 708/1200 [00:13<00:09, 52.36it/s]     60% |█████▉    | 🦖 714/1200 [00:13<00:09, 52.38it/s]     60% |██████    | 🦖 720/1200 [00:13<00:09, 52.30it/s]     60% |██████    | 🦖 726/1200 [00:13<00:09, 52.09it/s]     61% |██████    | 🦖 732/1200 [00:13<00:08, 52.17it/s]     62% |██████▏   | 🦖 738/1200 [00:14<00:08, 52.28it/s]     62% |██████▏   | 🦖 744/1200 [00:14<00:08, 52.29it/s]     62% |██████▎   | 🦖 750/1200 [00:14<00:08, 52.36it/s]     63% |██████▎   | 🦖 756/1200 [00:14<00:08, 52.35it/s]     64% |██████▎   | 🦖 762/1200 [00:14<00:08, 52.37it/s]     64% |██████▍   | 🦖 768/1200 [00:14<00:08, 52.34it/s]     64% |██████▍   | 🦖 774/1200 [00:14<00:08, 52.29it/s]     65% |██████▌   | 🦖 780/1200 [00:14<00:08, 52.26it/s]     66% |██████▌   | 🦖 786/1200 [00:15<00:07, 52.29it/s]     66% |██████▌   | 🦖 792/1200 [00:15<00:07, 52.33it/s]     66% |██████▋   | 🦖 798/1200 [00:15<00:07, 51.97it/s]     67% |██████▋   | 🦖 804/1200 [00:15<00:07, 52.11it/s]     68% |██████▊   | 🦖 810/1200 [00:15<00:07, 52.17it/s]     68% |██████▊   | 🦖 816/1200 [00:15<00:07, 52.27it/s]     68% |██████▊   | 🦖 822/1200 [00:15<00:07, 52.29it/s]     69% |██████▉   | 🦖 828/1200 [00:15<00:07, 52.30it/s]     70% |██████▉   | 🦖 834/1200 [00:15<00:07, 52.26it/s]     70% |███████   | 🦖 840/1200 [00:16<00:06, 52.29it/s]     70% |███████   | 🦖 846/1200 [00:16<00:06, 52.28it/s]     71% |███████   | 🦖 852/1200 [00:16<00:06, 52.22it/s]     72% |███████▏  | 🦖 858/1200 [00:16<00:06, 52.32it/s]     72% |███████▏  | 🦖 864/1200 [00:16<00:06, 52.20it/s]     72% |███████▎  | 🦖 870/1200 [00:16<00:06, 52.28it/s]     73% |███████▎  | 🦖 876/1200 [00:16<00:06, 52.29it/s]     74% |███████▎  | 🦖 882/1200 [00:16<00:06, 52.27it/s]     74% |███████▍  | 🦖 888/1200 [00:16<00:05, 52.31it/s]     74% |███████▍  | 🦖 894/1200 [00:17<00:05, 52.32it/s]     75% |███████▌  | 🦖 900/1200 [00:17<00:05, 52.33it/s]     76% |███████▌  | 🦖 906/1200 [00:17<00:05, 52.30it/s]     76% |███████▌  | 🦖 912/1200 [00:17<00:05, 52.36it/s]     76% |███████▋  | 🦖 918/1200 [00:17<00:05, 52.31it/s]     77% |███████▋  | 🦖 924/1200 [00:17<00:05, 52.36it/s]     78% |███████▊  | 🦖 930/1200 [00:17<00:05, 52.34it/s]     78% |███████▊  | 🦖 936/1200 [00:17<00:05, 52.24it/s]     78% |███████▊  | 🦖 942/1200 [00:18<00:04, 52.13it/s]     79% |███████▉  | 🦖 948/1200 [00:18<00:04, 52.20it/s]     80% |███████▉  | 🦖 954/1200 [00:18<00:04, 52.25it/s]     80% |████████  | 🦖 960/1200 [00:18<00:04, 52.18it/s]     80% |████████  | 🦖 966/1200 [00:18<00:04, 52.20it/s]     81% |████████  | 🦖 972/1200 [00:18<00:04, 52.18it/s]     82% |████████▏ | 🦖 978/1200 [00:18<00:04, 52.22it/s]     82% |████████▏ | 🦖 984/1200 [00:18<00:04, 52.19it/s]     82% |████████▎ | 🦖 990/1200 [00:18<00:04, 52.18it/s]     83% |████████▎ | 🦖 996/1200 [00:19<00:03, 52.16it/s]     84% |████████▎ | 🦖 1002/1200 [00:19<00:03, 52.21it/s]     84% |████████▍ | 🦖 1008/1200 [00:19<00:03, 52.17it/s]     84% |████████▍ | 🦖 1014/1200 [00:19<00:03, 52.16it/s]     85% |████████▌ | 🦖 1020/1200 [00:19<00:03, 52.05it/s]     86% |████████▌ | 🦖 1026/1200 [00:19<00:03, 52.07it/s]     86% |████████▌ | 🦖 1032/1200 [00:19<00:03, 52.20it/s]     86% |████████▋ | 🦖 1038/1200 [00:19<00:03, 52.08it/s]     87% |████████▋ | 🦖 1044/1200 [00:19<00:02, 52.15it/s]     88% |████████▊ | 🦖 1050/1200 [00:20<00:02, 52.16it/s]     88% |████████▊ | 🦖 1056/1200 [00:20<00:02, 52.13it/s]     88% |████████▊ | 🦖 1062/1200 [00:20<00:02, 52.13it/s]     89% |████████▉ | 🦖 1068/1200 [00:20<00:02, 52.13it/s]     90% |████████▉ | 🦖 1074/1200 [00:20<00:02, 52.12it/s]     90% |█████████ | 🦖 1080/1200 [00:20<00:02, 52.16it/s]     90% |█████████ | 🦖 1086/1200 [00:20<00:02, 52.26it/s]     91% |█████████ | 🦖 1092/1200 [00:20<00:02, 52.12it/s]     92% |█████████▏| 🦖 1098/1200 [00:20<00:01, 52.22it/s]     92% |█████████▏| 🦖 1104/1200 [00:21<00:01, 52.19it/s]     92% |█████████▎| 🦖 1110/1200 [00:21<00:01, 52.19it/s]     93% |█████████▎| 🦖 1116/1200 [00:21<00:01, 52.17it/s]     94% |█████████▎| 🦖 1122/1200 [00:21<00:01, 52.05it/s]     94% |█████████▍| 🦖 1128/1200 [00:21<00:01, 52.16it/s]     94% |█████████▍| 🦖 1134/1200 [00:21<00:01, 52.18it/s]     95% |█████████▌| 🦖 1140/1200 [00:21<00:01, 52.23it/s]     96% |█████████▌| 🦖 1146/1200 [00:21<00:01, 52.06it/s]     96% |█████████▌| 🦖 1152/1200 [00:22<00:00, 52.17it/s]     96% |█████████▋| 🦖 1158/1200 [00:22<00:00, 52.18it/s]     97% |█████████▋| 🦖 1164/1200 [00:22<00:00, 52.12it/s]     98% |█████████▊| 🦖 1170/1200 [00:22<00:00, 52.16it/s]     98% |█████████▊| 🦖 1176/1200 [00:22<00:00, 52.11it/s]     98% |█████████▊| 🦖 1182/1200 [00:22<00:00, 52.12it/s]     99% |█████████▉| 🦖 1188/1200 [00:22<00:00, 52.14it/s]    100% |█████████▉| 🦖 1194/1200 [00:22<00:00, 52.16it/s]    100% |██████████| 🦖 1200/1200 [00:22<00:00, 52.04it/s]    100% |██████████| 🦖 1200/1200 [00:22<00:00, 52.27it/s]
+
+    Acceptance fraction: not recorded by sampler.
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 346-349
 
 A well-tuned ensemble sampler typically achieves acceptance fractions between
 0.2 and 0.5.  Values outside this range suggest that the walkers are taking
 steps that are too large or too small relative to the posterior width.
 
-.. GENERATED FROM PYTHON SOURCE LINES 314-321
+.. GENERATED FROM PYTHON SOURCE LINES 351-358
 
 Trace Plots — Chain Convergence
 --------------------------------
@@ -401,60 +546,76 @@ converged chain looks like a "fuzzy caterpillar" with walkers mixing well
 across the posterior.  Clear trends or poor mixing indicate the burn-in
 was too short.
 
-.. GENERATED FROM PYTHON SOURCE LINES 321-327
+.. GENERATED FROM PYTHON SOURCE LINES 358-364
 
 .. code-block:: Python
 
 
-    fig, result.trace_plot("T_eff", burn=0, thin=1)
-    plt.suptitle(r"Trace plot — $T_\mathrm{eff}$  (all steps, no burn-in removed)", y=1.01)
+    fig, result.trace_plot("T_10", burn=0, thin=1)
+    plt.suptitle(r"Trace plot — $T_{10}$  (all steps, no burn-in removed)", y=1.01)
     plt.tight_layout()
     plt.show()
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 328-331
+
+
+.. image-sg:: /auto_examples/inference/images/sphx_glr_plot_optical_lc_inference_002.png
+   :alt: Trace plot — $T_{10}$  (all steps, no burn-in removed), Trace plot: T_10
+   :srcset: /auto_examples/inference/images/sphx_glr_plot_optical_lc_inference_002.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 365-368
 
 After the burn-in phase (first ~400 steps) the chains settle and mix well.
 The dotted region before the dashed vertical line is discarded in all
 subsequent analyses.
 
-.. GENERATED FROM PYTHON SOURCE LINES 331-340
+.. GENERATED FROM PYTHON SOURCE LINES 368-377
 
 .. code-block:: Python
 
 
-    fig, result.trace_plot("T_eff", burn=N_BURN, thin=N_THIN)
+    fig, result.trace_plot("T_10", burn=N_BURN, thin=N_THIN)
     plt.suptitle(
-        rf"Trace plot — $T_\mathrm{{eff}}$  (burn={N_BURN}, thin={N_THIN})",
+        rf"Trace plot — $T_{{10}}$  (burn={N_BURN}, thin={N_THIN})",
         y=1.01,
     )
     plt.tight_layout()
     plt.show()
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 341-347
+
+
+.. image-sg:: /auto_examples/inference/images/sphx_glr_plot_optical_lc_inference_003.png
+   :alt: Trace plot — $T_{10}$  (burn=400, thin=10), Trace plot: T_10
+   :srcset: /auto_examples/inference/images/sphx_glr_plot_optical_lc_inference_003.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 378-384
 
 Corner Plot — Posterior Distributions
 --------------------------------------
 
 The corner plot shows marginal and joint posterior distributions for all
-five free parameters.  The dashed lines mark the true values; the recovered
+six free parameters.  The dashed lines mark the true values; the recovered
 posteriors should bracket them.
 
-.. GENERATED FROM PYTHON SOURCE LINES 347-366
+.. GENERATED FROM PYTHON SOURCE LINES 384-397
 
 .. code-block:: Python
 
 
     # Convert true parameter values to the units used internally for display.
     # The corner_plot ``truths`` dict expects values in base units (seconds, K, CGS).
-    truths_display = {
-        "t_0": TRUE_PARAMS["t_0"],
-        "tau_r": TRUE_PARAMS["tau_r"],
-        "tau_d": TRUE_PARAMS["tau_d"],
-        "T_eff": TRUE_PARAMS["T_eff"],
-        "amplitude": TRUE_PARAMS["amplitude"],
-    }
+    truths_display = dict(TRUE_PARAMS)
 
     fig = result.corner_plot(
         burn=N_BURN,
@@ -465,19 +626,30 @@ posteriors should bracket them.
     plt.show()
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 367-369
 
-All five posteriors are unimodal and centred near the true values, confirming
+
+.. image-sg:: /auto_examples/inference/images/sphx_glr_plot_optical_lc_inference_004.png
+   :alt: Corner plot — posterior distributions with true values (dashed), t_0 = ${8.74e+04}_{-2.01e+03}^{+1.84e+03}$, tau_r = ${1.81e+05}_{-1.28e+04}^{+1.4e+04}$, tau_d = ${8.63e+05}_{-7.53e+03}^{+8.03e+03}$, L_peak = ${1e+43}_{-2.85e+41}^{+2.82e+41}$, T_10 = ${1.01e+04}_{-106}^{+113}$, alpha = ${0.192}_{-0.0107}^{+0.0101}$
+   :srcset: /auto_examples/inference/images/sphx_glr_plot_optical_lc_inference_004.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 398-400
+
+All six posteriors are unimodal and centred near the true values, confirming
 that the model is identifiable from five-band light curve data at 5 % noise.
 
-.. GENERATED FROM PYTHON SOURCE LINES 371-375
+.. GENERATED FROM PYTHON SOURCE LINES 402-406
 
 Posterior Summary
 ------------------
 
 We compute the median and 68 % credible interval for each parameter.
 
-.. GENERATED FROM PYTHON SOURCE LINES 375-391
+.. GENERATED FROM PYTHON SOURCE LINES 406-422
 
 .. code-block:: Python
 
@@ -498,7 +670,28 @@ We compute the median and 68 % credible interval for each parameter.
         print(f"{name:<14} {true_val:>12.3e} {med:>12.3e} {med - lo:>10.3e} {hi - med:>10.3e}")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 392-401
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    Posterior summary (median ± 1σ):
+    Parameter              True       Median        −1σ        +1σ
+    ------------------------------------------------------------
+    t_0               8.640e+04    8.742e+04  2.005e+03  1.844e+03
+    tau_r             1.728e+05    1.809e+05  1.279e+04  1.399e+04
+    tau_d             8.640e+05    8.629e+05  7.528e+03  8.031e+03
+    L_peak            1.000e+43    1.001e+43  2.847e+41  2.823e+41
+    T_10              1.000e+04    1.007e+04  1.064e+02  1.126e+02
+    alpha             2.000e-01    1.919e-01  1.070e-02  1.008e-02
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 423-432
 
 Step 6 — Posterior Predictive Check
 -------------------------------------
@@ -510,7 +703,7 @@ across all bands validates both the forward model and the inference setup.
 We draw 200 random posterior samples and evaluate the model in each band at
 a dense time grid.
 
-.. GENERATED FROM PYTHON SOURCE LINES 401-457
+.. GENERATED FROM PYTHON SOURCE LINES 432-486
 
 .. code-block:: Python
 
@@ -532,19 +725,17 @@ a dense time grid.
             theta = flat_samples[k]
             params_k = problem.unpack_free_parameters(theta)
             out_k = model.forward_model(
-                {"time": t_ppc_s, "band_idx": np.full(len(t_ppc_s), band_idx_val, dtype=int)},
+                {"time": t_ppc_s, "band_index": np.full(len(t_ppc_s), band_idx_val, dtype=int)},
                 params_k,
             )
-            ax.plot(t_ppc_s / 86400, flux_to_ab_mag(out_k.flux_density.value), color=color, alpha=0.04, lw=0.8)
+            ax.plot(t_ppc_s / 86400, flux_to_ab_mag(out_k.flux.value), color=color, alpha=0.04, lw=0.8)
 
         # True model
         out_true = model.forward_model(
-            {"time": t_ppc_s, "band_idx": np.full(len(t_ppc_s), band_idx_val, dtype=int)},
+            {"time": t_ppc_s, "band_index": np.full(len(t_ppc_s), band_idx_val, dtype=int)},
             TRUE_PARAMS,
         )
-        ax.plot(
-            t_ppc_s / 86400, flux_to_ab_mag(out_true.flux_density.value), color="black", lw=2, zorder=5, label="True model"
-        )
+        ax.plot(t_ppc_s / 86400, flux_to_ab_mag(out_true.flux.value), color="black", lw=2, zorder=5, label="True model")
 
         # Data
         mask = band_names_all == band_name
@@ -555,7 +746,7 @@ a dense time grid.
         mag_err = 2.5 * f_e_band / (np.log(10) * f_obs_band)
         ax.errorbar(t_obs, mag_obs, yerr=mag_err, fmt="o", color="black", ms=5, zorder=6, label="Data")
 
-        ax.invert_yaxis()
+        ax.set_ylim(mag_obs.max() + 0.8, mag_obs.min() - 0.4)  # inverted; clips the divergent onset
         ax.set_ylabel(rf"$m_{band_name}$ [AB mag]", fontsize=11)
         ax.text(0.02, 0.08, rf"${band_name}$ band", transform=ax.transAxes, fontsize=11, color=color, fontweight="bold")
         if band_name == BAND_LIST[0]:
@@ -571,7 +762,18 @@ a dense time grid.
     plt.show()
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 458-486
+
+
+.. image-sg:: /auto_examples/inference/images/sphx_glr_plot_optical_lc_inference_005.png
+   :alt: Posterior predictive check — 200 posterior draws (shaded) vs. data
+   :srcset: /auto_examples/inference/images/sphx_glr_plot_optical_lc_inference_005.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 487-513
 
 The shaded region represents the 68 % predictive interval from the posterior.
 It narrows around the peak, where the data constrain the model most tightly,
@@ -580,12 +782,12 @@ and broadens at early and late times where fewer observations were made.
 Key takeaways
 ~~~~~~~~~~~~~
 
-- A ``FREDBlackbodyModel``
-  with just five parameters (three temporal, two spectral) recovers the
-  true light curves in all five *ugriz* bands simultaneously.
-- Multi-band coverage strongly constrains :math:`T_\mathrm{eff}`: the colour
-  information from five bands breaks the degeneracy between temperature and
-  amplitude that would be present in single-band data.
+- A blackbody with a FRED luminosity and a power-law cooling temperature, with just six parameters (three
+  temporal, one luminosity, two spectral), recovers the true light curves in all five *ugriz* bands
+  simultaneously.
+- Multi-band coverage constrains the temperature evolution (:math:`T_{10}` and :math:`\alpha`) separately from the
+  luminosity: the colour information from five bands breaks the degeneracy between temperature and
+  luminosity that would be present in single-band data.
 - The :ref:`data_overview` pipeline — container → ``to_inference_data`` →
   likelihood — requires no manual unit conversions or column remapping; the
   ``model.bundle`` attribute carries all the band-resolution logic.
@@ -597,15 +799,13 @@ Next steps
   ``container = OpticalPhotometryContainer.from_file("phot.fits")``.
 - Add upper limits by setting ``flux_density = NaN`` and populating
   ``flux_upper_limit`` for non-detections.
-- Try ``GeneralizedFREDBlackbodyModel``
-  for a more flexible temporal shape, or
-  :class:`~trilobite.models.generic.optical_photometry.GaussianBlackbodyModel`
-  for symmetric transients.
+- Replace the inline model with any other :class:`~trilobite.models.core.optical.OpticalModel`: only
+  ``_compute_sed`` has to change.
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.003 seconds)
+   **Total running time of the script:** (0 minutes 28.285 seconds)
 
 
 .. _sphx_glr_download_auto_examples_inference_plot_optical_lc_inference.py:

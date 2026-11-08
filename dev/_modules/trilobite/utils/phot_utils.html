@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -526,21 +543,22 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    **Photon weighting** (default for CCDs):</span>
+<span class="sd">    **Photon weighting** (default for CCDs), where the factor :math:`1/\lambda` combines the photon energy</span>
+<span class="sd">    :math:`1/(h\nu) \propto \lambda` with the Jacobian :math:`|d\nu/d\lambda| = c/\lambda^2`:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        langle F_nu rangle = frac{int F_nu(lambda) , T(lambda) ,</span>
-<span class="sd">        frac{lambda}{hc} , dlambda}{int T(lambda) ,</span>
-<span class="sd">        frac{lambda}{hc} , dlambda}</span>
+<span class="sd">        \langle F_\nu \rangle = \frac{\int F_\nu(\lambda) \, T(\lambda) \,</span>
+<span class="sd">        \frac{1}{\lambda} \, d\lambda}{\int T(\lambda) \,</span>
+<span class="sd">        \frac{1}{\lambda} \, d\lambda}</span>
 
 <span class="sd">    **Energy weighting** (bolometers):</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        langle F_nu rangle = frac{int F_nu(lambda) , T(lambda) ,</span>
-<span class="sd">        frac{c}{lambda^2} , dlambda}{int T(lambda) ,</span>
-<span class="sd">        frac{c}{lambda^2} , dlambda}</span>
+<span class="sd">        \langle F_\nu \rangle = \frac{\int F_\nu(\lambda) \, T(\lambda) \,</span>
+<span class="sd">        \frac{c}{\lambda^2} \, d\lambda}{\int T(\lambda) \,</span>
+<span class="sd">        \frac{c}{\lambda^2} \, d\lambda}</span>
 
 <span class="sd">    The precomputed ``weights`` array encodes these integrals discretely via</span>
 <span class="sd">    :func:`numpy.gradient`, so that ``np.dot(F_nu_on_filter_grid, weights)``</span>
@@ -548,7 +566,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        import numpy as np</span>
@@ -571,6 +588,20 @@
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">weighting</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"photon"</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the filter from a transmission curve.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        wavelength : ~astropy.units.Quantity or ~numpy.ndarray</span>
+<span class="sd">            Wavelength grid of the filter. Bare arrays are interpreted as cm.</span>
+<span class="sd">        transmission : ~numpy.ndarray</span>
+<span class="sd">            Dimensionless transmission values on the wavelength grid, with the same shape as ``wavelength``.</span>
+<span class="sd">        name : str, optional</span>
+<span class="sd">            Human-readable name for the filter.</span>
+<span class="sd">        weighting : {'photon', 'energy'}, optional</span>
+<span class="sd">            Weighting scheme of the filter. Default is ``'photon'``.</span>
+<span class="sd">        """</span>
         <span class="c1"># ------------------------------------------------------------------ #</span>
         <span class="c1"># Validate and coerce inputs                                          #</span>
         <span class="c1"># ------------------------------------------------------------------ #</span>
@@ -624,28 +655,28 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Human-readable filter name (empty string if not set)."""</span>
+<span class="w">        </span><span class="sd">"""str: Human-readable filter name (empty string if not set)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Wavelength grid in cm."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Wavelength grid in cm."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Frequency grid in Hz (same ordering as :attr:`wavelength`)."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Frequency grid in Hz (same ordering as :attr:`wavelength`)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Raw transmission values (not normalised)."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Raw transmission values (not normalised)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transmission</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Precomputed, normalised integration weights (on the wavelength grid).</span>
+<span class="sd">        ~numpy.ndarray: Precomputed, normalised integration weights (on the wavelength grid).</span>
 
 <span class="sd">        The weights satisfy ``np.dot(F_nu_on_filter_grid, weights) == &lt;F_nu&gt;``</span>
 <span class="sd">        where ``&lt;F_nu&gt;`` is the band-averaged flux density.</span>
@@ -654,31 +685,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">weighting</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Weighting scheme, either ``'photon'`` or ``'energy'``."""</span>
+<span class="w">        </span><span class="sd">"""str: Weighting scheme, either ``'photon'`` or ``'energy'``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weighting</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wavelength_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""``(lambda_min, lambda_max)`` of the filter grid in cm."""</span>
+<span class="w">        </span><span class="sd">"""Tuple of float: ``(lambda_min, lambda_max)`` of the filter grid in cm."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength_bounds</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">frequency_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""``(nu_min, nu_max)`` of the filter grid in Hz."""</span>
+<span class="w">        </span><span class="sd">"""Tuple of float: ``(nu_min, nu_max)`` of the filter grid in Hz."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_bounds</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">effective_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        Pivot (effective) wavelength of the filter in cm.</span>
+<span class="sd">        float: Pivot (effective) wavelength of the filter in cm.</span>
 
 <span class="sd">        Defined as the photon-weighted pivot wavelength independent of the</span>
 <span class="sd">        chosen weighting scheme:</span>
 
 <span class="sd">        .. math::</span>
 
-<span class="sd">            lambda_{rm pivot} = sqrt{</span>
-<span class="sd">                frac{int T(lambda),dlambda}{int T(lambda)/lambda^2,dlambda}</span>
+<span class="sd">            \lambda_{\rm pivot} = \sqrt{</span>
+<span class="sd">                \frac{\int T(\lambda) \, d\lambda}{\int T(\lambda) / \lambda^2 \, d\lambda}</span>
 <span class="sd">            }</span>
 <span class="sd">        """</span>
         <span class="n">numerator</span> <span class="o">=</span> <span class="n">_trapz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transmission</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">)</span>
@@ -689,17 +720,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">effective_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Pivot frequency in Hz, derived from :attr:`effective_wavelength`."""</span>
+<span class="w">        </span><span class="sd">"""float: Pivot frequency in Hz, derived from :attr:`effective_wavelength`."""</span>
         <span class="k">return</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">effective_wavelength</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">filter_width_lambda</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Equivalent width of the filter in wavelength space (cm)."""</span>
+<span class="w">        </span><span class="sd">"""float: Equivalent width of the filter in wavelength space (cm)."""</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">_trapz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transmission</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">filter_width_nu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Equivalent width of the filter in frequency space (Hz)."""</span>
+<span class="w">        </span><span class="sd">"""float: Equivalent width of the filter in frequency space (Hz)."""</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">_trapz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transmission</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span><span class="p">)))</span>
 
     <span class="c1"># ====================================================================== #</span>
@@ -707,6 +738,14 @@
     <span class="c1"># ====================================================================== #</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return an unambiguous representation of the filter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The filter name, effective wavelength, weighting and number of grid points.</span>
+<span class="sd">        """</span>
         <span class="n">name_part</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">'"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="k">else</span> <span class="s2">"unnamed"</span>
         <span class="n">lam_eff_aa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">effective_wavelength</span> <span class="o">*</span> <span class="mf">1e8</span>  <span class="c1"># cm → Å</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -717,13 +756,41 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the same string as :meth:`__repr__`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The representation string.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Determine the number of grid points in the filter."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Determine the number of grid points in the filter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of grid points in the filter.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compare this filter with another one.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : object</span>
+<span class="sd">            The object to compare with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool or NotImplemented</span>
+<span class="sd">            Whether the grids, transmissions and weightings match, or ``NotImplemented`` if ``other`` is not a filter.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">PhotometryFilter</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -902,8 +969,10 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        fig : matplotlib.figure.Figure</span>
-<span class="sd">        axes : matplotlib.axes.Axes</span>
+<span class="sd">        fig : ~matplotlib.figure.Figure</span>
+<span class="sd">            The figure containing the plot.</span>
+<span class="sd">        axes : ~matplotlib.axes.Axes</span>
+<span class="sd">            The axes containing the plot.</span>
 <span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_fig_axes</span><span class="p">,</span> <span class="n">set_plot_style</span>
 
@@ -959,7 +1028,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        PhotometryFilter</span>
+<span class="sd">        ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">            The reconstructed filter.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">wavelength</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"wavelength_cm"</span><span class="p">]),</span>
@@ -998,7 +1068,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        PhotometryFilter</span>
+<span class="sd">        ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">            The filter loaded from the file.</span>
 <span class="sd">        """</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
@@ -1045,7 +1116,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        PhotometryFilter</span>
+<span class="sd">        ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">            The filter loaded from the file.</span>
 <span class="sd">        """</span>
         <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
             <span class="n">grp</span> <span class="o">=</span> <span class="n">fh</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
@@ -1104,7 +1176,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        PhotometryFilter</span>
+<span class="sd">        ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">            The reconstructed filter.</span>
 <span class="sd">        """</span>
         <span class="n">resolved_name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">table</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span>
         <span class="n">resolved_weighting</span> <span class="o">=</span> <span class="n">weighting</span> <span class="k">if</span> <span class="n">weighting</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">table</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"weighting"</span><span class="p">,</span> <span class="s2">"photon"</span><span class="p">)</span>
@@ -1153,7 +1226,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        PhotometryFilter</span>
+<span class="sd">        ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">            The reconstructed filter.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1205,42 +1279,32 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        import numpy as np, astropy.units as u</span>
+<span class="sd">        import numpy as np</span>
+<span class="sd">        import astropy.units as u</span>
 <span class="sd">        from trilobite.utils.phot_utils import (</span>
 <span class="sd">            PhotometryFilter,</span>
 <span class="sd">            FilterBundle,</span>
 <span class="sd">        )</span>
 
-
-<span class="sd">        def gauss_filter(</span>
-<span class="sd">            center_aa, width_aa, name, N=200</span>
-<span class="sd">        ):</span>
+<span class="sd">        centers = {"g": 4770, "r": 6231, "i": 7625}</span>
+<span class="sd">        filters = {}</span>
+<span class="sd">        for name, center in centers.items():</span>
 <span class="sd">            lam = (</span>
 <span class="sd">                np.linspace(</span>
-<span class="sd">                    center_aa - 3 * width_aa,</span>
-<span class="sd">                    center_aa + 3 * width_aa,</span>
-<span class="sd">                    N,</span>
+<span class="sd">                    center - 1800, center + 1800, 200</span>
 <span class="sd">                )</span>
 <span class="sd">                * u.AA</span>
 <span class="sd">            )</span>
 <span class="sd">            T = np.exp(</span>
-<span class="sd">                -0.5</span>
-<span class="sd">                * ((lam.value - center_aa) / width_aa)</span>
-<span class="sd">                ** 2</span>
+<span class="sd">                -0.5 * ((lam.value - center) / 600) ** 2</span>
 <span class="sd">            )</span>
-<span class="sd">            return PhotometryFilter(lam, T, name=name)</span>
+<span class="sd">            filters[name] = PhotometryFilter(</span>
+<span class="sd">                lam, T, name=name</span>
+<span class="sd">            )</span>
 
-
-<span class="sd">        bundle = FilterBundle(</span>
-<span class="sd">            {</span>
-<span class="sd">                "g": gauss_filter(4770, 600, "g"),</span>
-<span class="sd">                "r": gauss_filter(6231, 600, "r"),</span>
-<span class="sd">                "i": gauss_filter(7625, 600, "i"),</span>
-<span class="sd">            }</span>
-<span class="sd">        )</span>
+<span class="sd">        bundle = FilterBundle(filters)</span>
 <span class="sd">        nu = bundle.frequency_grid</span>
 <span class="sd">        F_nu = (</span>
 <span class="sd">            np.ones_like(nu) * 3.631e-20</span>
@@ -1251,6 +1315,14 @@
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the bundle and build the common grid and weight matrix.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filters : dict of str to ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">            Mapping from filter name to filter. It must contain at least one filter.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filters</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"FilterBundle requires at least one filter."</span><span class="p">)</span>
 
@@ -1308,28 +1380,28 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">filters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Dictionary mapping filter name → :class:`PhotometryFilter`."""</span>
+<span class="w">        </span><span class="sd">"""dict: Dictionary mapping filter name → :class:`PhotometryFilter`."""</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">filter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Ordered list of filter names."""</span>
+<span class="w">        </span><span class="sd">"""List of str: Ordered list of filter names."""</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter_names</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">frequency_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Common frequency grid in Hz (ascending order)."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Common frequency grid in Hz (ascending order)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_grid</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wavelength_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Common wavelength grid in cm (descending, = c/frequency_grid)."""</span>
+<span class="w">        </span><span class="sd">"""~numpy.ndarray: Common wavelength grid in cm (descending, = c/frequency_grid)."""</span>
         <span class="k">return</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_grid</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">weight_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Precomputed weight matrix, shape ``(N_filters, N_common)``.</span>
+<span class="sd">        ~numpy.ndarray: Precomputed weight matrix, shape ``(N_filters, N_common)``.</span>
 
 <span class="sd">        Row ``i`` contains the normalised weights for ``filter_names[i]``</span>
 <span class="sd">        interpolated onto the common frequency grid.</span>
@@ -1338,7 +1410,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Number of filters in the bundle."""</span>
+<span class="w">        </span><span class="sd">"""int: Number of filters in the bundle."""</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">)</span>
 
     <span class="c1"># ====================================================================== #</span>
@@ -1346,22 +1418,80 @@
     <span class="c1"># ====================================================================== #</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the number of filters in the bundle.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of filters.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return an unambiguous representation of the bundle.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The filter names and the size of the common grid.</span>
+<span class="sd">        """</span>
         <span class="n">names_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">'"</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_names</span><span class="p">)</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"FilterBundle([</span><span class="si">{</span><span class="n">names_str</span><span class="si">}</span><span class="s2">], N_common=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frequency_grid</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the same string as :meth:`__repr__`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The representation string.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PhotometryFilter</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a filter by name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        key : str</span>
+<span class="sd">            Name of the filter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">            The filter called ``key``.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Iterate over the filter names.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        iterator</span>
+<span class="sd">            An iterator over the filter names.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check whether a filter is in the bundle.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        key : str</span>
+<span class="sd">            Name of the filter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            ``True`` if a filter called ``key`` is in the bundle.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nu</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">F_nu</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -1580,8 +1710,10 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        fig : matplotlib.figure.Figure, optional</span>
-<span class="sd">        axes : matplotlib.axes.Axes, optional</span>
+<span class="sd">        fig : ~matplotlib.figure.Figure, optional</span>
+<span class="sd">            Figure to plot on. If ``None``, a new figure is created.</span>
+<span class="sd">        axes : ~matplotlib.axes.Axes, optional</span>
+<span class="sd">            Axes to plot on. If ``None``, axes are created or taken from ``fig``.</span>
 <span class="sd">        wavelength_unit : str, optional</span>
 <span class="sd">            Astropy unit string for the x-axis (default ``"AA"``).</span>
 <span class="sd">        legend : bool, optional</span>
@@ -1592,8 +1724,10 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        fig : matplotlib.figure.Figure</span>
-<span class="sd">        axes : matplotlib.axes.Axes</span>
+<span class="sd">        fig : ~matplotlib.figure.Figure</span>
+<span class="sd">            The figure containing the plot.</span>
+<span class="sd">        axes : ~matplotlib.axes.Axes</span>
+<span class="sd">            The axes containing the plot.</span>
 <span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_default_cmap</span><span class="p">,</span> <span class="n">resolve_fig_axes</span><span class="p">,</span> <span class="n">set_plot_style</span>
 
@@ -1655,7 +1789,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        FilterBundle</span>
+<span class="sd">        ~trilobite.utils.phot_utils.FilterBundle</span>
+<span class="sd">            The reconstructed bundle.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="n">PhotometryFilter</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">"filters"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span></div>
 
@@ -1689,7 +1824,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        FilterBundle</span>
+<span class="sd">        ~trilobite.utils.phot_utils.FilterBundle</span>
+<span class="sd">            The bundle loaded from the file.</span>
 <span class="sd">        """</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
@@ -1734,7 +1870,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        FilterBundle</span>
+<span class="sd">        ~trilobite.utils.phot_utils.FilterBundle</span>
+<span class="sd">            The bundle loaded from the file.</span>
 <span class="sd">        """</span>
         <span class="n">filters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
@@ -1793,7 +1930,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        flux_to_ab_mag(3.631e-20)</span>
@@ -1957,7 +2093,8 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    PhotometryFilter</span>
+<span class="sd">    ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">        The filter loaded from the file.</span>
 <span class="sd">    """</span>
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
@@ -1990,7 +2127,8 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    PhotometryFilter</span>
+<span class="sd">    ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">        The filter loaded from the ``speclite`` registry.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -2031,7 +2169,8 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    PhotometryFilter</span>
+<span class="sd">    ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">        The filter with the given name.</span>
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">load_filter_from_speclite</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">weighting</span><span class="o">=</span><span class="n">weighting</span><span class="p">)</span></div>
 
@@ -2114,7 +2253,8 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    PhotometryFilter</span>
+<span class="sd">    ~trilobite.utils.phot_utils.PhotometryFilter</span>
+<span class="sd">        The filter downloaded from the SVO Filter Profile Service.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>

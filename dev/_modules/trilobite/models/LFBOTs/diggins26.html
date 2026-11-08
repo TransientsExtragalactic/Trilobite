@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -496,6 +513,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.electron_distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BrokenPowerLaw</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.SEDs.numerical.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalSynchrotronEngine</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..core.status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelStatus</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">"Diggins26_TwoComponentModel"</span><span class="p">,</span>
@@ -811,6 +830,42 @@
 <span class="sd">             - :math:`t`</span>
 <span class="sd">             - Observer-frame time since explosion.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    redshift : float, optional</span>
+<span class="sd">        Source redshift. Exactly one of ``redshift``, ``luminosity_distance`` and ``angular_diameter_distance`` must</span>
+<span class="sd">        be given.</span>
+<span class="sd">    luminosity_distance : float or ~astropy.units.Quantity, optional</span>
+<span class="sd">        Source luminosity distance. Bare values are interpreted as Mpc.</span>
+<span class="sd">    angular_diameter_distance : float or ~astropy.units.Quantity, optional</span>
+<span class="sd">        Source angular diameter distance. Bare values are interpreted as Mpc.</span>
+<span class="sd">    cosmology : ~astropy.cosmology.FLRW, optional</span>
+<span class="sd">        Cosmology used to convert between redshift and distance. Defaults to the Trilobite configuration cosmology.</span>
+<span class="sd">    hydrogen_mass_fraction : float, optional</span>
+<span class="sd">        Hydrogen mass fraction of the CSM. Default ``0.7``.</span>
+<span class="sd">    helium_mass_fraction : float, optional</span>
+<span class="sd">        Helium mass fraction of the CSM. Defaults to ``1 - hydrogen_mass_fraction`` (no metals).</span>
+<span class="sd">    adiabatic_index : float, optional</span>
+<span class="sd">        Adiabatic index of the shocked gas. Default ``5/3``.</span>
+<span class="sd">    reference_radius : float or ~astropy.units.Quantity, optional</span>
+<span class="sd">        Radius at which ``rho_int`` and ``rho_ext`` are defined. Bare values are cm. Default ``1e15 cm``.</span>
+<span class="sd">    inner_radius : float or ~astropy.units.Quantity, optional</span>
+<span class="sd">        Inner radius of the CSM, below which both components have zero density. Bare values are cm. Default ``0``.</span>
+<span class="sd">    shock_start_time : float or ~astropy.units.Quantity, optional</span>
+<span class="sd">        Source-frame time at which the shock integration starts. Bare values are seconds. Default ``0.3 d``.</span>
+<span class="sd">    max_initial_beta : float, optional</span>
+<span class="sd">        Largest permitted initial velocity :math:`v_0/c`; parameter sets above it are rejected as infeasible.</span>
+<span class="sd">        Default ``0.8``.</span>
+<span class="sd">    gamma_points_per_decade : int, optional</span>
+<span class="sd">        Electron Lorentz-factor grid resolution. Default ``20``.</span>
+<span class="sd">    n_azimuth : int, optional</span>
+<span class="sd">        Number of azimuths sampled for the equatorial free-free transmission. Default ``4``.</span>
+<span class="sd">    integrator_kw : dict, optional</span>
+<span class="sd">        Keyword arguments forwarded to :func:`scipy.integrate.solve_ivp` for the shock integration.</span>
+<span class="sd">    seed_photon_luminosity : callable, optional</span>
+<span class="sd">        Luminosity :math:`L(t)` of the radiation field that Compton-scatters off the electrons. If ``None``</span>
+<span class="sd">        (default), only synchrotron cooling is included.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    .. rubric:: Geometry and the shock</span>
@@ -946,6 +1001,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    Diggins et al. (2026, in preparation).</span>
 <span class="sd">    """</span>
+
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
 
     <span class="c1"># =============================================== #</span>
     <span class="c1"># Parameter and Variable Declarations             #</span>
@@ -1564,7 +1621,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">filling_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The area-fraction table, built on first access (see :meth:`build_filling_table`)."""</span>
+<span class="w">        </span><span class="sd">"""tuple: The area-fraction table, built on first access (see :meth:`build_filling_table`)."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filling_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">build_filling_table</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filling_table</span>

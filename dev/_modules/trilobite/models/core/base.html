@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -473,6 +490,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelParameter</span><span class="p">,</span> <span class="n">ModelVariable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.serial</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelStatus</span><span class="p">,</span> <span class="n">_warn_if_needed</span>
 
 <span class="c1"># --- TYPE ALIASES --- #</span>
 <span class="c1"># These are type aliases to allow for cleaner type hints throughout the codebase. They are</span>
@@ -480,7 +498,7 @@
 
 
 <div class="viewcode-block" id="Model">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.generic.light_curve.Model">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.supernovae.chevalier_shock.Model">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Model</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Abstract base class for all Trilobite models.</span>
@@ -497,6 +515,11 @@
 <span class="sd">    This abstract base class defines the structure that all Trilobite models must adhere to. Specifically, each</span>
 <span class="sd">    model must declare its parameters and variables as class-level attributes, and implement the</span>
 <span class="sd">    :meth:`~trilobite.models.core.base.Model._forward_model` method to compute the model's outputs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Model-specific constructor arguments. The accepted keyword arguments are defined by each subclass.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># =============================================== #</span>
@@ -591,15 +614,45 @@
 <span class="sd">    textbook citation, or other authoritative source describing</span>
 <span class="sd">    the model's origin or usage.</span>
 <span class="sd">    """</span>
+    <span class="n">STATUS</span><span class="p">:</span> <span class="n">ModelStatus</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    ModelStatus: Development stage of the model.</span>
+
+<span class="sd">    One of :class:`~trilobite.models.core.status.ModelStatus`. The status is **not inherited**: a subclass that does</span>
+<span class="sd">    not declare its own ``STATUS`` is reset to :attr:`~trilobite.models.core.status.ModelStatus.UNVALIDATED`, since</span>
+<span class="sd">    verification of a parent class says nothing about a subclass that changes the physics. Strings (e.g.</span>
+<span class="sd">    ``"validated"``) are accepted and converted at class-definition time. Models with an ``EXPERIMENTAL`` or</span>
+<span class="sd">    ``DEPRECATED`` status emit a :class:`UserWarning` when instantiated.</span>
+<span class="sd">    """</span>
+    <span class="n">STATUS_NOTE</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    str: Optional free-text qualification of :attr:`STATUS`.</span>
+
+<span class="sd">    For example, what a validated model was checked against, or the replacement for a deprecated one. Shown next to</span>
+<span class="sd">    the status badge in the documentation. Like :attr:`STATUS`, it is not inherited.</span>
+<span class="sd">    """</span>
 
     <span class="c1"># =============================================== #</span>
     <span class="c1"># Initialization and Instantiation                #</span>
     <span class="c1"># =============================================== #</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Validate that the subclass has properly defined its parameters and variables."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validate that the subclass has properly defined its parameters and variables.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments forwarded to ``super().__init_subclass__``.</span>
+<span class="sd">        """</span>
         <span class="c1"># Hand off to the super-class initializer to ensure that any work</span>
         <span class="c1"># done there is not skipped.</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Status is per-class, never inherited: reset to the safe default unless declared on this class.</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_status_declared</span> <span class="o">=</span> <span class="s2">"STATUS"</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"STATUS"</span><span class="p">,</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">"STATUS_NOTE"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">STATUS_NOTE</span> <span class="o">=</span> <span class="s2">""</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"At least one VARIABLE must be defined."</span><span class="p">)</span>
@@ -648,9 +701,35 @@
         <span class="c1"># Rebuild namedtuple with validated units</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">UNITS</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">UNITS</span><span class="p">)(</span><span class="o">*</span><span class="n">unit_values</span><span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Create the instance, warning if the model's :attr:`STATUS` calls for caution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args : tuple</span>
+<span class="sd">            Positional constructor arguments; consumed by ``__init__``, not used here.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Keyword constructor arguments; consumed by ``__init__``, not used here.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Model</span>
+<span class="sd">            The newly created, not yet initialized, instance.</span>
+<span class="sd">        """</span>
+        <span class="n">_warn_if_needed</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Initialize the model with given parameters and variables."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the model with given parameters and variables.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Model-specific constructor arguments, defined by each subclass.</span>
+<span class="sd">        """</span>
 
     <span class="k">pass</span>
 
@@ -734,7 +813,7 @@
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">raw_outputs</span><span class="p">,</span> <span class="n">output_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">output_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">OUTPUTS</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Model.forward_model">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.forward_model.html#trilobite.models.generic.light_curve.Model.forward_model">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.forward_model.html#trilobite.models.supernovae.chevalier_shock.Model.forward_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">variables</span><span class="p">:</span> <span class="n">_ModelVariablesInput</span><span class="p">,</span>
@@ -745,12 +824,12 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        variables: dict of str, array-like or ~astropy.units.Quantity</span>
+<span class="sd">        variables : dict of str, array-like or ~astropy.units.Quantity</span>
 <span class="sd">            The model's input variables. Each variable must be provided as a key-value pair in the</span>
 <span class="sd">            dictionary, where the key is the variable name and the value is the variable's value. Each element</span>
 <span class="sd">            must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy</span>
 <span class="sd">            broadcasting rules are applied throughout.</span>
-<span class="sd">        parameters: dict of str, array-like or ~astropy.units.Quantity</span>
+<span class="sd">        parameters : dict of str, array-like or ~astropy.units.Quantity</span>
 <span class="sd">            The model's parameters. Each parameter must be provided as a key-value pair in the</span>
 <span class="sd">            dictionary, where the key is the parameter name and the value is the parameter's value. Each element</span>
 <span class="sd">            must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy</span>
@@ -759,7 +838,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        outputs : namedtuple</span>
+<span class="sd">        namedtuple</span>
 <span class="sd">            NamedTuple containing the model outputs in the canonical</span>
 <span class="sd">            order defined by :attr:`OUTPUTS`. Fields with defined units</span>
 <span class="sd">            are returned as :class:`~astropy.units.Quantity` objects; fields</span>
@@ -814,12 +893,12 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        variables: dict of str, array-like or ~astropy.units.Quantity</span>
+<span class="sd">        variables : dict of str, array-like or ~astropy.units.Quantity</span>
 <span class="sd">            The model's input variables. Each variable must be provided as a key-value pair in the</span>
 <span class="sd">            dictionary, where the key is the variable name and the value is the variable's value. Each element</span>
 <span class="sd">            must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy</span>
 <span class="sd">            broadcasting rules are applied throughout.</span>
-<span class="sd">        parameters: dict of str, array-like or ~astropy.units.Quantity</span>
+<span class="sd">        parameters : dict of str, array-like or ~astropy.units.Quantity</span>
 <span class="sd">            The model's parameters. Each parameter must be provided as a key-value pair in the</span>
 <span class="sd">            dictionary, where the key is the parameter name and the value is the parameter's value. Each element</span>
 <span class="sd">            must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy</span>
@@ -828,7 +907,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        outputs : namedtuple</span>
+<span class="sd">        namedtuple</span>
 <span class="sd">            NamedTuple containing the model outputs in the canonical</span>
 <span class="sd">            order defined by :attr:`OUTPUTS`. Fields with defined units</span>
 <span class="sd">            are returned as :class:`~astropy.units.Quantity` objects; fields</span>
@@ -840,7 +919,7 @@
     <span class="c1"># Variables, Bounds, Parameters, etc.             #</span>
     <span class="c1"># =============================================== #</span>
 <div class="viewcode-block" id="Model.coerce_model_variables">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.coerce_model_variables.html#trilobite.models.generic.light_curve.Model.coerce_model_variables">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.coerce_model_variables.html#trilobite.models.supernovae.chevalier_shock.Model.coerce_model_variables">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">coerce_model_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="n">_ModelVariablesInput</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ModelVariablesInputRaw</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Coerce model variables into raw numerical values in base units.</span>
@@ -886,7 +965,7 @@
 
 
 <div class="viewcode-block" id="Model.coerce_model_parameters">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.coerce_model_parameters.html#trilobite.models.generic.light_curve.Model.coerce_model_parameters">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.coerce_model_parameters.html#trilobite.models.supernovae.chevalier_shock.Model.coerce_model_parameters">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">coerce_model_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">_ModelParametersInput</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ModelParametersInputRaw</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Coerce model parameters into raw numerical values in base units.</span>
@@ -1001,7 +1080,7 @@
         <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Model.check_parameter_bounds">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.check_parameter_bounds.html#trilobite.models.generic.light_curve.Model.check_parameter_bounds">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.check_parameter_bounds.html#trilobite.models.supernovae.chevalier_shock.Model.check_parameter_bounds">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_parameter_bounds</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">_ModelParametersInput</span><span class="p">,</span>
@@ -1028,7 +1107,7 @@
 
 
 <div class="viewcode-block" id="Model.check_model_bounds">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.check_model_bounds.html#trilobite.models.generic.light_curve.Model.check_model_bounds">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.check_model_bounds.html#trilobite.models.supernovae.chevalier_shock.Model.check_model_bounds">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_model_bounds</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">variables</span><span class="p">:</span> <span class="n">_ModelVariablesInput</span><span class="p">,</span>
@@ -1050,7 +1129,6 @@
 <span class="sd">            Mapping of parameter names to their values. Values may be scalars,</span>
 <span class="sd">            NumPy arrays, or :class:`~astropy.units.Quantity` objects.</span>
 
-
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
@@ -1065,17 +1143,57 @@
     <span class="c1"># Dunder Methods                                  #</span>
     <span class="c1"># =============================================== #</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a concise string representation of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The class name and the model's :attr:`DESCRIPTION`.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> Model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">DESCRIPTION</span><span class="si">}</span><span class="s2">&gt;"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the same string as :meth:`__repr__`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The class name and the model's :attr:`DESCRIPTION`.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Compute the total number of parameters and variables."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compute the total number of parameters and variables.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of parameters plus the number of variables.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModelParameter</span><span class="p">,</span> <span class="n">ModelVariable</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Get a parameter or variable by name."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get a parameter or variable by name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item : str</span>
+<span class="sd">            Name of the parameter or variable.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ModelParameter or ModelVariable</span>
+<span class="sd">            The parameter or variable called ``item``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        KeyError</span>
+<span class="sd">            If ``item`` is neither a parameter nor a variable name.</span>
+<span class="sd">        """</span>
         <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">param</span>
@@ -1100,16 +1218,15 @@
     <span class="c1"># and deserialized, and the model will need to overwrite the default</span>
     <span class="c1"># serialization and deserialization methods to handle this custom object.</span>
 <div class="viewcode-block" id="Model.to_model_spec">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.to_model_spec.html#trilobite.models.generic.light_curve.Model.to_model_spec">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.to_model_spec.html#trilobite.models.supernovae.chevalier_shock.Model.to_model_spec">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_model_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelSpec</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Serialize this model to a ModelSpec.</span>
 
-<span class="sd">        Requirements</span>
-<span class="sd">        ------------</span>
-<span class="sd">        - The model must have called `_register_init(...)` in its constructor.</span>
-<span class="sd">        - All registered kwargs must be JSON-serializable.</span>
-<span class="sd">        - The model class must be importable via module path.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.models.core.serial.ModelSpec</span>
+<span class="sd">            The specification (importable target plus constructor kwargs) from which the model can be rebuilt.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1119,6 +1236,12 @@
 <span class="sd">            If constructor arguments are not JSON-serializable.</span>
 <span class="sd">        ImportError</span>
 <span class="sd">            If the model class is not importable.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - The model must have called ``_register_init(...)`` in its constructor.</span>
+<span class="sd">        - All registered kwargs must be JSON-serializable.</span>
+<span class="sd">        - The model class must be importable via module path.</span>
 <span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
@@ -1177,16 +1300,27 @@
 
 
 <div class="viewcode-block" id="Model.from_model_spec">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.from_model_spec.html#trilobite.models.generic.light_curve.Model.from_model_spec">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.base.Model.from_model_spec.html#trilobite.models.supernovae.chevalier_shock.Model.from_model_spec">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_model_spec</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">ModelSpec</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Construct a model from a ModelSpec.</span>
 
-<span class="sd">        Ensures:</span>
-<span class="sd">        - Spec is valid</span>
-<span class="sd">        - Target is importable</span>
-<span class="sd">        - Returned object is instance of Model</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        spec : ~trilobite.models.core.serial.ModelSpec</span>
+<span class="sd">            The specification to build the model from. Its target must be importable.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.models.core.base.Model</span>
+<span class="sd">            The constructed model, guaranteed to be an instance of ``cls``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``spec`` is not a :class:`~trilobite.models.core.serial.ModelSpec`, or the constructed object is not</span>
+<span class="sd">            an instance of ``cls``.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">ModelSpec</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Expected ModelSpec."</span><span class="p">)</span>

@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -624,13 +641,34 @@
     <span class="n">DESCRIPTION</span> <span class="o">=</span> <span class="s2">"Abstract base for time-evolving multi-band optical photometry models."</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">:</span> <span class="s2">"FilterBundle"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bundle : FilterBundle</span>
+<span class="sd">            Collection of optical filters defining the band set. Mutable after construction via :meth:`add_filter` /</span>
+<span class="sd">            :meth:`remove_filter`, but weight matrices must be finalised before any inference run.</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__init_bundle__</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">(</span><span class="n">bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OpticalModel.coerce_model_variables">
 <a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.optical.OpticalModel.coerce_model_variables.html#trilobite.models.core.optical.OpticalModel.coerce_model_variables">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">coerce_model_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="s2">"_ModelVariablesInput"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_ModelVariablesInputRaw"</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Coerce variables; resolve band name strings to integer indices."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Coerce variables; resolve band name strings to integer indices.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        variables : dict</span>
+<span class="sd">            Model variables. A ``band_index`` given as band names is resolved to integer indices.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The coerced, unitless variables.</span>
+<span class="sd">        """</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">"band_index"</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
             <span class="n">variables</span><span class="p">[</span><span class="s2">"band_index"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_band_index</span><span class="p">(</span><span class="n">variables</span><span class="p">[</span><span class="s2">"band_index"</span><span class="p">])</span>
@@ -722,13 +760,33 @@
     <span class="n">DESCRIPTION</span> <span class="o">=</span> <span class="s2">"Abstract base for single-epoch multi-band optical photometry models."</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">:</span> <span class="s2">"FilterBundle"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bundle : FilterBundle</span>
+<span class="sd">            Collection of optical filters defining the band set.</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__init_bundle__</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">(</span><span class="n">bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OpticalEpochModel.coerce_model_variables">
 <a class="viewcode-back" href="../../../../_as_gen/trilobite.models.core.optical.OpticalEpochModel.coerce_model_variables.html#trilobite.models.core.optical.OpticalEpochModel.coerce_model_variables">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">coerce_model_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="s2">"_ModelVariablesInput"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_ModelVariablesInputRaw"</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Coerce variables; resolve band name strings to integer indices."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Coerce variables; resolve band name strings to integer indices.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        variables : dict</span>
+<span class="sd">            Model variables. A ``band_index`` given as band names is resolved to integer indices.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The coerced, unitless variables.</span>
+<span class="sd">        """</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">"band_index"</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
             <span class="n">variables</span><span class="p">[</span><span class="s2">"band_index"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_band_index</span><span class="p">(</span><span class="n">variables</span><span class="p">[</span><span class="s2">"band_index"</span><span class="p">])</span>

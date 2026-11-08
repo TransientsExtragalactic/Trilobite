@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -53,7 +53,6 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
@@ -63,11 +62,14 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="_static/gallery_search.js?v=1fa25899"></script>
+    <script src="_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="_static/logo.svg"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Working With Observational Data" href="auto_examples/data/index.html" />
-    <link rel="prev" title="Pool API Reference" href="reference/parallel/pools.html" />
+    <link rel="prev" title="Trilobite Models" href="models/overview.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -162,6 +164,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="api.html">
     API
   </a>
@@ -171,13 +187,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#" aria-current="page">
-    Example Gallery
   </a>
 </li>
 
@@ -304,6 +313,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="api.html">
     API
   </a>
@@ -313,13 +336,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#" aria-current="page">
-    Example Gallery
   </a>
 </li>
 
@@ -441,16 +457,21 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="auto_examples/synchrotron/c_cooling/index.html">Electron Cooling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/c_cooling/plot_synchrotron_cooling_engine.html">Electron Cooling — the Synchrotron Radiative Cooling Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/c_cooling/plot_synchrotron_cooling_engine.html">Is My Supernova Fast-Cooling? Tracking the Cooling Break</a></li>
 <li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/c_cooling/plot_ic_vs_synchrotron_cooling.html">Synchrotron vs Inverse Compton Cooling</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="auto_examples/synchrotron/d_closures/index.html">Closures and Equipartition</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_equipartition_analysis.html">Equipartition Analysis from a Radio SED</a></li>
-<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_bolometric_emissivity.html">Bolometric Synchrotron Emissivity and Equipartition</a></li>
-<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_inverse_closure.html">Recovering Physical Parameters from an Observed SED: the Inverse Closure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_forward_closure.html">From Physical Parameters to SED Parameters: the Forward Closure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_sed_to_source_size.html">From SED to Source Size: The Inverse Closure Workflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_bolometric_emissivity.html">How Much Power Does the Shocked Shell Radiate? Bolometric Synchrotron Emissivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_inverse_closure.html">Analytic Inverse Closure: Recovering B and R from an SED Peak</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_equipartition_analysis.html">Equipartition Analysis: What Does a Radio Peak Say About Source Energy?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_sed_to_source_size.html">From a Radio SED to Source Size and Velocity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="auto_examples/synchrotron/e_inversions/index.html">Spectral Inversions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/e_inversions/plot_inversion_demarchi22.html">Recovering B and R from an SSA Peak: the De Marchi22 Inversion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/e_inversions/plot_inversion_diggins26.html">Recovering B and R from an SSA Peak: the Diggins26 Inversion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_examples/synchrotron/e_inversions/plot_inversion_cooling_diggins26.html">Inverting a Cooled Source: Diggins26 with Cooling Branch Selection</a></li>
 </ul>
 </details></li>
 </ul>
@@ -502,15 +523,6 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="auto_examples/modeling/index.html">Forward Modeling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="auto_examples/modeling/plot_fred_blackbody_optical_lc.html">Multi-Band Optical Light Curve: FREDBlackbodyModel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auto_examples/modeling/plot_ffa_fadeout_evolution.html">Time-Resolved Spectral Modeling: FFA Fade-out in a Radio SN</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auto_examples/modeling/plot_chevalier_shock_synchrotron_cooling.html">Synchrotron Emission from Fast-Cooling SN Shocks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auto_examples/modeling/plot_tde_radio_afterglow.html">TDE Radio Afterglow: Mildly Relativistic Outflow in ISM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auto_examples/modeling/plot_phenomenological_lc_fit.html">Phenomenological Radio Light Curve Fitting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auto_examples/modeling/plot_type_IIn_SN_dense_CSM.html">Type IIn Supernova in a Dense Circumstellar Wind</a></li>
-</ul>
-</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="auto_examples/accretion/index.html">Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="auto_examples/accretion/plot_disk_scurve.html">Disk Thermal Equilibrium: The S-curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auto_examples/accretion/plot_adv_disk.html">Advective Cooling in One-Zone Accretion Disks</a></li>
@@ -520,6 +532,13 @@
 <li class="toctree-l2"><a class="reference internal" href="auto_examples/accretion/plot_disk_broadband_sed.html">Late-Time Broadband SED Evolution of a TDE Accretion Disk</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auto_examples/accretion/plot_ss_disk.html">Sunyaev-Shakura Alpha-Disk: Structure, Scalings, and SED</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auto_examples/accretion/plot_fallback_disk.html">Accretion Disk with Fallback Mass Supply</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="auto_examples/modeling/index.html">Forward Modeling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="auto_examples/modeling/plot_sn1993j_radio_sed.html">A Radio Supernova in a Red-Supergiant Wind: SN 1993J</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_examples/modeling/plot_sn2010jl_ffa_turn_on.html">Free-Free Turn-On in a Dense Wind: SN 2010jl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_examples/modeling/plot_phenomenological_lc_fit.html">Reading a Radio Light Curve: Peak Times and Slopes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_examples/modeling/plot_tde_radio_afterglow.html">TDE Radio Afterglow: Mildly Relativistic Outflow in ISM</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="auto_examples/inference/index.html">Inference and Parameter Estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -590,62 +609,29 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <style>
-  .bd-article h1 {
-      font-size: 2.6rem;
-      color: #1f7a8c;
-      margin-bottom: 0.5rem;
-  }
-</style>
-
-<div style="
- display: flex;
- align-items: center;
- gap: 2.5rem;
- padding: 2.5rem 0 2.4rem 0;   /* increase bottom padding */
- border-bottom: 1px solid #e5e7eb;
- margin-bottom: 1.8rem;        /* ← THIS is key */
- ">
-
-    <img src="_images/logo.svg" style="width: 25%; height: auto;">
-
-    <div style="max-width: 620px;"><section id="example-gallery">
-<h1>Example Gallery<a class="headerlink" href="#example-gallery" title="Link to this heading">#</a></h1>
-        <p style="
-            margin: 0.4rem 0 0 0;
-            font-size: 1rem;
-            color: #666;
-        ">
-            Practical examples to get started with Trilobite.
-        </p>
-
-        <p style="
-            margin: 1rem 0 0 0;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #3a4a52;
-        ">
-            Explore <strong>runnable, self-contained examples</strong> —
-            from <strong>loading observational data</strong> and
-            <strong>running inference</strong> to modeling
-            <strong>synchrotron emission</strong> and
-            <strong>accretion disk dynamics</strong>.
-        </p>
-
-    </div>
-</div><section id="working-with-data">
-<h2>Working with Data<a class="headerlink" href="#working-with-data" title="Link to this heading">#</a></h2>
-<p>Load and inspect your observations before fitting anything.</p>
-<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
-<div class="sd-row sd-row-cols-2 sd-row-cols-xs-2 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+  <div class="page-header"><img alt="Trilobite logo" class="page-header-logo" src="_images/logo.svg" />
+<div class="page-header-text"><section id="example-gallery">
+<span id="gallery-examples"></span><h1>Example Gallery<a class="headerlink" href="#example-gallery" title="Link to this heading">#</a></h1>
+<p class="page-header-tagline">Learn by running real workflows.</p>
+<p class="page-header-lede">
+   Runnable, self-contained examples covering the full Trilobite workflow, from raw observations to physical parameters. Follow the path below, or search for a specific example or science case.
+</p>
+</div>
+</div><div id="gallery-search"></div><section class="trilobite-stage" id="observe">
+<h2>1. Observe<a class="headerlink" href="#observe" title="Link to this heading">#</a></h2>
+<p>Get data into Trilobite and connect model SEDs to broadband photometry, before fitting anything.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 trilobite-topic-grid docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-2 sd-g-xs-2 sd-g-sm-2 sd-g-md-2 sd-g-lg-2 docutils">
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
 Observational Data</div>
-<p class="sd-card-text"><strong>Load, group, and visualize photometric observations.</strong></p>
-<p class="sd-card-text">Load radio photometry from FITS files, group observations into temporal epochs,
-and plot light curves using the <a class="reference internal" href="_as_gen/trilobite.data.html#module-trilobite.data" title="trilobite.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data</span></code></a> subpackage.</p>
+<p class="sd-card-text">Radio and optical photometry and light-curve containers from <a class="reference internal" href="_as_gen/trilobite.data.html#module-trilobite.data" title="trilobite.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.data</span></code></a>, per-band
+extraction, and conversion to <a class="reference internal" href="_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a>.</p>
+</div>
+<div class="sd-card-footer docutils">
+<p class="sd-card-text">7 examples</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="auto_examples/data/index.html"><span class="doc">Working With Observational Data</span></a></div>
 </div>
@@ -654,31 +640,32 @@ and plot light curves using the <a class="reference internal" href="_as_gen/tril
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
 Optical Filters and Photometry</div>
-<p class="sd-card-text"><strong>Build and convolve optical filters for broadband photometry.</strong></p>
-<p class="sd-card-text">Construct filters, assemble a <a class="reference internal" href="_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a>
-for MCMC-optimised matrix-multiply convolution, and convert between flux density
-and AB/ST magnitudes.</p>
+<p class="sd-card-text">Build filters, assemble a <a class="reference internal" href="_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a> for fast convolution in MCMC
+loops, load SVO profiles, and convert between flux density and AB/ST magnitudes.</p>
+</div>
+<div class="sd-card-footer docutils">
+<p class="sd-card-text">4 examples</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="auto_examples/photometry/index.html"><span class="doc">Optical Filters and Photometry</span></a></div>
 </div>
 </div>
 </div>
 </section>
-<hr class="docutils" />
-<section id="understanding-the-physics">
-<h2>Understanding the Physics<a class="headerlink" href="#understanding-the-physics" title="Link to this heading">#</a></h2>
-<p>Learn the radiative and dynamical building blocks that every Trilobite model is built from.</p>
-<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
-<div class="sd-row sd-row-cols-2 sd-row-cols-xs-2 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<section class="trilobite-stage" id="understand-the-physics">
+<h2>2. Understand the physics<a class="headerlink" href="#understand-the-physics" title="Link to this heading">#</a></h2>
+<p>The radiative, shock, and accretion building blocks that every Trilobite model is assembled from.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 trilobite-topic-grid docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-2 sd-row-cols-lg-3 sd-g-2 sd-g-xs-2 sd-g-sm-2 sd-g-md-2 sd-g-lg-2 docutils">
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
 Synchrotron Emission</div>
-<p class="sd-card-text"><strong>Understand the synchrotron emission that drives radio transients.</strong></p>
-<p class="sd-card-text">Four sub-sections: kernel functions and the <span class="math notranslate nohighlight">\(\nu\)</span>–<span class="math notranslate nohighlight">\(\gamma\)</span>–<span class="math notranslate nohighlight">\(B\)</span>
-relation; SED spectral regimes; electron cooling (synchrotron and IC); closure
-relations and equipartition analysis.</p>
+<p class="sd-card-text">Electron distributions, SED regimes with cooling and self-absorption, numerical engines for
+inhomogeneous and off-axis sources, and closure relations and equipartition.</p>
+</div>
+<div class="sd-card-footer docutils">
+<p class="sd-card-text">15 examples</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="auto_examples/synchrotron/index.html"><span class="doc">Synchrotron Emission Examples</span></a></div>
 </div>
@@ -687,10 +674,10 @@ relations and equipartition analysis.</p>
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
 Free-Free Emission</div>
-<p class="sd-card-text"><strong>Compute free-free emission and absorption in ionized gas.</strong></p>
-<p class="sd-card-text">Thermal bremsstrahlung emissivity, flux density, optical depth profiles for wind
-and shell CSM geometries, and FFA attenuation of synchrotron SEDs using
-<a class="reference internal" href="_as_gen/trilobite.radiation.free_free.html#module-trilobite.radiation.free_free" title="trilobite.radiation.free_free"><code class="xref py py-mod docutils literal notranslate"><span class="pre">free_free</span></code></a>.</p>
+<p class="sd-card-text">Gaunt factors, thermal bremsstrahlung flux, and free-free absorption of synchrotron SEDs.</p>
+</div>
+<div class="sd-card-footer docutils">
+<p class="sd-card-text">3 examples</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="auto_examples/free_free/index.html"><span class="doc">Free-Free Emission Examples</span></a></div>
 </div>
@@ -699,9 +686,11 @@ and shell CSM geometries, and FFA attenuation of synchrotron SEDs using
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
 Opacity Laws</div>
-<p class="sd-card-text"><strong>Evaluate grey and frequency-dependent opacity laws.</strong></p>
-<p class="sd-card-text">Kramers, electron scattering, and OPAL/TOPS Rosseland mean opacity from the
-bundled tables using <a class="reference internal" href="_as_gen/trilobite.radiation.opacity.html#module-trilobite.radiation.opacity" title="trilobite.radiation.opacity"><code class="xref py py-mod docutils literal notranslate"><span class="pre">opacity</span></code></a>.</p>
+<p class="sd-card-text">Analytic grey laws and the tabulated OPAL and TOPS Rosseland means from
+<a class="reference internal" href="_as_gen/trilobite.radiation.opacity.html#module-trilobite.radiation.opacity" title="trilobite.radiation.opacity"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.opacity</span></code></a>.</p>
+</div>
+<div class="sd-card-footer docutils">
+<p class="sd-card-text">2 examples</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="auto_examples/opacity/index.html"><span class="doc">Opacity Models</span></a></div>
 </div>
@@ -710,61 +699,68 @@ bundled tables using <a class="reference internal" href="_as_gen/trilobite.radia
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
 Shock Dynamics</div>
-<p class="sd-card-text"><strong>Step through shock propagation at the integrator level.</strong></p>
-<p class="sd-card-text">The numerical shock engine, blast-wave evolution in power-law density profiles,
-and the time-stepping integrator from <a class="reference internal" href="_as_gen/trilobite.dynamics.html#module-trilobite.dynamics" title="trilobite.dynamics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dynamics</span></code></a>.</p>
+<p class="sd-card-text">Rankine-Hugoniot jump conditions, self-similar solutions (Chevalier, Sedov-Taylor, Blandford-McKee), and
+the numerical thin-shell and mechanical shock engines in <a class="reference internal" href="_as_gen/trilobite.dynamics.html#module-trilobite.dynamics" title="trilobite.dynamics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.dynamics</span></code></a>.</p>
+</div>
+<div class="sd-card-footer docutils">
+<p class="sd-card-text">15 examples</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="auto_examples/dynamics/index.html"><span class="doc">Shock Dynamics</span></a></div>
 </div>
-</div>
-</div>
-</section>
-<hr class="docutils" />
-<section id="building-forward-models">
-<h2>Building Forward Models<a class="headerlink" href="#building-forward-models" title="Link to this heading">#</a></h2>
-<p>Assemble physical components into models that generate synthetic observables.</p>
-<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
-<div class="sd-row sd-row-cols-2 sd-row-cols-xs-2 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
-Physical Models</div>
-<p class="sd-card-text"><strong>Generate synthetic light curves and SEDs with high-level model objects.</strong></p>
-<p class="sd-card-text">Chevalier shock models, FFA fadeout, TDE afterglows, Type IIn supernovae in
-dense CSM, and phenomenological light curves.</p>
+Accretion Disks</div>
+<p class="sd-card-text">Steady-state Shakura-Sunyaev disks and time-dependent one-zone evolution: equations of state, thermal
+S-curves, fallback accretion, and TDE disk observables.</p>
 </div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="auto_examples/modeling/index.html"><span class="doc">Forward Modeling</span></a></div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-body docutils">
-<div class="sd-card-title sd-font-weight-bold docutils">
-Accretion Disk Models</div>
-<p class="sd-card-text"><strong>Evolve accretion disks through their thermodynamic phases.</strong></p>
-<p class="sd-card-text">Thermal S-curves, limit cycles, fallback disks, and advective solutions using
-the <a class="reference internal" href="_as_gen/trilobite.dynamics.accretion.one_zone.html#module-trilobite.dynamics.accretion.one_zone" title="trilobite.dynamics.accretion.one_zone"><code class="xref py py-mod docutils literal notranslate"><span class="pre">one_zone</span></code></a> Cython integrator.</p>
+<div class="sd-card-footer docutils">
+<p class="sd-card-text">8 examples</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="auto_examples/accretion/index.html"><span class="doc">Accretion Disk Models</span></a></div>
 </div>
 </div>
 </div>
 </section>
-<hr class="docutils" />
-<section id="running-inference">
-<h2>Running Inference<a class="headerlink" href="#running-inference" title="Link to this heading">#</a></h2>
-<p>Fit models to data and recover physical parameters from your observations.</p>
-<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
-<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-1 sd-row-cols-lg-1 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<section class="trilobite-stage" id="build-a-model">
+<h2>3. Build a model<a class="headerlink" href="#build-a-model" title="Link to this heading">#</a></h2>
+<p>Assemble components into a model that predicts observables.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 trilobite-topic-grid docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-1 sd-row-cols-lg-1 sd-g-2 sd-g-xs-2 sd-g-sm-2 sd-g-md-2 sd-g-lg-2 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Forward Modeling</div>
+<p class="sd-card-text">Evaluate high-level <a class="reference internal" href="_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> objects directly: Chevalier shock models,
+free-free fadeout, TDE radio afterglows, Type IIn supernovae in dense CSM, and phenomenological light
+curves.</p>
+</div>
+<div class="sd-card-footer docutils">
+<p class="sd-card-text">6 examples</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="auto_examples/modeling/index.html"><span class="doc">Forward Modeling</span></a></div>
+</div>
+</div>
+</div>
+</section>
+<section class="trilobite-stage" id="fit-it-to-data">
+<h2>4. Fit it to data<a class="headerlink" href="#fit-it-to-data" title="Link to this heading">#</a></h2>
+<p>Priors, likelihoods, MCMC, and posteriors.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 trilobite-topic-grid docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-1 sd-row-cols-lg-1 sd-g-2 sd-g-xs-2 sd-g-sm-2 sd-g-md-2 sd-g-lg-2 docutils">
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
 Inference and Parameter Estimation</div>
-<p class="sd-card-text"><strong>Fit a physical model to data and recover posterior distributions over its parameters.</strong></p>
-<p class="sd-card-text">End-to-end MCMC workflows — single- and multi-epoch SED fitting, upper-limit
-handling, shock-parameter recovery, and posterior propagation through closure
-relations. Built on the <a class="reference internal" href="_as_gen/trilobite.inference.html#module-trilobite.inference" title="trilobite.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inference</span></code></a> subpackage.</p>
+<p class="sd-card-text">End-to-end workflows built on <a class="reference internal" href="_as_gen/trilobite.inference.html#module-trilobite.inference" title="trilobite.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.inference</span></code></a>: single- and multi-epoch SED fitting, upper
+limits and censored data, nuisance parameters, shock-parameter recovery, and posterior propagation
+through closure relations.</p>
+</div>
+<div class="sd-card-footer docutils">
+<p class="sd-card-text">8 examples</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="auto_examples/inference/index.html"><span class="doc">Inference and Parameter Estimation</span></a></div>
 </div>
@@ -786,12 +782,12 @@ relations. Built on the <a class="reference internal" href="_as_gen/trilobite.in
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="reference/parallel/pools.html"
+       href="models/overview.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Pool API Reference</p>
+        <p class="prev-next-title">Trilobite Models</p>
       </div>
     </a>
     <a class="right-next"
@@ -822,10 +818,10 @@ relations. Built on the <a class="reference internal" href="_as_gen/trilobite.in
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#working-with-data">Working with Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-physics">Understanding the Physics</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-forward-models">Building Forward Models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-inference">Running Inference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#observe">1. Observe</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understand-the-physics">2. Understand the physics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-a-model">3. Build a model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fit-it-to-data">4. Fit it to data</a></li>
 </ul>
   </nav></div>
 

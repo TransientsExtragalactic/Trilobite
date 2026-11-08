@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -1022,12 +1039,18 @@
 <span class="sd">      the Planck function over the disk annuli.</span>
 <span class="sd">    - :meth:`compute_bolometric_luminosity` — analytic L_bol = G M Ṁ / (2 R_in).</span>
 
-<span class="sd">    Design Notes</span>
-<span class="sd">    ------------</span>
+<span class="sd">    .. rubric:: Design Notes</span>
+
 <span class="sd">    The base class is **stateless** with respect to the disk physical parameters:</span>
 <span class="sd">    ``M_BH``, ``mdot``, and ``R_in`` are passed at call time, not stored at</span>
 <span class="sd">    construction.  Subclass ``__init__`` methods may cache model-level constants</span>
 <span class="sd">    (e.g. the viscosity parameter α) but must not cache physical state.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Model-level configuration (e.g. the viscosity parameter ``alpha``). Physical disk state must **not** be stored</span>
+<span class="sd">        here.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># =========================================================================</span>
@@ -1040,9 +1063,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        kwargs</span>
-<span class="sd">            Model-level configuration (e.g. viscosity parameter ``alpha``).</span>
-<span class="sd">            Physical disk state must **not** be stored here.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Model-level configuration (e.g. the viscosity parameter ``alpha``). Physical disk state must **not** be</span>
+<span class="sd">            stored here.</span>
 <span class="sd">        """</span>
         <span class="k">pass</span>
 
@@ -1351,10 +1374,26 @@
         <span class="n">mdot</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span>
         <span class="n">R_in</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"dict[str, Union[u.Quantity, _ArrayLike]]"</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the disk structure (alias for :meth:`compute`).</span>
 
 <span class="sd">        See :meth:`compute` for full parameter and return documentation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        radius : array-like or `~astropy.units.Quantity`</span>
+<span class="sd">            Radial coordinate(s) [cm or Quantity].</span>
+<span class="sd">        M_BH : float or `~astropy.units.Quantity`</span>
+<span class="sd">            Black-hole (central object) mass [g or Quantity].</span>
+<span class="sd">        mdot : float or `~astropy.units.Quantity`</span>
+<span class="sd">            Mass accretion rate :math:`\dot{M}` [g s⁻¹ or Quantity].</span>
+<span class="sd">        R_in : float or `~astropy.units.Quantity`</span>
+<span class="sd">            Inner truncation radius (e.g. ISCO) [cm or Quantity].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The disk structure, as returned by :meth:`compute`.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">M_BH</span><span class="p">,</span> <span class="n">mdot</span><span class="p">,</span> <span class="n">R_in</span><span class="p">)</span></div>
 
@@ -1446,6 +1485,10 @@
 <span class="sd">        Shakura-Sunyaev dimensionless viscosity parameter</span>
 <span class="sd">        (:math:`0 &lt; \alpha \lesssim 1`).</span>
 
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Shakura, N. I., &amp; Sunyaev, R. A. 1973, A&amp;A, 24, 337.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    Evaluate the disk structure at three radii for a :math:`10\,M_\odot` black hole:</span>
@@ -1490,10 +1533,6 @@
 <span class="sd">            D_L=100 * u.Mpc,</span>
 <span class="sd">        )</span>
 <span class="sd">        print(sed["F_nu"])</span>
-
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Shakura, N. I., &amp; Sunyaev, R. A. 1973, A&amp;A, 24, 337.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
@@ -1618,9 +1657,25 @@
     <span class="c1"># Dunder methods</span>
     <span class="c1"># -------------------------------------------------------------------------</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return a readable description of the disk.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The class name with the viscosity parameter.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"AlphaDisk(alpha=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return an unambiguous representation of the disk.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The class name with the viscosity parameter.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;AlphaDisk(alpha=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="si">}</span><span class="s2">)&gt;"</span></div>
 
 </pre></div>

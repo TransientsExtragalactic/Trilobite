@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -62,6 +62,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../_static/logo.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -161,6 +164,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api.html">
     API
   </a>
@@ -170,13 +187,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -303,6 +313,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api.html">
     API
   </a>
@@ -312,13 +336,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -422,10 +439,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/data/inference_data.html">Inference Data Containers</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../reference/models/overview.html">Trilobite Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/models/directory.html">Trilobite Model Directory</a></li>
 </ul>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../reference/inference/overview.html">Parameter Inference and Model Comparison</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -1124,8 +1137,7 @@ given a physical model.</p>
 <p>It performs <strong>no unit coercion, column resolution, or table parsing</strong>.
 Those responsibilities belong to the data ingestion layer
 (e.g. <a class="reference internal" href="trilobite.data.core.DataContainer.html#trilobite.data.core.DataContainer" title="trilobite.data.core.DataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataContainer</span></code></a> → <a class="reference internal" href="trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a>).</p>
-<section id="architectural-role">
-<h2>Architectural Role<a class="headerlink" href="#architectural-role" title="Link to this heading">#</a></h2>
+<p class="rubric">Architectural Role</p>
 <p>The inference stack is intentionally layered:</p>
 <ol class="arabic simple">
 <li><p><strong>DataContainer</strong>
@@ -1140,9 +1152,7 @@ Encodes forward physics.</p></li>
 </ol>
 <p>The <a class="reference internal" href="#trilobite.inference.likelihood.base.Likelihood" title="trilobite.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a> layer is therefore a <strong>pure statistical engine</strong>
 operating on already-validated numerical data.</p>
-</section>
-<section id="design-principles">
-<h2>Design Principles<a class="headerlink" href="#design-principles" title="Link to this heading">#</a></h2>
+<p class="rubric">Design Principles</p>
 <ul class="simple">
 <li><p>The likelihood should contain <em>only statistical logic</em>.</p></li>
 <li><p>All unit validation and shape checking must already be complete.</p></li>
@@ -1150,9 +1160,7 @@ operating on already-validated numerical data.</p>
 <li><p>The likelihood evaluation itself must be stateless with respect
 to model parameters.</p></li>
 </ul>
-</section>
-<section id="extending-likelihood">
-<h2>Extending Likelihood<a class="headerlink" href="#extending-likelihood" title="Link to this heading">#</a></h2>
+<p class="rubric">Extending Likelihood</p>
 <p>Concrete likelihood implementations must implement:</p>
 <ul class="simple">
 <li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code></p></li>
@@ -1166,15 +1174,7 @@ to model parameters.</p></li>
 <li><p>Calling the appropriate numerical backend</p></li>
 <li><p>Implementing the statistical form of the likelihood</p></li>
 </ul>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>This class makes no assumptions about priors or sampling strategies.</p></li>
-<li><p>Parameter coercion is delegated to the model.</p></li>
-<li><p>Data validation is delegated to <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code>.</p></li>
-</ul>
-</section>
-<section id="nuisance-parameters">
-<h2>Nuisance Parameters<a class="headerlink" href="#nuisance-parameters" title="Link to this heading">#</a></h2>
+<p class="rubric">Nuisance Parameters</p>
 <p>A likelihood may own parameters of its own, such as a free systematic error term, which are sampled
 alongside the model parameters but belong to the statistical description of the data rather than to the
 physics. They are declared in the class-level <a class="reference internal" href="trilobite.inference.likelihood.base.Likelihood.NUISANCE_PARAMETERS.html#trilobite.inference.likelihood.base.Likelihood.NUISANCE_PARAMETERS" title="trilobite.inference.likelihood.base.Likelihood.NUISANCE_PARAMETERS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">NUISANCE_PARAMETERS</span></code></a> tuple, which mirrors
@@ -1185,6 +1185,23 @@ freezing and transforms behave exactly as they do for model parameters.</p>
 model and the nuisance parameters through their own <a class="reference internal" href="trilobite.models.core.parameters.ModelParameter.html#trilobite.models.core.parameters.ModelParameter" title="trilobite.models.core.parameters.ModelParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelParameter</span></code></a>
 definitions, and calls <code class="docutils literal notranslate"><span class="pre">_log_likelihood(parameters)</span></code> or, when nuisance parameters are declared,
 <code class="docutils literal notranslate"><span class="pre">_log_likelihood(parameters,</span> <span class="pre">nuisance)</span></code>. The model therefore never sees nuisance values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>) – The forward model used to generate predicted observables. Must be an instance of
+<a class="reference internal" href="trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code>) – Fully validated, immutable dataset containing numerical arrays required for likelihood evaluation. All unit
+coercion and shape validation must already have been performed.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>This class makes no assumptions about priors or sampling strategies.</p></li>
+<li><p>Parameter coercion is delegated to the model.</p></li>
+<li><p>Data validation is delegated to <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code>.</p></li>
+</ul>
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -1212,7 +1229,6 @@ definitions, and calls <code class="docutils literal notranslate"><span class="p
 </tbody>
 </table>
 </div>
-</section>
 </dd></dl>
 
 </section>

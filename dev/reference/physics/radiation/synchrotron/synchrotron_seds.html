@@ -38,7 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -63,6 +63,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -162,6 +165,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -171,13 +188,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../../../user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -304,6 +314,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../api.html">
     API
   </a>
@@ -313,13 +337,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../../../user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -423,10 +440,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Trilobite Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Trilobite Model Directory</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1546,7 +1559,7 @@ capability. Given any electron distribution — supplied either as a callable fu
 array — it evaluates the emissivity integral and the self-absorption coefficient on a log-uniform
 <span class="math notranslate nohighlight">\((\nu, \gamma)\)</span> grid, solves the radiative transfer equation for a homogeneous source slab, and
 applies relativistic Doppler and cosmological redshift corrections to produce an observed flux density.
-The entire computation is performed in log-space using <code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code>, which keeps it
+The entire computation is performed in log-space using <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.logsumexp.html#scipy.special.logsumexp" title="(in SciPy v1.18.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code></a>, which keeps it
 numerically stable across the large dynamic range typical of synchrotron spectra and fast enough for use
 in inference hot loops.</p>
 <p>Unlike the stateless <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED" title="trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronSED</span></code></a> subclasses,
@@ -1744,7 +1757,7 @@ comoving-frame intensity at each node and integrates against the projected-area 
 responsible for any geometric correction (e.g. <span class="math notranslate nohighlight">\(\Delta r / \cos\theta_\mathrm{jet}\)</span>).</p>
 </div>
 <p><strong>Off-axis engine.</strong>
-<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.OffAxisAsymmetricSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.OffAxisAsymmetricSynchrotronEngine" title="trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">OffAxisAsymmetricSynchrotronEngine</span></code></a>
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine" title="trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">OffAxisAsymmetricSynchrotronEngine</span></code></a>
 generalizes the on-axis engine to an arbitrary observer polar angle
 <span class="math notranslate nohighlight">\(\theta_\mathrm{obs}\)</span>. The <span class="math notranslate nohighlight">\(\theta_\mathrm{jet}\)</span> nodes now span the full sphere
 (<span class="math notranslate nohighlight">\(\cos\theta_\mathrm{jet} \in [-1, 1]\)</span>), and an additional azimuthal Gauss–Legendre

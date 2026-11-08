@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -61,6 +61,9 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,6 +161,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -167,13 +184,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -298,6 +308,20 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../api.html">
     API
   </a>
@@ -307,13 +331,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
     Trilobite User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Example Gallery
   </a>
 </li>
 
@@ -477,20 +494,53 @@
 <span class="sd">        - close()</span>
 
 <span class="sd">    The interface is intentionally minimal and backend-agnostic.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **_ : dict</span>
+<span class="sd">        Ignored keyword arguments, accepted so that subclasses can take pool-specific options.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Initialization</span>
     <span class="c1"># ------------------------------------------------------------------</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the pool.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **_ : dict</span>
+<span class="sd">            Ignored keyword arguments, accepted so that subclasses can take pool-specific options.</span>
+<span class="sd">        """</span>
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Dunder Methods</span>
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Pool"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Enter the pool's context.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.parallel.base.Pool</span>
+<span class="sd">            The pool itself.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Leave the pool's context, terminating the workers if an exception was raised.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        exc_type : type or None</span>
+<span class="sd">            Type of the exception raised in the context, if any.</span>
+<span class="sd">        exc : BaseException or None</span>
+<span class="sd">            The exception raised in the context, if any.</span>
+<span class="sd">        tb : traceback or None</span>
+<span class="sd">            Traceback of the exception raised in the context, if any.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -525,6 +575,15 @@
 <span class="sd">        Apply `func` to each element of `iterable`.</span>
 
 <span class="sd">        Must return an iterable (preferably lazy).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : callable</span>
+<span class="sd">            Function applied to each element of ``iterable``.</span>
+<span class="sd">        iterable : ~collections.abc.Iterable</span>
+<span class="sd">            Elements to process.</span>
+<span class="sd">        callback : callable, optional</span>
+<span class="sd">            Optional callback executed after each result is computed.</span>
 <span class="sd">        """</span>
         <span class="o">...</span></div>
 
@@ -564,6 +623,20 @@
 <span class="sd">        Split tasks into `self.size` contiguous batches and map over batches.</span>
 
 <span class="sd">        The worker receives a list[T] (a batch).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : callable</span>
+<span class="sd">            Function applied to each batch, which is a list of tasks.</span>
+<span class="sd">        tasks : ~collections.abc.Collection</span>
+<span class="sd">            Tasks to process.</span>
+<span class="sd">        callback : callable, optional</span>
+<span class="sd">            Optional callback executed after each batch result is computed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~collections.abc.Iterable</span>
+<span class="sd">            The results of mapping ``func`` over the batches.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Pool size must be &gt;= 1."</span><span class="p">)</span>
@@ -645,7 +718,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Number of worker execution units.</span>
+<span class="sd">        int: Number of worker execution units.</span>
 
 <span class="sd">        Always returns 1 for SerialPool.</span>
 <span class="sd">        """</span>
@@ -668,11 +741,11 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        func</span>
+<span class="sd">        func : callable</span>
 <span class="sd">            Function applied to each input element.</span>
-<span class="sd">        iterable</span>
+<span class="sd">        iterable : ~collections.abc.Iterable</span>
 <span class="sd">            Tasks to process.</span>
-<span class="sd">        callback</span>
+<span class="sd">        callback : callable, optional</span>
 <span class="sd">            Optional callback executed after each result is computed.</span>
 
 <span class="sd">        Returns</span>
