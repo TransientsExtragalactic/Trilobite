@@ -344,9 +344,9 @@ class RadioPhotometryContainer(DataContainer):
         """
         return self.__table__[self.get_epoch_mask(epoch)].copy()
 
-    def get_epoch(self, epoch: int) -> "RadioPhotometryEpochContainer":
+    def get_epoch(self, epoch: int) -> "RadioPhotometryEpoch":
         """
-        Return a RadioPhotometryContainer for the specified epoch.
+        Return a RadioPhotometryEpoch for the specified epoch.
 
         Parameters
         ----------
@@ -359,7 +359,7 @@ class RadioPhotometryContainer(DataContainer):
             Photometry container holding only the observations in ``epoch``.
         """
         epoch_table = self.get_epoch_table(epoch)
-        return RadioPhotometryEpochContainer(epoch_table)
+        return RadioPhotometryEpoch(epoch_table)
 
     @property
     def n_detections(self) -> int:

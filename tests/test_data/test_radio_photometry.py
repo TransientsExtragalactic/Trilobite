@@ -4,6 +4,7 @@ Tests for RadioPhotometryContainer.
 Mirrors the structure of test_optical_photometry.py for radio data.
 """
 
+import warnings
 from unittest.mock import MagicMock
 
 import numpy as np
@@ -11,7 +12,7 @@ import pytest
 from astropy import units as u
 from astropy.table import Table
 
-from trilobite.data import RadioPhotometryContainer
+from trilobite.data import RadioPhotometryContainer, RadioPhotometryEpoch
 
 
 # ============================================================
@@ -180,6 +181,15 @@ class TestEpochs:
         c = RadioPhotometryContainer(_radio_table(n=10))
         c.set_epochs_from_time_gaps(max_gap=20 * u.day)
         assert c.n_epochs >= 1
+
+    def test_get_epoch_returns_epoch_without_deprecation_warning(self):
+        c = RadioPhotometryContainer(_radio_table(n=9))
+        c.set_epochs_from_indices(np.array([0, 0, 0, 1, 1, 1, 2, 2, 2]))
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            epoch = c.get_epoch(1)
+        assert type(epoch) is RadioPhotometryEpoch
+        assert epoch.n_obs == 3
 
     def test_epoch_ids_preserved_through_mask(self):
         c = RadioPhotometryContainer(_radio_table(n=10, with_epochs=True))
