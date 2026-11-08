@@ -41,6 +41,8 @@ from astropy import units as u
 
 from trilobite.models.core import Model, ModelParameter, ModelVariable
 
+from ..core.status import ModelStatus
+
 __all__ = ["LinearModel", "QuadraticModel", "PowerLawModel", "ExponentialModel", "ConstantModel"]
 
 _CurveOutputs = namedtuple("CurveOutputs", ["y"])
@@ -97,6 +99,8 @@ class LinearModel(Model):
              - Evaluated model value.
     """
 
+    STATUS = ModelStatus.UNVALIDATED
+
     VARIABLES = (ModelVariable("x", base_units=None),)
 
     PARAMETERS = (
@@ -111,9 +115,25 @@ class LinearModel(Model):
     REFERENCE = "Elementary linear function."
 
     def __init__(self):
+        """Initialize the model."""
         self._register_init()
 
     def _forward_model(self, variables, parameters):
+        """
+        Evaluate the linear model, ``y = m * x + b``.
+
+        Parameters
+        ----------
+        variables : dict of str, array-like
+            Model variables; must contain ``"x"``.
+        parameters : dict of str, array-like
+            Model parameters: ``m`` and ``b``.
+
+        Returns
+        -------
+        namedtuple
+            Instance of ``OUTPUTS`` with the single field ``y``.
+        """
         x = np.asarray(variables["x"], dtype=float)
         m = parameters["m"]
         b = parameters["b"]
@@ -174,6 +194,8 @@ class QuadraticModel(Model):
              - Evaluated model value.
     """
 
+    STATUS = ModelStatus.UNVALIDATED
+
     VARIABLES = (ModelVariable("x", base_units=None),)
 
     PARAMETERS = (
@@ -189,9 +211,25 @@ class QuadraticModel(Model):
     REFERENCE = "Elementary quadratic function."
 
     def __init__(self):
+        """Initialize the model."""
         self._register_init()
 
     def _forward_model(self, variables, parameters):
+        """
+        Evaluate the quadratic model, ``y = a * x**2 + b * x + c``.
+
+        Parameters
+        ----------
+        variables : dict of str, array-like
+            Model variables; must contain ``"x"``.
+        parameters : dict of str, array-like
+            Model parameters: ``a``, ``b`` and ``c``.
+
+        Returns
+        -------
+        namedtuple
+            Instance of ``OUTPUTS`` with the single field ``y``.
+        """
         x = np.asarray(variables["x"], dtype=float)
         a = parameters["a"]
         b = parameters["b"]
@@ -254,6 +292,8 @@ class PowerLawModel(Model):
     The amplitude parameter is constrained to be non-negative.
     """
 
+    STATUS = ModelStatus.UNVALIDATED
+
     VARIABLES = (ModelVariable("x", base_units=None),)
 
     PARAMETERS = (
@@ -268,9 +308,25 @@ class PowerLawModel(Model):
     REFERENCE = "Elementary scaling relation."
 
     def __init__(self):
+        """Initialize the model."""
         self._register_init()
 
     def _forward_model(self, variables, parameters):
+        """
+        Evaluate the power-law model, ``y = A * x**alpha``.
+
+        Parameters
+        ----------
+        variables : dict of str, array-like
+            Model variables; must contain ``"x"``.
+        parameters : dict of str, array-like
+            Model parameters: ``A`` and ``alpha``.
+
+        Returns
+        -------
+        namedtuple
+            Instance of ``OUTPUTS`` with the single field ``y``.
+        """
         x = np.asarray(variables["x"], dtype=float)
         A = parameters["A"]
         alpha = parameters["alpha"]
@@ -328,6 +384,8 @@ class ExponentialModel(Model):
              - Evaluated model value.
     """
 
+    STATUS = ModelStatus.UNVALIDATED
+
     VARIABLES = (ModelVariable("x", base_units=None),)
 
     PARAMETERS = (
@@ -342,9 +400,25 @@ class ExponentialModel(Model):
     REFERENCE = "Elementary exponential function."
 
     def __init__(self):
+        """Initialize the model."""
         self._register_init()
 
     def _forward_model(self, variables, parameters):
+        """
+        Evaluate the exponential model, ``y = A * exp(k * x)``.
+
+        Parameters
+        ----------
+        variables : dict of str, array-like
+            Model variables; must contain ``"x"``.
+        parameters : dict of str, array-like
+            Model parameters: ``A`` and ``k``.
+
+        Returns
+        -------
+        namedtuple
+            Instance of ``OUTPUTS`` with the single field ``y``.
+        """
         x = np.asarray(variables["x"], dtype=float)
         A = parameters["A"]
         k = parameters["k"]
@@ -399,6 +473,8 @@ class ConstantModel(Model):
              - Constant model value.
     """
 
+    STATUS = ModelStatus.UNVALIDATED
+
     VARIABLES = (ModelVariable("x", base_units=None),)
 
     PARAMETERS = (ModelParameter("C", 1.0, base_units=None),)
@@ -410,9 +486,25 @@ class ConstantModel(Model):
     REFERENCE = "Zero-order polynomial."
 
     def __init__(self):
+        """Initialize the model."""
         self._register_init()
 
     def _forward_model(self, variables, parameters):
+        """
+        Evaluate the constant model, ``y = C``, with the shape of ``x``.
+
+        Parameters
+        ----------
+        variables : dict of str, array-like
+            Model variables; must contain ``"x"``.
+        parameters : dict of str, array-like
+            Model parameters: ``C``.
+
+        Returns
+        -------
+        namedtuple
+            Instance of ``OUTPUTS`` with the single field ``y``.
+        """
         x = np.asarray(variables["x"], dtype=float)
         C = parameters["C"]
         return self.OUTPUTS(y=np.full_like(x, C))
@@ -503,18 +595,17 @@ class BrokenPowerLaw(Model):
              - :math:`y(x)`
              - Model value evaluated at :math:`x`.
 
-    Notes
-    -----
-    - The model is continuous at :math:`x_b`.
-    - The first derivative is discontinuous.
-    - For smooth transitions, use :class:`SmoothedBrokenPowerLaw`.
-
     See Also
     --------
     :class:`SmoothedBrokenPowerLaw`: Smooth transition version.
     :class:`TripleBrokenPowerLaw`: Three-segment extension.
     :class:`SmoothedTripleBrokenPowerLaw`: Smooth three-segment version.
 
+    Notes
+    -----
+    - The model is continuous at :math:`x_b`.
+    - The first derivative is discontinuous.
+    - For smooth transitions, use :class:`SmoothedBrokenPowerLaw`.
 
     Examples
     --------
@@ -537,6 +628,8 @@ class BrokenPowerLaw(Model):
         plt.title("Broken Power Law Example")
         plt.show()
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (
         ModelVariable(
@@ -565,6 +658,26 @@ class BrokenPowerLaw(Model):
         self._register_init()
 
     def _forward_model(self, variables, parameters):
+        """
+        Evaluate the sharp two-segment broken power law.
+
+        Parameters
+        ----------
+        variables : dict of str, array-like
+            Model variables; must contain ``"x"``.
+        parameters : dict of str, array-like
+            Model parameters: ``A``, ``x_b``, ``alpha_1`` and ``alpha_2``.
+
+        Returns
+        -------
+        namedtuple
+            Instance of ``OUTPUTS`` with the single field ``y``.
+
+        Raises
+        ------
+        ValueError
+            If ``x <= 0``.
+        """
         x = np.asarray(variables["x"], dtype=float)
 
         if np.any(x <= 0):
@@ -668,15 +781,15 @@ class SmoothedBrokenPowerLaw(Model):
              - :math:`y(x)`
              - Model value.
 
+    See Also
+    --------
+    :class:`BrokenPowerLaw`: Sharp two-segment version.
+    :class:`SmoothedTripleBrokenPowerLaw`: Smooth three-segment extension.
+
     Notes
     -----
     - Continuous and differentiable everywhere.
     - As :math:`s \to 0`, approaches :class:`BrokenPowerLaw`.
-
-    See Also
-    --------
-    :class:`BrokenPowerLaw`
-    :class:`SmoothedTripleBrokenPowerLaw`
 
     Examples
     --------
@@ -700,6 +813,8 @@ class SmoothedBrokenPowerLaw(Model):
         plt.show()
     """
 
+    STATUS = ModelStatus.UNVALIDATED
+
     VARIABLES = (ModelVariable("x", base_units=u.dimensionless_unscaled),)
 
     PARAMETERS = (
@@ -721,6 +836,26 @@ class SmoothedBrokenPowerLaw(Model):
         self._register_init()
 
     def _forward_model(self, variables, parameters):
+        """
+        Evaluate the smoothed two-segment broken power law.
+
+        Parameters
+        ----------
+        variables : dict of str, array-like
+            Model variables; must contain ``"x"``.
+        parameters : dict of str, array-like
+            Model parameters: ``A``, ``x_b``, ``alpha_1``, ``alpha_2`` and ``s``.
+
+        Returns
+        -------
+        namedtuple
+            Instance of ``OUTPUTS`` with the single field ``y``.
+
+        Raises
+        ------
+        ValueError
+            If ``x <= 0 or s == 0``.
+        """
         x = np.asarray(variables["x"], dtype=float)
 
         if np.any(x <= 0):
@@ -822,16 +957,16 @@ class TripleBrokenPowerLaw(Model):
              - :math:`y`
              - Independent variable.
 
+    See Also
+    --------
+    :class:`BrokenPowerLaw`: Two-segment version.
+    :class:`SmoothedTripleBrokenPowerLaw`: Smooth version with the same break structure.
+
     Notes
     -----
     - Continuous at both break locations.
     - Derivative is discontinuous.
     - Useful for modeling multi-regime spectra.
-
-    See Also
-    --------
-    :class:`BrokenPowerLaw`
-    :class:`SmoothedTripleBrokenPowerLaw`
 
     Examples
     --------
@@ -855,6 +990,8 @@ class TripleBrokenPowerLaw(Model):
         plt.show()
     """
 
+    STATUS = ModelStatus.UNVALIDATED
+
     VARIABLES = (ModelVariable("x", base_units=u.dimensionless_unscaled),)
 
     PARAMETERS = (
@@ -877,6 +1014,26 @@ class TripleBrokenPowerLaw(Model):
         self._register_init()
 
     def _forward_model(self, variables, parameters):
+        """
+        Evaluate the sharp three-segment broken power law.
+
+        Parameters
+        ----------
+        variables : dict of str, array-like
+            Model variables; must contain ``"x"``.
+        parameters : dict of str, array-like
+            Model parameters: ``A``, ``x_b1``, ``x_b2``, ``alpha_1``, ``alpha_2`` and ``alpha_3``.
+
+        Returns
+        -------
+        namedtuple
+            Instance of ``OUTPUTS`` with the single field ``y``.
+
+        Raises
+        ------
+        ValueError
+            If ``x <= 0``.
+        """
         x = np.asarray(variables["x"], dtype=float)
 
         if np.any(x <= 0):
@@ -940,17 +1097,17 @@ class SmoothedTripleBrokenPowerLaw(Model):
 
         - ``y`` – Model value
 
+    See Also
+    --------
+    :class:`TripleBrokenPowerLaw`: Sharp (non-smoothed) version.
+    :class:`SmoothedBrokenPowerLaw`: Smooth two-segment version.
+
     Notes
     -----
     - Continuous and differentiable everywhere.
     - Approaches :class:`TripleBrokenPowerLaw`
       as :math:`s \to 0`.
     - Recommended for inference workflows.
-
-    See Also
-    --------
-    :class:`TripleBrokenPowerLaw`
-    :class:`SmoothedBrokenPowerLaw`
 
     Examples
     --------
@@ -973,6 +1130,8 @@ class SmoothedTripleBrokenPowerLaw(Model):
         plt.title("Smoothed Triple Broken Power Law Example")
         plt.show()
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (ModelVariable("x", base_units=u.dimensionless_unscaled),)
 
@@ -997,6 +1156,26 @@ class SmoothedTripleBrokenPowerLaw(Model):
         self._register_init()
 
     def _forward_model(self, variables, parameters):
+        """
+        Evaluate the smoothed three-segment broken power law.
+
+        Parameters
+        ----------
+        variables : dict of str, array-like
+            Model variables; must contain ``"x"``.
+        parameters : dict of str, array-like
+            Model parameters: ``A``, ``x_b1``, ``x_b2``, ``alpha_1``, ``alpha_2``, ``alpha_3`` and ``s``.
+
+        Returns
+        -------
+        namedtuple
+            Instance of ``OUTPUTS`` with the single field ``y``.
+
+        Raises
+        ------
+        ValueError
+            If ``x <= 0 or s == 0``.
+        """
         x = np.asarray(variables["x"], dtype=float)
 
         if np.any(x <= 0):

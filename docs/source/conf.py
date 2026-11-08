@@ -1,8 +1,10 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
+Configuration file for the Sphinx documentation builder.
+
+This file only contains a selection of the most common options. For a full
+list see the documentation:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
 
 # -- Path setup --------------------------------------------------------------
 
@@ -14,6 +16,8 @@ import os
 import sys
 
 import matplotlib  # noqa: F401
+
+sys.path.insert(0, os.path.abspath("_ext"))
 # -- Project information -----------------------------------------------------
 
 project = "Trilobite"
@@ -41,6 +45,8 @@ extensions = [
     "sphinxcontrib.bibtex",
     "sphinx_gallery.gen_gallery",
     "sphinx_copybutton",
+    "gallery_index",
+    "model_index",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -99,6 +105,7 @@ html_favicon = "images/logo.svg"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+html_js_files = ["catalog_search.js", "gallery_search.js", "model_search.js"]
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
@@ -309,8 +316,5 @@ sphinx_gallery_conf = {
     # Galleries that depend on models not yet implemented.  These are listed
     # here so that the build treats them as known failures rather than
     # unexpected errors.  Remove each entry once the corresponding model exists.
-    "expected_failing_examples": [
-        "galleries/modeling/plot_fred_blackbody_optical_lc.py",
-        "galleries/inference/plot_optical_lc_inference.py",
-    ],
+    "expected_failing_examples": [],
 }

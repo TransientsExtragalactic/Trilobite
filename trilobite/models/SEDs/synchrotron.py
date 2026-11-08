@@ -22,8 +22,7 @@ All models:
 - Include cosmological redshift corrections.
 - Support either pitch-angle averaged or fixed pitch-angle emission.
 
-Model Hierarchy
----------------
+.. rubric:: Model Hierarchy
 
 The models differ only in which spectral breaks are included:
 
@@ -36,8 +35,7 @@ The models differ only in which spectral breaks are included:
 | :class:`SSA_Cooling_SynchrotronSEDModel`     | ✓         | ✓         |
 +----------------------------------------------+-----------+-----------+
 
-Implementation Notes
---------------------
+.. rubric:: Implementation Notes
 
 These models enforce microphysical closure relations
 through the underlying synchrotron normalization routines.
@@ -81,6 +79,8 @@ from trilobite.radiation.synchrotron.SEDs import (
     PowerLaw_SynchrotronSED,
 )
 from trilobite.radiation.synchrotron.SEDs.one_zone._functions import smoothed_BPL
+
+from ..core.status import ModelStatus
 
 __all__ = [
     "SSA_Cooling_SynchrotronSEDModel",
@@ -204,6 +204,32 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
              - :math:`\log F_\nu`
              - Log flux density (cgs units).
 
+    Parameters
+    ----------
+    pitch_averaged : bool, optional
+        If ``True``, the emissivity is averaged over an isotropic pitch-angle distribution. If ``False``
+        (default), a fixed pitch angle ``alpha`` is taken as a model parameter.
+
+    See Also
+    --------
+    :class:`SSA_SynchrotronSEDModel`
+        Synchrotron model including self-absorption but without cooling.
+
+    :class:`Cooling_SynchrotronSEDModel`
+        Synchrotron model including cooling but without self-absorption.
+
+    :class:`SynchrotronSEDModel`
+        Optically thin synchrotron model without cooling or absorption.
+
+    :mod:`trilobite.radiation.synchrotron.SEDs`
+        Low-level SED implementations and normalization routines.
+
+    :ref:`synchrotron_theory`
+        Detailed theoretical description of synchrotron radiation.
+
+    :ref:`synch_sed_theory`
+        Detailed documentation of SED construction and normalization.
+
     Notes
     -----
     - All break frequencies are computed self-consistently.
@@ -306,28 +332,9 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
         plt.grid(alpha=0.3)
         plt.tight_layout()
         plt.show()
-
-    See Also
-    --------
-    :class:`SSA_SynchrotronSEDModel`
-        Synchrotron model including self-absorption but without cooling.
-
-    :class:`Cooling_SynchrotronSEDModel`
-        Synchrotron model including cooling but without self-absorption.
-
-    :class:`SynchrotronSEDModel`
-        Optically thin synchrotron model without cooling or absorption.
-
-    :mod:`trilobite.radiation.synchrotron.SEDs`
-        Low-level SED implementations and normalization routines.
-
-    :ref:`synchrotron_theory`
-        Detailed theoretical description of synchrotron radiation.
-
-    :ref:`synch_sed_theory`
-        Detailed documentation of SED construction and normalization.
-
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     # -------------------------------------------------- #
     # Output Definition                                  #
@@ -656,6 +663,23 @@ class SSA_SynchrotronSEDModel(Model):
              - :math:`\log F_\nu`
              - Log flux density (cgs units).
 
+    Parameters
+    ----------
+    pitch_averaged : bool, optional
+        If ``True``, the emissivity is averaged over an isotropic pitch-angle distribution. If ``False``
+        (default), a fixed pitch angle ``alpha`` is taken as a model parameter.
+
+    See Also
+    --------
+    :class:`SSA_Cooling_SynchrotronSEDModel`
+        Synchrotron model including both cooling and self-absorption.
+
+    :class:`Cooling_SynchrotronSEDModel`
+        Synchrotron model including cooling but without self-absorption.
+
+    :class:`SynchrotronSEDModel`
+        Optically thin synchrotron model without cooling or absorption.
+
     Notes
     -----
     - No cooling break is computed.
@@ -667,12 +691,6 @@ class SSA_SynchrotronSEDModel(Model):
           \nu_{\rm obs} = \frac{\delta}{1+z} \nu' ,
           \quad
           F_{\nu,\rm obs} = \delta^3 F'_{\nu'}.
-
-    See Also
-    --------
-    :class:`SSA_Cooling_SynchrotronSEDModel`
-    :class:`Cooling_SynchrotronSEDModel`
-    :class:`SynchrotronSEDModel`
 
     Examples
     --------
@@ -755,6 +773,8 @@ class SSA_SynchrotronSEDModel(Model):
         plt.tight_layout()
         plt.show()
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     # -------------------------------------------------- #
     # Output Definition                                  #
@@ -1061,18 +1081,28 @@ class Cooling_SynchrotronSEDModel(Model):
              - :math:`\log F_\nu`
              - Log flux density (cgs units).
 
+    Parameters
+    ----------
+    pitch_averaged : bool, optional
+        If ``True``, the emissivity is averaged over an isotropic pitch-angle distribution. If ``False``
+        (default), a fixed pitch angle ``alpha`` is taken as a model parameter.
+
+    See Also
+    --------
+    :class:`SSA_Cooling_SynchrotronSEDModel`
+        Synchrotron model including both cooling and self-absorption.
+
+    :class:`SSA_SynchrotronSEDModel`
+        Synchrotron model including self-absorption but without cooling.
+
+    :class:`SynchrotronSEDModel`
+        Optically thin synchrotron model without cooling or absorption.
+
     Notes
     -----
     - Cooling regime (fast/slow) is determined self-consistently.
     - No absorption break is computed.
     - Observer-frame corrections applied internally.
-
-    See Also
-    --------
-    :class:`SSA_Cooling_SynchrotronSEDModel`
-    :class:`SSA_SynchrotronSEDModel`
-    :class:`SynchrotronSEDModel`
-
 
     Examples
     --------
@@ -1186,8 +1216,9 @@ class Cooling_SynchrotronSEDModel(Model):
         plt.grid(alpha=0.3)
         plt.tight_layout()
         plt.show()
-
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     # -------------------------------------------------- #
     # Output Definition                                  #
@@ -1486,18 +1517,29 @@ class SynchrotronSEDModel(Model):
              - :math:`\log F_\nu`
              - Log flux density (cgs units).
 
+    Parameters
+    ----------
+    pitch_averaged : bool, optional
+        If ``True``, the emissivity is averaged over an isotropic pitch-angle distribution. If ``False``
+        (default), a fixed pitch angle ``alpha`` is taken as a model parameter.
+
+    See Also
+    --------
+    :class:`SSA_Cooling_SynchrotronSEDModel`
+        Synchrotron model including both cooling and self-absorption.
+
+    :class:`SSA_SynchrotronSEDModel`
+        Synchrotron model including self-absorption but without cooling.
+
+    :class:`Cooling_SynchrotronSEDModel`
+        Synchrotron model including cooling but without self-absorption.
+
     Notes
     -----
     - Single power-law SED above injection frequency.
     - No cooling break.
     - No SSA turnover.
     - Observer-frame corrections applied internally.
-
-    See Also
-    --------
-    :class:`SSA_Cooling_SynchrotronSEDModel`
-    :class:`SSA_SynchrotronSEDModel`
-    :class:`Cooling_SynchrotronSEDModel`
 
     Examples
     --------
@@ -1609,6 +1651,8 @@ class SynchrotronSEDModel(Model):
         plt.tight_layout()
         plt.show()
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     # -------------------------------------------------- #
     # Output Definition                                  #
@@ -1901,6 +1945,8 @@ class Synchrotron_SSA_SBPL_Model(Model):
     the radio SED. Care should be taken when interpreting fit results, especially when using
     sparse data.
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     # ============================================== #
     # Model Initialization                           #

@@ -51,6 +51,8 @@ from trilobite.radiation.synchrotron.electron_distributions import BrokenPowerLa
 from trilobite.radiation.synchrotron.SEDs.numerical.core import NumericalSynchrotronEngine
 from trilobite.utils.misc_utils import ensure_in_units
 
+from ..core.status import ModelStatus
+
 __all__ = [
     "Diggins26_TwoComponentModel",
     "Diggins26SectorDynamics",
@@ -351,6 +353,42 @@ class Diggins26_TwoComponentModel(Model):
              - :math:`t`
              - Observer-frame time since explosion.
 
+    Parameters
+    ----------
+    redshift : float, optional
+        Source redshift. Exactly one of ``redshift``, ``luminosity_distance`` and ``angular_diameter_distance`` must
+        be given.
+    luminosity_distance : float or ~astropy.units.Quantity, optional
+        Source luminosity distance. Bare values are interpreted as Mpc.
+    angular_diameter_distance : float or ~astropy.units.Quantity, optional
+        Source angular diameter distance. Bare values are interpreted as Mpc.
+    cosmology : ~astropy.cosmology.FLRW, optional
+        Cosmology used to convert between redshift and distance. Defaults to the Trilobite configuration cosmology.
+    hydrogen_mass_fraction : float, optional
+        Hydrogen mass fraction of the CSM. Default ``0.7``.
+    helium_mass_fraction : float, optional
+        Helium mass fraction of the CSM. Defaults to ``1 - hydrogen_mass_fraction`` (no metals).
+    adiabatic_index : float, optional
+        Adiabatic index of the shocked gas. Default ``5/3``.
+    reference_radius : float or ~astropy.units.Quantity, optional
+        Radius at which ``rho_int`` and ``rho_ext`` are defined. Bare values are cm. Default ``1e15 cm``.
+    inner_radius : float or ~astropy.units.Quantity, optional
+        Inner radius of the CSM, below which both components have zero density. Bare values are cm. Default ``0``.
+    shock_start_time : float or ~astropy.units.Quantity, optional
+        Source-frame time at which the shock integration starts. Bare values are seconds. Default ``0.3 d``.
+    max_initial_beta : float, optional
+        Largest permitted initial velocity :math:`v_0/c`; parameter sets above it are rejected as infeasible.
+        Default ``0.8``.
+    gamma_points_per_decade : int, optional
+        Electron Lorentz-factor grid resolution. Default ``20``.
+    n_azimuth : int, optional
+        Number of azimuths sampled for the equatorial free-free transmission. Default ``4``.
+    integrator_kw : dict, optional
+        Keyword arguments forwarded to :func:`scipy.integrate.solve_ivp` for the shock integration.
+    seed_photon_luminosity : callable, optional
+        Luminosity :math:`L(t)` of the radiation field that Compton-scatters off the electrons. If ``None``
+        (default), only synchrotron cooling is included.
+
     Notes
     -----
     .. rubric:: Geometry and the shock
@@ -486,6 +524,8 @@ class Diggins26_TwoComponentModel(Model):
     ----------
     Diggins et al. (2026, in preparation).
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     # =============================================== #
     # Parameter and Variable Declarations             #
@@ -1101,7 +1141,7 @@ class Diggins26_TwoComponentModel(Model):
 
     @property
     def filling_table(self) -> tuple:
-        """The area-fraction table, built on first access (see :meth:`build_filling_table`)."""
+        """tuple: The area-fraction table, built on first access (see :meth:`build_filling_table`)."""
         if self._filling_table is None:
             self.build_filling_table()
         return self._filling_table

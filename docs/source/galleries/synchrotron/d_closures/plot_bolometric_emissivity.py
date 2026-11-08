@@ -1,300 +1,87 @@
 r"""
-Bolometric Synchrotron Emissivity and Equipartition
-===================================================
+How Much Power Does the Shocked Shell Radiate? Bolometric Synchrotron Emissivity
+================================================================================
 
-The **bolometric synchrotron emissivity** is the total radiated power per unit
-volume integrated over all frequencies. For a power-law electron distribution
+**Objective:** estimate the bolometric synchrotron luminosity of a supernova shell and find out how much
+radiative cooling reduces it.
 
-.. math::
-
-    N(\gamma) = N_0 \gamma^{-p}
-
-in a magnetic field :math:`B`, the total emissivity follows from integrating
-the single-electron synchrotron power
+The power radiated per unit volume is the single-electron synchrotron power integrated over the electron
+distribution,
 
 .. math::
 
-    P(\gamma) =
-    \frac{4}{3}\sigma_T c U_B \gamma^2,
+    j_{\rm bol} = \frac{4}{3}\sigma_T c\,\frac{B^2}{8\pi}\int N(\gamma)\,\gamma^2\,d\gamma ,
 
-where :math:`U_B = B^2/(8\pi)` is the magnetic energy density.
-
-The bolometric emissivity therefore becomes
-
-.. math::
-
-    j_{\rm bol}
-    =
-    \frac{4}{3}\sigma_T c \frac{B^2}{8\pi}
-    \int_{\gamma_{\min}}^{\gamma_{\max}}
-    N(\gamma)\gamma^2 d\gamma.
-
-For a fixed electron normalization :math:`N_0` this yields the scaling
-
-.. math::
-
-    j_{\rm bol} \propto N_0 B^2.
-
-Equipartition
--------------
-
-In many astrophysical systems the magnetic field and electron population are
-tied to the post-shock thermal energy density :math:`u_{\rm therm}` through
-equipartition fractions
-
-.. math::
-
-    u_B = \epsilon_B u_{\rm therm},
-    \qquad
-    u_e = \epsilon_E u_{\rm therm}.
-
-This implies
-
-.. math::
-
-    B = \sqrt{8\pi\,\epsilon_B\,u_{\rm therm}},
-    \qquad
-    N_0 \propto u_e \propto u_{\rm therm}.
-
-Since :math:`u_{\rm therm} \propto B^2`, the electron normalization obeys
-
-.. math::
-
-    N_0 \propto B^2.
-
-Combining this with the intrinsic synchrotron scaling
-:math:`j_{\rm bol} \propto N_0 B^2` yields
-
-.. math::
-
-    j_{\rm bol} \propto B^4.
-
-This scaling is independent of the power-law index :math:`p`.
-
+with the normalization of :math:`N(\gamma)` set by the equipartition fractions :math:`\epsilon_E` and
+:math:`\epsilon_B`. The luminosity of the shell is :math:`L_{\rm bol} = j_{\rm bol} V`. The classes in
+:mod:`trilobite.radiation.synchrotron.electron_distributions` provide :math:`j_{\rm bol}` directly through
+:meth:`~trilobite.radiation.synchrotron.electron_distributions.ElectronDistribution.bol_emiss_from_magnetic_field`.
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from trilobite.radiation.synchrotron.electron_distributions import (
-    BrokenPowerLaw,
-    PowerLaw,
-    equipartition_magnetic_field,
-)
+from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
+from trilobite.radiation.synchrotron.electron_distributions import BrokenPowerLaw, PowerLaw
 from trilobite.utils.plot_utils import set_plot_style
-
-# %%
-# Section 1: Bolometric Emissivity vs Magnetic Field
-# --------------------------------------------------
-#
-# At fixed electron normalization :math:`N_0`, the bolometric synchrotron
-# emissivity scales as
-#
-# .. math::
-#
-#     j_{\rm bol} \propto B^2.
-#
-# However, if the electron normalization is determined by equipartition,
-# then :math:`N_0 \propto B^2`. The resulting emissivity scaling becomes
-#
-# .. math::
-#
-#     j_{\rm bol} \propto B^4.
-#
-# This scaling is independent of the power-law index :math:`p`.  Below we
-# compute the emissivity for several values of :math:`p` to illustrate
-# that the slope is unchanged.
 
 set_plot_style()
 
-B_arr = np.geomspace(0.01, 10.0, 200) * u.G
+# %%
+# The Shell
+# ---------
+#
+# We take the shell of a Type Ibc supernova 30 days after explosion, with :math:`B = 1` G,
+# :math:`R = 10^{16}` cm and a volume filling factor of 0.5. The electrons have :math:`p = 3`
+# and equipartition fractions :math:`\epsilon_E = \epsilon_B = 0.1`.
 
-p_values = [2.0, 2.5, 3.0, 3.5]
-
-gamma_min = 100
-gamma_max = 1e6
-
-epsilon_E = 0.1
-epsilon_B = 0.1
-
-fig, ax = plt.subplots(figsize=(8, 5))
-
-for p in p_values:
-    j = PowerLaw.bol_emiss_from_magnetic_field(
-        B_arr,
-        epsilon_B=epsilon_B,
-        epsilon_E=epsilon_E,
-        p=p,
-        gamma_min=gamma_min,
-        gamma_max=gamma_max,
-    )
-
-    ax.loglog(
-        B_arr.to_value(u.G),
-        j.to_value(u.erg / u.s / u.cm**3),
-        lw=2,
-        label=rf"$p={p}$",
-    )
-
-# reference B^4 guide
-B_ref = 0.1
-j_ref = PowerLaw.bol_emiss_from_magnetic_field(
-    B_ref * u.G,
-    epsilon_B=epsilon_B,
-    epsilon_E=epsilon_E,
-    p=2.5,
-    gamma_min=gamma_min,
-    gamma_max=gamma_max,
-)
-
-guide = j_ref.to_value(u.erg / u.s / u.cm**3) * (B_arr.value / B_ref) ** 4
-
-ax.loglog(B_arr.value, guide, "k--", lw=1, label=r"$\propto B^4$")
-
-ax.set_xlabel(r"Magnetic field $B$ [G]")
-ax.set_ylabel(r"$j_{\rm bol}$ [erg s$^{-1}$ cm$^{-3}$]")
-ax.set_title("Bolometric Synchrotron Emissivity vs Magnetic Field")
-ax.legend()
-ax.grid(True, which="both", ls="--", alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-
+B, R, t, f_V = 1.0 * u.G, 1.0e16 * u.cm, 30.0 * u.day, 0.5
+V = 4 / 3 * np.pi * R**3 * f_V
+kwargs = dict(epsilon_B=0.1, epsilon_E=0.1, gamma_min=1.0, gamma_max=1e6)
 
 # %%
-# Section 2: Power-Law vs Broken Power-Law Emissivity
-# ---------------------------------------------------
+# Without Cooling
+# ---------------
 #
-# Radiative cooling modifies the electron distribution. A cooled population
-# is described by a broken power-law
-#
-# .. math::
-#
-#     N(\gamma) \propto
-#     \begin{cases}
-#         \gamma^{-p}, & \gamma < \gamma_c \\
-#         \gamma^{-(p+1)}, & \gamma > \gamma_c
-#     \end{cases}
-#
-# The steepening above :math:`\gamma_c` reduces the contribution of
-# high-energy electrons to the bolometric emissivity.  The ratio
-#
-# .. math::
-#
-#     j_{\rm BPL}/j_{\rm PL}
-#
-# therefore measures the suppression caused by cooling.
+# For an uncooled power-law distribution the luminosity follows directly.
 
-B_demo = 0.5 * u.G
-p = 2.5
-
-gamma_c = np.geomspace(200, 5e5, 200)
-
-j_pl = PowerLaw.bol_emiss_from_magnetic_field(
-    B_demo,
-    epsilon_B=epsilon_B,
-    epsilon_E=epsilon_E,
-    p=p,
-    gamma_min=gamma_min,
-    gamma_max=gamma_max,
-)
-
-j_bpl = np.array(
-    [
-        BrokenPowerLaw.bol_emiss_from_magnetic_field(
-            B_demo,
-            epsilon_B=epsilon_B,
-            epsilon_E=epsilon_E,
-            p1=p,
-            p2=p + 1,
-            gamma_c=float(gc),
-            gamma_min=gamma_min,
-            gamma_max=gamma_max,
-        ).to_value(u.erg / u.s / u.cm**3)
-        for gc in gamma_c
-    ]
-) * (u.erg / u.s / u.cm**3)
-
-fig, axes = plt.subplots(2, 1, figsize=(8, 7), sharex=True)
-
-axes[0].loglog(
-    gamma_c,
-    j_bpl.to_value(u.erg / u.s / u.cm**3),
-    lw=2,
-    label="Cooled BPL",
-)
-
-axes[0].axhline(
-    j_pl.to_value(u.erg / u.s / u.cm**3),
-    ls="--",
-    color="k",
-    label="Uncooled PL",
-)
-
-axes[0].set_ylabel(r"$j_{\rm bol}$")
-axes[0].set_title("Cooling Suppression of Bolometric Emissivity")
-axes[0].legend()
-axes[0].grid(True, which="both", ls="--", alpha=0.3)
-
-axes[1].semilogx(
-    gamma_c,
-    (j_bpl / j_pl).value,
-    lw=2,
-)
-
-axes[1].axhline(1, ls="--", color="k")
-axes[1].set_xlabel(r"Cooling Lorentz factor $\gamma_c$")
-axes[1].set_ylabel(r"$j_{\rm BPL}/j_{\rm PL}$")
-axes[1].grid(True, which="both", ls="--", alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-
+j_pl = PowerLaw.bol_emiss_from_magnetic_field(B, p=3.0, **kwargs)
+print(f"Uncooled:  j_bol = {j_pl:.2e},  L_bol = {(j_pl * V).to(u.erg / u.s):.2e}")
 
 # %%
-# Section 3: Equipartition Magnetic Field
-# ---------------------------------------
+# With Cooling
+# ------------
 #
-# Solving :math:`u_B = B^2/(8\pi) = \epsilon_B u_{\rm therm}` for :math:`B`
-# gives :math:`B_{\rm eq} \propto u_{\rm therm}^{1/2}`, independent of
-# :math:`\epsilon_B` in slope (only the intercept shifts).  Below we confirm
-# this for several values of :math:`\epsilon_B`.
+# Over 30 days electrons above the cooling Lorentz factor :math:`\gamma_c` have radiated away much of their
+# energy, which steepens the distribution to :math:`\gamma^{-(p+1)}` above :math:`\gamma_c`. We take
+# :math:`\gamma_c` from
+# :class:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine` and use a broken
+# power law.
 
-u_therm = np.geomspace(1e-4, 1e6, 200) * u.erg / u.cm**3
+gamma_c = SynchrotronRadiativeCoolingEngine().compute_cooling_gamma(B=B, t=t)
+j_bpl = BrokenPowerLaw.bol_emiss_from_magnetic_field(B, p1=3.0, p2=4.0, gamma_c=float(gamma_c), **kwargs)
+print(f"Cooled:    j_bol = {j_bpl:.2e},  L_bol = {(j_bpl * V).to(u.erg / u.s):.2e}  (gamma_c = {gamma_c:.0f})")
 
-eps_vals = [0.01, 0.1, 0.33, 1]
+# %%
+# The cooled luminosity depends on where the break falls, so we repeat the calculation over a range of
+# :math:`\gamma_c` and mark the value for this shell.
 
-fig, ax = plt.subplots(figsize=(8, 5))
+gamma_c_grid = np.geomspace(2, 1e5, 100)
+ratio = [
+    (BrokenPowerLaw.bol_emiss_from_magnetic_field(B, p1=3.0, p2=4.0, gamma_c=g, **kwargs) / j_pl).decompose().value
+    for g in gamma_c_grid
+]
 
-for eps in eps_vals:
-    B_eq = equipartition_magnetic_field(
-        u_therm=u_therm,
-        epsilon_B=eps,
-    )
-
-    ax.loglog(
-        u_therm.to_value(u.erg / u.cm**3),
-        B_eq.to_value(u.G),
-        lw=2,
-        label=rf"$\epsilon_B={eps}$",
-    )
-
-# guide slope
-B_ref_eq = equipartition_magnetic_field(
-    u_therm=1 * u.erg / u.cm**3,
-    epsilon_B=0.1,
-)
-
-guide = B_ref_eq.value * (u_therm.value) ** 0.5
-
-ax.loglog(u_therm.value, guide, "k--", label=r"$\propto u_{\rm therm}^{1/2}$")
-
-ax.set_xlabel(r"$u_{\rm therm}$ [erg cm$^{-3}$]")
-ax.set_ylabel(r"$B_{\rm eq}$ [G]")
-ax.set_title("Equipartition Magnetic Field Scaling")
+fig, ax = plt.subplots(figsize=(6.5, 4.2), constrained_layout=True)
+ax.semilogx(gamma_c_grid, ratio, lw=2)
+ax.plot(gamma_c, (j_bpl / j_pl).decompose(), "ro", ms=9, label=rf"This shell ($\gamma_c={gamma_c:.0f}$)")
+ax.axhline(1.0, color="k", ls="--", lw=1, label="Uncooled")
+ax.set(xlabel=r"Cooling Lorentz factor $\gamma_c$", ylabel=r"$L_{\rm bol}$ (cooled) / $L_{\rm bol}$ (uncooled)")
 ax.legend()
-ax.grid(True, which="both", ls="--", alpha=0.3)
-
-plt.tight_layout()
 plt.show()
+
+# %%
+# **Outcome:** the shell radiates about :math:`1.5\times10^{39}` erg/s if the electrons are uncooled. With the
+# cooling expected after 30 days the luminosity is about half of that, :math:`7.7\times10^{38}` erg/s.
+# Neglecting cooling would overestimate the radiated power by roughly a factor of two for this source.

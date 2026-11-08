@@ -7,12 +7,13 @@ kernel functions that describe single-electron emission, through spectral energy
 models with cooling and self-absorption, to the closure relations that connect observed SED
 parameters back to physical source properties.
 
-Examples are grouped into four progressive sections:
+Examples are grouped into five progressive sections:
 
 - **Fundamentals** — kernel functions, the ν–γ–B relation, and single-electron spectra
 - **Spectral Energy Distributions** — SED model hierarchy, spectral regimes, and SSA
 - **Electron Cooling** — synchrotron and inverse Compton cooling physics
-- **Closures and Equipartition** — forward/inverse closure, emissivity scaling, and equipartition analysis
+- **Closures and Equipartition** — forward/inverse closure, bolometric emissivity, equipartition analysis, and SED-to-source-size
+- **Spectral Inversions** — round-trip tests of the closed-form SSA inversions against the numerical engine
 
 .. rubric:: Theory and API
 

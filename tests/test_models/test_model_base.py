@@ -16,7 +16,7 @@ from typing import NamedTuple
 import pytest
 from astropy import units as u
 
-from trilobite.models.core import Model, ModelParameter, ModelVariable
+from trilobite.models.core import Model, ModelParameter, ModelStatus, ModelVariable
 
 
 # ============================================================
@@ -333,3 +333,72 @@ def test_forward_model_tupled():
 
     assert isinstance(result, tuple)
     assert result[0] == 6.0
+
+
+# ============================================================
+# Development-status tests
+# ============================================================
+def _walk_models(cls):
+    for sub in cls.__subclasses__():
+        yield sub
+        yield from _walk_models(sub)
+
+
+def _make_model(**attrs):
+    """Build a throwaway concrete Model subclass with the given class attributes."""
+    return type("_StatusModel", (SimpleModel,), attrs)
+
+
+def test_status_default_is_unvalidated():
+    """A model that declares no status is UNVALIDATED."""
+    assert Model.STATUS is ModelStatus.UNVALIDATED
+    assert _make_model().STATUS is ModelStatus.UNVALIDATED
+
+
+def test_status_is_not_inherited():
+    """Subclassing a validated model resets the status (and note) to the safe default."""
+    parent = _make_model(STATUS=ModelStatus.VALIDATED, STATUS_NOTE="checked against X")
+    child = type("_Child", (parent,), {})
+    assert parent.STATUS is ModelStatus.VALIDATED
+    assert child.STATUS is ModelStatus.UNVALIDATED
+    assert child.STATUS_NOTE == ""
+
+
+def test_status_string_coercion_and_validation():
+    """Strings are accepted case-insensitively; unknown ones are rejected at class definition."""
+    assert _make_model(STATUS="Validated").STATUS is ModelStatus.VALIDATED
+    with pytest.raises(ValueError):
+        _make_model(STATUS="finished")
+
+
+@pytest.mark.parametrize("status", [ModelStatus.EXPERIMENTAL, ModelStatus.DEPRECATED])
+def test_status_warns_on_instantiation(status):
+    """Experimental and deprecated models warn when instantiated, quoting the note."""
+    cls = _make_model(STATUS=status, STATUS_NOTE="use Other instead")
+    with pytest.warns(UserWarning, match="use Other instead"):
+        cls()
+
+
+@pytest.mark.parametrize("status", [ModelStatus.VALIDATED, ModelStatus.UNVALIDATED])
+def test_status_silent_otherwise(status):
+    """Validated and unvalidated models do not warn."""
+    import warnings
+
+    cls = _make_model(STATUS=status)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        cls()
+
+
+def test_all_library_models_declare_status():
+    """Every concrete in-tree model must declare STATUS explicitly rather than rely on the default."""
+    import inspect
+
+    import trilobite.models  # noqa: F401  (registers every model subclass)
+
+    undeclared = sorted(
+        f"{c.__module__}.{c.__name__}"
+        for c in set(_walk_models(Model))
+        if c.__module__.startswith("trilobite.") and not inspect.isabstract(c) and not c._status_declared
+    )
+    assert not undeclared, f"Models missing an explicit STATUS: {undeclared}"

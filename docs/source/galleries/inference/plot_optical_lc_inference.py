@@ -4,9 +4,8 @@ Fitting a Multi-Band Optical Light Curve with MCMC
 
 This example performs a complete round-trip:
 
-1. **Forward model** — generate synthetic SDSS *ugriz* photometry from a
-   ``FREDBlackbodyModel``
-   with known parameters.
+1. **Forward model** — define a simple blackbody model whose luminosity follows a FRED profile and whose
+   temperature cools as a power law, and generate synthetic SDSS *ugriz* photometry from it with known parameters.
 2. **Load** — package the noisy observations into an
    :class:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`,
    demonstrating the standard data pipeline described in :ref:`data_overview`.
@@ -22,12 +21,9 @@ This example performs a complete round-trip:
 6. **Posterior predictive check** — draw light curves from the posterior and
    overlay them on the data in all five bands.
 
-The coupled optical model architecture is detailed in
-:ref:`sphx_glr_auto_examples_modeling_plot_fred_blackbody_optical_lc.py`.
-
 See Also
 --------
-- ``FREDBlackbodyModel``
+- :class:`~trilobite.models.core.optical.OpticalModel`
 - :class:`trilobite.data.optical_photometry.OpticalPhotometryContainer`
 - :class:`trilobite.inference.likelihood.base.GaussianCensoredLikelihood`
 - :class:`trilobite.inference.sampling.mcmc.EmceeSampler`
@@ -39,23 +35,65 @@ See Also
 # Step 1 — Forward Model
 # -----------------------
 #
-# We assemble the SDSS *ugriz* filter bundle and instantiate the
-# ``FREDBlackbodyModel``.
-# The bundle's ``filter_names`` list defines the mapping
-# ``band_name → band_idx`` that is used automatically when the data container
-# calls :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`.
+# We define the model inline by subclassing :class:`~trilobite.models.core.optical.OpticalModel`. A subclass only
+# has to declare its parameters and implement ``_compute_sed``, which returns the flux density on the filter
+# bundle's frequency grid at a set of times. The base class handles the filter convolution and the band indexing.
 #
-# Trilobite loads real SDSS response curves via ``speclite``.  See
+# The transient is a blackbody with two time dependences:
+#
+# - the bolometric luminosity follows a fast-rise exponential-decay (FRED) profile, normalized so that
+#   ``L_peak`` is the peak luminosity, and
+# - the temperature cools as a power law, :math:`T = T_{10}\,[(t - t_0)/10\,{\rm d}]^{-\alpha}`.
+#
+# The flux density at a distance :math:`D` follows from :math:`F_\nu = B_\nu(T)\,L/(4\sigma T^4 D^2)`, which
+# conserves :math:`L = 4\pi R^2 \sigma T^4`. The distance is fixed at 100 Mpc.
+#
+# Trilobite loads real SDSS response curves via ``speclite``. See
 # :ref:`sphx_glr_auto_examples_photometry_plot_filter_bundle.py` for details
 # on filter construction.
 
 import matplotlib.pyplot as plt
 import numpy as np
+from astropy import constants as const
 from astropy import units as u
 from astropy.table import Table
 
-from trilobite.models.generic.optical_photometry import FREDBlackbodyModel
+from trilobite.models.core.optical import OpticalModel
+from trilobite.models.core.parameters import ModelParameter
 from trilobite.utils.phot_utils import FilterBundle, flux_to_ab_mag, load_filter_from_speclite
+
+DAY = 86400.0
+_H, _K, _C, _SIGMA = (const.h.cgs.value, const.k_B.cgs.value, const.c.cgs.value, const.sigma_sb.cgs.value)
+_D = (100.0 * u.Mpc).to_value(u.cm)
+
+
+class FREDPowerLawBlackbody(OpticalModel):
+    """Blackbody with a FRED luminosity and a power-law cooling temperature."""
+
+    PARAMETERS = (
+        ModelParameter("t_0", 1.0 * DAY, base_units=u.s, description="Onset time.", bounds=(0.0, None)),
+        ModelParameter("tau_r", 2.0 * DAY, base_units=u.s, description="Rise time.", bounds=(0.0, None)),
+        ModelParameter("tau_d", 10.0 * DAY, base_units=u.s, description="Decay time.", bounds=(0.0, None)),
+        ModelParameter("L_peak", 1e43, base_units=u.erg / u.s, description="Peak luminosity.", bounds=(0.0, None)),
+        ModelParameter("T_10", 1e4, base_units=u.K, description="Temperature 10 days after onset.", bounds=(0.0, None)),
+        ModelParameter("alpha", 0.2, base_units=u.dimensionless_unscaled, description="Cooling index."),
+    )
+
+    def _compute_sed(self, nu_grid, t_unique, parameters):
+        dt = np.maximum(t_unique - parameters["t_0"], 1e-3 * DAY)
+        tau_r, tau_d = parameters["tau_r"], parameters["tau_d"]
+
+        # FRED profile, divided by its value at its maximum so that L_peak is the peak luminosity.
+        fred = (1.0 - np.exp(-dt / tau_r)) * np.exp(-dt / tau_d)
+        dt_pk = tau_r * np.log(1.0 + tau_d / tau_r)
+        fred_pk = (1.0 - np.exp(-dt_pk / tau_r)) * np.exp(-dt_pk / tau_d)
+        L = np.where(t_unique > parameters["t_0"], parameters["L_peak"] * fred / fred_pk, 0.0)
+
+        T = parameters["T_10"] * (dt / (10.0 * DAY)) ** -parameters["alpha"]
+        x = _H * nu_grid[None, :] / (_K * T[:, None])
+        B_nu = 2 * _H * nu_grid[None, :] ** 3 / _C**2 / np.expm1(np.minimum(x, 700.0))
+        return B_nu * L[:, None] / (4 * _SIGMA * T[:, None] ** 4 * _D**2)
+
 
 # ---- Build SDSS ugriz filter bundle ----------------------------------------
 SDSS_BANDS = {
@@ -67,7 +105,7 @@ SDSS_BANDS = {
 }
 filters = {short: load_filter_from_speclite(sp) for short, sp in SDSS_BANDS.items()}
 bundle = FilterBundle(filters)
-model = FREDBlackbodyModel(bundle)
+model = FREDPowerLawBlackbody(bundle)
 
 print(f"Model variables : {model.variable_names}")
 print(f"Model parameters: {model.parameter_names}")
@@ -75,14 +113,15 @@ print(f"Model outputs   : {model.output_names}")
 
 # ---- True parameters for the synthetic transient ---------------------------
 #
-# All physical time parameters are stored in seconds internally (the model's
-# base units for ``time``).  We express them as days for readability.
+# All times are in seconds internally (the model's base units for ``time``).
+# We express them as days for readability.
 TRUE_PARAMS = {
-    "t_0": 1.0 * 86400,  # onset at day 1  [s]
-    "tau_r": 2.0 * 86400,  # 2-day rise       [s]
-    "tau_d": 10.0 * 86400,  # 10-day decay     [s]
-    "T_eff": 12_000.0,  # colour temperature [K]
-    "amplitude": 5e-28,  # peak F_nu at V-pivot [erg/s/cm²/Hz]
+    "t_0": 1.0 * DAY,  # onset at day 1
+    "tau_r": 2.0 * DAY,  # 2-day rise
+    "tau_d": 10.0 * DAY,  # 10-day decay
+    "L_peak": 1e43,  # peak luminosity [erg/s]
+    "T_10": 1.0e4,  # temperature 10 days after onset [K]
+    "alpha": 0.2,  # cooling index
 }
 
 # %%
@@ -106,8 +145,8 @@ band_idx_all = np.tile(np.arange(n_bands), n_epochs)  # shape (45,)
 t_all_s = t_all_days * 86400.0
 
 # ---- Evaluate the forward model to get noise-free fluxes -------------------
-variables_true = {"time": t_all_s, "band_idx": band_idx_all}
-flux_true = model.forward_model(variables_true, TRUE_PARAMS).flux_density.value
+variables_true = {"time": t_all_s, "band_index": band_idx_all}
+flux_true = model.forward_model(variables_true, TRUE_PARAMS).flux.value
 
 # Add 5 % Gaussian noise
 noise_frac = 0.05
@@ -168,9 +207,9 @@ for band_name in BAND_LIST:
 
     # True model
     out_dense = model.forward_model(
-        {"time": t_dense_s, "band_idx": np.full(len(t_dense_s), idx, dtype=int)}, TRUE_PARAMS
+        {"time": t_dense_s, "band_index": np.full(len(t_dense_s), idx, dtype=int)}, TRUE_PARAMS
     )
-    f_dense = out_dense.flux_density.value
+    f_dense = out_dense.flux.value
 
     # Observed data for this band
     mask = band_names_all == band_name
@@ -204,9 +243,8 @@ ax_mag.set_title("Synthetic photometry — AB magnitude")
 ax_mag.legend(ncol=2, fontsize=9)
 
 fig.suptitle(
-    rf"FREDBlackbodyModel  ($T_\mathrm{{eff}} = {TRUE_PARAMS['T_eff'] / 1000:.0f}$ kK, "
-    rf"$\tau_r = {TRUE_PARAMS['tau_r'] / 86400:.0f}$ d, "
-    rf"$\tau_d = {TRUE_PARAMS['tau_d'] / 86400:.0f}$ d)",
+    rf"FRED + power-law blackbody  ($\tau_r = {TRUE_PARAMS['tau_r'] / DAY:.0f}$ d, "
+    rf"$\tau_d = {TRUE_PARAMS['tau_d'] / DAY:.0f}$ d, $\alpha = {TRUE_PARAMS['alpha']:.1f}$)",
     y=1.01,
 )
 plt.tight_layout()
@@ -219,7 +257,7 @@ plt.show()
 # :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`
 # performs three operations in a single call:
 #
-# 1. Resolves each ``band_name`` string to an integer ``band_idx`` by looking
+# 1. Resolves each ``band_name`` string to an integer ``band_index`` by looking
 #    up ``model.bundle.filter_names``.
 # 2. Converts time to seconds (the model's ``base_units`` for ``time``).
 # 3. Returns an :class:`~trilobite.data.core.InferenceData` object containing
@@ -250,7 +288,7 @@ print(inference_data.describe())
 # only detections.
 #
 # :class:`~trilobite.inference.problem.InferenceProblem` wraps the likelihood
-# together with priors on the free parameters.  All five parameters are
+# together with priors on the free parameters.  All six parameters are
 # sampled; log-uniform (``loguniform``) priors are appropriate for
 # scale-invariant quantities.
 
@@ -271,10 +309,9 @@ problem = InferenceProblem(likelihood=likelihood)
 problem.set_prior("t_0", "loguniform", lower=0.1 * u.day, upper=30.0 * u.day)
 problem.set_prior("tau_r", "loguniform", lower=0.1 * u.day, upper=20.0 * u.day)
 problem.set_prior("tau_d", "loguniform", lower=0.5 * u.day, upper=100.0 * u.day)
-problem.set_prior("T_eff", "loguniform", lower=1_000.0 * u.K, upper=50_000.0 * u.K)
-problem.set_prior(
-    "amplitude", "loguniform", lower=1e-30 * u.Unit("erg/(s cm2 Hz)"), upper=1e-24 * u.Unit("erg/(s cm2 Hz)")
-)
+problem.set_prior("L_peak", "loguniform", lower=1e41 * u.Unit("erg/s"), upper=1e45 * u.Unit("erg/s"))
+problem.set_prior("T_10", "loguniform", lower=1_000.0 * u.K, upper=50_000.0 * u.K)
+problem.set_prior("alpha", "uniform", lower=0.0, upper=1.0)
 
 print(f"\nFree parameters  : {problem.free_parameter_names}")
 print(f"Initial log-posterior: {problem.initial_log_posterior:.1f}")
@@ -319,8 +356,8 @@ else:
 # across the posterior.  Clear trends or poor mixing indicate the burn-in
 # was too short.
 
-fig, result.trace_plot("T_eff", burn=0, thin=1)
-plt.suptitle(r"Trace plot — $T_\mathrm{eff}$  (all steps, no burn-in removed)", y=1.01)
+fig, result.trace_plot("T_10", burn=0, thin=1)
+plt.suptitle(r"Trace plot — $T_{10}$  (all steps, no burn-in removed)", y=1.01)
 plt.tight_layout()
 plt.show()
 
@@ -329,9 +366,9 @@ plt.show()
 # The dotted region before the dashed vertical line is discarded in all
 # subsequent analyses.
 
-fig, result.trace_plot("T_eff", burn=N_BURN, thin=N_THIN)
+fig, result.trace_plot("T_10", burn=N_BURN, thin=N_THIN)
 plt.suptitle(
-    rf"Trace plot — $T_\mathrm{{eff}}$  (burn={N_BURN}, thin={N_THIN})",
+    rf"Trace plot — $T_{{10}}$  (burn={N_BURN}, thin={N_THIN})",
     y=1.01,
 )
 plt.tight_layout()
@@ -342,18 +379,12 @@ plt.show()
 # --------------------------------------
 #
 # The corner plot shows marginal and joint posterior distributions for all
-# five free parameters.  The dashed lines mark the true values; the recovered
+# six free parameters.  The dashed lines mark the true values; the recovered
 # posteriors should bracket them.
 
 # Convert true parameter values to the units used internally for display.
 # The corner_plot ``truths`` dict expects values in base units (seconds, K, CGS).
-truths_display = {
-    "t_0": TRUE_PARAMS["t_0"],
-    "tau_r": TRUE_PARAMS["tau_r"],
-    "tau_d": TRUE_PARAMS["tau_d"],
-    "T_eff": TRUE_PARAMS["T_eff"],
-    "amplitude": TRUE_PARAMS["amplitude"],
-}
+truths_display = dict(TRUE_PARAMS)
 
 fig = result.corner_plot(
     burn=N_BURN,
@@ -364,7 +395,7 @@ plt.suptitle("Corner plot — posterior distributions with true values (dashed)"
 plt.show()
 
 # %%
-# All five posteriors are unimodal and centred near the true values, confirming
+# All six posteriors are unimodal and centred near the true values, confirming
 # that the model is identifiable from five-band light curve data at 5 % noise.
 
 # %%
@@ -416,19 +447,17 @@ for ax, band_name in zip(axes, BAND_LIST):
         theta = flat_samples[k]
         params_k = problem.unpack_free_parameters(theta)
         out_k = model.forward_model(
-            {"time": t_ppc_s, "band_idx": np.full(len(t_ppc_s), band_idx_val, dtype=int)},
+            {"time": t_ppc_s, "band_index": np.full(len(t_ppc_s), band_idx_val, dtype=int)},
             params_k,
         )
-        ax.plot(t_ppc_s / 86400, flux_to_ab_mag(out_k.flux_density.value), color=color, alpha=0.04, lw=0.8)
+        ax.plot(t_ppc_s / 86400, flux_to_ab_mag(out_k.flux.value), color=color, alpha=0.04, lw=0.8)
 
     # True model
     out_true = model.forward_model(
-        {"time": t_ppc_s, "band_idx": np.full(len(t_ppc_s), band_idx_val, dtype=int)},
+        {"time": t_ppc_s, "band_index": np.full(len(t_ppc_s), band_idx_val, dtype=int)},
         TRUE_PARAMS,
     )
-    ax.plot(
-        t_ppc_s / 86400, flux_to_ab_mag(out_true.flux_density.value), color="black", lw=2, zorder=5, label="True model"
-    )
+    ax.plot(t_ppc_s / 86400, flux_to_ab_mag(out_true.flux.value), color="black", lw=2, zorder=5, label="True model")
 
     # Data
     mask = band_names_all == band_name
@@ -439,7 +468,7 @@ for ax, band_name in zip(axes, BAND_LIST):
     mag_err = 2.5 * f_e_band / (np.log(10) * f_obs_band)
     ax.errorbar(t_obs, mag_obs, yerr=mag_err, fmt="o", color="black", ms=5, zorder=6, label="Data")
 
-    ax.invert_yaxis()
+    ax.set_ylim(mag_obs.max() + 0.8, mag_obs.min() - 0.4)  # inverted; clips the divergent onset
     ax.set_ylabel(rf"$m_{band_name}$ [AB mag]", fontsize=11)
     ax.text(0.02, 0.08, rf"${band_name}$ band", transform=ax.transAxes, fontsize=11, color=color, fontweight="bold")
     if band_name == BAND_LIST[0]:
@@ -462,12 +491,12 @@ plt.show()
 # Key takeaways
 # ~~~~~~~~~~~~~
 #
-# - A ``FREDBlackbodyModel``
-#   with just five parameters (three temporal, two spectral) recovers the
-#   true light curves in all five *ugriz* bands simultaneously.
-# - Multi-band coverage strongly constrains :math:`T_\mathrm{eff}`: the colour
-#   information from five bands breaks the degeneracy between temperature and
-#   amplitude that would be present in single-band data.
+# - A blackbody with a FRED luminosity and a power-law cooling temperature, with just six parameters (three
+#   temporal, one luminosity, two spectral), recovers the true light curves in all five *ugriz* bands
+#   simultaneously.
+# - Multi-band coverage constrains the temperature evolution (:math:`T_{10}` and :math:`\alpha`) separately from the
+#   luminosity: the colour information from five bands breaks the degeneracy between temperature and
+#   luminosity that would be present in single-band data.
 # - The :ref:`data_overview` pipeline — container → ``to_inference_data`` →
 #   likelihood — requires no manual unit conversions or column remapping; the
 #   ``model.bundle`` attribute carries all the band-resolution logic.
@@ -479,7 +508,5 @@ plt.show()
 #   ``container = OpticalPhotometryContainer.from_file("phot.fits")``.
 # - Add upper limits by setting ``flux_density = NaN`` and populating
 #   ``flux_upper_limit`` for non-detections.
-# - Try ``GeneralizedFREDBlackbodyModel``
-#   for a more flexible temporal shape, or
-#   :class:`~trilobite.models.generic.optical_photometry.GaussianBlackbodyModel`
-#   for symmetric transients.
+# - Replace the inline model with any other :class:`~trilobite.models.core.optical.OpticalModel`: only
+#   ``_compute_sed`` has to change.

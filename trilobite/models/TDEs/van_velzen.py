@@ -19,6 +19,8 @@ from trilobite.models.core.optical import OpticalModel
 from trilobite.models.core.parameters import ModelParameter
 from trilobite.radiation.blackbody import _log_photospheric_radius, _log_specific_flux_fnu_cgs
 
+from ..core.status import ModelStatus
+
 if TYPE_CHECKING:
     from trilobite._typing import _ModelParametersInputRaw
     from trilobite.utils.phot_utils import FilterBundle
@@ -227,6 +229,11 @@ class VanVelzenModel(OpticalModel):
              - :math:`f_\nu(\nu,t)`
              - Filter-convolved flux density.
 
+    Parameters
+    ----------
+    bundle : FilterBundle
+        Filter set defining the observable bands.
+
     Notes
     -----
     - The luminosity light curve is continuous at :math:`t = t_{\rm peak}`.
@@ -236,15 +243,12 @@ class VanVelzenModel(OpticalModel):
     - No cosmological corrections (redshift, K-correction) are applied;
       ``D`` is treated as a plain luminosity distance.
 
-    Parameters
-    ----------
-    bundle : FilterBundle
-        Filter set defining the observable bands.
-
     References
     ----------
     van Velzen et al. 2021, ApJ, 908, 4.
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     PARAMETERS = _VV_PARAMETERS
     DESCRIPTION = (
@@ -256,6 +260,14 @@ class VanVelzenModel(OpticalModel):
     REFERENCE = "van Velzen et al. 2021, ApJ, 908, 4."
 
     def __init__(self, bundle: "FilterBundle") -> None:
+        """
+        Initialize the model.
+
+        Parameters
+        ----------
+        bundle : FilterBundle
+            Filter set defining the observable bands.
+        """
         super().__init__(bundle)
 
     def _compute_sed(

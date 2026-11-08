@@ -171,6 +171,30 @@ lint.exclude = [
     "docs/*",      # Exclude documentation from linting.
 ]
 
+[tool.numpydoc_validation]
+checks = [
+  "all",  # report on all checks, except the ones excluded below
+  "EX01", # Don't require an Examples section
+  "SA01", # Don't require a See Also section
+  "ES01", # Don't require an Extended Summary
+]
+# Test modules are not documented API: don't require numpydoc-style docstrings on test functions/classes.
+exclude_files = ['^tests/']
+# Private objects (a single leading underscore, e.g. ``Model._forward_model`` or ``_helper``) are not public API.
+# The pattern is matched against the dotted name ``module.Class.member``, so it also exempts everything nested
+# inside a private class. Dunder methods (``__init__``, ...) are still validated.
+exclude = ['\._[^_]']
+# RT01 ("no Returns section") and SS02 ("summary must start with a capital letter") don't
+# recognize the numpydoc `"""type: description."""` one-liner convention this codebase uses
+# for simple `@property` attributes (its AST-based checker can't distinguish a `@property`
+# from a regular method, and a lowercase type name like `int:`/`numpy.ndarray:` is the
+# correct, intentional start of that convention). Suppress both specifically for docstrings
+# that open with that "type: " pattern, rather than forcing every property into a verbose
+# Parameters/Returns block it can't even semantically have (no parameters).
+override_RT01 = ['^[~\w][~\w\.\[\], ]*(?:\bor\b[~\w\.\[\], ]+)*:\s']
+override_SS02 = ['^[~\w][~\w\.\[\], ]*(?:\bor\b[~\w\.\[\], ]+)*:\s']
+
+
 [tool.coverage.run]
 branch = true
 source = ["trilobite"]

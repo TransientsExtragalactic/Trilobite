@@ -98,7 +98,7 @@ Resources
     :gutter: 5
 
     .. grid-item-card::
-        :img-top: images/index/stopwatch_icon.png
+        :img-top: images/index/quickstart_icon.png
 
         Quickstart Guide
         ^^^^^^^^^^^^^^^^
@@ -116,7 +116,26 @@ Resources
             To The Quickstart Page
 
     .. grid-item-card::
-        :img-top: images/index/lightbulb.png
+        :img-top: images/index/model_icon.png
+
+        Models
+        ^^^^^^
+        Looking for a ready-made model of a GRB, supernova, TDE or LFBOT? The model directory is a searchable catalog
+        of every forward model in ``Trilobite``, each labeled with its development status (validated, experimental,
+        etc.).
+
+        +++
+
+        .. button-ref:: models/index
+            :ref-type: doc
+            :expand:
+            :color: secondary
+            :click-parent:
+
+            To the Model Directory
+
+    .. grid-item-card::
+        :img-top: images/index/examples_icon.png
 
         Examples
         ^^^^^^^^
@@ -178,9 +197,10 @@ Contents
 .. toctree::
    :maxdepth: 1
 
+   models/index
+   examples
    api
    reference/user_guide
-   examples
    getting_started
 
 Indices and tables

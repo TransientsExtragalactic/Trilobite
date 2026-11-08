@@ -21,6 +21,8 @@ from astropy import units as u
 from trilobite.models.core.base import Model
 from trilobite.models.core.parameters import ModelParameter, ModelVariable
 
+from ..core.status import ModelStatus
+
 __all__ = [
     "BandFunctionModel",
 ]
@@ -130,6 +132,8 @@ class BandFunctionModel(Model):
     point; its value does not affect the spectral *shape*, only the
     absolute normalisation of :math:`A`.
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     # =============================================== #
     # Parameter and Variable Declarations             #

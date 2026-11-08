@@ -20,6 +20,8 @@ from trilobite.models.core.base import Model
 from trilobite.models.core.parameters import ModelParameter, ModelVariable
 from trilobite.radiation.synchrotron.SEDs import SSA_SED_PowerLaw
 
+from ..core.status import ModelStatus
+
 __all__ = [
     "ChevalierShockModel",
 ]
@@ -34,8 +36,9 @@ class ChevalierShockModel(Model):
     (CSM) using the self-similar solutions presented in :footcite:t:`ChevalierXRayRadioEmission1982`.
     The model computes the shock dynamics and resulting synchrotron spectral energy distribution (SED)
     based on a set of macroscopic and microscopic parameters.
-
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     # =============================================== #
     # Parameter and Variable Declarations             #
