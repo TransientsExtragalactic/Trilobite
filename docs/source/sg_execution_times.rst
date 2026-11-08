@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**02:55.778** total execution time for 68 files **from all galleries**:
+**03:13.692** total execution time for 68 files **from all galleries**:
 
 .. container::
 
@@ -53,8 +53,11 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_inference_plot_nuisance_parameter_fit.py` (``galleries/inference/plot_nuisance_parameter_fit.py``)
      - 00:11.877
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_inference_plot_optical_lc_inference.py` (``galleries/inference/plot_optical_lc_inference.py``)
+     - 00:10.628
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_modeling_plot_sn2010jl_ffa_turn_on.py` (``galleries/modeling/plot_sn2010jl_ffa_turn_on.py``)
-     - 00:02.755
+     - 00:09.963
      - 0.0
    * - :ref:`sphx_glr_auto_examples_modeling_plot_sn1993j_radio_sed.py` (``galleries/modeling/plot_sn1993j_radio_sed.py``)
      - 00:00.730
@@ -63,7 +66,7 @@ Computation times
      - 00:00.542
      - 0.0
    * - :ref:`sphx_glr_auto_examples_modeling_plot_phenomenological_lc_fit.py` (``galleries/modeling/plot_phenomenological_lc_fit.py``)
-     - 00:00.436
+     - 00:00.517
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_e_inversions_plot_inversion_cooling_diggins26.py` (``galleries/synchrotron/e_inversions/plot_inversion_cooling_diggins26.py``)
      - 00:00.413
@@ -97,9 +100,6 @@ Computation times
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_d_closures_plot_bolometric_emissivity.py` (``galleries/synchrotron/d_closures/plot_bolometric_emissivity.py``)
      - 00:00.087
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_inference_plot_optical_lc_inference.py` (``galleries/inference/plot_optical_lc_inference.py``)
-     - 00:00.003
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000

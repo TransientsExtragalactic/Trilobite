@@ -178,6 +178,12 @@ checks = [
   "SA01", # Don't require a See Also section
   "ES01", # Don't require an Extended Summary
 ]
+# Test modules are not documented API: don't require numpydoc-style docstrings on test functions/classes.
+exclude_files = ['^tests/']
+# Private objects (a single leading underscore, e.g. ``Model._forward_model`` or ``_helper``) are not public API.
+# The pattern is matched against the dotted name ``module.Class.member``, so it also exempts everything nested
+# inside a private class. Dunder methods (``__init__``, ...) are still validated.
+exclude = ['\._[^_]']
 # RT01 ("no Returns section") and SS02 ("summary must start with a capital letter") don't
 # recognize the numpydoc `"""type: description."""` one-liner convention this codebase uses
 # for simple `@property` attributes (its AST-based checker can't distinguish a `@property`

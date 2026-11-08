@@ -1,8 +1,29 @@
+.. raw:: html
+
+   <div class="page-header">
+
+.. image:: /images/logo.svg
+   :class: page-header-logo
+   :alt: Trilobite logo
+
+.. raw:: html
+
+   <div class="page-header-text">
+
 .. _user_guide:
 
 ========================
 Trilobite User Guide
 ========================
+
+.. raw:: html
+
+   <p class="page-header-tagline">Technical documentation for the Trilobite library.</p>
+   <p class="page-header-lede">
+      Topic-by-topic explanations of the components that make up Trilobite, from data and physics modules to inference.
+   </p>
+   </div>
+   </div>
 
 Welcome to the **Trilobite User Guide**! This page is the location of all technical documentation for the
 trilobite library and is generally the first place to look when seeking information on how to use the library. In
@@ -53,13 +74,9 @@ Trilobite Models
 
 The core functionality of trilobite is its ability to create physical models of radio sources and their
 environments. These models are built using a combination of modular building blocks that represent different physical
-processes and components. The following guides provide an overview of the modeling capabilities of trilobite:
-
-.. toctree::
-    :maxdepth: 1
-
-    models/overview
-    models/directory
+processes and components. Models have their own top-level section: see the :doc:`model directory
+</models/index>` for a searchable catalog of every available model and its development status, and the
+:doc:`modeling guide </models/overview>` for how to build your own.
 
 More than any other part of the Trilobite library, the models section is designed for extensibility, even by every
 day users of the code. It is important to be able to correctly leverage the capabilities of the building blocks and

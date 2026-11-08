@@ -1,14 +1,42 @@
+.. raw:: html
+
+   <div class="page-header">
+
+.. image:: /images/logo.svg
+   :class: page-header-logo
+   :alt: Trilobite logo
+
+.. raw:: html
+
+   <div class="page-header-text">
+
 .. _model_directory:
 
-=========================================
-Trilobite Model Directory
-=========================================
+==================
+Models
+==================
+
+.. raw:: html
+
+   <p class="page-header-tagline">A searchable catalog of every forward model in Trilobite.</p>
+   <p class="page-header-lede">
+      Browse GRB, supernova, TDE and LFBOT models, each labeled with its development status.
+   </p>
+   </div>
+   </div>
 
 Trilobite provides an ever-expanding collection of forward models for astrophysical inference,
 phenomenological curve fitting, and physically motivated transient modeling. Models range from lightweight
 mathematical forms to physically grounded shock and emission models, and all share the unified
 :class:`~trilobite.models.core.base.Model` interface: consistent parameter handling, unit support, and
 compatibility with likelihood and inference tools.
+
+.. toctree::
+   :hidden:
+
+   overview
+
+.. model-search::
 
 .. grid:: 1 1 2 2
    :gutter: 2
@@ -29,6 +57,20 @@ compatibility with likelihood and inference tools.
       Most models are designed to be subclassed. Phenomenological models adapt with minimal effort, and
       physical models expose their core components so assumptions can be modified cleanly.
 
+.. rst-class:: trilobite-model-browse
+
+Development status
+------------------
+
+Every model carries a development stage, shown as a badge in the tables below and at the top of its API page. The
+stage is declared on the model class with the ``STATUS`` attribute (see
+:class:`~trilobite.models.core.status.ModelStatus`), so it can never drift from the code. Instantiating an
+experimental or deprecated model emits a warning.
+
+.. model-status-legend::
+
+.. rst-class:: trilobite-model-browse
+
 Browse by category
 ------------------
 
@@ -45,7 +87,7 @@ Browse by category
       Curve fits, pulses, evolving SEDs
 
       +++
-      17 models
+      :model-count:`Generic`
 
    .. grid-item-card:: SEDs
       :link: sed_models
@@ -56,7 +98,7 @@ Browse by category
       Physical multi-wavelength spectra
 
       +++
-      5 models
+      :model-count:`SEDs`
 
    .. grid-item-card:: Supernovae
       :link: supernova_models
@@ -67,7 +109,7 @@ Browse by category
       Shock and CSM interaction
 
       +++
-      1 model
+      :model-count:`Supernovae`
 
    .. grid-item-card:: LFBOTs
       :link: lfbot_models
@@ -78,7 +120,7 @@ Browse by category
       Two-component radio emission
 
       +++
-      1 model
+      :model-count:`LFBOTs`
 
    .. grid-item-card:: GRBs
       :link: grb_models
@@ -89,7 +131,7 @@ Browse by category
       Prompt and afterglow emission
 
       +++
-      1 model
+      :model-count:`GRBs`
 
    .. grid-item-card:: Optical
       :link: optical_models
@@ -100,9 +142,11 @@ Browse by category
       Filter-convolved photometry
 
       +++
-      4 models
+      :model-count:`Optical`
 
 .. _generic_models:
+
+.. rst-class:: trilobite-model-browse
 
 Generic Models
 --------------
@@ -110,61 +154,25 @@ Generic Models
 Flexible, modular models that are not tied to a specific physical scenario. They are ideal for rapid
 prototyping, exploratory analysis, and building custom likelihoods.
 
-.. dropdown:: Curve-fitting models :bdg-primary:`4`
-   :name: curve_fitting_models
+.. dropdown:: Curve-fitting models
    :open:
    :class-container: trilobite-dropdown
 
-   Flexible mathematical forms for fitting data.
+   .. model-table:: trilobite.models.generic.curves
 
-   .. currentmodule:: trilobite.models.generic.curves
-
-   .. autosummary::
-      :nosignatures:
-
-      BrokenPowerLaw
-      SmoothedBrokenPowerLaw
-      TripleBrokenPowerLaw
-      SmoothedTripleBrokenPowerLaw
-
-.. dropdown:: Light curve models :bdg-primary:`10`
-   :name: light_curve_models
+.. dropdown:: Light curve models
    :class-container: trilobite-dropdown
 
-   Phenomenological models for time-domain transient analysis and pulse-shape modeling.
+   .. model-table:: trilobite.models.generic.light_curve
 
-   .. currentmodule:: trilobite.models.generic.light_curve
-
-   .. autosummary::
-      :nosignatures:
-
-      FRED
-      GeneralizedFRED
-      GaussianPulse
-      LogNormalPulse
-      BrokenPowerLawTime
-      SmoothedBrokenPowerLawTime
-      ExponentialRisePowerLawDecay
-      NorrisPulse
-      WeibullPulse
-      LogisticPulse
-
-.. dropdown:: Evolving SED models :bdg-primary:`3`
-   :name: evolving_models
+.. dropdown:: Evolving SED models
    :class-container: trilobite-dropdown
 
-   Phenomenological SED models in which the spectral parameters evolve in time.
-
-   .. currentmodule:: trilobite.models.generic.evolving_seds
-
-   .. autosummary::
-      :nosignatures:
-
-      ~evolving_sbpl.PL_Evolving_SBPL_Model
-      ~evolving_sbpl.BPL_Evolving_SBPL_Model
-      ~evolving_sbpl.TripleBPL_Evolving_SBPL_Model
+   .. model-table:: trilobite.models.generic.evolving_seds
 
 .. _sed_models:
+
+.. rst-class:: trilobite-model-browse
 
 SED Models
 ----------
@@ -172,40 +180,30 @@ SED Models
 Full-physics spectral energy distributions for a range of emission mechanisms and physical assumptions,
 suited to multi-wavelength fitting and inference.
 
-.. dropdown:: Synchrotron :bdg-primary:`5`
+.. dropdown:: Synchrotron
    :open:
    :class-container: trilobite-dropdown
 
-   .. currentmodule:: trilobite.models.SEDs.synchrotron
-
-   .. autosummary::
-      :nosignatures:
-
-      SSA_Cooling_SynchrotronSEDModel
-      SSA_SynchrotronSEDModel
-      Cooling_SynchrotronSEDModel
-      SynchrotronSEDModel
-      Synchrotron_SSA_SBPL_Model
+   .. model-table:: trilobite.models.SEDs.synchrotron
 
 .. _supernova_models:
+
+.. rst-class:: trilobite-model-browse
 
 Supernova Models
 ----------------
 
 Physically motivated shock dynamics, radiation processes, and circumstellar interaction physics.
 
-.. dropdown:: Self-similar shock models :bdg-primary:`1`
+.. dropdown:: Self-similar shock models
    :open:
    :class-container: trilobite-dropdown
 
-   .. currentmodule:: trilobite.models.supernovae
-
-   .. autosummary::
-      :nosignatures:
-
-      chevalier_shock.ChevalierShockModel
+   .. model-table:: trilobite.models.supernovae
 
 .. _lfbot_models:
+
+.. rst-class:: trilobite-model-browse
 
 LFBOT Models
 ------------
@@ -215,18 +213,15 @@ equatorial and a polar sightline through an axisymmetric CSM, each with its own 
 emission and free-free attenuation. It provides both a paired ``(time, frequency)`` path for inference and a
 ``tabulate`` path for analysis and plotting.
 
-.. dropdown:: Two-component synchrotron model :bdg-primary:`1`
+.. dropdown:: Two-component synchrotron model
    :open:
    :class-container: trilobite-dropdown
 
-   .. currentmodule:: trilobite.models.LFBOTs.diggins26
-
-   .. autosummary::
-      :nosignatures:
-
-      Diggins26_TwoComponentModel
+   .. model-table:: trilobite.models.LFBOTs
 
 .. _grb_models:
+
+.. rst-class:: trilobite-model-browse
 
 GRB Models
 ----------
@@ -234,18 +229,15 @@ GRB Models
 Spectral and temporal properties of gamma-ray burst (GRB) emission, from empirical spectral characterisation to
 physically motivated jet and afterglow models.
 
-.. dropdown:: Prompt-emission spectral models :bdg-primary:`1`
+.. dropdown:: Prompt-emission spectral models
    :open:
    :class-container: trilobite-dropdown
 
-   .. currentmodule:: trilobite.models.GRBs
-
-   .. autosummary::
-      :nosignatures:
-
-      band.BandFunctionModel
+   .. model-table:: trilobite.models.GRBs
 
 .. _optical_models:
+
+.. rst-class:: trilobite-model-browse
 
 Optical Models
 --------------
@@ -256,19 +248,18 @@ Filter-convolved flux densities for multi-band photometric observations. Optical
 :class:`~trilobite.utils.phot_utils.FilterBundle` convolution, time deduplication, and band-index resolution
 automatically. See :ref:`the optical model pattern <optical_model_pattern>` for a guide to implementing custom optical models.
 
-.. dropdown:: Blackbody models :bdg-primary:`2`
+.. dropdown:: Blackbody models
    :open:
    :class-container: trilobite-dropdown
 
-   .. currentmodule:: trilobite.models.SEDs.blackbody_optical
+   .. model-table:: trilobite.models.SEDs.blackbody_optical
 
-   .. autosummary::
-      :nosignatures:
+.. dropdown:: TDE light-curve models
+   :class-container: trilobite-dropdown
 
-      BlackbodyOpticalModel
-      BlackbodyOpticalEpochModel
+   .. model-table:: trilobite.models.TDEs
 
-.. dropdown:: Abstract base classes :bdg-secondary:`2`
+.. dropdown:: Abstract base classes
    :class-container: trilobite-dropdown
 
    .. currentmodule:: trilobite.models.core.optical
@@ -280,6 +271,8 @@ automatically. See :ref:`the optical model pattern <optical_model_pattern>` for 
       OpticalEpochModel
 
 .. _extending_model_library:
+
+.. rst-class:: trilobite-model-browse
 
 Extending the Model Library
 ---------------------------

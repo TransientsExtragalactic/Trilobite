@@ -111,6 +111,65 @@ html[data-theme="dark"] .navbar-brand img {
     color: var(--pst-color-text-muted);
 }
 
+/* Landing-page header: logo on the left; title, tagline and lede on the right. Used by the
+   quickstart, models, examples, user guide and API pages (see getting_started.rst for the markup).
+   The opening <div> is raw HTML before the title and the closing tags follow it, so the page's
+   real RST title renders as the <h1> inside the header. */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 2.5rem 0 2.4rem 0;
+    margin-bottom: 1.8rem;
+    border-bottom: 1px solid var(--pst-color-border);
+}
+
+.page-header .page-header-logo {
+    width: 25%;
+    height: auto;
+    flex-shrink: 0;
+}
+
+html[data-theme="dark"] .bd-content img.page-header-logo {
+    background-color: transparent;
+    filter: none;
+}
+
+.page-header-text {
+    max-width: 620px;
+}
+
+.page-header h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2.6rem;
+    color: var(--pst-color-primary);
+}
+
+.page-header-tagline {
+    margin: 0.4rem 0 0 0;
+    font-size: 1rem;
+    color: var(--pst-color-text-muted);
+}
+
+.page-header-lede {
+    margin: 1rem 0 0 0;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--pst-color-text-base);
+}
+
+@media (max-width: 600px) {
+    .page-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.25rem;
+    }
+
+    .page-header .page-header-logo {
+        width: 50%;
+    }
+}
+
 .badges {
     margin-top: 0.5rem;
     display: flex;
@@ -356,3 +415,23 @@ section.trilobite-stage > h2 {
     margin-top: 0.6rem;
     border-bottom: none;
 }
+
+/* ── Model directory ────────────────────────────────────────────────────── */
+/* Development-status pill (search results; tables and API pages use sphinx-design badges) */
+.model-status {
+    padding: 0.05rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #fff;
+}
+
+.model-status-validated { background: var(--pst-color-success); }
+.model-status-unvalidated { background: var(--pst-color-secondary); }
+.model-status-experimental { background: var(--pst-color-warning); color: #000; }
+.model-status-deprecated { background: var(--pst-color-danger); }
+
+table.model-table td:nth-child(2) { white-space: nowrap; }
+
+.model-status-legend dl { margin-bottom: 0; }

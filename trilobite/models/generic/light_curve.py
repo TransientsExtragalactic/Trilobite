@@ -47,6 +47,7 @@ import numpy as np
 from astropy import units as u
 
 from ..core import Model, ModelParameter, ModelVariable
+from ..core.status import ModelStatus
 
 __all__ = [
     "FRED",
@@ -154,11 +155,26 @@ class FRED(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`GeneralizedFRED`
+        Generalized fast-rise exponential-decay pulse.
+
+    :class:`GaussianPulse`
+        Symmetric Gaussian pulse.
+
+    :class:`NorrisPulse`
+        Norris GRB pulse.
+
     Notes
     -----
     The peak time depends non-trivially on the ratio :math:`\tau_r/\tau_d`.
     The model reduces to a simple exponential decay when
     :math:`\tau_r \rightarrow 0`.
+
+    References
+    ----------
+    .. footbibliography::
 
     Examples
     --------
@@ -188,17 +204,9 @@ class FRED(Model):
         plt.title("FRED Model Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`GeneralizedFRED`
-    :class:`GaussianPulse`
-    :class:`NorrisPulse`
-
-    References
-    ----------
-    .. footbibliography::
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (
         ModelVariable(
@@ -342,6 +350,17 @@ class GeneralizedFRED(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`FRED`
+        Fast-rise exponential-decay pulse.
+
+    :class:`NorrisPulse`
+        Norris GRB pulse.
+
+    :class:`LogNormalPulse`
+        Asymmetric log-normal pulse.
+
     Notes
     -----
     - The peak time depends on both :math:`n` and the ratio
@@ -354,6 +373,10 @@ class GeneralizedFRED(Model):
     Caution should be exercised when interpreting fitted parameters
     physically, as this model does not enforce energy conservation or
     radiative transfer consistency.
+
+    References
+    ----------
+    .. footbibliography::
 
     Examples
     --------
@@ -383,17 +406,9 @@ class GeneralizedFRED(Model):
         plt.title("Generalized FRED Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`FRED`
-    :class:`NorrisPulse`
-    :class:`LogNormalPulse`
-
-    References
-    ----------
-    .. footbibliography::
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -523,6 +538,14 @@ class GaussianPulse(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`FRED`
+        Fast-rise exponential-decay pulse.
+
+    :class:`LogNormalPulse`
+        Asymmetric log-normal pulse.
+
     Notes
     -----
     The full width at half maximum (FWHM) is given by
@@ -562,13 +585,9 @@ class GaussianPulse(Model):
         plt.title("Gaussian Pulse Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`FRED`
-    :class:`LogNormalPulse`
-
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -683,6 +702,14 @@ class LogNormalPulse(Model):
              - :math:`F(t)`
              - Flux at time :math:`t`.
 
+    See Also
+    --------
+    :class:`FRED`
+        Fast-rise exponential-decay pulse.
+
+    :class:`NorrisPulse`
+        Norris GRB pulse.
+
     Notes
     -----
     The peak time occurs at
@@ -722,13 +749,9 @@ class LogNormalPulse(Model):
         plt.title("Log-Normal Pulse Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`FRED`
-    :class:`NorrisPulse`
-
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -844,6 +867,11 @@ class BrokenPowerLawTime(Model):
              - :math:`F(t)`
              - Flux value.
 
+    See Also
+    --------
+    :class:`SmoothedBrokenPowerLawTime`
+        Smoothly broken power-law temporal model.
+
     Notes
     -----
     The derivative is discontinuous at :math:`t_b`. This model is therefore
@@ -877,12 +905,9 @@ class BrokenPowerLawTime(Model):
         plt.title("Broken Power Law Time Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`SmoothedBrokenPowerLawTime`
-
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1010,6 +1035,11 @@ class SmoothedBrokenPowerLawTime(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`BrokenPowerLawTime`
+        Sharp broken power-law temporal model.
+
     Notes
     -----
     This model is continuous and differentiable for all
@@ -1043,12 +1073,9 @@ class SmoothedBrokenPowerLawTime(Model):
         plt.title("Smoothed Broken Power Law Time Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`BrokenPowerLawTime`
-
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1166,6 +1193,10 @@ class ExponentialRisePowerLawDecay(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`BrokenPowerLawTime`
+        Sharp broken power-law temporal model.
 
     Notes
     -----
@@ -1200,12 +1231,9 @@ class ExponentialRisePowerLawDecay(Model):
         plt.title("Exponential Rise Power-Law Decay Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`BrokenPowerLawTime`
-
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1320,6 +1348,13 @@ class NorrisPulse(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`FRED`
+        Fast-rise exponential-decay pulse.
+
+    :class:`LogNormalPulse`
+        Asymmetric log-normal pulse.
 
     Notes
     -----
@@ -1328,6 +1363,10 @@ class NorrisPulse(Model):
     .. math::
 
         t_{\rm peak} = t_s + \sqrt{\tau_1 \tau_2}.
+
+    References
+    ----------
+    .. footbibliography::
 
     Examples
     --------
@@ -1357,16 +1396,9 @@ class NorrisPulse(Model):
         plt.title("Norris Pulse Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`FRED`
-    :class:`LogNormalPulse`
-
-    References
-    ----------
-    .. footbibliography::
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1479,6 +1511,13 @@ class WeibullPulse(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`NorrisPulse`
+        Norris GRB pulse.
+
+    :class:`LogNormalPulse`
+        Asymmetric log-normal pulse.
 
     Notes
     -----
@@ -1512,13 +1551,9 @@ class WeibullPulse(Model):
         plt.title("Weibull Pulse Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`NorrisPulse`
-    :class:`LogNormalPulse`
-
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1622,6 +1657,10 @@ class LogisticPulse(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`GaussianPulse`
+        Symmetric Gaussian pulse.
 
     Notes
     -----
@@ -1661,12 +1700,9 @@ class LogisticPulse(Model):
         plt.title("Logistic Transition Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`GaussianPulse`
-
     """
+
+    STATUS = ModelStatus.UNVALIDATED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 

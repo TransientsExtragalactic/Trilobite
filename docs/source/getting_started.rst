@@ -1,27 +1,16 @@
-.. _getting_started:
+.. raw:: html
+
+   <div class="page-header">
+
+.. image:: /images/logo.svg
+   :class: page-header-logo
+   :alt: Trilobite logo
 
 .. raw:: html
 
-   <style>
-     .bd-article h1 {
-         font-size: 2.6rem;
-         color: #1f7a8c;
-         margin-bottom: 0.5rem;
-     }
-   </style>
+   <div class="page-header-text">
 
-   <div style="
-    display: flex;
-    align-items: center;
-    gap: 2.5rem;
-    padding: 2.5rem 0 2.4rem 0;
-    border-bottom: 1px solid #e5e7eb;
-    margin-bottom: 1.8rem;
-    ">
-
-       <img src="_images/logo.svg" style="width: 25%; height: auto;">
-
-       <div style="max-width: 620px;">
+.. _getting_started:
 
 ==================
 Quickstart Guide
@@ -29,26 +18,12 @@ Quickstart Guide
 
 .. raw:: html
 
-           <p style="
-               margin: 0.4rem 0 0 0;
-               font-size: 1rem;
-               color: #666;
-           ">
-               Get up and running with Trilobite.
-           </p>
-
-           <p style="
-               margin: 1rem 0 0 0;
-               font-size: 1.1rem;
-               line-height: 1.6;
-               color: #3a4a52;
-           ">
-               Install the package, explore worked examples, and understand
-               how the library is structured — everything you need to start
-               modeling astrophysical transients.
-           </p>
-
-       </div>
+   <p class="page-header-tagline">Get up and running with Trilobite.</p>
+   <p class="page-header-lede">
+      Install the package, explore worked examples, and understand how the library is structured &mdash;
+      everything you need to start modeling astrophysical transients.
+   </p>
+   </div>
    </div>
 
 Installation

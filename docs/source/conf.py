@@ -46,6 +46,7 @@ extensions = [
     "sphinx_gallery.gen_gallery",
     "sphinx_copybutton",
     "gallery_index",
+    "model_index",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -104,7 +105,7 @@ html_favicon = "images/logo.svg"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
-html_js_files = ["gallery_search.js"]
+html_js_files = ["catalog_search.js", "gallery_search.js", "model_search.js"]
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
@@ -315,7 +316,5 @@ sphinx_gallery_conf = {
     # Galleries that depend on models not yet implemented.  These are listed
     # here so that the build treats them as known failures rather than
     # unexpected errors.  Remove each entry once the corresponding model exists.
-    "expected_failing_examples": [
-        "galleries/inference/plot_optical_lc_inference.py",
-    ],
+    "expected_failing_examples": [],
 }

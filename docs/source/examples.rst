@@ -1,11 +1,29 @@
+.. raw:: html
+
+   <div class="page-header">
+
+.. image:: /images/logo.svg
+   :class: page-header-logo
+   :alt: Trilobite logo
+
+.. raw:: html
+
+   <div class="page-header-text">
+
 .. _gallery_examples:
 
-================================
+===================
 Example Gallery
-================================
+===================
 
-Runnable, self-contained examples covering the full Trilobite workflow, from raw observations to physical
-parameters. Follow the path below, or search for a specific example or science case.
+.. raw:: html
+
+   <p class="page-header-tagline">Learn by running real workflows.</p>
+   <p class="page-header-lede">
+      Runnable, self-contained examples covering the full Trilobite workflow, from raw observations to physical parameters. Follow the path below, or search for a specific example or science case.
+   </p>
+   </div>
+   </div>
 
 .. raw:: html
 
