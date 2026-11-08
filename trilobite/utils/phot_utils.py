@@ -78,21 +78,22 @@ class PhotometryFilter:
 
     Notes
     -----
-    **Photon weighting** (default for CCDs):
+    **Photon weighting** (default for CCDs), where the factor :math:`1/\lambda` combines the photon energy
+    :math:`1/(h\nu) \propto \lambda` with the Jacobian :math:`|d\nu/d\lambda| = c/\lambda^2`:
 
     .. math::
 
-        langle F_nu rangle = frac{int F_nu(lambda) , T(lambda) ,
-        frac{lambda}{hc} , dlambda}{int T(lambda) ,
-        frac{lambda}{hc} , dlambda}
+        \langle F_\nu \rangle = \frac{\int F_\nu(\lambda) \, T(\lambda) \,
+        \frac{1}{\lambda} \, d\lambda}{\int T(\lambda) \,
+        \frac{1}{\lambda} \, d\lambda}
 
     **Energy weighting** (bolometers):
 
     .. math::
 
-        langle F_nu rangle = frac{int F_nu(lambda) , T(lambda) ,
-        frac{c}{lambda^2} , dlambda}{int T(lambda) ,
-        frac{c}{lambda^2} , dlambda}
+        \langle F_\nu \rangle = \frac{\int F_\nu(\lambda) \, T(\lambda) \,
+        \frac{c}{\lambda^2} \, d\lambda}{\int T(\lambda) \,
+        \frac{c}{\lambda^2} \, d\lambda}
 
     The precomputed ``weights`` array encodes these integrals discretely via
     :func:`numpy.gradient`, so that ``np.dot(F_nu_on_filter_grid, weights)``
@@ -242,8 +243,8 @@ class PhotometryFilter:
 
         .. math::
 
-            lambda_{rm pivot} = sqrt{
-                frac{int T(lambda),dlambda}{int T(lambda)/lambda^2,dlambda}
+            \lambda_{\rm pivot} = \sqrt{
+                \frac{\int T(\lambda) \, d\lambda}{\int T(\lambda) / \lambda^2 \, d\lambda}
             }
         """
         numerator = _trapz(self._transmission, self._wavelength)
