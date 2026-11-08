@@ -614,22 +614,22 @@
 <span class="sd">    textbook citation, or other authoritative source describing</span>
 <span class="sd">    the model's origin or usage.</span>
 <span class="sd">    """</span>
-    <span class="n">STATUS</span><span class="p">:</span> <span class="n">ModelStatus</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span>
+    <span class="n">STATUS</span><span class="p">:</span> <span class="n">ModelStatus</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVERIFIED</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    ModelStatus: Development stage of the model.</span>
 
 <span class="sd">    One of :class:`~trilobite.models.core.status.ModelStatus`. The status is **not inherited**: a subclass that does</span>
-<span class="sd">    not declare its own ``STATUS`` is reset to :attr:`~trilobite.models.core.status.ModelStatus.UNVALIDATED`, since</span>
+<span class="sd">    not declare its own ``STATUS`` is reset to :attr:`~trilobite.models.core.status.ModelStatus.UNVERIFIED`, since</span>
 <span class="sd">    verification of a parent class says nothing about a subclass that changes the physics. Strings (e.g.</span>
-<span class="sd">    ``"validated"``) are accepted and converted at class-definition time. Models with an ``EXPERIMENTAL`` or</span>
+<span class="sd">    ``"verified"``) are accepted and converted at class-definition time. Models with an ``EXPERIMENTAL`` or</span>
 <span class="sd">    ``DEPRECATED`` status emit a :class:`UserWarning` when instantiated.</span>
 <span class="sd">    """</span>
     <span class="n">STATUS_NOTE</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    str: Optional free-text qualification of :attr:`STATUS`.</span>
 
-<span class="sd">    For example, what a validated model was checked against, or the replacement for a deprecated one. Shown next to</span>
-<span class="sd">    the status badge in the documentation. Like :attr:`STATUS`, it is not inherited.</span>
+<span class="sd">    For example, what a verified model was checked against, why a novel model has no reference, or the replacement</span>
+<span class="sd">    for a deprecated one. Shown next to the status badge in the documentation. Like :attr:`STATUS`, it is not inherited.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># =============================================== #</span>
@@ -650,7 +650,7 @@
 
         <span class="c1"># Status is per-class, never inherited: reset to the safe default unless declared on this class.</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_status_declared</span> <span class="o">=</span> <span class="s2">"STATUS"</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"STATUS"</span><span class="p">,</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span><span class="p">))</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"STATUS"</span><span class="p">,</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVERIFIED</span><span class="p">))</span>
         <span class="k">if</span> <span class="s2">"STATUS_NOTE"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">STATUS_NOTE</span> <span class="o">=</span> <span class="s2">""</span>
 

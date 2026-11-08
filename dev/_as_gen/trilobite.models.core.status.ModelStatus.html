@@ -671,8 +671,9 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.description.html">trilobite.models.core.status.ModelStatus.description</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.badge_color.html">trilobite.models.core.status.ModelStatus.badge_color</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.warns.html">trilobite.models.core.status.ModelStatus.warns</a></li>
-<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.VALIDATED.html">trilobite.models.core.status.ModelStatus.VALIDATED</a></li>
-<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.UNVALIDATED.html">trilobite.models.core.status.ModelStatus.UNVALIDATED</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.VERIFIED.html">trilobite.models.core.status.ModelStatus.VERIFIED</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.NOVEL.html">trilobite.models.core.status.ModelStatus.NOVEL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.UNVERIFIED.html">trilobite.models.core.status.ModelStatus.UNVERIFIED</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.EXPERIMENTAL.html">trilobite.models.core.status.ModelStatus.EXPERIMENTAL</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.DEPRECATED.html">trilobite.models.core.status.ModelStatus.DEPRECATED</a></li>
 </ul>
@@ -3477,17 +3478,21 @@
 <dd><p>Development stage of a model.</p>
 <p>The status is declared on a model with the <code class="docutils literal notranslate"><span class="pre">STATUS</span></code> class attribute:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">VALIDATED</span>
-    <span class="n">STATUS_NOTE</span> <span class="o">=</span> <span class="s2">"Reproduces the closed-form solution of Chevalier (1982) to 1e-6."</span>
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">VERIFIED</span>
+    <span class="n">STATUS_NOTE</span> <span class="o">=</span> <span class="s2">"Reproduces the light curves of Author et al. (2016)."</span>
 </pre></div>
 </div>
 <p>Each member’s value is the short lower-case key used in the documentation search index. Members also expose
 a human-readable <a class="reference internal" href="trilobite.models.core.status.ModelStatus.label.html#trilobite.models.core.status.ModelStatus.label" title="trilobite.models.core.status.ModelStatus.label"><code class="xref py py-attr docutils literal notranslate"><span class="pre">label</span></code></a> and <a class="reference internal" href="trilobite.models.core.status.ModelStatus.description.html#trilobite.models.core.status.ModelStatus.description" title="trilobite.models.core.status.ModelStatus.description"><code class="xref py py-attr docutils literal notranslate"><span class="pre">description</span></code></a>.</p>
 <p>The members, in order of increasing caution:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">VALIDATED</span></code>: verified against analytic limits, independent codes, or published results.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">UNVALIDATED</span></code>: implemented and tested, but not yet independently verified. This is the default for any
-model that does not declare a status.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VERIFIED</span></code>: backed by a verification test (see <code class="docutils literal notranslate"><span class="pre">tests/verification</span></code>) that compares the model with
+published results or another independent reference. A model may only be marked <code class="docutils literal notranslate"><span class="pre">VERIFIED</span></code> if such a test
+exists; whether the test is suitable is judged when the change is reviewed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NOVEL</span></code>: new physics with no published counterpart to check against, so it cannot be verified against the
+literature yet.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UNVERIFIED</span></code>: implemented and tested, but not yet verified. This is the default for any model that does not
+declare a status.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">EXPERIMENTAL</span></code>: under active development; the physics, parameters or API may change without notice.
 Instantiating an experimental model emits a <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#UserWarning" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserWarning</span></code></a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DEPRECATED</span></code>: scheduled for removal; prefer the replacement named in <code class="docutils literal notranslate"><span class="pre">STATUS_NOTE</span></code>. Instantiating a
@@ -3506,7 +3511,7 @@ deprecated model emits a <a class="reference external" href="https://docs.python
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.label.html#trilobite.models.core.status.ModelStatus.label" title="trilobite.models.core.status.ModelStatus.label"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label</span></code></a></p></td>
-<td><p>Display name, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;Validated&quot;</span></code>.</p></td>
+<td><p>Display name, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;Verified&quot;</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.description.html#trilobite.models.core.status.ModelStatus.description" title="trilobite.models.core.status.ModelStatus.description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">description</span></code></a></p></td>
 <td><p>One-sentence explanation of the stage.</p></td>
@@ -3517,16 +3522,19 @@ deprecated model emits a <a class="reference external" href="https://docs.python
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.warns.html#trilobite.models.core.status.ModelStatus.warns" title="trilobite.models.core.status.ModelStatus.warns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warns</span></code></a></p></td>
 <td><p>Whether instantiating a model at this stage emits a warning.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.VALIDATED.html#trilobite.models.core.status.ModelStatus.VALIDATED" title="trilobite.models.core.status.ModelStatus.VALIDATED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VALIDATED</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.VERIFIED.html#trilobite.models.core.status.ModelStatus.VERIFIED" title="trilobite.models.core.status.ModelStatus.VERIFIED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VERIFIED</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.UNVALIDATED.html#trilobite.models.core.status.ModelStatus.UNVALIDATED" title="trilobite.models.core.status.ModelStatus.UNVALIDATED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UNVALIDATED</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.NOVEL.html#trilobite.models.core.status.ModelStatus.NOVEL" title="trilobite.models.core.status.ModelStatus.NOVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NOVEL</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.EXPERIMENTAL.html#trilobite.models.core.status.ModelStatus.EXPERIMENTAL" title="trilobite.models.core.status.ModelStatus.EXPERIMENTAL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EXPERIMENTAL</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.UNVERIFIED.html#trilobite.models.core.status.ModelStatus.UNVERIFIED" title="trilobite.models.core.status.ModelStatus.UNVERIFIED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UNVERIFIED</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.DEPRECATED.html#trilobite.models.core.status.ModelStatus.DEPRECATED" title="trilobite.models.core.status.ModelStatus.DEPRECATED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEPRECATED</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.EXPERIMENTAL.html#trilobite.models.core.status.ModelStatus.EXPERIMENTAL" title="trilobite.models.core.status.ModelStatus.EXPERIMENTAL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EXPERIMENTAL</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.models.core.status.ModelStatus.DEPRECATED.html#trilobite.models.core.status.ModelStatus.DEPRECATED" title="trilobite.models.core.status.ModelStatus.DEPRECATED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEPRECATED</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>

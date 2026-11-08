@@ -672,8 +672,9 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.description.html">trilobite.models.core.status.ModelStatus.description</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.badge_color.html">trilobite.models.core.status.ModelStatus.badge_color</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.warns.html">trilobite.models.core.status.ModelStatus.warns</a></li>
-<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.VALIDATED.html">trilobite.models.core.status.ModelStatus.VALIDATED</a></li>
-<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.UNVALIDATED.html">trilobite.models.core.status.ModelStatus.UNVALIDATED</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.VERIFIED.html">trilobite.models.core.status.ModelStatus.VERIFIED</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.NOVEL.html">trilobite.models.core.status.ModelStatus.NOVEL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.UNVERIFIED.html">trilobite.models.core.status.ModelStatus.UNVERIFIED</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.EXPERIMENTAL.html">trilobite.models.core.status.ModelStatus.EXPERIMENTAL</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.DEPRECATED.html">trilobite.models.core.status.ModelStatus.DEPRECATED</a></li>
 </ul>
@@ -3477,20 +3478,20 @@
 frequency dependence has been integrated out, yielding an effective
 opacity <span class="math notranslate nohighlight">\(\kappa(\rho, T)\)</span>.</p>
 <p class="rubric">Module Design</p>
-<p><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a> subclasses <a class="reference internal" href="trilobite.radiation.opacity.base.OpacityLaw.html#trilobite.radiation.opacity.base.OpacityLaw" title="trilobite.radiation.opacity.base.OpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpacityLaw</span></code></a>
+<p><a class="reference internal" href="trilobite.radiation.opacity.GreyOpacityLaw.html#trilobite.radiation.opacity.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a> subclasses <a class="reference internal" href="trilobite.radiation.opacity.base.OpacityLaw.html#trilobite.radiation.opacity.base.OpacityLaw" title="trilobite.radiation.opacity.base.OpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpacityLaw</span></code></a>
 for the common case where opacity has no frequency dependence.  Private methods
 take <code class="docutils literal notranslate"><span class="pre">(log_T,</span> <span class="pre">log_rho)</span></code>; public methods take <code class="docutils literal notranslate"><span class="pre">(rho,</span> <span class="pre">T)</span></code> — no <code class="docutils literal notranslate"><span class="pre">nu</span></code> anywhere.</p>
-<p><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity.html#trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity" title="trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstantGreyOpacity</span></code></a> is a concrete grey opacity with a fixed value
+<p><a class="reference internal" href="trilobite.radiation.opacity.ConstantGreyOpacity.html#trilobite.radiation.opacity.ConstantGreyOpacity" title="trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstantGreyOpacity</span></code></a> is a concrete grey opacity with a fixed value
 independent of temperature and density.  It accepts either a plain float
 (interpreted as <span class="math notranslate nohighlight">\(\mathrm{cm^2\,g^{-1}}\)</span>) or an
 <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> with compatible units.</p>
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity.html#trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity" title="trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstantGreyOpacity</span></code></a>(kappa, *[, mean_type])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.opacity.ConstantGreyOpacity.html#trilobite.radiation.opacity.ConstantGreyOpacity" title="trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstantGreyOpacity</span></code></a>(kappa, *[, mean_type])</p></td>
 <td><p>Grey opacity law with a fixed, composition- and state-independent value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>(**parameters)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.opacity.GreyOpacityLaw.html#trilobite.radiation.opacity.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>(**parameters)</p></td>
 <td><p>Abstract base class for grey (frequency-averaged) opacity laws.</p></td>
 </tr>
 </tbody>

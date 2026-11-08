@@ -672,8 +672,9 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.description.html">trilobite.models.core.status.ModelStatus.description</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.badge_color.html">trilobite.models.core.status.ModelStatus.badge_color</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.warns.html">trilobite.models.core.status.ModelStatus.warns</a></li>
-<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.VALIDATED.html">trilobite.models.core.status.ModelStatus.VALIDATED</a></li>
-<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.UNVALIDATED.html">trilobite.models.core.status.ModelStatus.UNVALIDATED</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.VERIFIED.html">trilobite.models.core.status.ModelStatus.VERIFIED</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.NOVEL.html">trilobite.models.core.status.ModelStatus.NOVEL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.UNVERIFIED.html">trilobite.models.core.status.ModelStatus.UNVERIFIED</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.EXPERIMENTAL.html">trilobite.models.core.status.ModelStatus.EXPERIMENTAL</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.models.core.status.ModelStatus.DEPRECATED.html">trilobite.models.core.status.ModelStatus.DEPRECATED</a></li>
 </ul>
@@ -3494,7 +3495,7 @@ mean (e.g. Wolf-Rayet winds, diffuse accretion disc coronae,
 <span class="math notranslate nohighlight">\(T \sim 10^7\text{–}10^9\,\mathrm{K}\)</span>).  At high temperatures
 the constant <span class="math notranslate nohighlight">\(\kappa_{\rm es}\)</span> term dominates; at lower temperatures
 and higher densities the <span class="math notranslate nohighlight">\(\rho T^{-3.5}\)</span> term takes over.</p>
-<p>Prefer <a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a> in environments where bound-free
+<p>Prefer <a class="reference internal" href="trilobite.radiation.opacity.KramersESOpacity.html#trilobite.radiation.opacity.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a> in environments where bound-free
 opacity is also significant (most stellar-structure contexts).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3509,11 +3510,11 @@ Default <code class="docutils literal notranslate"><span class="pre">0.34</span>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersBFESOpacity</span></code></a></dt><dd><p>Bound-free variant with the same floor structure.</p>
+<dt><a class="reference internal" href="trilobite.radiation.opacity.KramersBFESOpacity.html#trilobite.radiation.opacity.KramersBFESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersBFESOpacity</span></code></a></dt><dd><p>Bound-free variant with the same floor structure.</p>
 </dd>
-<dt><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a></dt><dd><p>Preferred combined FF + BF form including electron scattering.</p>
+<dt><a class="reference internal" href="trilobite.radiation.opacity.KramersESOpacity.html#trilobite.radiation.opacity.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a></dt><dd><p>Preferred combined FF + BF form including electron scattering.</p>
 </dd>
-<dt><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElectronScatteringOpacity</span></code></a></dt><dd><p>Thomson floor alone, without the Kramers term.</p>
+<dt><a class="reference internal" href="trilobite.radiation.opacity.ElectronScatteringOpacity.html#trilobite.radiation.opacity.ElectronScatteringOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElectronScatteringOpacity</span></code></a></dt><dd><p>Thomson floor alone, without the Kramers term.</p>
 </dd>
 </dl>
 </div>

@@ -465,9 +465,9 @@
 <span class="sd">Development-stage markers for Trilobite models.</span>
 
 <span class="sd">Every :class:`~trilobite.models.core.base.Model` carries a ``STATUS`` class attribute, a member of</span>
-<span class="sd">:class:`ModelStatus`, which records how far along its development and verification the model is. The status is</span>
-<span class="sd">surfaced in the documentation (model directory badges and API pages) and, for the stages that warrant caution,</span>
-<span class="sd">at runtime.</span>
+<span class="sd">:class:`ModelStatus`, which records how far along its development the model is and whether it has been verified.</span>
+<span class="sd">The status is surfaced in the documentation (model directory badges and API pages) and, for the stages that warrant</span>
+<span class="sd">caution, at runtime.</span>
 <span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -487,31 +487,36 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        class MyModel(Model):</span>
-<span class="sd">            STATUS = ModelStatus.VALIDATED</span>
-<span class="sd">            STATUS_NOTE = "Reproduces the closed-form solution of Chevalier (1982) to 1e-6."</span>
+<span class="sd">            STATUS = ModelStatus.VERIFIED</span>
+<span class="sd">            STATUS_NOTE = "Reproduces the light curves of Author et al. (2016)."</span>
 
 <span class="sd">    Each member's value is the short lower-case key used in the documentation search index. Members also expose</span>
 <span class="sd">    a human-readable :attr:`label` and :attr:`description`.</span>
 
 <span class="sd">    The members, in order of increasing caution:</span>
 
-<span class="sd">    - ``VALIDATED``: verified against analytic limits, independent codes, or published results.</span>
-<span class="sd">    - ``UNVALIDATED``: implemented and tested, but not yet independently verified. This is the default for any</span>
-<span class="sd">      model that does not declare a status.</span>
+<span class="sd">    - ``VERIFIED``: backed by a verification test (see ``tests/verification``) that compares the model with</span>
+<span class="sd">      published results or another independent reference. A model may only be marked ``VERIFIED`` if such a test</span>
+<span class="sd">      exists; whether the test is suitable is judged when the change is reviewed.</span>
+<span class="sd">    - ``NOVEL``: new physics with no published counterpart to check against, so it cannot be verified against the</span>
+<span class="sd">      literature yet.</span>
+<span class="sd">    - ``UNVERIFIED``: implemented and tested, but not yet verified. This is the default for any model that does not</span>
+<span class="sd">      declare a status.</span>
 <span class="sd">    - ``EXPERIMENTAL``: under active development; the physics, parameters or API may change without notice.</span>
 <span class="sd">      Instantiating an experimental model emits a :class:`UserWarning`.</span>
 <span class="sd">    - ``DEPRECATED``: scheduled for removal; prefer the replacement named in ``STATUS_NOTE``. Instantiating a</span>
 <span class="sd">      deprecated model emits a :class:`UserWarning`.</span>
 <span class="sd">    """</span>
 
-    <span class="n">VALIDATED</span> <span class="o">=</span> <span class="s2">"validated"</span>
-    <span class="n">UNVALIDATED</span> <span class="o">=</span> <span class="s2">"unvalidated"</span>
+    <span class="n">VERIFIED</span> <span class="o">=</span> <span class="s2">"verified"</span>
+    <span class="n">NOVEL</span> <span class="o">=</span> <span class="s2">"novel"</span>
+    <span class="n">UNVERIFIED</span> <span class="o">=</span> <span class="s2">"unverified"</span>
     <span class="n">EXPERIMENTAL</span> <span class="o">=</span> <span class="s2">"experimental"</span>
     <span class="n">DEPRECATED</span> <span class="o">=</span> <span class="s2">"deprecated"</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""str: Display name, e.g. ``"Validated"``."""</span>
+<span class="w">        </span><span class="sd">"""str: Display name, e.g. ``"Verified"``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
 
     <span class="nd">@property</span>
@@ -539,7 +544,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        value : ModelStatus or str</span>
-<span class="sd">            The status, or its string key (e.g. ``"validated"``).</span>
+<span class="sd">            The status, or its string key (e.g. ``"verified"``).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -563,15 +568,17 @@
 
 
 <span class="n">_DESCRIPTIONS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">ModelStatus</span><span class="o">.</span><span class="n">VALIDATED</span><span class="p">:</span> <span class="s2">"Verified against analytic limits, independent codes, or published results."</span><span class="p">,</span>
-    <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span><span class="p">:</span> <span class="s2">"Implemented and tested, but not yet independently verified."</span><span class="p">,</span>
+    <span class="n">ModelStatus</span><span class="o">.</span><span class="n">VERIFIED</span><span class="p">:</span> <span class="s2">"Backed by a verification test against published results or an independent reference."</span><span class="p">,</span>
+    <span class="n">ModelStatus</span><span class="o">.</span><span class="n">NOVEL</span><span class="p">:</span> <span class="s2">"New physics with no published counterpart to verify against."</span><span class="p">,</span>
+    <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVERIFIED</span><span class="p">:</span> <span class="s2">"Implemented and tested, but not yet verified."</span><span class="p">,</span>
     <span class="n">ModelStatus</span><span class="o">.</span><span class="n">EXPERIMENTAL</span><span class="p">:</span> <span class="s2">"Under active development; physics, parameters or API may change without notice."</span><span class="p">,</span>
     <span class="n">ModelStatus</span><span class="o">.</span><span class="n">DEPRECATED</span><span class="p">:</span> <span class="s2">"Scheduled for removal; prefer the suggested replacement."</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">_BADGE_COLORS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">ModelStatus</span><span class="o">.</span><span class="n">VALIDATED</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
-    <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVALIDATED</span><span class="p">:</span> <span class="s2">"secondary"</span><span class="p">,</span>
+    <span class="n">ModelStatus</span><span class="o">.</span><span class="n">VERIFIED</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">,</span>
+    <span class="n">ModelStatus</span><span class="o">.</span><span class="n">NOVEL</span><span class="p">:</span> <span class="s2">"info"</span><span class="p">,</span>
+    <span class="n">ModelStatus</span><span class="o">.</span><span class="n">UNVERIFIED</span><span class="p">:</span> <span class="s2">"secondary"</span><span class="p">,</span>
     <span class="n">ModelStatus</span><span class="o">.</span><span class="n">EXPERIMENTAL</span><span class="p">:</span> <span class="s2">"warning"</span><span class="p">,</span>
     <span class="n">ModelStatus</span><span class="o">.</span><span class="n">DEPRECATED</span><span class="p">:</span> <span class="s2">"danger"</span><span class="p">,</span>
 <span class="p">}</span>
