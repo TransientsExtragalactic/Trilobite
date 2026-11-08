@@ -55,7 +55,7 @@ def compute_log_Qm_no_cgs(
 
     Returns
     -------
-    log_Qm : float or ndarray
+    float or ndarray
         Natural logarithm of :math:`Q_{m,0}`.
 
     Notes
@@ -106,7 +106,7 @@ def compute_log_Qm_no_cgs_iso(
 
     Returns
     -------
-    log_Qm : float or ndarray
+    float or ndarray
         Natural logarithm of :math:`Q_{m,\mathrm{ISO}}`.
 
     Notes
@@ -147,19 +147,18 @@ def compute_log_Qm_slow_cgs(
     filling_factor : float or ndarray
         Volume filling factor :math:`f_V` entering
         :math:`V_{\rm eff} = (4\pi/3) R^3 f_V`.
-
     log_luminosity_distance : float or ndarray
         Natural logarithm of the luminosity distance :math:`\log D_L` (cm).
-
     gamma_min : float or ndarray
         Minimum Lorentz factor :math:`\gamma_m`.
-
+    gamma_c : float or ~numpy.ndarray
+        Cooling Lorentz factor :math:`\gamma_c`.
     p : float or ndarray
         Electron power-law index.
 
     Returns
     -------
-    log_Qm : float or ndarray
+    float or ndarray
         Natural logarithm of :math:`Q_{m,0}`.
 
     Notes
@@ -200,19 +199,18 @@ def compute_log_Qm_slow_cgs_iso(
     ----------
     filling_factor : float or ndarray
         Volume filling factor :math:`f_V`.
-
     log_luminosity_distance : float or ndarray
         Natural logarithm of luminosity distance :math:`\log D_L`.
-
     gamma_min : float or ndarray
         Minimum Lorentz factor :math:`\gamma_m`.
-
+    gamma_c : float or ~numpy.ndarray
+        Cooling Lorentz factor :math:`\gamma_c`.
     p : float or ndarray
         Electron power-law index.
 
     Returns
     -------
-    log_Qm : float or ndarray
+    float or ndarray
         Natural logarithm of :math:`Q_{m,\mathrm{ISO}}`.
 
     Notes
@@ -264,7 +262,7 @@ def compute_log_Qc_cgs(
 
     Returns
     -------
-    log_Qc : float or ndarray
+    float or ndarray
         Natural logarithm of :math:`Q_{c,0}`.
 
     Notes
@@ -317,7 +315,7 @@ def compute_log_Qc_cgs_iso(
 
     Returns
     -------
-    log_Qc : float or ndarray
+    float or ndarray
         Natural logarithm of :math:`Q_{c,\mathrm{ISO}}`.
     """
     log_qc = (
@@ -353,7 +351,7 @@ def compute_log_P0_cgs(
 
     Returns
     -------
-    log_P0 : float or ndarray
+    float or ndarray
         Natural log of :math:`P_0` in CGS.
 
     Notes
@@ -389,7 +387,7 @@ def compute_log_P0_cgs_iso(
 
     Returns
     -------
-    log_P0 : float or ndarray
+    float or ndarray
         Natural log of :math:`P_{0,\mathrm{ISO}}` in CGS.
 
     Notes
@@ -421,6 +419,26 @@ def compute_log_N0_fast_cooling(
         slope -p for γ > γ_min
 
     The first moment is computed in scaled units x = γ / γ_c.
+
+    Parameters
+    ----------
+    gamma_min : float
+        Minimum electron Lorentz factor.
+    gamma_c : float
+        Cooling Lorentz factor.
+    p : float
+        Electron power-law index.
+    epsilon_e : float
+        Fraction of the post-shock energy in relativistic electrons.
+    epsilon_B : float
+        Fraction of the post-shock energy in the magnetic field.
+    gamma_max : float, optional
+        Maximum electron Lorentz factor. Default is ``numpy.inf``.
+
+    Returns
+    -------
+    float
+        Natural logarithm of the normalization :math:`\tilde{N}_0`.
     """
     log_moment = np.log(
         BrokenPowerLaw.moment(1, p1=2.0, p2=p + 1.0, gamma_c=gamma_min, gamma_min=gamma_c, gamma_max=gamma_max)
@@ -444,6 +462,26 @@ def compute_log_N0_slow_cooling(
     Slow cooling distribution:
         slope -p for γ_min < γ < γ_c
         slope -(p+1) for γ > γ_c
+
+    Parameters
+    ----------
+    gamma_min : float
+        Minimum electron Lorentz factor.
+    gamma_c : float
+        Cooling Lorentz factor.
+    p : float
+        Electron power-law index.
+    epsilon_e : float
+        Fraction of the post-shock energy in relativistic electrons.
+    epsilon_B : float
+        Fraction of the post-shock energy in the magnetic field.
+    gamma_max : float, optional
+        Maximum electron Lorentz factor. Default is ``numpy.inf``.
+
+    Returns
+    -------
+    float
+        Natural logarithm of the normalization :math:`\tilde{N}_0`.
     """
     log_moment = np.log(
         BrokenPowerLaw.moment(1, p1=p, p2=p + 1.0, gamma_c=gamma_c, gamma_min=gamma_min, gamma_max=gamma_max)
@@ -465,6 +503,24 @@ def compute_log_N0_no_cooling(
 
     Distribution:
         slope -p for γ_min < γ < γ_max
+
+    Parameters
+    ----------
+    gamma_min : float
+        Minimum electron Lorentz factor.
+    p : float
+        Electron power-law index.
+    epsilon_e : float
+        Fraction of the post-shock energy in relativistic electrons.
+    epsilon_B : float
+        Fraction of the post-shock energy in the magnetic field.
+    gamma_max : float, optional
+        Maximum electron Lorentz factor. Default is ``numpy.inf``.
+
+    Returns
+    -------
+    float
+        Natural logarithm of the normalization :math:`\tilde{N}_0`.
     """
     log_moment = np.log(PowerLaw.moment(1, p=p, gamma_min=gamma_min, gamma_max=gamma_max))
 

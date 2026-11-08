@@ -65,7 +65,7 @@ class InferenceParameter:
 
     Parameters
     ----------
-    model_parameter: `~trilobite.models.core.parameters.ModelParameter`
+    model_parameter : `~trilobite.models.core.parameters.ModelParameter`
         The model parameter associated with this inference parameter. This is where we
         get the name, default value, bounds, and other metadata about the parameter. This should be
         selected from the model's :attr:`~trilobite.models.core.base.Model.PARAMETERS` list or the likelihood's
@@ -74,10 +74,10 @@ class InferenceParameter:
         instances are generated automatically during :class:`~trilobite.inference.problem.InferenceProblem`
         initialization, users typically
         do not need to create them manually.
-    freeze: bool, optional
+    freeze : bool, optional
         Whether to freeze this parameter during inference. If `True`, the parameter
         will not be varied. Default is `False`.
-    prior: Callable, optional
+    prior : Callable, optional
         A callable representing the prior distribution for this parameter. If not provided,
         a default prior based on the parameter's bounds will be used. If a prior is provided, it
         should be a callable which takes a single float argument (the parameter value) and returns
@@ -87,11 +87,11 @@ class InferenceParameter:
 
             def prior(x: float) -> float:
 
-    transform: Callable, optional
+    transform : Callable, optional
         A callable to transform the parameter value (e.g., log-transform). If not provided,
         no transformation will be applied. If a transform is provided, an `inverse_transform` should
         also be provided.
-    initial_value: float, optional
+    initial_value : float, optional
         An initial value for the parameter to start inference from. If not provided, the model's default
         value will be used. When performing MCMC, chains will be distributed around this initial value.
     """
@@ -198,6 +198,32 @@ class InferenceParameter:
         transform: "ParameterTransform" = None,
         initial_value: float = None,
     ):
+        """
+        Initialize the inference parameter.
+
+        Parameters
+        ----------
+        model_parameter : `~trilobite.models.core.parameters.ModelParameter`
+            The model parameter associated with this inference parameter. This is where we get the name, default
+            value, bounds, and other metadata about the parameter. This should be selected from the model's
+            :attr:`~trilobite.models.core.base.Model.PARAMETERS` list or the likelihood's nuisance parameters. Because
+            :class:`~trilobite.inference.problem.InferenceParameter` instances are generated automatically during
+            :class:`~trilobite.inference.problem.InferenceProblem` initialization, users typically do not need to
+            create them manually.
+        freeze : bool, optional
+            Whether to freeze this parameter during inference. If `True`, the parameter will not be varied. Default is
+            `False`.
+        prior : Callable, optional
+            A callable representing the prior distribution for this parameter. It takes a single float argument (the
+            parameter value) and returns the log-prior probability (a float). If not provided, a default prior based
+            on the parameter's bounds will be used.
+        transform : Callable, optional
+            A callable to transform the parameter value (e.g., log-transform). If not provided, no transformation will
+            be applied. If a transform is provided, an `inverse_transform` should also be provided.
+        initial_value : float, optional
+            An initial value for the parameter to start inference from. If not provided, the model's default value
+            will be used. When performing MCMC, chains will be distributed around this initial value.
+        """
         # Set all of the attributes.
         self.model_parameter = model_parameter
         self.freeze = freeze
@@ -230,7 +256,7 @@ class InferenceParameter:
 
     @property
     def model_default(self):
-        """The default value of the parameter from the model."""
+        """`float` or `~astropy.units.Quantity`: The default value of the parameter from the model."""
         return self.model_parameter.default
 
     @property
@@ -253,13 +279,9 @@ class InferenceParameter:
 
         Parameters
         ----------
-        value: float or `astropy.units.Quantity` or array-like
+        value : float or `astropy.units.Quantity` or array-like
             The new initial value for the parameter. This will be coerced to the model's base
             units.
-
-        Returns
-        -------
-        None
         """
         try:
             self._initial_value = ensure_in_units(value, self.model_base_unit)
@@ -471,8 +493,8 @@ class InferenceProblem:
     sampling), but instead provides a standardized interface and bookkeeping
     layer that samplers can rely on.
 
-    Core responsibilities
-    ---------------------
+    .. rubric:: Core responsibilities
+
     - **Parameter management**
         Each model parameter is wrapped in an :class:`~trilobite.inference.problem.InferenceParameter`,
         which tracks whether the parameter is free or fixed, its prior,
@@ -506,8 +528,8 @@ class InferenceProblem:
         A comprehensive validation routine ensures that the inference problem
         is internally consistent and ready for execution before sampling begins.
 
-    Design philosophy
-    -----------------
+    .. rubric:: Design philosophy
+
     The :class:`~trilobite.inference.problem.InferenceProblem` enforces a clear separation of concerns:
 
     - **Models** define physical parameters and predictions.
@@ -520,8 +542,8 @@ class InferenceProblem:
     Trilobite ensures that inference logic remains transparent, reproducible,
     and extensible.
 
-    Intended usage
-    --------------
+    .. rubric:: Intended usage
+
     Users typically do not instantiate :class:`~trilobite.inference.problem.InferenceProblem` directly.
     Instead, concrete subclasses may:
 
@@ -533,13 +555,14 @@ class InferenceProblem:
     them as functions (to evaluate the log-posterior) or by using the provided
     ``log_prior``, ``log_likelihood``, and ``log_posterior`` interfaces.
 
-    Notes
-    -----
-    - All probability-returning methods return **log-probabilities**.
-    - Parameter transformations are assumed to operate in unconstrained
-      sampling space; inverse transforms are applied before evaluating priors.
-    - This class does not store sampling results; results are handled by
-      classes in :mod:`trilobite.inference.sampling`.
+    Parameters
+    ----------
+    likelihood : ~trilobite.inference.likelihood.base.Likelihood
+        The likelihood object that defines the model and data for this inference problem.
+    *_ : tuple
+        Additional positional arguments. Not used in this base class.
+    **__ : dict
+        Additional keyword arguments. Not used in this base class.
 
     See Also
     --------
@@ -549,6 +572,14 @@ class InferenceProblem:
         Collection of prior distributions usable with inference parameters.
     trilobite.inference.sampling
         Samplers that operate on :class:`~trilobite.inference.problem.InferenceProblem` instances.
+
+    Notes
+    -----
+    - All probability-returning methods return **log-probabilities**.
+    - Parameter transformations are assumed to operate in unconstrained
+      sampling space; inverse transforms are applied before evaluating priors.
+    - This class does not store sampling results; results are handled by
+      classes in :mod:`trilobite.inference.sampling`.
     """
 
     # ------------------------------------------------- #
@@ -561,12 +592,12 @@ class InferenceProblem:
 
         Parameters
         ----------
-        likelihood: `~trilobite.inference.likelihood.base.Likelihood`
+        likelihood : `~trilobite.inference.likelihood.base.Likelihood`
             The likelihood object that defines the model and data for this inference problem.
-        args:
-            Additional positional arguments. (Not used in this base class.)
-        kwargs:
-            Additional keyword arguments. (Not used in this base class.)
+        *_ : tuple
+            Additional positional arguments. Not used in this base class.
+        **__ : dict
+            Additional keyword arguments. Not used in this base class.
 
         Notes
         -----
@@ -611,7 +642,7 @@ class InferenceProblem:
 
         Parameters
         ----------
-        theta: np.ndarray
+        theta : np.ndarray
             Array of free parameters in the order defined by the model, in **sampling space** (identical to
             physical space for parameters without a transform).
 
@@ -634,6 +665,14 @@ class InferenceProblem:
         return self.n_free_parameters
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the problem.
+
+        Returns
+        -------
+        str
+            The class name, model name and the numbers of free and fixed parameters.
+        """
         return (
             f"{self.__class__.__name__}("
             f"model={self.model.__class__.__name__}, "
@@ -642,6 +681,14 @@ class InferenceProblem:
         )
 
     def __str__(self) -> str:
+        """
+        Return a readable summary of the problem.
+
+        Returns
+        -------
+        str
+            The formatted summary, as returned by :meth:`summary`.
+        """
         return self.summary()
 
     def __contains__(self, item: str) -> bool:
@@ -650,7 +697,7 @@ class InferenceProblem:
 
         Parameters
         ----------
-        item: str
+        item : str
             The name of the parameter to check.
 
         Returns
@@ -661,13 +708,33 @@ class InferenceProblem:
         return item in self.__parameters__
 
     def __getitem__(self, item: str) -> "InferenceParameter":
+        """
+        Return an inference parameter by name.
+
+        Parameters
+        ----------
+        item : str
+            Name of the parameter.
+
+        Returns
+        -------
+        ~trilobite.inference.problem.InferenceParameter
+            The parameter called ``item``.
+        """
         if item in self.__parameters__:
             return self.__parameters__[item]
         else:
             raise KeyError(f"Parameter '{item}' not found in InferenceProblem.")
 
     def __iter__(self):
-        """Iterate over parameter names."""
+        """
+        Iterate over parameter names.
+
+        Returns
+        -------
+        iterator of str
+            An iterator over the parameter names.
+        """
         return iter(self.__parameters__)
 
     def _repr_html_(self) -> str:
@@ -719,10 +786,30 @@ class InferenceProblem:
         return html
 
     def summary(self) -> str:
-        """Return a formatted summary of the inference problem."""
+        """
+        Return a formatted summary of the inference problem.
+
+        Returns
+        -------
+        str
+            The formatted summary.
+        """
         nuisance = set(self.nuisance_parameter_names)
 
         def nuisance_tag(name):
+            """
+            Return a tag marking nuisance parameters in the summary.
+
+            Parameters
+            ----------
+            name : str
+                Name of the parameter.
+
+            Returns
+            -------
+            str
+                ``' [nuisance]'`` if ``name`` is a likelihood nuisance parameter and an empty string otherwise.
+            """
             return " [nuisance]" if name in nuisance else ""
 
         lines = [
@@ -750,15 +837,36 @@ class InferenceProblem:
     # Basic Access Utilities                            #
     # ------------------------------------------------- #
     def keys(self) -> list[str]:
-        """Return a list of parameter names in the inference problem."""
+        """
+        Return a list of parameter names in the inference problem.
+
+        Returns
+        -------
+        list of str
+            The parameter names.
+        """
         return list(self.__parameters__.keys())
 
     def values(self) -> list["InferenceParameter"]:
-        """Return a list of inference parameters in the inference problem."""
+        """
+        Return a list of inference parameters in the inference problem.
+
+        Returns
+        -------
+        list of ~trilobite.inference.problem.InferenceParameter
+            The inference parameters, in parameter order.
+        """
         return list(self.__parameters__.values())
 
     def items(self) -> list[tuple[str, "InferenceParameter"]]:
-        """Return a list of (name, inference parameter) tuples in the inference problem."""
+        """
+        Return a list of (name, inference parameter) tuples in the inference problem.
+
+        Returns
+        -------
+        list of tuple
+            The ``(name, inference parameter)`` pairs, in parameter order.
+        """
         return list(self.__parameters__.items())
 
     # ------------------------------------------------- #
@@ -885,6 +993,11 @@ class InferenceProblem:
         r"""
         Transform a full physical parameter vector into sampling space.
 
+        Parameters
+        ----------
+        theta : ~numpy.ndarray
+            Full physical-space parameter vector.
+
         Returns
         -------
         z : np.ndarray
@@ -930,6 +1043,11 @@ class InferenceProblem:
         r"""
         Convert sampling-space vector z to physical space theta and compute total log-Jacobian.
 
+        Parameters
+        ----------
+        z : ~numpy.ndarray
+            Full sampling-space parameter vector.
+
         Returns
         -------
         theta : np.ndarray
@@ -971,6 +1089,11 @@ class InferenceProblem:
     ) -> tuple[np.ndarray, float]:
         r"""
         Transform free physical-space parameters into sampling space.
+
+        Parameters
+        ----------
+        theta_free : ~numpy.ndarray
+            Physical-space values of the free parameters.
 
         Returns
         -------
@@ -1017,6 +1140,11 @@ class InferenceProblem:
     ) -> tuple[np.ndarray, float]:
         r"""
         Transform free sampling-space parameters into physical space.
+
+        Parameters
+        ----------
+        z_free : ~numpy.ndarray
+            Sampling-space values of the free parameters.
 
         Returns
         -------
@@ -1332,7 +1460,6 @@ class InferenceProblem:
         -----
         This is a public wrapper around the internal :meth:`_log_free_likelihood` method which
         handles packing the free parameters from a dictionary into the required NumPy array format.
-
         """
         params = self._coerce_parameters(params)
         theta_free = self.pack_free_parameters(params)
@@ -1499,7 +1626,7 @@ class InferenceProblem:
 
     @property
     def data(self):
-        """The data associated with this inference problem.
+        """~trilobite.data.core.DataContainer: The data associated with this inference problem.
 
         This data container is that data which is being fit by the problem. It is provided to the likelihood object
         when it is initialized and is used during likelihood evaluations. This may be any number of data container types
@@ -1689,7 +1816,7 @@ class InferenceProblem:
             Type of prior. One of the keys of :data:`~trilobite.inference.prior.PRIOR_REGISTRY`:
             ``'uniform'``, ``'loguniform'``, ``'normal'``, ``'lognormal'``, ``'halfnormal'``, ``'gamma'``,
             ``'beta'`` or ``'truncatednormal'``.
-        parameters
+        **parameters : dict
             Parameters defining the prior. Those that carry the parameter's units (e.g. ``lower`` and ``upper``
             for ``'uniform'``) may be given as :class:`~astropy.units.Quantity`; a bare float is interpreted in
             the parameter's base units. Dimensionless arguments (e.g. ``alpha`` and ``beta`` for ``'beta'``)

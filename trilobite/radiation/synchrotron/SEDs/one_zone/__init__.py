@@ -8,8 +8,8 @@ both forward and inverse computations.
 
 See Also
 --------
-:ref:`synchrotron_seds` -- one-zone SED models and spectrum inversion
-:ref:`synchrotron_theory` -- synchrotron theory and kernel functions
+:ref:`synchrotron_seds` : One-zone SED models and spectrum inversion.
+:ref:`synchrotron_theory` : Synchrotron theory and kernel functions.
 """
 
 __all__ = [

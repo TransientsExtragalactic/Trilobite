@@ -1085,6 +1085,21 @@ def invert_powerlaw_sed(
         - ``"R"`` : inferred source radius as a Quantity in cm
         - ``"B"`` : inferred magnetic field strength as a Quantity in G
 
+    See Also
+    --------
+    _invert_powerlaw_sed
+        Low-level log-space backend.
+    invert_powerlaw_cooling_sed
+        Optically thin inversion with explicit cooling regime.
+    invert_powerlaw_ssa_sed
+        SSA inversion without cooling.
+    invert_powerlaw_cooling_ssa_sed
+        Combined explicit-cooling + SSA inversion.
+    :ref:`single_zone_sed_inversion`
+        Standard inversion documentation.
+    :ref:`synch_sed_theory`
+        General synchrotron theory and conventions.
+
     Notes
     -----
     This is the standard public inversion for the simplest one-zone closure.
@@ -1102,21 +1117,6 @@ def invert_powerlaw_sed(
        Use a different closure when the fitted peak is shaped by cooling,
        synchrotron self-absorption, or both. The corresponding public
        wrappers in this module expose those alternatives.
-
-    See Also
-    --------
-    _invert_powerlaw_sed
-        Low-level log-space backend.
-    invert_powerlaw_cooling_sed
-        Optically thin inversion with explicit cooling regime.
-    invert_powerlaw_ssa_sed
-        SSA inversion without cooling.
-    invert_powerlaw_cooling_ssa_sed
-        Combined explicit-cooling + SSA inversion.
-    :ref:`single_zone_sed_inversion`
-        Standard inversion documentation.
-    :ref:`synch_sed_theory`
-        General synchrotron theory and conventions.
     """
     # ------------------------------------------------------------------ #
     # Resolve cosmological information.
@@ -1249,6 +1249,19 @@ def invert_powerlaw_cooling_ssa_sed(
         - ``"R"`` : inferred source radius as a Quantity in cm
         - ``"B"`` : inferred magnetic field strength as a Quantity in G
 
+    See Also
+    --------
+    _invert_powerlaw_cooling_ssa_sed
+        Low-level log-space backend.
+    invert_powerlaw_ssa_sed
+        SSA inversion without explicit cooling.
+    invert_powerlaw_cooling_sed
+        Optically thin inversion with explicit cooling.
+    :ref:`single_zone_sed_inversion`
+        Standard inversion framework.
+    :ref:`synch_sed_theory`
+        Spectral regime definitions and conventions.
+
     Notes
     -----
     The supplied ``regime`` selects the analytic inversion branch.
@@ -1280,19 +1293,6 @@ def invert_powerlaw_cooling_ssa_sed(
 
        This function assumes that :math:`\gamma_c` is provided explicitly
        when the chosen regime requires it.
-
-    See Also
-    --------
-    _invert_powerlaw_cooling_ssa_sed
-        Low-level log-space backend.
-    invert_powerlaw_ssa_sed
-        SSA inversion without explicit cooling.
-    invert_powerlaw_cooling_sed
-        Optically thin inversion with explicit cooling.
-    :ref:`single_zone_sed_inversion`
-        Standard inversion framework.
-    :ref:`synch_sed_theory`
-        Spectral regime definitions and conventions.
     """
     # ------------------------------------------------------------------ #
     # Resolve cosmological information.
@@ -1424,6 +1424,19 @@ def invert_powerlaw_cooling_sed(
         - ``"R"`` : inferred source radius as a Quantity in cm
         - ``"B"`` : inferred magnetic field strength as a Quantity in G
 
+    See Also
+    --------
+    _invert_powerlaw_cooling_sed
+        Low-level log-space backend.
+    invert_powerlaw_sed
+        Standard optically thin inversion.
+    invert_powerlaw_cooling_ssa_sed
+        Combined explicit-cooling + SSA inversion.
+    :ref:`single_zone_sed_inversion`
+        Standard inversion framework.
+    :ref:`synch_sed_theory`
+        Regime definitions and synchrotron conventions.
+
     Notes
     -----
     This wrapper exposes the explicitly cooled optically thin inversion
@@ -1437,19 +1450,6 @@ def invert_powerlaw_cooling_sed(
        - ``"fast_cooling"``
        - ``"slow_cooling"``
        - ``"no_cooling"``
-
-    See Also
-    --------
-    _invert_powerlaw_cooling_sed
-        Low-level log-space backend.
-    invert_powerlaw_sed
-        Standard optically thin inversion.
-    invert_powerlaw_cooling_ssa_sed
-        Combined explicit-cooling + SSA inversion.
-    :ref:`single_zone_sed_inversion`
-        Standard inversion framework.
-    :ref:`synch_sed_theory`
-        Regime definitions and synchrotron conventions.
     """
     # ------------------------------------------------------------------ #
     # Resolve cosmological information.
@@ -1576,6 +1576,19 @@ def invert_powerlaw_ssa_sed(
         - ``"R"`` : inferred source radius as a Quantity in cm
         - ``"B"`` : inferred magnetic field strength as a Quantity in G
 
+    See Also
+    --------
+    _invert_powerlaw_ssa_sed
+        Low-level log-space backend.
+    invert_powerlaw_sed
+        Standard optically thin inversion.
+    invert_powerlaw_cooling_ssa_sed
+        Explicit-cooling SSA inversion.
+    :ref:`single_zone_sed_inversion`
+        Standard inversion framework.
+    :ref:`synch_sed_theory`
+        Synchrotron and SSA theory.
+
     Notes
     -----
     This wrapper exposes the SSA inversion family without an explicit cooling break.
@@ -1593,19 +1606,6 @@ def invert_powerlaw_ssa_sed(
 
        Use this function when the SSA turnover matters but the cooling break
        does not enter the inversion.
-
-    See Also
-    --------
-    _invert_powerlaw_ssa_sed
-        Low-level log-space backend.
-    invert_powerlaw_sed
-        Standard optically thin inversion.
-    invert_powerlaw_cooling_ssa_sed
-        Explicit-cooling SSA inversion.
-    :ref:`single_zone_sed_inversion`
-        Standard inversion framework.
-    :ref:`synch_sed_theory`
-        Synchrotron and SSA theory.
     """
     # ------------------------------------------------------------------ #
     # Resolve cosmological information.

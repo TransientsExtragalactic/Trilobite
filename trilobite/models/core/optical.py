@@ -176,11 +176,32 @@ class OpticalModel(_FilterBundleMixin, Model, ABC):
     DESCRIPTION = "Abstract base for time-evolving multi-band optical photometry models."
 
     def __init__(self, bundle: "FilterBundle") -> None:
+        """
+        Initialize the model.
+
+        Parameters
+        ----------
+        bundle : FilterBundle
+            Collection of optical filters defining the band set. Mutable after construction via :meth:`add_filter` /
+            :meth:`remove_filter`, but weight matrices must be finalised before any inference run.
+        """
         self.__init_bundle__(bundle)
         self._register_init(bundle=bundle)
 
     def coerce_model_variables(self, variables: "_ModelVariablesInput") -> "_ModelVariablesInputRaw":
-        """Coerce variables; resolve band name strings to integer indices."""
+        """
+        Coerce variables; resolve band name strings to integer indices.
+
+        Parameters
+        ----------
+        variables : dict
+            Model variables. A ``band_index`` given as band names is resolved to integer indices.
+
+        Returns
+        -------
+        dict
+            The coerced, unitless variables.
+        """
         variables = dict(variables)
         if "band_index" in variables:
             variables["band_index"] = self._resolve_band_index(variables["band_index"])
@@ -268,11 +289,31 @@ class OpticalEpochModel(_FilterBundleMixin, Model, ABC):
     DESCRIPTION = "Abstract base for single-epoch multi-band optical photometry models."
 
     def __init__(self, bundle: "FilterBundle") -> None:
+        """
+        Initialize the model.
+
+        Parameters
+        ----------
+        bundle : FilterBundle
+            Collection of optical filters defining the band set.
+        """
         self.__init_bundle__(bundle)
         self._register_init(bundle=bundle)
 
     def coerce_model_variables(self, variables: "_ModelVariablesInput") -> "_ModelVariablesInputRaw":
-        """Coerce variables; resolve band name strings to integer indices."""
+        """
+        Coerce variables; resolve band name strings to integer indices.
+
+        Parameters
+        ----------
+        variables : dict
+            Model variables. A ``band_index`` given as band names is resolved to integer indices.
+
+        Returns
+        -------
+        dict
+            The coerced, unitless variables.
+        """
         variables = dict(variables)
         if "band_index" in variables:
             variables["band_index"] = self._resolve_band_index(variables["band_index"])

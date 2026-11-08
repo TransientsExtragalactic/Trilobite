@@ -120,9 +120,39 @@ def make_homologous_stationary_sources(
         rho_4 = rho_csm
 
     def u_1(r, t):
+        """
+        Compute the homologous ejecta velocity ``r / t``.
+
+        Parameters
+        ----------
+        r : float or ~numpy.ndarray
+            Radius in cm.
+        t : float or ~numpy.ndarray
+            Time since explosion in s.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Ejecta velocity in cm/s.
+        """
         return np.asarray(r, dtype=float) / np.asarray(t, dtype=float)
 
     def u_4(r, _t=None):
+        """
+        Return the velocity of the stationary CSM, which is zero.
+
+        Parameters
+        ----------
+        r : float or ~numpy.ndarray
+            Radius in cm.
+        _t : float, optional
+            Ignored; the CSM is stationary.
+
+        Returns
+        -------
+        float or ~numpy.ndarray
+            Zero, with the shape of ``r``.
+        """
         r_arr = np.asarray(r)
         return 0.0 if r_arr.ndim == 0 else np.zeros_like(r_arr, dtype=float)
 

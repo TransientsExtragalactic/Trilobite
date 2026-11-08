@@ -178,7 +178,6 @@ class FRED(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -380,7 +379,6 @@ class GeneralizedFRED(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -559,7 +557,6 @@ class GaussianPulse(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -723,7 +720,6 @@ class LogNormalPulse(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -879,7 +875,6 @@ class BrokenPowerLawTime(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1047,7 +1042,6 @@ class SmoothedBrokenPowerLawTime(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1205,7 +1199,6 @@ class ExponentialRisePowerLawDecay(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1370,7 +1363,6 @@ class NorrisPulse(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1525,7 +1517,6 @@ class WeibullPulse(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1674,7 +1665,6 @@ class LogisticPulse(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 

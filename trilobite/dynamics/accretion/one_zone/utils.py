@@ -18,8 +18,8 @@ All public functions accept :class:`~astropy.units.Quantity` inputs and return
 :class:`~astropy.units.Quantity` outputs.  Private functions (prefixed ``_``)
 work directly in CGS floats.
 
-Geometry
---------
+.. rubric:: Geometry
+
 The one-zone disk uses the Metzger+08 self-similar geometry constants:
 
 .. math::
@@ -33,8 +33,8 @@ such that:
     J_D = \xi\,M_D\,\sqrt{G\,M_{\rm BH}\,R_D}, \qquad
     \Sigma_D = \frac{M_D}{\pi\,A\,R_D^2}
 
-Physics reference
------------------
+.. rubric:: Physics reference
+
 Heating/cooling balance:
 
 .. math::
@@ -47,8 +47,8 @@ Heating/cooling balance:
 
 See Also
 --------
-:mod:`trilobite.physics_utils.eos` : sound-speed implementations.
-:class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk` : model
+:mod:`trilobite.physics_utils.eos` : Sound-speed implementations.
+:class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk` : Model
     class whose Cython closure implements the same balance.
 """
 
@@ -556,7 +556,7 @@ def compute_advection_s_curve(
         Number of temperature grid points (used only when ``T_grid`` is ``None``).
     T_min, T_max : Quantity [temperature]
         Temperature range for the default grid.
-    sigma_min, sigma_max : Quantity [surface density]
+    sigma_max, sigma_min : Quantity [surface density]
         Surface density search bracket for brentq.
 
     Returns

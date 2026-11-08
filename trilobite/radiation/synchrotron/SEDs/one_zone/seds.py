@@ -168,12 +168,19 @@ class SynchrotronSED(ABC):
         All of the existing SEDs are implemented using this base class as a guide. If you're
         in need of check out the other classes in this module.
 
-    Instantiation
-    --------------
+    .. rubric:: Instantiation
+
     Instantiation of the SED class may be used to pre-compute class-wide constants, evaluate or construct kernels,
     etc; however, it should **NOT** be used to store SED-specific parameters. All SED-specific parameters
     should be passed directly to the relevant methods. This ensures that, during high-load inference tasks,
     no unnecessary re-instantiation of SED objects is required.
+
+    Parameters
+    ----------
+    *args : tuple
+        Positional arguments for SED instantiation.
+    **kwargs : dict
+        Keyword arguments for SED instantiation.
     """
 
     # ============================================================ #
@@ -185,9 +192,9 @@ class SynchrotronSED(ABC):
 
         Parameters
         ----------
-        args:
+        *args : tuple
             Positional arguments for SED instantiation.
-        kwargs:
+        **kwargs : dict
             Keyword arguments for SED instantiation.
 
         Notes
@@ -204,10 +211,30 @@ class SynchrotronSED(ABC):
 
         This is a thin wrapper around :meth:`sed` and exists purely for
         convenience, allowing SED objects to be used as callables.
+
+        Parameters
+        ----------
+        nu : ~numpy.ndarray or ~astropy.units.Quantity or float
+            Frequencies at which to evaluate the SED.
+        **parameters : dict
+            SED parameters, forwarded to :meth:`sed`.
+
+        Returns
+        -------
+        ~astropy.units.Quantity
+            The flux density, as returned by :meth:`sed`.
         """
         return self.sed(nu, **parameters)
 
     def __repr__(self):
+        """
+        Return an unambiguous representation of the SED object.
+
+        Returns
+        -------
+        str
+            The class name.
+        """
         return f"<{self.__class__.__name__}()>"
 
     # ============================================================ #
@@ -577,7 +604,7 @@ class MultiSpectrumSynchrotronSED(SynchrotronSED, ABC):
 
         Returns
         -------
-        regime : int or Enum-like
+        int or Enum-like
             Regime identifier defined by the subclass.
 
         Notes
@@ -970,7 +997,7 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
 
         Returns
         -------
-        F_nu : array-like or quantity
+        array-like or quantity
             Flux density evaluated at ``nu``, returned with units of
             ``erg cm^-2 s^-1 Hz^-1``.
 
@@ -998,7 +1025,6 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
                 nu_m=1e12 * u.Hz,
                 p=2.4,
             )
-
         """
         # Handle units
         nu = ensure_in_units(nu, "Hz")
@@ -1249,6 +1275,14 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             - ``nu_max`` : maximum synchrotron frequency
               (:math:`\mathrm{Hz}`)
 
+        See Also
+        --------
+        _opt_from_physics_to_params :
+            Log-space implementation of the closure relation.
+
+        sed :
+            Evaluate the synchrotron SED using the returned parameters.
+
         Notes
         -----
         This closure assumes a **single-zone homogeneous emission region** and
@@ -1264,14 +1298,6 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         This method performs only the parameter conversion; it does not enforce
         spectral ordering constraints such as radiative cooling or synchrotron
         self-absorption.
-
-        See Also
-        --------
-        _opt_from_physics_to_params :
-            Log-space implementation of the closure relation.
-
-        sed :
-            Evaluate the synchrotron SED using the returned parameters.
         """
         # ------------------------------------------------------------------ #
         # Resolve cosmological information.
@@ -1608,11 +1634,20 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
 
         Returns
         -------
-        params : dict
+        dict
             Dictionary containing the inferred physical parameters:
 
             - ``"R"`` : source radius, returned in cm,
             - ``"B"`` : magnetic field strength, returned in G.
+
+        See Also
+        --------
+        _opt_from_params_to_physics :
+            Low-level log-space implementation of the inverse closure.
+        from_physics_to_params :
+            Forward closure from physical source parameters to SED parameters.
+        sed :
+            Evaluate the SED for a given set of phenomenological parameters.
 
         Notes
         -----
@@ -1656,15 +1691,6 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         helper :func:`resolve_cosmological_distances` is used to enforce a
         self-consistent set of cosmological quantities before the inversion is
         performed.
-
-        See Also
-        --------
-        _opt_from_params_to_physics :
-            Low-level log-space implementation of the inverse closure.
-        from_physics_to_params :
-            Forward closure from physical source parameters to SED parameters.
-        sed :
-            Evaluate the SED for a given set of phenomenological parameters.
 
         Examples
         --------
@@ -1996,7 +2022,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         Returns
         -------
-        regime : callable
+        callable
             A member of the :attr:`~PowerLaw_Cooling_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS` enumeration identifying the
             applicable synchrotron spectral regime.
 
@@ -2218,12 +2244,16 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         ----------
         nu : ~astropy.units.Quantity or float or array-like
             Frequencies at which to evaluate the SED.
-        nu_m, nu_c, nu_max : ~astropy.units.Quantity or float
-            Injection, cooling, and maximum synchrotron frequencies.
+        nu_m : ~astropy.units.Quantity or float
+            Injection frequency.
+        nu_c : ~astropy.units.Quantity or float
+            Cooling frequency.
         F_norm : ~astropy.units.Quantity or float
             The normalization flux density corresponding to the *optically thin* equivalent
             emission at the dominant electron frequency. See :ref:`single_zone_sed_normalization` for details on how
             to determine the appropriate normalization.
+        nu_max : ~astropy.units.Quantity or float
+            Maximum synchrotron frequency.
         nu_ac : ~astropy.units.Quantity or float, optional
             Stratified SSA transition frequency.
         omega : float
@@ -2426,7 +2456,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Electron power-law index.
         f_V : float, optional
             Volume filling factor.
-        f_A: float, optional
+        f_A : float, optional
             Area filling factor.
         epsilon_E : float, optional
             Fraction of post-shock internal energy carried by relativistic electrons.
@@ -2685,7 +2715,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             (e.g. shock acceleration), values of
             :math:`\gamma_{\min} \sim 10-10^3` may be more physically
             appropriate.
-        gamma_c: float, optional
+        gamma_c : float, optional
             Cooling Lorentz factor.
 
             This parameter is relevant for regimes where radiative cooling explicitly shapes the spectrum.
@@ -2849,6 +2879,15 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             - ``R`` : source radius (cm)
             - ``B`` : magnetic field strength (G)
 
+        See Also
+        --------
+        determine_sed_regime
+            Identify the synchrotron spectral regime.
+        from_physics_to_params
+            Forward closure relation.
+        sed
+            Evaluate the SED for a given parameter set.
+
         Notes
         -----
         **Interpretation**
@@ -2875,15 +2914,6 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         In such cases, users should treat the inferred parameters as
         **order-of-magnitude estimates only**.
-
-        See Also
-        --------
-        determine_sed_regime
-            Identify the synchrotron spectral regime.
-        from_physics_to_params
-            Forward closure relation.
-        sed
-            Evaluate the SED for a given parameter set.
         """
         return invert_powerlaw_cooling_ssa_sed(
             regime=regime,
@@ -3165,7 +3195,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         Returns
         -------
-        regime : enum-like
+        enum-like
             Identifier specifying the **global cooling regime** of the synchrotron
             spectrum, determined by the ordering of :math:`\nu_m`, :math:`\nu_c`,
             and :math:`\nu_{\max}`.
@@ -3361,7 +3391,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         Returns
         -------
-        flux : astropy.units.Quantity
+        astropy.units.Quantity
             Flux density :math:`F_\nu` evaluated at ``nu``.
 
         Notes
@@ -3936,7 +3966,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             :math:`\gamma_{\min} \sim 10-10^3` may be more physically
             appropriate.
 
-        gamma_c: float, optional
+        gamma_c : float, optional
 
             Cooling Lorentz factor.
 
@@ -4081,6 +4111,15 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             - ``R`` : source radius (cm)
             - ``B`` : magnetic field strength (G)
 
+        See Also
+        --------
+        determine_sed_regime
+            Identify the synchrotron spectral regime.
+        from_physics_to_params
+            Forward closure relation.
+        sed
+            Evaluate the SED for a given parameter set.
+
         Notes
         -----
         **Interpretation**
@@ -4107,15 +4146,6 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         In such cases, users should treat the inferred parameters as
         **order-of-magnitude estimates only**.
-
-        See Also
-        --------
-        determine_sed_regime
-            Identify the synchrotron spectral regime.
-        from_physics_to_params
-            Forward closure relation.
-        sed
-            Evaluate the SED for a given parameter set.
         """
         return invert_powerlaw_cooling_sed(
             regime=regime,
@@ -4438,7 +4468,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         Returns
         -------
-        regime : enum-like
+        enum-like
             Member of :attr:`SPECTRUM_FUNCTIONS` identifying the global synchrotron
             self-absorption regime.
 
@@ -4684,7 +4714,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         Returns
         -------
-        flux : astropy.units.Quantity
+        astropy.units.Quantity
             Flux density :math:`F_\nu` evaluated at ``nu``.
 
         Notes
@@ -5447,6 +5477,15 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             - ``R`` : source radius (cm)
             - ``B`` : magnetic field strength (G)
 
+        See Also
+        --------
+        determine_sed_regime
+            Identify the synchrotron spectral regime.
+        from_physics_to_params
+            Forward closure relation.
+        sed
+            Evaluate the SED for a given parameter set.
+
         Notes
         -----
         **Interpretation**
@@ -5473,15 +5512,6 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         In such cases, users should treat the inferred parameters as
         **order-of-magnitude estimates only**.
-
-        See Also
-        --------
-        determine_sed_regime
-            Identify the synchrotron spectral regime.
-        from_physics_to_params
-            Forward closure relation.
-        sed
-            Evaluate the SED for a given parameter set.
         """
         return invert_powerlaw_ssa_sed(
             regime=regime,
@@ -5539,6 +5569,12 @@ class SSA_SED_PowerLaw(SynchrotronSED):
     No assumptions are made about time evolution, shock dynamics, or cooling
     regimes beyond those implicit in the broken power-law description.
 
+    See Also
+    --------
+    SynchrotronSED
+        Abstract base class defining the interface for all synchrotron SED
+        implementations.
+
     Notes
     -----
     - The break frequency :math:`\nu_{\rm brk}` is defined as the frequency at
@@ -5550,12 +5586,6 @@ class SSA_SED_PowerLaw(SynchrotronSED):
     - The special case :math:`p = 2` is not supported due to logarithmic
       divergences in the electron energy integral and must be handled
       separately.
-
-    See Also
-    --------
-    SynchrotronSED
-        Abstract base class defining the interface for all synchrotron SED
-        implementations.
 
     References
     ----------
@@ -5901,9 +5931,7 @@ class SSA_SED_PowerLaw(SynchrotronSED):
 
         References
         ----------
-
         .. footbibliography::
-
         """
         # Validate units of all unit bearing quantities and coerce them to the expected
         # units for the optimized backend.
@@ -6080,15 +6108,24 @@ class SSA_SED_PowerLaw(SynchrotronSED):
         ----------
         B : float or array-like
             Magnetic field strength in Gauss.
-
         R : float or array-like
             Radius of the emitting region in cm.
-
         distance : float or array-like
             Distance to the source in Mpc.
-
-        p, f, theta, epsilon_B, epsilon_E, gamma_min, gamma_max
-            See the user-facing function ``compute_BPL_SED_from_BR``.
+        p : float or array-like
+            Electron power-law index.
+        f : float or array-like
+            Filling factor of the emitting region.
+        theta : float or array-like
+            Pitch angle in radians.
+        epsilon_B : float or array-like
+            Fraction of the post-shock energy density in the magnetic field.
+        epsilon_E : float or array-like
+            Fraction of the post-shock energy density in relativistic electrons.
+        gamma_min : float or array-like
+            Minimum electron Lorentz factor.
+        gamma_max : float or array-like
+            Maximum electron Lorentz factor.
 
         Returns
         -------
@@ -6283,6 +6320,28 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         population. For a numerical model that includes cooling, use
         :class:`Numerical_PowerLaw_Cooling_SSA_SynchrotronSED`. For analytic
         (regime-classified) models with SSA, use :class:`PowerLaw_SSA_SynchrotronSED`.
+
+    Parameters
+    ----------
+    gamma : ~numpy.ndarray or None, optional
+        Explicit Lorentz factor grid. If ``None``, a log-uniform grid is built from ``gamma_min``, ``gamma_max``, and
+        ``n_gamma``.
+    gamma_min : float, optional
+        Lower bound of the Lorentz factor grid. Default ``1.0``.
+    gamma_max : float, optional
+        Upper bound of the Lorentz factor grid. Default ``1e8``.
+    n_gamma : int, optional
+        Number of quadrature points on the Lorentz factor grid. Default ``200``.
+    x_min : float, optional
+        Lower bound of the synchrotron kernel :math:`x` grid. Default ``1e-5``.
+    x_max : float, optional
+        Upper bound of the synchrotron kernel :math:`x` grid. Default ``1e2``.
+    num_points : int, optional
+        Number of points on the kernel grid. Default ``1000``.
+    spacing : {"log", "linear"}, optional
+        Kernel grid spacing. Default ``"log"``.
+    method : {"exact", "lu"}, optional
+        Kernel evaluation method. Default ``"exact"``.
 
     See Also
     --------
@@ -6549,7 +6608,7 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Flux density in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
 
@@ -6720,6 +6779,28 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
         the distribution. For analytic regime-classified models with cooling, use
         :class:`PowerLaw_Cooling_SynchrotronSED` or
         :class:`PowerLaw_Cooling_SSA_SynchrotronSED`.
+
+    Parameters
+    ----------
+    gamma : ~numpy.ndarray or None, optional
+        Explicit Lorentz factor grid. If ``None``, a log-uniform grid is built from ``gamma_min``, ``gamma_max``, and
+        ``n_gamma``.
+    gamma_min : float, optional
+        Lower bound of the Lorentz factor grid. Default ``1.0``.
+    gamma_max : float, optional
+        Upper bound of the Lorentz factor grid. Default ``1e8``.
+    n_gamma : int, optional
+        Number of quadrature points on the Lorentz factor grid. Default ``200``.
+    x_min : float, optional
+        Lower bound of the synchrotron kernel :math:`x` grid. Default ``1e-5``.
+    x_max : float, optional
+        Upper bound of the synchrotron kernel :math:`x` grid. Default ``1e2``.
+    num_points : int, optional
+        Number of points on the kernel grid. Default ``1000``.
+    spacing : {"log", "linear"}, optional
+        Kernel grid spacing. Default ``"log"``.
+    method : {"exact", "lu"}, optional
+        Kernel evaluation method. Default ``"exact"``.
 
     See Also
     --------
@@ -7053,7 +7134,7 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Flux density in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
 
@@ -7223,6 +7304,30 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         * - Area filling factor
           - :math:`f_A`
           - Fraction of the projected area that is emitting.
+
+    Parameters
+    ----------
+    gamma : ~numpy.ndarray or None, optional
+        Explicit Lorentz factor grid. If ``None``, a log-uniform grid is built from ``gamma_min``, ``gamma_max``, and
+        ``n_gamma``.
+    gamma_min : float, optional
+        Lower bound of the Lorentz factor grid. Default ``1.0``.
+    gamma_max : float, optional
+        Upper bound of the Lorentz factor grid. Default ``1e8``. Should extend to several times :math:`\Theta` to
+        capture the Maxwell-Jüttner tail at the expected electron temperatures.
+    n_gamma : int, optional
+        Number of log-spaced quadrature points on the Lorentz factor grid. Default ``200``.
+    x_min : float, optional
+        Lower bound of the synchrotron kernel :math:`x` grid, where :math:`x = \nu/\nu_c(\gamma)`. Default ``1e-5``.
+    x_max : float, optional
+        Upper bound of the synchrotron kernel :math:`x` grid. Default ``1e2``.
+    num_points : int, optional
+        Number of points on the kernel grid. Default ``1000``.
+    spacing : {"log", "linear"}, optional
+        Spacing of the kernel grid. Default ``"log"``.
+    method : {"exact", "lu"}, optional
+        Kernel evaluation method. ``"exact"`` evaluates the full modified Bessel function; ``"lu"`` uses an
+        LU-decomposed approximation. Default ``"exact"``.
 
     See Also
     --------
@@ -7472,7 +7577,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Flux density in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
 
@@ -7609,6 +7714,31 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
 
     SSA is computed as in all numerical classes via plane-parallel radiative
     transfer over the combined distribution (no regime classification required).
+
+    Parameters
+    ----------
+    gamma : ~numpy.ndarray or None, optional
+        Explicit Lorentz factor grid. If ``None``, a log-uniform grid is built from ``gamma_min``, ``gamma_max``, and
+        ``n_gamma``.
+    gamma_min : float, optional
+        Lower bound of the Lorentz factor grid. Default ``1.0``.
+    gamma_max : float, optional
+        Upper bound of the Lorentz factor grid. Default ``1e8``. Should be wide enough to capture the Maxwell-Jüttner
+        tail (at least :math:`\sim 10\,\Theta`) as well as the non-thermal power-law cutoff ``gamma_max`` passed at
+        call time.
+    n_gamma : int, optional
+        Number of log-spaced quadrature points on the Lorentz factor grid. Default ``200``.
+    x_min : float, optional
+        Lower bound of the synchrotron kernel :math:`x` grid, where :math:`x = \nu/\nu_c(\gamma)`. Default ``1e-5``.
+    x_max : float, optional
+        Upper bound of the synchrotron kernel :math:`x` grid. Default ``1e2``.
+    num_points : int, optional
+        Number of points on the kernel grid. Default ``1000``.
+    spacing : {"log", "linear"}, optional
+        Spacing of the kernel grid. Default ``"log"``.
+    method : {"exact", "lu"}, optional
+        Kernel evaluation method. ``"exact"`` evaluates the full modified Bessel function; ``"lu"`` uses an
+        LU-decomposed approximation. Default ``"exact"``.
 
     See Also
     --------
@@ -7911,7 +8041,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Flux density in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
 

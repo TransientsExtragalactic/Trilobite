@@ -177,7 +177,7 @@ nitpick_ignore_regex = [
     (r"py:class", r"cosmo\.Cosmology"),
     (r"py:class", r"tqdm"),
     (r"py:class", r"dtype=float64"),
-    (r"py:class", r"ruamel\.yaml\.nodes\.Node"),
+    (r"py:class", r"ruamel\.yaml\..*"),
     (r"py:class", r"trilobite\.parallel\.base\.[RT]"),
     # Informal type annotations: not Python objects
     (r"py:class", r"namedtuple"),

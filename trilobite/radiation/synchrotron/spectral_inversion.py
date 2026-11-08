@@ -402,14 +402,14 @@ def invert_ssa_Diggins26(
         ``"B"`` (:math:`\mathrm{G}`) and ``"R"`` (:math:`\mathrm{cm}`), with the shape obtained by broadcasting all
         of the inputs against one another.
 
+    See Also
+    --------
+    invert_ssa_with_cooling_Diggins26 : Cooled-versus-uncooled consistency check.
+
     Notes
     -----
     This inversion makes no statement about cooling. If electrons are cooled at :math:`\nu_a`, use one of the cooled
     inversions or :func:`invert_ssa_with_cooling_Diggins26`. Relativistic effects and redshift are not treated.
-
-    See Also
-    --------
-    invert_ssa_with_cooling_Diggins26 : Cooled-versus-uncooled consistency check.
     """
     mp = _SSAMicrophysics(p, epsilon_E, epsilon_B, f_A, f_V, alpha, pitch_average, gamma_min, gamma_max)
     nu, F, D = _prepare(nu_brk, F_brk, distance)
@@ -453,10 +453,28 @@ def invert_ssa_synchrotron_cooled_Diggins26(
 
     Parameters
     ----------
-    nu_brk, F_brk, distance, p, epsilon_E, epsilon_B, f_A, f_V, alpha, pitch_average, gamma_min, gamma_max
-        As in :func:`invert_ssa_Diggins26`.
+    nu_brk : float, array-like, or ~astropy.units.Quantity
+        Best-fit break frequency, identified with :math:`\nu_a`. Bare floats are in Hz.
+    F_brk : float, array-like, or ~astropy.units.Quantity
+        Asymptotic intercept flux density of the fit at ``nu_brk``. Bare floats are in
+        :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`.
+    distance : float, array-like, or ~astropy.units.Quantity
+        Distance to the source. Bare floats are in cm.
     t : float, array-like, or ~astropy.units.Quantity
         Dynamical (effective cooling) time of the source. Bare floats are in s.
+    p : float or array-like, optional
+        Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
+    epsilon_E, epsilon_B : float or array-like, optional
+        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+    f_A, f_V : float or array-like, optional
+        Area and volume filling factors.
+    alpha : float or array-like, optional
+        Pitch angle in radians. Defaults to :math:`\pi/2`. Ignored (with a warning if given) when
+        ``pitch_average=True``.
+    pitch_average : bool, optional
+        If ``True``, use the isotropic pitch-angle coefficients.
+    gamma_min, gamma_max : float or array-like, optional
+        Bounds of the electron Lorentz-factor distribution.
 
     Returns
     -------
@@ -524,11 +542,31 @@ def invert_ssa_ic_cooled_Diggins26(
 
     Parameters
     ----------
-    nu_brk, F_brk, distance, t, p, epsilon_E, epsilon_B, f_A, f_V, alpha, pitch_average, gamma_min, gamma_max
-        As in :func:`invert_ssa_synchrotron_cooled_Diggins26`.
+    nu_brk : float, array-like, or ~astropy.units.Quantity
+        Best-fit break frequency, identified with :math:`\nu_a`. Bare floats are in Hz.
+    F_brk : float, array-like, or ~astropy.units.Quantity
+        Asymptotic intercept flux density of the fit at ``nu_brk``. Bare floats are in
+        :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`.
+    distance : float, array-like, or ~astropy.units.Quantity
+        Distance to the source. Bare floats are in cm.
+    t : float, array-like, or ~astropy.units.Quantity
+        Dynamical (effective cooling) time of the source. Bare floats are in s.
     L : float, array-like, or ~astropy.units.Quantity
         Bolometric luminosity of the seed-photon source at the epoch being inverted. Bare floats are in
         :math:`\mathrm{erg\,s^{-1}}`. Must be positive.
+    p : float or array-like, optional
+        Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
+    epsilon_E, epsilon_B : float or array-like, optional
+        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+    f_A, f_V : float or array-like, optional
+        Area and volume filling factors.
+    alpha : float or array-like, optional
+        Pitch angle in radians. Defaults to :math:`\pi/2`. Ignored (with a warning if given) when
+        ``pitch_average=True``.
+    pitch_average : bool, optional
+        If ``True``, use the isotropic pitch-angle coefficients.
+    gamma_min, gamma_max : float or array-like, optional
+        Bounds of the electron Lorentz-factor distribution.
 
     Returns
     -------
@@ -587,11 +625,31 @@ def invert_ssa_combined_cooled_Diggins26(
 
     Parameters
     ----------
-    nu_brk, F_brk, distance, t, p, epsilon_E, epsilon_B, f_A, f_V, alpha, pitch_average, gamma_min, gamma_max
-        As in :func:`invert_ssa_synchrotron_cooled_Diggins26`.
+    nu_brk : float, array-like, or ~astropy.units.Quantity
+        Best-fit break frequency, identified with :math:`\nu_a`. Bare floats are in Hz.
+    F_brk : float, array-like, or ~astropy.units.Quantity
+        Asymptotic intercept flux density of the fit at ``nu_brk``. Bare floats are in
+        :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`.
+    distance : float, array-like, or ~astropy.units.Quantity
+        Distance to the source. Bare floats are in cm.
+    t : float, array-like, or ~astropy.units.Quantity
+        Dynamical (effective cooling) time of the source. Bare floats are in s.
     L : float, array-like, or ~astropy.units.Quantity
         Bolometric luminosity of the seed-photon source at the epoch being inverted. Bare floats are in
-        :math:`\mathrm{erg\,s^{-1}}`. ``L = 0`` removes the IC channel.
+        :math:`\mathrm{erg\,s^{-1}}`. Must be positive.
+    p : float or array-like, optional
+        Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
+    epsilon_E, epsilon_B : float or array-like, optional
+        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+    f_A, f_V : float or array-like, optional
+        Area and volume filling factors.
+    alpha : float or array-like, optional
+        Pitch angle in radians. Defaults to :math:`\pi/2`. Ignored (with a warning if given) when
+        ``pitch_average=True``.
+    pitch_average : bool, optional
+        If ``True``, use the isotropic pitch-angle coefficients.
+    gamma_min, gamma_max : float or array-like, optional
+        Bounds of the electron Lorentz-factor distribution.
 
     Returns
     -------
@@ -651,8 +709,31 @@ def invert_ssa_with_cooling_Diggins26(
 
     Parameters
     ----------
-    nu_brk, F_brk, distance, t, L, p, epsilon_E, epsilon_B, f_A, f_V, alpha, pitch_average, gamma_min, gamma_max
-        As in :func:`invert_ssa_combined_cooled_Diggins26`.
+    nu_brk : float, array-like, or ~astropy.units.Quantity
+        Best-fit break frequency, identified with :math:`\nu_a`. Bare floats are in Hz.
+    F_brk : float, array-like, or ~astropy.units.Quantity
+        Asymptotic intercept flux density of the fit at ``nu_brk``. Bare floats are in
+        :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`.
+    distance : float, array-like, or ~astropy.units.Quantity
+        Distance to the source. Bare floats are in cm.
+    t : float, array-like, or ~astropy.units.Quantity
+        Dynamical (effective cooling) time of the source. Bare floats are in s.
+    L : float, array-like, or ~astropy.units.Quantity
+        Bolometric luminosity of the seed-photon source at the epoch being inverted. Bare floats are in
+        :math:`\mathrm{erg\,s^{-1}}`. Must be positive.
+    p : float or array-like, optional
+        Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
+    epsilon_E, epsilon_B : float or array-like, optional
+        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+    f_A, f_V : float or array-like, optional
+        Area and volume filling factors.
+    alpha : float or array-like, optional
+        Pitch angle in radians. Defaults to :math:`\pi/2`. Ignored (with a warning if given) when
+        ``pitch_average=True``.
+    pitch_average : bool, optional
+        If ``True``, use the isotropic pitch-angle coefficients.
+    gamma_min, gamma_max : float or array-like, optional
+        Bounds of the electron Lorentz-factor distribution.
 
     Returns
     -------
@@ -698,6 +779,23 @@ def invert_ssa_with_cooling_Diggins26(
     flagged = (branch == "ambiguous") | (branch == "fast_cooling")
 
     def pick(x_c, x_u, mask_flagged=True):
+        """
+        Select the cooled or uncooled solution element-wise.
+
+        Parameters
+        ----------
+        x_c : ~numpy.ndarray
+            Value on the cooled branch.
+        x_u : ~numpy.ndarray
+            Value on the uncooled branch.
+        mask_flagged : bool, optional
+            Whether to set flagged draws (ambiguous or fast-cooling) to NaN. Default is ``True``.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            The selected values, with the shape of the inputs.
+        """
         out = np.where(use_c, x_c, x_u)
         return np.where(flagged, np.nan, out) if mask_flagged else out
 
@@ -919,6 +1017,10 @@ def invert_ssa_DeMarchi22(
     dict
         ``"B"`` (:math:`\mathrm{G}`) and ``"R"`` (:math:`\mathrm{cm}`).
 
+    See Also
+    --------
+    invert_ssa_Diggins26 : Uncooled inversion with optional pitch-angle averaging.
+
     Notes
     -----
     .. important::
@@ -927,10 +1029,6 @@ def invert_ssa_DeMarchi22(
         use the isotropic pitch-angle coefficients, use :func:`invert_ssa_Diggins26`.
 
     The source is treated as local and non-relativistic, as for the other inversions in this module.
-
-    See Also
-    --------
-    invert_ssa_Diggins26 : Uncooled inversion with optional pitch-angle averaging.
 
     References
     ----------

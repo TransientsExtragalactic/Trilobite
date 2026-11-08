@@ -282,6 +282,20 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
     via a **declarative closure pipeline** whose steps are defined by subclass
     implementations.
 
+    Parameters
+    ----------
+    **context_parameters : dict
+        Context parameters of the disk model, stored verbatim in :attr:`_context_parameters`.
+
+    See Also
+    --------
+    gP_esDisk :
+        The canonical concrete implementation of this base class.
+    OneZoneAccretionResult :
+        The result container returned by :meth:`solve`.
+    :ref:`one_zone_disk`, :ref:`one_zone_disk_theory`
+        Overview and theory of the one-zone accretion disk model.
+
     Notes
     -----
     **The ODE system**
@@ -341,14 +355,6 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         print(result.success, result.n_steps)
         data = result.data
         result.to_hdf5("disk_run.h5", overwrite=True)
-
-    See Also
-    --------
-    gP_esDisk :
-        The canonical concrete implementation of this base class.
-    OneZoneAccretionResult :
-        The result container returned by :meth:`solve`.
-    :ref:`one_zone_disk`, :ref:`one_zone_disk_theory`
     """
 
     # ==================================================== #
@@ -490,17 +496,15 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         Returns
         -------
         str
-            ``ClassName(param1=val1, param2=val2, ...)``
+            The class name followed by the context parameters as keyword arguments.
 
         Examples
         --------
-
         .. code-block:: python
 
             $ disk = gP_esDisk(mu=0.62)
             $ repr(disk)
             'gP_esDisk(mu=0.62)'
-
         """
         ctx = ", ".join(f"{k}={v!r}" for k, v in self._context_parameters.items())
         return f"{type(self).__name__}({ctx})"
@@ -525,7 +529,6 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
 
         Examples
         --------
-
         .. code-block:: python
 
             $ print(disk)
@@ -923,6 +926,11 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
             Result containing the raw Cython result array, the processed
             runtime parameters, and solver metadata.
 
+        See Also
+        --------
+        OneZoneAccretionResult :
+            The object returned by this method.
+
         Examples
         --------
         .. code-block:: python
@@ -952,11 +960,6 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
             print(result.success, result.n_steps)
             data = result.data
             print(data["T_c"][[0, -1]])
-
-        See Also
-        --------
-        OneZoneAccretionResult :
-            The object returned by this method.
         """
         # --- Process time span --- #
         t_start = float(ensure_in_units(t_span[0], "s"))
@@ -1196,8 +1199,8 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         check is reported as a ``(passed, value, note)`` tuple so the caller
         can decide how to react.
 
-        Checks performed
-        ----------------
+        .. rubric:: Checks performed
+
         - **finite** — every result field is finite and non-NaN.
         - **T_c_positive** — midplane temperature is positive.
         - **tau_thick** — optical depth :math:`\tau \geq 1` (thick-disk
@@ -1451,8 +1454,8 @@ class OneZoneAccretionResult:
             "disk_run.h5"
         )
 
-    Parameters
-    ----------
+    .. rubric:: Attributes
+
     model : OneZoneAccretionDiskBase
         The disk model instance that produced this result.
     result_array : np.ndarray
@@ -1484,6 +1487,7 @@ class OneZoneAccretionResult:
     _extra_fields: Optional[dict] = field(default=None, init=False, repr=False)
 
     def __post_init__(self) -> None:
+        """Validate the result array against the model's declared result fields."""
         self.result_array = np.asarray(self.result_array, dtype=float)
         if self.result_array.ndim != 2:
             raise ValueError(f"result_array must be 2-D, got shape {self.result_array.shape}.")
@@ -1493,42 +1497,42 @@ class OneZoneAccretionResult:
     # ---------------------------------------------- #
     @property
     def t(self) -> np.ndarray:
-        """Integration times in seconds, shape ``(N,)``."""
+        """~numpy.ndarray: Integration times in seconds, shape ``(N,)``."""
         return self.result_array[1, :]
 
     @property
     def M_D(self) -> u.Quantity:
-        """Disk mass :math:`M_D` in grams, shape ``(N,)``."""
+        """~astropy.units.Quantity: Disk mass :math:`M_D` in grams, shape ``(N,)``."""
         return self.result_array[2, :] * u.g
 
     @property
     def M_D_solar(self) -> u.Quantity:
-        """Disk mass :math:`M_D` in solar masses, shape ``(N,)``."""
+        """~astropy.units.Quantity: Disk mass :math:`M_D` in solar masses, shape ``(N,)``."""
         return self.M_D.to(u.Msun)
 
     @property
     def J_D(self) -> u.Quantity:
-        r"""Disk angular momentum :math:`J_D` in g cm² s⁻¹, shape ``(N,)``."""
+        r"""~astropy.units.Quantity: Disk angular momentum :math:`J_D` in g cm² s⁻¹, shape ``(N,)``."""
         return self.result_array[3, :] * u.g * u.cm**2 / u.s
 
     @property
     def t_quantity(self) -> u.Quantity:
-        """Integration times as a unit-bearing Quantity in seconds."""
+        """~astropy.units.Quantity: Integration times as a unit-bearing Quantity in seconds."""
         return self.t * u.s
 
     @property
     def n_steps(self) -> int:
-        """Number of stored time steps ``N``."""
+        """int: Number of stored time steps ``N``."""
         return self.result_array.shape[1]
 
     @property
     def field_list(self) -> list[str]:
-        """Field names declared in :attr:`~OneZoneAccretionDiskBase.RESULT_FIELDS`."""
+        """List of str: Field names declared in :attr:`~OneZoneAccretionDiskBase.RESULT_FIELDS`."""
         return list(self.model.RESULT_FIELDS.keys())
 
     @property
     def derived_field_list(self) -> list[str]:
-        """Declared field names plus user-added field names, sorted."""
+        """List of str: Declared field names plus user-added field names, sorted."""
         available: set = set(self.field_list) | {"t", "M_D", "J_D"}
         if self._extra_fields:
             available |= set(self._extra_fields.keys())
@@ -1617,7 +1621,6 @@ class OneZoneAccretionResult:
         -------
         int
             Equivalent to :attr:`n_steps`.
-
         """
         return self.n_steps
 
@@ -1627,7 +1630,7 @@ class OneZoneAccretionResult:
         Returns
         -------
         str
-            ``OneZoneAccretionResult(model=..., n_steps=N, success=True/False)``
+            The model, number of stored steps and success flag.
         """
         return f"OneZoneAccretionResult(model={self.model!r}, n_steps={self.n_steps}, success={self.success!r})"
 
@@ -1642,7 +1645,6 @@ class OneZoneAccretionResult:
 
         Examples
         --------
-
         .. code-block:: python
 
             print(result)
@@ -1668,7 +1670,19 @@ class OneZoneAccretionResult:
         return "\n".join(lines)
 
     def __eq__(self, other: object) -> bool:
-        """Return ``True`` if *other* is an equivalent result."""
+        """
+        Return ``True`` if *other* is an equivalent result.
+
+        Parameters
+        ----------
+        other : object
+            The object to compare with.
+
+        Returns
+        -------
+        bool
+            Whether ``other`` is an equivalent result.
+        """
         if not isinstance(other, OneZoneAccretionResult):
             return NotImplemented
         return (
@@ -1680,7 +1694,19 @@ class OneZoneAccretionResult:
         )
 
     def __contains__(self, key: str) -> bool:
-        """Return ``True`` if *key* is present in :attr:`data`."""
+        """
+        Return ``True`` if *key* is present in :attr:`data`.
+
+        Parameters
+        ----------
+        key : str
+            Field name to look for.
+
+        Returns
+        -------
+        bool
+            Whether ``key`` is present in :attr:`data`.
+        """
         return key in self.data
 
     def __getitem__(self, key: str) -> _FieldValue:
@@ -1693,7 +1719,8 @@ class OneZoneAccretionResult:
 
         Returns
         -------
-        `~astropy.units.Quantity` or `numpy.ndarray`
+        ~astropy.units.Quantity or ~numpy.ndarray
+            The requested field.
 
         Raises
         ------
@@ -1703,7 +1730,14 @@ class OneZoneAccretionResult:
         return self.data[key]
 
     def keys(self) -> list[str]:
-        """Return all field names present in :attr:`data`, sorted."""
+        """
+        Return all field names present in :attr:`data`, sorted.
+
+        Returns
+        -------
+        list of str
+            The sorted field names.
+        """
         return sorted(self.data.keys())
 
     # ---------------------------------------------- #
@@ -1745,6 +1779,12 @@ class OneZoneAccretionResult:
         FileExistsError
             If *filename* already exists and ``overwrite=False``.
 
+        See Also
+        --------
+        from_hdf5 :
+            Class method to load a result from a file written by this
+            method.
+
         Examples
         --------
         .. code-block:: python
@@ -1753,12 +1793,6 @@ class OneZoneAccretionResult:
 
             # Overwrite a previous run:
             result.to_hdf5("disk_run.h5", overwrite=True)
-
-        See Also
-        --------
-        from_hdf5 :
-            Class method to load a result from a file written by this
-            method.
         """
         import h5py
 
@@ -1811,6 +1845,11 @@ class OneZoneAccretionResult:
             If the file's ``"format"`` attribute does not equal
             :attr:`FORMAT` (``"OneZoneAccretionResult"``).
 
+        See Also
+        --------
+        to_hdf5 :
+            Instance method that writes the file this class method reads.
+
         Examples
         --------
         .. code-block:: python
@@ -1824,11 +1863,6 @@ class OneZoneAccretionResult:
             )
             print(loaded.M_D_solar)
             data = loaded.data
-
-        See Also
-        --------
-        to_hdf5 :
-            Instance method that writes the file this class method reads.
         """
         import h5py
 
@@ -1884,8 +1918,10 @@ class OneZoneAccretionResult:
 
         Returns
         -------
-        fig : `~matplotlib.figure.Figure`
-        axes : `numpy.ndarray` of `~matplotlib.axes.Axes`
+        fig : ~matplotlib.figure.Figure
+            The figure containing the plot.
+        axes : ~numpy.ndarray of ~matplotlib.axes.Axes
+            The axes for disk mass and angular momentum.
 
         Examples
         --------
@@ -1937,8 +1973,10 @@ class OneZoneAccretionResult:
 
         Returns
         -------
-        fig : `~matplotlib.figure.Figure`
-        ax : `~matplotlib.axes.Axes`
+        fig : ~matplotlib.figure.Figure
+            The figure containing the plot.
+        ax : ~matplotlib.axes.Axes
+            The axes containing the plot.
 
         Raises
         ------
@@ -1988,8 +2026,10 @@ class OneZoneAccretionResult:
 
         Returns
         -------
-        fig : `~matplotlib.figure.Figure`
-        axes : `numpy.ndarray` of `~matplotlib.axes.Axes`
+        fig : ~matplotlib.figure.Figure
+            The figure containing the plot.
+        axes : ~numpy.ndarray of ~matplotlib.axes.Axes
+            The axes, one per field.
 
         Examples
         --------
@@ -2063,7 +2103,6 @@ class OneZoneAccretionResult:
 
         Examples
         --------
-
         .. code-block:: python
 
             > result.get_field("T_c")
@@ -2077,7 +2116,19 @@ class OneZoneAccretionResult:
         return d[name]
 
     def has_field(self, name: str) -> bool:
-        """Return ``True`` if *name* is present in :attr:`data`."""
+        """
+        Return ``True`` if *name* is present in :attr:`data`.
+
+        Parameters
+        ----------
+        name : str
+            Field name to look for.
+
+        Returns
+        -------
+        bool
+            Whether ``name`` is present in :attr:`data`.
+        """
         return name in self.data
 
     def add_field(self, name: str, value: _FieldValue, overwrite: bool = False) -> None:

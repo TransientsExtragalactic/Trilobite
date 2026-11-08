@@ -66,9 +66,9 @@ class _DynamicalProfile(ABC):
 
     See Also
     --------
-    ~trilobite.dynamics.profiles.csm.CSMDensityProfile : ABC for circumstellar-medium density fields.
-    ~trilobite.dynamics.profiles.ejecta.EjectaDensityProfile : ABC for homologous ejecta density fields.
-    ~trilobite.dynamics.profiles.velocity.VelocityProfile : ABC for upstream velocity fields.
+    :obj:`~trilobite.dynamics.profiles.csm.CSMDensityProfile` : ABC for circumstellar-medium density fields.
+    :obj:`~trilobite.dynamics.profiles.ejecta.EjectaDensityProfile` : ABC for homologous ejecta density fields.
+    :obj:`~trilobite.dynamics.profiles.velocity.VelocityProfile` : ABC for upstream velocity fields.
     """
 
     OUTPUT_UNITS: ClassVar[Optional[u.Unit]] = None

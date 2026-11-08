@@ -17,8 +17,8 @@ and advanced inference workflows (e.g., prior predictive checks or
 analytic marginalizations), but they are **not required** for standard
 MCMC-based inference.
 
-Usage within Trilobite
-------------------------
+.. rubric:: Usage within Trilobite
+
 When defining an :class:`~trilobite.inference.problem.InferenceProblem`,
 users may specify priors in one of two ways:
 
@@ -29,8 +29,8 @@ users may specify priors in one of two ways:
 The inference machinery treats both options equivalently, enabling
 flexibility without sacrificing clarity or performance.
 
-Design principles
------------------
+.. rubric:: Design principles
+
 The design of this module follows a few core principles:
 
 - **Lightweight**: Priors are simple, stateless callable objects.
@@ -91,8 +91,8 @@ class Prior(ABC):
     while allowing optional extensions (PDFs and CDFs) for more advanced
     inference workflows.
 
-    Design philosophy
-    -----------------
+    .. rubric:: Design philosophy
+
     - Priors are lightweight, callable objects.
     - The *log-prior* is the primary quantity used during inference.
     - All priors operate in **physical parameter space**.
@@ -105,6 +105,12 @@ class Prior(ABC):
     - Accept any required parameters at construction time
     - Implement ``_generate_log_prior``
     - Optionally implement ``_generate_prior`` and ``_generate_cum_prior``
+
+    Parameters
+    ----------
+    **parameters : dict
+        Keyword arguments defining the parameters of the prior distribution. They are stored and passed to the
+        generator methods so that subclasses can define their behavior.
 
     Notes
     -----
@@ -121,10 +127,9 @@ class Prior(ABC):
 
         Parameters
         ----------
-        parameters
-            Keyword arguments defining the parameters of the prior distribution.
-            These are stored and passed to the generator methods so that subclasses
-            may flexibly define their behavior.
+        **parameters : dict
+            Keyword arguments defining the parameters of the prior distribution. They are stored and passed to the
+            generator methods so that subclasses can define their behavior.
         """
         # Store the defining parameters for introspection and debugging.
         self._parameters = parameters
@@ -220,6 +225,16 @@ class Prior(ABC):
         """
         Evaluate the probability density function at a given value.
 
+        Parameters
+        ----------
+        x : float
+            Value at which to evaluate the density.
+
+        Returns
+        -------
+        float
+            The probability density at ``x``.
+
         Raises
         ------
         NotImplementedError
@@ -232,6 +247,16 @@ class Prior(ABC):
     def cdf(self, x: float) -> float:
         """
         Evaluate the cumulative distribution function at a given value.
+
+        Parameters
+        ----------
+        x : float
+            Value at which to evaluate the distribution function.
+
+        Returns
+        -------
+        float
+            The cumulative probability at ``x``.
 
         Raises
         ------
@@ -277,17 +302,43 @@ class Prior(ABC):
     # ------------------------------------------------------------ #
     def __call__(self, x: float) -> float:
         """
-        Alias for :meth:`logp`.
+        Evaluate the log-prior, as an alias for :meth:`logp`.
 
         This allows prior instances to be used as callable log-priors.
+
+        Parameters
+        ----------
+        x : float
+            Value at which to evaluate the log-prior.
+
+        Returns
+        -------
+        float
+            The log-prior density at ``x``.
         """
         return self.logp(x)
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the prior.
+
+        Returns
+        -------
+        str
+            The class name with the prior's parameters.
+        """
         params = ", ".join(f"{k}={v}" for k, v in self._parameters.items())
         return f"{self.__class__.__name__}({params})"
 
     def __str__(self) -> str:
+        """
+        Return a readable description of the prior.
+
+        Returns
+        -------
+        str
+            The class name with the prior's parameters.
+        """
         if self._parameters:
             params = ", ".join(f"{k}={v}" for k, v in self._parameters.items())
             return f"{self.__class__.__name__} with parameters ({params})"
@@ -310,6 +361,11 @@ class Prior(ABC):
                 module.submodule:ClassName
 
             If it is not, an error is raised. Additionally, all constructor parameters must be JSON-serializable.
+
+        Returns
+        -------
+        dict
+            A JSON-safe dictionary describing the prior.
 
         Raises
         ------
@@ -434,9 +490,26 @@ class CallablePrior(Prior):
 
     This allows custom priors without requiring users to subclass `Prior`,
     while preserving introspection and serialization metadata.
+
+    Parameters
+    ----------
+    log_prior_callable : callable
+        Function mapping a value to its log-prior density.
+    parameters : dict, optional
+        Metadata describing the prior, stored for introspection and serialization.
     """
 
     def __init__(self, log_prior_callable: Callable[[float], float], parameters: Optional[dict] = None):
+        """
+        Initialize the prior.
+
+        Parameters
+        ----------
+        log_prior_callable : callable
+            Function mapping a value to its log-prior density.
+        parameters : dict, optional
+            Metadata describing the prior, stored for introspection and serialization.
+        """
         # Ensure that the callable is valid.
         if not callable(log_prior_callable):
             raise ValueError("log_prior_callable must be callable.")
@@ -472,33 +545,50 @@ class UniformPrior(Prior):
 
     where :math:`a` is the lower bound and :math:`b` is the upper bound.
 
-    Support
-    -------
+    .. rubric:: Support
+
     :math:`x \in [a,b]`
 
-    Interpretation
-    --------------
+    .. rubric:: Interpretation
+
     The uniform prior represents *complete prior ignorance* **within a
     specified range**, but it still encodes strong assumptions:
 
     - Values outside the bounds are *impossible*
     - All values inside the bounds are equally likely
 
-    Typical uses
-    ------------
+    .. rubric:: Typical uses
+
     - Poorly constrained parameters with known physical limits
     - Bounding parameters to prevent unphysical solutions
     - Simple exploratory modeling
 
-    Caveats
-    -------
+    .. rubric:: Caveats
+
     - Uniform priors are **not invariant under reparameterization**
       (e.g., uniform in ``x`` is not uniform in ``log x``).
     - For scale parameters spanning orders of magnitude, a log-uniform
       prior is usually more appropriate.
+
+    Parameters
+    ----------
+    lower : float
+        Lower bound of the support.
+    upper : float
+        Upper bound of the support. Must be larger than ``lower``.
     """
 
     def __init__(self, lower: float, upper: float):
+        """
+        Initialize the prior.
+
+        Parameters
+        ----------
+        lower : float
+            Lower bound of the support.
+        upper : float
+            Upper bound of the support. Must be larger than ``lower``.
+        """
         if upper <= lower:
             raise ValueError("UniformPrior requires upper > lower.")
         super().__init__(lower=float(lower), upper=float(upper))
@@ -536,30 +626,47 @@ class LogUniformPrior(Prior):
 
     where :math:`a > 0` and :math:`b > a`.
 
-    Support
-    -------
+    .. rubric:: Support
+
     :math:`x \in [a,b]` , with ``x > 0``
 
-    Interpretation
-    --------------
+    .. rubric:: Interpretation
+
     This prior expresses ignorance over *orders of magnitude* rather than
     linear differences. Equal probability mass is assigned to intervals
     like ``[1, 10]`` and ``[10, 100]``.
 
-    Typical uses
-    ------------
+    .. rubric:: Typical uses
+
     - Normalization parameters
     - Scale parameters (luminosity, mass, density)
     - Any strictly positive quantity spanning many decades
 
-    Caveats
-    -------
+    .. rubric:: Caveats
+
     - Requires explicit lower and upper bounds
     - Diverges as :math:`x\to 0` without a lower cutoff
     - Should not be used for parameters that can take zero or negative values
+
+    Parameters
+    ----------
+    lower : float
+        Lower bound of the support. Must be positive.
+    upper : float
+        Upper bound of the support. Must be larger than ``lower``.
     """
 
     def __init__(self, lower: float, upper: float):
+        """
+        Initialize the prior.
+
+        Parameters
+        ----------
+        lower : float
+            Lower bound of the support. Must be positive.
+        upper : float
+            Upper bound of the support. Must be larger than ``lower``.
+        """
         if lower <= 0 or upper <= 0:
             raise ValueError("LogUniformPrior bounds must be > 0.")
         if upper <= lower:
@@ -598,9 +705,25 @@ class NormalPrior(Prior):
         -\frac{(x - \mu)^2}{2\sigma^2}
         \right]
 
+    Parameters
+    ----------
+    mean : float
+        Mean of the distribution.
+    sigma : float
+        Standard deviation. Must be positive.
     """
 
     def __init__(self, mean: float, sigma: float):
+        """
+        Initialize the prior.
+
+        Parameters
+        ----------
+        mean : float
+            Mean of the distribution.
+        sigma : float
+            Standard deviation. Must be positive.
+        """
         if sigma <= 0:
             raise ValueError("NormalPrior requires sigma > 0.")
         super().__init__(mean=float(mean), sigma=float(sigma))
@@ -640,28 +763,53 @@ class TruncatedNormalPrior(Prior):
 
     where :math:`Z` is the normalization constant.
 
-    Support
-    -------
+    .. rubric:: Support
+
     :math:`x \in [a,b]`
 
-    Interpretation
-    --------------
+    .. rubric:: Interpretation
+
     This prior combines informative Gaussian beliefs with hard physical
     bounds.
 
-    Typical uses
-    ------------
+    .. rubric:: Typical uses
+
     - Parameters with known physical limits
     - Regularizing weakly constrained fits
     - Quantities that must remain finite or positive
 
-    Caveats
-    -------
+    .. rubric:: Caveats
+
     - Behavior near the boundaries can influence inference
     - Poorly chosen bounds can introduce bias
+
+    Parameters
+    ----------
+    mean : float
+        Mean of the underlying normal distribution.
+    sigma : float
+        Standard deviation of the underlying normal distribution. Must be positive.
+    lower : float
+        Lower bound of the support.
+    upper : float
+        Upper bound of the support. Must be larger than ``lower``.
     """
 
     def __init__(self, mean: float, sigma: float, lower: float, upper: float):
+        """
+        Initialize the prior.
+
+        Parameters
+        ----------
+        mean : float
+            Mean of the underlying normal distribution.
+        sigma : float
+            Standard deviation of the underlying normal distribution. Must be positive.
+        lower : float
+            Lower bound of the support.
+        upper : float
+            Upper bound of the support. Must be larger than ``lower``.
+        """
         if sigma <= 0:
             raise ValueError("TruncatedNormalPrior requires sigma > 0.")
         if upper <= lower:
@@ -725,28 +873,41 @@ class HalfNormalPrior(Prior):
             0 & \text{otherwise}
         \end{cases}
 
-    Support
-    -------
+    .. rubric:: Support
+
     :math:`x \ge 0`
 
-    Interpretation
-    --------------
+    .. rubric:: Interpretation
+
     The half-normal prior favors small positive values while allowing
     occasional large excursions.
 
-    Typical uses
-    ------------
+    .. rubric:: Typical uses
+
     - Noise amplitudes
     - Scatter or variance parameters
     - Regularization terms
 
-    Caveats
-    -------
+    .. rubric:: Caveats
+
     - Strongly informative near zero
     - Scale parameter must be chosen carefully
+
+    Parameters
+    ----------
+    sigma : float
+        Scale (standard deviation) of the underlying normal distribution. Must be positive.
     """
 
     def __init__(self, sigma: float):
+        """
+        Initialize the prior.
+
+        Parameters
+        ----------
+        sigma : float
+            Scale (standard deviation) of the underlying normal distribution. Must be positive.
+        """
         if sigma <= 0:
             raise ValueError("HalfNormalPrior requires sigma > 0.")
         super().__init__(sigma=float(sigma))
@@ -791,9 +952,25 @@ class LogNormalPrior(Prior):
         -\frac{(\ln x - \mu)^2}{2\sigma^2}
         \right]
 
-    Support
-    -------
+    .. rubric:: Support
+
     :math:`x > 0`
+
+    .. rubric:: Interpretation
+
+    The log-normal prior models multiplicative uncertainty and naturally
+    describes quantities spanning orders of magnitude.
+
+    .. rubric:: Typical uses
+
+    - Scale parameters with asymmetric uncertainty
+    - Physical quantities constrained to be positive
+    - Growth or decay processes
+
+    .. rubric:: Caveats
+
+    - Mean and variance are not intuitive in linear space
+    - Strongly asymmetric for large :math:`\sigma`
 
     Parameters
     ----------
@@ -806,25 +983,19 @@ class LogNormalPrior(Prior):
     sigma : float
         Standard deviation :math:`\sigma` of the natural logarithm. This is dimensionless and independent of
         the reference unit. To convert from a width in dex, use :math:`\sigma = \sigma_{\rm dex}\ln 10`.
-
-    Interpretation
-    --------------
-    The log-normal prior models multiplicative uncertainty and naturally
-    describes quantities spanning orders of magnitude.
-
-    Typical uses
-    ------------
-    - Scale parameters with asymmetric uncertainty
-    - Physical quantities constrained to be positive
-    - Growth or decay processes
-
-    Caveats
-    -------
-    - Mean and variance are not intuitive in linear space
-    - Strongly asymmetric for large :math:`\sigma`
     """
 
     def __init__(self, mean: float, sigma: float):
+        """
+        Initialize the prior.
+
+        Parameters
+        ----------
+        mean : float
+            Mean of the natural logarithm of the variable.
+        sigma : float
+            Standard deviation of the natural logarithm of the variable. Must be positive.
+        """
         if sigma <= 0:
             raise ValueError("LogNormalPrior requires sigma > 0.")
         super().__init__(mean=float(mean), sigma=float(sigma))
@@ -866,28 +1037,45 @@ class GammaPrior(Prior):
     where :math:`k > 0` is the shape parameter and :math:`\theta > 0`
     is the scale parameter.
 
-    Support
-    -------
+    .. rubric:: Support
+
     :math:`x > 0`
 
-    Interpretation
-    --------------
+    .. rubric:: Interpretation
+
     The Gamma prior is flexible and can interpolate between exponential-like
     and approximately Gaussian behavior.
 
-    Typical uses
-    ------------
+    .. rubric:: Typical uses
+
     - Rates and intensities
     - Variance or precision parameters
     - Hierarchical scale parameters
 
-    Caveats
-    -------
+    .. rubric:: Caveats
+
     - Shape and scale parameters may be unintuitive
     - Can become highly informative if poorly chosen
+
+    Parameters
+    ----------
+    shape : float
+        Shape parameter of the distribution. Must be positive.
+    scale : float
+        Scale parameter of the distribution. Must be positive.
     """
 
     def __init__(self, shape: float, scale: float):
+        """
+        Initialize the prior.
+
+        Parameters
+        ----------
+        shape : float
+            Shape parameter of the distribution. Must be positive.
+        scale : float
+            Scale parameter of the distribution. Must be positive.
+        """
         if shape <= 0 or scale <= 0:
             raise ValueError("GammaPrior requires shape > 0 and scale > 0.")
         super().__init__(shape=float(shape), scale=float(scale))
@@ -929,29 +1117,46 @@ class BetaPrior(Prior):
 
     where :math:`\alpha > 0` and :math:`\beta > 0`.
 
-    Support
-    -------
+    .. rubric:: Support
+
     :math:`x \in [0,1]`
 
-    Interpretation
-    --------------
+    .. rubric:: Interpretation
+
     The Beta prior is highly flexible and can represent uniform, peaked,
     or boundary-favoring beliefs.
 
-    Typical uses
-    ------------
+    .. rubric:: Typical uses
+
     - Efficiencies
     - Fractions
     - Probabilities
 
-    Caveats
-    -------
+    .. rubric:: Caveats
+
     - Singular behavior at boundaries when :math:`\alpha < 1` or
       :math:`\beta < 1`
     - Must not be used outside the unit interval
+
+    Parameters
+    ----------
+    alpha : float
+        First shape parameter. Must be positive.
+    beta : float
+        Second shape parameter. Must be positive.
     """
 
     def __init__(self, alpha: float, beta: float):
+        """
+        Initialize the prior.
+
+        Parameters
+        ----------
+        alpha : float
+            First shape parameter. Must be positive.
+        beta : float
+            Second shape parameter. Must be positive.
+        """
         if alpha <= 0 or beta <= 0:
             raise ValueError("BetaPrior requires alpha > 0 and beta > 0.")
         super().__init__(alpha=float(alpha), beta=float(beta))

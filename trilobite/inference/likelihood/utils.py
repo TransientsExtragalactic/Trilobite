@@ -3,7 +3,6 @@ Utilities for working with Likelihood classes.
 
 These helpers provide deterministic reconstruction of likelihood
 objects using fully-qualified import paths of the form:
-
 """
 
 import importlib

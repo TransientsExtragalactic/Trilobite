@@ -29,20 +29,53 @@ class Pool(ABC, Generic[T, R]):
         - close()
 
     The interface is intentionally minimal and backend-agnostic.
+
+    Parameters
+    ----------
+    **_ : dict
+        Ignored keyword arguments, accepted so that subclasses can take pool-specific options.
     """
 
     # ------------------------------------------------------------------
     # Initialization
     # ------------------------------------------------------------------
-    def __init__(self, **_): ...
+    def __init__(self, **_):
+        """
+        Initialize the pool.
+
+        Parameters
+        ----------
+        **_ : dict
+            Ignored keyword arguments, accepted so that subclasses can take pool-specific options.
+        """
 
     # ------------------------------------------------------------------
     # Dunder Methods
     # ------------------------------------------------------------------
     def __enter__(self) -> "Pool":
+        """
+        Enter the pool's context.
+
+        Returns
+        -------
+        ~trilobite.parallel.base.Pool
+            The pool itself.
+        """
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
+        """
+        Leave the pool's context, terminating the workers if an exception was raised.
+
+        Parameters
+        ----------
+        exc_type : type or None
+            Type of the exception raised in the context, if any.
+        exc : BaseException or None
+            The exception raised in the context, if any.
+        tb : traceback or None
+            Traceback of the exception raised in the context, if any.
+        """
         if exc_type is not None:
             self.terminate()
         else:
@@ -75,6 +108,15 @@ class Pool(ABC, Generic[T, R]):
         Apply `func` to each element of `iterable`.
 
         Must return an iterable (preferably lazy).
+
+        Parameters
+        ----------
+        func : callable
+            Function applied to each element of ``iterable``.
+        iterable : ~collections.abc.Iterable
+            Elements to process.
+        callback : callable, optional
+            Optional callback executed after each result is computed.
         """
         ...
 
@@ -105,6 +147,20 @@ class Pool(ABC, Generic[T, R]):
         Split tasks into `self.size` contiguous batches and map over batches.
 
         The worker receives a list[T] (a batch).
+
+        Parameters
+        ----------
+        func : callable
+            Function applied to each batch, which is a list of tasks.
+        tasks : ~collections.abc.Collection
+            Tasks to process.
+        callback : callable, optional
+            Optional callback executed after each batch result is computed.
+
+        Returns
+        -------
+        ~collections.abc.Iterable
+            The results of mapping ``func`` over the batches.
         """
         if self.size <= 0:
             raise ValueError("Pool size must be >= 1.")
@@ -182,7 +238,7 @@ class SerialPool(Pool[T, R]):
     @property
     def size(self) -> int:
         """
-        Number of worker execution units.
+        int: Number of worker execution units.
 
         Always returns 1 for SerialPool.
         """
@@ -203,11 +259,11 @@ class SerialPool(Pool[T, R]):
 
         Parameters
         ----------
-        func
+        func : callable
             Function applied to each input element.
-        iterable
+        iterable : ~collections.abc.Iterable
             Tasks to process.
-        callback
+        callback : callable, optional
             Optional callback executed after each result is computed.
 
         Returns

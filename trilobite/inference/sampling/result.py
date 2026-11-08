@@ -106,6 +106,7 @@ class SamplingResult(ABC):
     # Initialization                                   #
     # ------------------------------------------------ #
     def __post_init__(self):
+        """Coerce the samples to an array."""
         self.samples = np.asarray(self.samples)
 
     # ------------------------------------------------ #
@@ -361,6 +362,7 @@ class MCMCSamplingResult(SamplingResult):
     # Initialization                                   #
     # ------------------------------------------------ #
     def __post_init__(self):
+        """Reshape the samples to ``(n_steps, n_walkers, n_dim)`` and reset the autocorrelation cache."""
         super().__post_init__()
 
         if self.samples.ndim == 2:
@@ -517,15 +519,17 @@ class MCMCSamplingResult(SamplingResult):
         This uses :func:`emcee.autocorr.integrated_time` to estimate the
         autocorrelation time :math:`\tau` for each parameter dimension.
 
+        Parameters
+        ----------
+        cache : bool, optional
+            Whether to cache the computed autocorrelation time for future reference.
+        **kwargs : dict
+            Additional keyword arguments passed to :func:`emcee.autocorr.integrated_time`.
+
         Returns
         -------
         numpy.ndarray
-            Array of shape ``(n_dim,)`` containing the estimated autocorrelation
-            time for each parameter.
-        cache : bool, optional
-            Whether to cache the computed autocorrelation time for future reference.
-        **kwargs:
-            Additional keyword arguments to pass to :func:`emcee.autocorr.integrated_time`.
+            Array of shape ``(n_dim,)`` with the estimated autocorrelation time of each parameter.
 
         Notes
         -----
@@ -553,15 +557,17 @@ class MCMCSamplingResult(SamplingResult):
         where :math:`N` is the total number of MCMC samples and :math:`\tau`
         is the integrated autocorrelation time.
 
+        Parameters
+        ----------
+        use_cache : bool, optional
+            Whether to use the cached autocorrelation time if available.
+        **kwargs : dict
+            Additional keyword arguments passed to :meth:`compute_autocorr_time`.
+
         Returns
         -------
         numpy.ndarray
-            Array of shape ``(n_dim,)`` containing the effective sample size
-            for each parameter.
-        use_cache : bool, optional
-            Whether to use the cached autocorrelation time if available.
-        **kwargs:
-            Additional keyword arguments to pass to :meth:`compute_autocorr_time`
+            Array of shape ``(n_dim,)`` with the effective sample size of each parameter.
         """
         if use_cache:
             if self._autocorr_time_cache is not None:
@@ -782,7 +788,8 @@ class MCMCSamplingResult(SamplingResult):
         physical : bool, optional
             If ``True`` (default), plot the parameter in physical space (inverse transform applied). If ``False``,
             plot the raw sampling-space chain, which is the space the sampler explored.
-        **kwargs: Additional keyword arguments passed to the plotting function.
+        **kwargs : dict
+            Additional keyword arguments passed to the plotting function.
 
         Returns
         -------

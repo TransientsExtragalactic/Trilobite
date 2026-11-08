@@ -46,8 +46,7 @@ The viscous timescale is set by an alpha-disk prescription:
 The thermodynamics of the disk (temperature, pressure, opacity) are
 determined through a *closure relation*, which depends on the chosen model.
 
-Physical assumptions
---------------------
+.. rubric:: Physical assumptions
 
 - The disk is geometrically thin or moderately thick, but vertically integrated.
 - Radial structure is not resolved; instead, a characteristic radius is used.
@@ -62,8 +61,7 @@ This framework is especially useful for:
 - Transient accretion episodes
 - Situations where global disk evolution is more important than detailed structure
 
-Model classes
--------------
+.. rubric:: Model classes
 
 :class:`~.core.GasPressureDisk`
     Gas-pressure-dominated disk (:math:`P = P_{\rm gas}`) with analytic or
@@ -83,8 +81,7 @@ All models accept:
   :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` instance
 - ``fallback``: whether to include a mass fallback source term
 
-Submodules
-----------
+.. rubric:: Submodules
 
 closure
     C-level interface defining the closure contract, including structs and

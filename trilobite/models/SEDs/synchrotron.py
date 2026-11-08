@@ -250,7 +250,6 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1106,7 +1105,6 @@ class Cooling_SynchrotronSEDModel(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1543,7 +1541,6 @@ class SynchrotronSEDModel(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 

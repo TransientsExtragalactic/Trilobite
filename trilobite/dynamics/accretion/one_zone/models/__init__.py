@@ -5,8 +5,7 @@ Each module here defines a concrete :class:`~trilobite.dynamics.accretion.one_zo
 that combines an EOS, the standard alpha-disk viscous derivative, and a writer
 into a self-contained closure ready for the integrator.
 
-Closures
---------
+.. rubric:: Closures
 
 _gP
     Defines :func:`~._gP.gP_closure_func` — the gas-pressure iterative

@@ -121,7 +121,7 @@ class NonRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        I_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame specific intensity in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.
         """
@@ -208,7 +208,7 @@ class NonRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame spectral flux density in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
         """
@@ -282,7 +282,7 @@ class NonRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        T_B : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame brightness temperature in Kelvin.
         """
         slab_depth, _ = self._spherical_geometry(R, f_V, 1.0)
@@ -351,7 +351,7 @@ class NonRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        L_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame spectral luminosity density in
             :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
         """
@@ -422,7 +422,7 @@ class NonRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        L_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame spectral luminosity density in
             :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
         """
@@ -508,7 +508,7 @@ class NonRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        L_iso : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Isotropic-equivalent spectral luminosity in
             :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
         """
@@ -631,7 +631,7 @@ class UltraRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        I_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame specific intensity in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.
         """
@@ -718,7 +718,7 @@ class UltraRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame spectral flux density in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
         """
@@ -794,7 +794,7 @@ class UltraRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        T_B : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame brightness temperature in Kelvin.
         """
         slab_depth, _, beta = self._ultra_rel_geometry(R, Gamma, f_V, 1.0)
@@ -865,7 +865,7 @@ class UltraRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        L_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame spectral luminosity density in
             :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
         """
@@ -938,7 +938,7 @@ class UltraRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        L_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame spectral luminosity density in
             :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
         """
@@ -1026,7 +1026,7 @@ class UltraRelativisticSphericalSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        L_iso : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Isotropic-equivalent spectral luminosity in
             :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
         """

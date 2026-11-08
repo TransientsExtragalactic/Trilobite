@@ -609,7 +609,6 @@ class BrokenPowerLaw(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -793,7 +792,6 @@ class SmoothedBrokenPowerLaw(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -970,7 +968,6 @@ class TripleBrokenPowerLaw(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1111,7 +1108,6 @@ class SmoothedTripleBrokenPowerLaw(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 

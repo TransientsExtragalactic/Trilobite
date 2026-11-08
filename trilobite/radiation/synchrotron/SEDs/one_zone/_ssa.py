@@ -496,7 +496,7 @@ def compute_ssa_frequencies_without_cooling(
         Natural logarithm of the injection frequency :math:`\nu_m`.
     log_gamma_m : float
         Natural logarithm of the minimum electron Lorentz factor.
-    p: float
+    p : float
         Electron power-law index.
 
     Returns

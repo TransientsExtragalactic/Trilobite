@@ -427,7 +427,7 @@ def compute_gyrofrequency(
 
     Returns
     -------
-    nu_g : astropy.units.Quantity
+    astropy.units.Quantity
         Synchrotron gyrofrequency in Hz.
 
     Notes
@@ -470,12 +470,12 @@ def compute_nu_critical(
 
     B : float, ~numpy.ndarray, or astropy.units.Quantity
         Magnetic field strength. Default units are Gauss.
-    alpha: float
+    alpha : float
         Pitch angle in radians. Default is ``pi/2``.
 
     Returns
     -------
-    nu_critical : astropy.units.Quantity
+    astropy.units.Quantity
         Synchrotron critical frequency in Hz.
 
     Notes
@@ -533,7 +533,7 @@ def compute_synchrotron_frequency(
 
     Returns
     -------
-    nu_synch : astropy.units.Quantity
+    astropy.units.Quantity
         Synchrotron characteristic frequency in Hz.
 
     Notes
@@ -601,7 +601,7 @@ def compute_synchrotron_gamma(
 
     Returns
     -------
-    gamma : astropy.units.Quantity
+    astropy.units.Quantity
         Electron Lorentz factor (dimensionless).
 
     Notes
@@ -656,7 +656,7 @@ def compute_single_electron_power(
 
     Returns
     -------
-    P_nu : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         Power per unit frequency in :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
 
     Notes
@@ -942,7 +942,7 @@ def compute_first_synchrotron_kernel(
 
     Returns
     -------
-    F : float or ~numpy.ndarray
+    float or ~numpy.ndarray
         :math:`F(x)` at each input point.
 
     Notes
@@ -994,7 +994,7 @@ def compute_averaged_first_synchrotron_kernel(
 
     Returns
     -------
-    F_avg : float or ~numpy.ndarray
+    float or ~numpy.ndarray
         :math:`\bar{F}(x)` at each input point.
 
     Notes

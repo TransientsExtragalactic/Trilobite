@@ -40,7 +40,8 @@ class GreyOpacityLaw(OpacityLaw):
 
     See Also
     --------
-    ~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity : Concrete constant-opacity implementation.
+    :obj:`~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity` :
+        Concrete constant-opacity implementation.
     trilobite.radiation.opacity.opacity_base.C_GreyOpacityBase : C-level companion.
     """
 
@@ -141,7 +142,13 @@ class GreyOpacityLaw(OpacityLaw):
             Mass density.
         T : `~astropy.units.Quantity`
             Temperature.
-        nu : any, optional
+        nu : object, optional
+            Ignored; accepted for compatibility with frequency-dependent opacity laws.
+
+        Returns
+        -------
+        float or ~numpy.ndarray
+            The logarithmic derivative :math:`\partial\ln\kappa/\partial\ln \rho` (dimensionless).
         """
         log_T = np.log(ensure_in_units(T, u.K))
         log_rho = np.log(ensure_in_units(rho, u.g / u.cm**3))
@@ -156,14 +163,36 @@ class GreyOpacityLaw(OpacityLaw):
             Mass density.
         T : `~astropy.units.Quantity`
             Temperature.
-        nu : any, optional
+        nu : object, optional
+            Ignored; accepted for compatibility with frequency-dependent opacity laws.
+
+        Returns
+        -------
+        float or ~numpy.ndarray
+            The logarithmic derivative :math:`\partial\ln\kappa/\partial\ln T` (dimensionless).
         """
         log_T = np.log(ensure_in_units(T, u.K))
         log_rho = np.log(ensure_in_units(rho, u.g / u.cm**3))
         return self._dlogkappa_dlogT(log_T, log_rho)
 
     def dlogkappa_dlognu(self, rho: u.Quantity, T: u.Quantity, nu) -> float:
-        r"""Return :math:`\partial\ln\kappa/\partial\ln\nu` = 0 (grey law)."""
+        r"""
+        Return :math:`\partial\ln\kappa/\partial\ln\nu` = 0 (grey law).
+
+        Parameters
+        ----------
+        rho : `~astropy.units.Quantity`
+            Mass density.
+        T : `~astropy.units.Quantity`
+            Temperature.
+        nu : object, optional
+            Ignored; accepted for compatibility with frequency-dependent opacity laws.
+
+        Returns
+        -------
+        float
+            Zero, since a grey opacity law does not depend on frequency.
+        """
         return 0.0
 
 
@@ -208,6 +237,19 @@ class ConstantGreyOpacity(GreyOpacityLaw):
         *,
         mean_type: Optional[str] = None,
     ) -> None:
+        r"""
+        Initialize the constant opacity law.
+
+        Parameters
+        ----------
+        kappa : float or `~astropy.units.Quantity`
+            Opacity value. A plain float is interpreted as :math:`\mathrm{cm^2\,g^{-1}}`. An
+            :class:`~astropy.units.Quantity` is converted to :math:`\mathrm{cm^2\,g^{-1}}` on construction.
+        mean_type : str or None, optional
+            Averaging prescription (e.g. ``"rosseland"`` or ``"planck"``). ``None`` (default) leaves the type
+            unspecified, which is appropriate when the opacity is used in a context that doesn't require a specific
+            mean type.
+        """
         if isinstance(kappa, u.Quantity):
             kappa_cgs = ensure_in_units(kappa, u.cm**2 / u.g)
         else:
@@ -220,7 +262,7 @@ class ConstantGreyOpacity(GreyOpacityLaw):
 
     @property
     def kappa(self) -> u.Quantity:
-        r"""Opacity value as a :class:`~astropy.units.Quantity` in :math:`\mathrm{cm^2\,g^{-1}}`."""
+        r"""~astropy.units.Quantity: Opacity value in :math:`\mathrm{cm^2\,g^{-1}}`."""
         return float(np.exp(self._log_kappa)) * u.cm**2 / u.g
 
     def _log_opacity(self, log_T, log_rho):

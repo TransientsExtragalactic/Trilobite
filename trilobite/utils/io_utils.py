@@ -128,6 +128,21 @@ class AstropyQuantityHandler(_YAMLHandler):
 
     @staticmethod
     def to_yaml(representer, obj: u.Quantity):
+        """
+        Represent a Quantity as a YAML mapping of its value and unit.
+
+        Parameters
+        ----------
+        representer : ruamel.yaml.representer.BaseRepresenter
+            YAML representer used to emit the node.
+        obj : ~astropy.units.Quantity
+            The quantity to serialize.
+
+        Returns
+        -------
+        ruamel.yaml.nodes.MappingNode
+            The YAML mapping node representing the object.
+        """
         value = obj.value
         if hasattr(value, "tolist"):
             value = value.tolist()
@@ -142,6 +157,21 @@ class AstropyQuantityHandler(_YAMLHandler):
 
     @staticmethod
     def from_yaml(loader, node):
+        """
+        Reconstruct a Quantity from a YAML mapping of its value and unit.
+
+        Parameters
+        ----------
+        loader : ruamel.yaml.constructor.BaseConstructor
+            YAML constructor used to build the mapping.
+        node : ruamel.yaml.nodes.MappingNode
+            The YAML mapping node to convert.
+
+        Returns
+        -------
+        ~astropy.units.Quantity
+            The reconstructed quantity.
+        """
         data = CommentedMap()
         loader.construct_mapping(node, maptyp=data, deep=True)
 
@@ -165,6 +195,21 @@ class AstropyCosmologyHandler(_YAMLHandler):
 
     @staticmethod
     def to_yaml(representer, obj: FLRW):
+        """
+        Represent a named cosmology as a YAML mapping holding its name.
+
+        Parameters
+        ----------
+        representer : ruamel.yaml.representer.BaseRepresenter
+            YAML representer used to emit the node.
+        obj : ~astropy.cosmology.FLRW
+            The cosmology to serialize. It must be named.
+
+        Returns
+        -------
+        ruamel.yaml.nodes.MappingNode
+            The YAML mapping node representing the object.
+        """
         # Require that cosmology has a name
         if obj.name is None:
             raise ValueError("Only named cosmologies can be serialized. Custom cosmologies are not supported.")
@@ -176,6 +221,21 @@ class AstropyCosmologyHandler(_YAMLHandler):
 
     @staticmethod
     def from_yaml(loader, node):
+        """
+        Reconstruct a cosmology from its name using the Astropy cosmology registry.
+
+        Parameters
+        ----------
+        loader : ruamel.yaml.constructor.BaseConstructor
+            YAML constructor used to build the mapping.
+        node : ruamel.yaml.nodes.MappingNode
+            The YAML mapping node to convert.
+
+        Returns
+        -------
+        ~astropy.cosmology.FLRW
+            The cosmology registered under the stored name.
+        """
         from astropy import cosmology
 
         data = CommentedMap()
@@ -197,6 +257,21 @@ class NumpyArrayHandler(_YAMLHandler):
 
     @staticmethod
     def to_yaml(representer, obj: np.ndarray):
+        """
+        Represent an array as a YAML mapping of its dtype, shape and data.
+
+        Parameters
+        ----------
+        representer : ruamel.yaml.representer.BaseRepresenter
+            YAML representer used to emit the node.
+        obj : ~numpy.ndarray
+            The array to serialize.
+
+        Returns
+        -------
+        ruamel.yaml.nodes.MappingNode
+            The YAML mapping node representing the object.
+        """
         # We store both dtype and shape to ensure safe reconstruction
         return representer.represent_mapping(
             NumpyArrayHandler.__tag__, {"dtype": str(obj.dtype), "shape": obj.shape, "data": obj.tolist()}
@@ -204,6 +279,21 @@ class NumpyArrayHandler(_YAMLHandler):
 
     @staticmethod
     def from_yaml(loader, node):
+        """
+        Reconstruct an array from a YAML mapping of its dtype, shape and data.
+
+        Parameters
+        ----------
+        loader : ruamel.yaml.constructor.BaseConstructor
+            YAML constructor used to build the mapping.
+        node : ruamel.yaml.nodes.MappingNode
+            The YAML mapping node to convert.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            The reconstructed array.
+        """
         data = CommentedMap()
         loader.construct_mapping(node, maptyp=data, deep=True)
 
@@ -231,6 +321,21 @@ class PathHandler(_YAMLHandler):
 
     @staticmethod
     def to_yaml(representer, obj: Path):
+        """
+        Represent a path as a YAML mapping of its parts.
+
+        Parameters
+        ----------
+        representer : ruamel.yaml.representer.BaseRepresenter
+            YAML representer used to emit the node.
+        obj : ~pathlib.Path
+            The path to serialize.
+
+        Returns
+        -------
+        ruamel.yaml.nodes.MappingNode
+            The YAML mapping node representing the object.
+        """
         data = {"absolute": obj.is_absolute(), "parts": list(obj.parts)}
         if obj.drive:
             data["drive"] = obj.drive
@@ -238,6 +343,21 @@ class PathHandler(_YAMLHandler):
 
     @staticmethod
     def from_yaml(loader, node):
+        """
+        Reconstruct a path from a YAML mapping of its parts.
+
+        Parameters
+        ----------
+        loader : ruamel.yaml.constructor.BaseConstructor
+            YAML constructor used to build the mapping.
+        node : ruamel.yaml.nodes.MappingNode
+            The YAML mapping node to convert.
+
+        Returns
+        -------
+        ~pathlib.Path
+            The reconstructed path.
+        """
         data = CommentedMap()
         loader.construct_mapping(node, maptyp=data, deep=True)
         parts = data.get("parts", [])

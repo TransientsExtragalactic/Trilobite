@@ -121,8 +121,8 @@ class ConstantVelocityProfile(VelocityProfile):
 
     a constant velocity independent of radius and time.
 
-    Parameters
-    ----------
+    .. rubric:: Parameters
+
     v_0 : float or ~astropy.units.Quantity
         Constant velocity. Bare values are interpreted as cm/s.
 

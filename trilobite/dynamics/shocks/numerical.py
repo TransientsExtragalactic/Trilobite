@@ -28,15 +28,13 @@ trilobite.dynamics.shocks.core.shock_engine.ShockEngine
     Base class for shock engines.
 scipy.integrate.solve_ivp
     ODE integrator used by the numerical engines.
-
-See Also
---------
-:ref:`numerical_shocks_overview`: walkthrough of the available numerical engines and when to use each closure.
-
-:ref:`numeric_shocks_theory`: derivation of the governing ODE systems for the thin-shell, pressure-driven,
+:ref:`numerical_shocks_overview`
+    Walkthrough of the available numerical engines and when to use each closure.
+:ref:`numeric_shocks_theory`
+    Derivation of the governing ODE systems for the thin-shell, pressure-driven,
     and mechanical closures.
-
-:ref:`shock_engines`: overview of the shock engine interface shared by all engines.
+:ref:`shock_engines`
+    Overview of the shock engine interface shared by all engines.
 """
 
 from abc import ABC
@@ -124,6 +122,22 @@ class MomentumConservingShockEngine(ShockEngine):
     Post-shock pressure is neglected and shell acceleration is driven purely by the
     momentum flux deposited by swept-up material from both sides.
 
+    Parameters
+    ----------
+    mu : float, optional
+        Mean molecular weight in units of the proton mass, used for the post-shock temperature. Default is ``0.5``
+        (fully ionized hydrogen).
+    **kwargs : dict
+        Passed to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
+
+    See Also
+    --------
+    :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine` :
+        More accurate closure that includes post-shock pressure in the shell acceleration.
+    :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine` :
+        Most complete closure that evolves separate internal energies for each shocked layer.
+    :ref:`conservative_snowplow_model` : Theory derivation.
+
     Notes
     -----
     The engine integrates the 3-component state vector
@@ -169,19 +183,22 @@ class MomentumConservingShockEngine(ShockEngine):
 
         For a detailed derivation of the governing ODE system, see
         :ref:`conservative_snowplow_model`.
-
-    See Also
-    --------
-    :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine` :
-        More accurate closure that includes post-shock pressure in the shell acceleration.
-    :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine` :
-        Most complete closure that evolves separate internal energies for each shocked layer.
-    :ref:`conservative_snowplow_model` : Theory derivation.
     """
 
     _STATE_CLASS = MomentumConservingShockState
 
     def __init__(self, mu: float = 0.5, **kwargs):
+        """
+        Initialize the engine.
+
+        Parameters
+        ----------
+        mu : float, optional
+            Mean molecular weight in units of the proton mass, used for the post-shock temperature. Default is ``0.5``
+            (fully ionized hydrogen).
+        **kwargs : dict
+            Passed to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
+        """
         super().__init__(**kwargs)
         self._mu = float(mu)
 
@@ -613,6 +630,21 @@ class PressureDrivenThinShellShockEngine(ShockEngine):
         For a detailed description of the theory behind this engine, see
         :ref:`pressure_driven_thin_shell_model`.
 
+    Parameters
+    ----------
+    mu : float, optional
+        Mean molecular weight in units of the proton mass, used for the post-shock temperature. Default is ``0.5``
+        (fully ionized hydrogen).
+    **kwargs : dict
+        Passed to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
+
+    See Also
+    --------
+    :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine` :
+        More complete closure that evolves separate internal energies for each
+        shocked layer.
+    :ref:`pressure_driven_thin_shell_model` : Theory derivation.
+
     Notes
     -----
     The engine integrates the 3-component state vector
@@ -642,13 +674,6 @@ class PressureDrivenThinShellShockEngine(ShockEngine):
     ejecta--shell velocity lag and
     :math:`\chi = (\hat{\gamma}+1)/(\hat{\gamma}-1)` is the strong-shock
     compression ratio.
-
-    See Also
-    --------
-    :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine` :
-        More complete closure that evolves separate internal energies for each
-        shocked layer.
-    :ref:`pressure_driven_thin_shell_model` : Theory derivation.
     """
 
     _STATE_CLASS = ThinShellShockState
@@ -663,7 +688,7 @@ class PressureDrivenThinShellShockEngine(ShockEngine):
             Mean molecular weight in units of the proton mass used for the
             post-shock temperature calculation. Default is ``0.5`` (fully
             ionized hydrogen).
-        kwargs
+        **kwargs : dict
             Passed to :class:`~trilobite.dynamics.shocks.shock_engine.ShockEngine`.
         """
         super().__init__(**kwargs)
@@ -998,6 +1023,25 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
 
         For a detailed derivation see :ref:`relativistic_pressure_driven_shells`.
 
+    Parameters
+    ----------
+    gamma_1 : float, optional
+        Adiabatic index of the shocked ejecta (region 1). Default is ``4/3``.
+    gamma_4 : float, optional
+        Adiabatic index of the shocked CSM (region 4). Default is ``4/3``.
+    beta_grid : ~numpy.ndarray, optional
+        Grid of shock velocities :math:`\beta = v/c` on which the shock solutions are precomputed. It must lie in
+        ``[0, 1]`` and be strictly ascending. If ``None``, it is built from ``beta_grid_min``, ``beta_grid_max`` and
+        ``beta_grid_size``.
+    beta_grid_min : float, optional
+        Lower bound of the generated ``beta`` grid. Default is ``1e-10``.
+    beta_grid_max : float, optional
+        Upper bound of the generated ``beta`` grid. Default is ``1 - 1e-10``.
+    beta_grid_size : int, optional
+        Number of points of the generated ``beta`` grid. Default is ``1000``.
+    **kwargs : dict
+        Passed to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
+
     See Also
     --------
     :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine` :
@@ -1017,12 +1061,26 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
         beta_grid_size: int = 1000,
         **kwargs,
     ):
-        """
+        r"""
         Initialize the :class:`RelPressureDrivenThinShellShockEngine`.
 
         Parameters
         ----------
-        kwargs
+        gamma_1 : float, optional
+            Adiabatic index of the shocked ejecta (region 1). Default is ``4/3``.
+        gamma_4 : float, optional
+            Adiabatic index of the shocked CSM (region 4). Default is ``4/3``.
+        beta_grid : ~numpy.ndarray, optional
+            Grid of shock velocities :math:`\beta = v/c` on which the shock solutions are precomputed. It must lie in
+            ``[0, 1]`` and be strictly ascending. If ``None``, it is built from ``beta_grid_min``, ``beta_grid_max``
+            and ``beta_grid_size``.
+        beta_grid_min : float, optional
+            Lower bound of the generated ``beta`` grid. Default is ``1e-10``.
+        beta_grid_max : float, optional
+            Upper bound of the generated ``beta`` grid. Default is ``1 - 1e-10``.
+        beta_grid_size : int, optional
+            Number of points of the generated ``beta`` grid. Default is ``1000``.
+        **kwargs : dict
             Passed to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
         """
         # Pass off the kwargs and the adiabatic indices to the parent class. The gammas are stored as
@@ -1917,9 +1975,7 @@ class MechanicalShockEngine(ShockEngine):
               - Instantaneous Rankine--Hugoniot downstream thermal energy density immediately behind the
                 forward shock. Reported as ``NaN`` when the forward shock is inactive.
 
-
     .. rubric:: Model Equations
-
 
     The engine integrates the 8-component state vector
 
@@ -2081,6 +2137,21 @@ class MechanicalShockEngine(ShockEngine):
         For a more detailed description of the theory behind this engine, see
         :ref:`mechanical_internal_energy_model`.
 
+    Parameters
+    ----------
+    mu_2 : float, optional
+        Mean molecular weight in units of the proton mass for the shocked ejecta (Region 2), used for the
+        reverse-shock post-shock temperature. Default is ``0.5`` (fully ionized hydrogen).
+    mu_3 : float, optional
+        Mean molecular weight in units of the proton mass for the shocked CSM (Region 3), used for the forward-shock
+        post-shock temperature. Default is ``0.5`` (fully ionized hydrogen).
+    gamma_2 : float, optional
+        Adiabatic index of the shocked ejecta (Region 2). Default ``5/3`` (non-relativistic monatomic ideal gas).
+    gamma_3 : float, optional
+        Adiabatic index of the shocked CSM (Region 3). Default ``5/3``.
+    **kwargs : dict
+        Passed to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
+
     See Also
     --------
     :ref:`mechanical_internal_energy_model`
@@ -2134,7 +2205,7 @@ class MechanicalShockEngine(ShockEngine):
             (non-relativistic monatomic ideal gas).
         gamma_3 : float, optional
             Adiabatic index of the shocked CSM (Region 3).  Default ``5/3``.
-        kwargs
+        **kwargs : dict
             Passed to the base :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
         """
         super().__init__(**kwargs)

@@ -50,8 +50,8 @@ effective optical depth
     \qquad
     \tau_T = \sigma_T \int_{r_{\rm min}}^{r_{\rm max}} n_e(r')\, dr'
 
-Module structure
-----------------
+.. rubric:: Module structure
+
 * **Private backend** (``_compute_RJ_*``): all inputs are in **natural logarithm
   CGS form** (except callables and flags).
 * **Public API** (``compute_ff_RJ_*``): unit-aware wrappers.
@@ -524,8 +524,8 @@ def compute_ff_RJ_optical_depth_from_quadrature(
     r : float or `~astropy.units.Quantity`
         Inner integration radius.  Bare floats assumed to be in **cm**.
     n_e : callable
-        Electron number density ``n_e(r_cgs) -> float`` [cm\ :sup:`-3`].
-        **No unit conversion inside the integrand.**
+        Electron number density ``n_e(r_cgs) -> float`` [cm\ :sup:`-3`]. No unit conversion is applied inside the
+        integrand.
     n_i : callable
         Ion number density ``n_i(r_cgs) -> float`` [cm\ :sup:`-3`].
     temperature : callable
@@ -546,8 +546,13 @@ def compute_ff_RJ_optical_depth_from_quadrature(
 
     Returns
     -------
-    tau : ~numpy.ndarray
+    ~numpy.ndarray
         Optical depths (or :math:`\tau_{\rm eff}`), one entry per frequency.
+
+    See Also
+    --------
+    compute_ff_RJ_optical_depth_from_arrays : Trapezoidal variant.
+    compute_ff_RJ_optical_depth_wind : Analytic wind-profile variant.
 
     Notes
     -----
@@ -573,11 +578,6 @@ def compute_ff_RJ_optical_depth_from_quadrature(
             temperature=lambda r: 1e4,
             r_max=1e17 * u.cm,
         )
-
-    See Also
-    --------
-    compute_ff_RJ_optical_depth_from_arrays : Trapezoidal variant.
-    compute_ff_RJ_optical_depth_wind : Analytic wind-profile variant.
     """
     nu_cgs = np.atleast_1d(np.asarray(ensure_in_units(frequency, u.Hz), dtype=float))
     r_cgs = float(ensure_in_units(r, u.cm))
@@ -638,8 +638,13 @@ def compute_ff_RJ_optical_depth_from_arrays(
 
     Returns
     -------
-    tau : ~numpy.ndarray
+    ~numpy.ndarray
         Optical depths, shape ``(n_\nu,)``.
+
+    See Also
+    --------
+    compute_ff_RJ_optical_depth_from_quadrature : Quadrature variant.
+    compute_ff_RJ_optical_depth_wind : Analytic alternative.
 
     Examples
     --------
@@ -666,11 +671,6 @@ def compute_ff_RJ_optical_depth_from_arrays(
             n_i=n_e_arr,
             temperature=1e4 * u.K,
         )
-
-    See Also
-    --------
-    compute_ff_RJ_optical_depth_from_quadrature : Quadrature variant.
-    compute_ff_RJ_optical_depth_wind : Analytic alternative.
     """
     nu_cgs = np.atleast_1d(np.asarray(ensure_in_units(frequency, u.Hz), dtype=float))
     r_cgs = np.asarray(ensure_in_units(r, u.cm), dtype=float)
@@ -741,8 +741,13 @@ def compute_ff_RJ_optical_depth_wind(
 
     Returns
     -------
-    tau : ~numpy.ndarray
+    ~numpy.ndarray
         Optical depths, one entry per frequency.
+
+    See Also
+    --------
+    compute_ff_RJ_optical_depth_powerlaw : General power-law density profile.
+    compute_ff_RJ_optical_depth_from_quadrature : Arbitrary-profile variant.
 
     Examples
     --------
@@ -763,11 +768,6 @@ def compute_ff_RJ_optical_depth_wind(
             n_i_0=1e4 / u.cm**3,
             temperature=1e4 * u.K,
         )
-
-    See Also
-    --------
-    compute_ff_RJ_optical_depth_powerlaw : General power-law density profile.
-    compute_ff_RJ_optical_depth_from_quadrature : Arbitrary-profile variant.
     """
     nu_cgs = np.atleast_1d(np.asarray(ensure_in_units(frequency, u.Hz), dtype=float))
     r_min_cgs = float(ensure_in_units(r_min, u.cm))
@@ -857,8 +857,13 @@ def compute_ff_RJ_optical_depth_wind_Mdot(
 
     Returns
     -------
-    tau : ~numpy.ndarray
+    ~numpy.ndarray
         Optical depths, one entry per frequency.
+
+    See Also
+    --------
+    compute_ff_RJ_optical_depth_wind : Same geometry parameterised by :math:`n_{e,0}`, :math:`n_{i,0}`.
+    compute_ff_RJ_optical_depth_powerlaw : General power-law density profile.
 
     Examples
     --------
@@ -877,11 +882,6 @@ def compute_ff_RJ_optical_depth_wind_Mdot(
             v_w=1e3 * u.km / u.s,
             r_min=1e15 * u.cm,
         )
-
-    See Also
-    --------
-    compute_ff_RJ_optical_depth_wind : Same geometry parameterised by :math:`n_{e,0}`, :math:`n_{i,0}`.
-    compute_ff_RJ_optical_depth_powerlaw : General power-law density profile.
     """
     nu_cgs = np.atleast_1d(np.asarray(ensure_in_units(frequency, u.Hz), dtype=float))
     Mdot_cgs = float(ensure_in_units(Mdot, u.g / u.s))
@@ -957,8 +957,13 @@ def compute_ff_RJ_optical_depth_shell(
 
     Returns
     -------
-    tau : ~numpy.ndarray
+    ~numpy.ndarray
         Optical depths, one entry per frequency.
+
+    See Also
+    --------
+    compute_ff_RJ_optical_depth_wind : Wind (r\ :sup:`-2`) variant.
+    compute_ff_RJ_optical_depth_powerlaw : General power-law variant.
 
     Examples
     --------
@@ -979,11 +984,6 @@ def compute_ff_RJ_optical_depth_shell(
             r_max=2e15 * u.cm,
             temperature=1e4 * u.K,
         )
-
-    See Also
-    --------
-    compute_ff_RJ_optical_depth_wind : Wind (r\ :sup:`-2`) variant.
-    compute_ff_RJ_optical_depth_powerlaw : General power-law variant.
     """
     nu_cgs = np.atleast_1d(np.asarray(ensure_in_units(frequency, u.Hz), dtype=float))
     r_min_cgs = float(ensure_in_units(r_min, u.cm))
@@ -1067,8 +1067,13 @@ def compute_ff_RJ_optical_depth_powerlaw(
 
     Returns
     -------
-    tau : ~numpy.ndarray
+    ~numpy.ndarray
         Optical depths, one entry per frequency.
+
+    See Also
+    --------
+    compute_ff_RJ_optical_depth_wind : Optimised :math:`p = 2` variant.
+    compute_ff_RJ_optical_depth_shell : Uniform-density (:math:`p = 0`) variant.
 
     Examples
     --------
@@ -1087,11 +1092,6 @@ def compute_ff_RJ_optical_depth_powerlaw(
             n_e_0=1e4 / u.cm**3, n_i_0=1e4 / u.cm**3,
             p=2.0, temperature=1e4 * u.K,
         )
-
-    See Also
-    --------
-    compute_ff_RJ_optical_depth_wind : Optimised :math:`p = 2` variant.
-    compute_ff_RJ_optical_depth_shell : Uniform-density (:math:`p = 0`) variant.
     """
     nu_cgs = np.atleast_1d(np.asarray(ensure_in_units(frequency, u.Hz), dtype=float))
     r_min_cgs = float(ensure_in_units(r_min, u.cm))
@@ -1160,8 +1160,13 @@ def compute_ff_RJ_optical_depth_EM(
 
     Returns
     -------
-    tau : ~numpy.ndarray
+    ~numpy.ndarray
         Dimensionless optical depths, one entry per frequency.
+
+    See Also
+    --------
+    compute_ff_RJ_optical_depth_wind : Analytic wind profile.
+    compute_ff_RJ_optical_depth_from_arrays : Integrates over a discrete profile.
 
     Examples
     --------
@@ -1179,11 +1184,6 @@ def compute_ff_RJ_optical_depth_EM(
             EM=1e24 * u.cm**-5,
             temperature=1e4 * u.K,
         )
-
-    See Also
-    --------
-    compute_ff_RJ_optical_depth_wind : Analytic wind profile.
-    compute_ff_RJ_optical_depth_from_arrays : Integrates over a discrete profile.
     """
     nu_cgs = np.atleast_1d(np.asarray(ensure_in_units(frequency, u.Hz), dtype=float))
     EM_cgs = float(ensure_in_units(EM, u.cm**-5))

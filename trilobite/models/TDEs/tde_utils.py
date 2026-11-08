@@ -148,7 +148,7 @@ def compute_mdot_peak_guillochon13(
 
     Returns
     -------
-    mdot_peak : astropy.units.Quantity
+    astropy.units.Quantity
         Peak mass fallback rate in :math:`M_\odot\,\mathrm{yr}^{-1}`.
 
     Notes
@@ -205,7 +205,7 @@ def compute_t_peak_guillochon13(
 
     Returns
     -------
-    t_peak : astropy.units.Quantity
+    astropy.units.Quantity
         Time to peak fallback rate in years.
 
     Notes
@@ -256,7 +256,7 @@ def compute_delta_M_guillochon13(
 
     Returns
     -------
-    delta_M : astropy.units.Quantity
+    astropy.units.Quantity
         Total accreted mass in :math:`M_\odot`.
 
     Notes
@@ -299,7 +299,7 @@ def compute_n_index_guillochon13(
 
     Returns
     -------
-    n : float or ndarray
+    float or ndarray
         Dimensionless power-law index of the late-time fallback rate.
 
     Notes

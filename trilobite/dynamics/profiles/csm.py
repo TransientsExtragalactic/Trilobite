@@ -26,7 +26,6 @@ profiles simply ignore the time argument internally.
 Bare numerical inputs are interpreted as CGS values. Unit-bearing inputs are
 converted once in the validation layer before optimized numerical evaluation.
 
-
 .. rubric:: Module Design
 
 Profiles are implemented as **stateless, classmethod-based evaluators**. Physical
@@ -105,17 +104,17 @@ class CSMDensityProfile(_DynamicalProfile):
     ``_opt_eval``
         Evaluate the density using already-processed unit-free inputs.
 
-    Notes
-    -----
-    This class assumes the two-argument signature ``(r, t)`` for compatibility
-    with shock-engine source terms. Stationary profiles (see
-    :class:`StationaryCSMDensityProfile`) may ignore ``t`` internally.
-
     See Also
     --------
     StationaryCSMDensityProfile : ABC for time-independent CSM profiles.
     WindCSMProfile : Steady wind-like CSM.
     UniformCSMProfile : Uniform CSM density.
+
+    Notes
+    -----
+    This class assumes the two-argument signature ``(r, t)`` for compatibility
+    with shock-engine source terms. Stationary profiles (see
+    :class:`StationaryCSMDensityProfile`) may ignore ``t`` internally.
     """
 
     OUTPUT_UNITS = u.g / u.cm**3
@@ -319,7 +318,7 @@ class WindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        A : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.
 
         Raises
@@ -372,7 +371,7 @@ class WindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        A_star : float
+        float
             Dimensionless wind-density parameter.
         """
         A = cls.normalize(
@@ -398,7 +397,7 @@ class WindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        A : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.
 
         Raises
@@ -473,7 +472,7 @@ class WindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        mass_loss_rate : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Progenitor mass-loss rate in :math:`\mathrm{g\,s^{-1}}`.
         """
         A = ensure_in_units(A, u.g / u.cm)
@@ -521,7 +520,7 @@ class WindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        mass : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Enclosed CSM mass in grams.
         """
         params = cls._validate_and_process_parameters(
@@ -573,7 +572,7 @@ class WindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        mass : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Shell mass in grams.
 
         Raises
@@ -629,7 +628,7 @@ class WindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        column : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Column density in :math:`\mathrm{g\,cm^{-2}}`.
         """
         params = cls._validate_and_process_parameters(
@@ -1264,7 +1263,7 @@ class TruncatedWindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        A : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.
         """
         return WindCSMProfile.normalize(mass_loss_rate, wind_velocity)
@@ -1407,7 +1406,7 @@ class WindWithFloorCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        A : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.
         """
         return WindCSMProfile.normalize(mass_loss_rate, wind_velocity)
@@ -1576,7 +1575,7 @@ class SmoothTruncatedWindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        A : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.
         """
         return WindCSMProfile.normalize(mass_loss_rate, wind_velocity)
@@ -2132,7 +2131,7 @@ class FiniteWindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        A : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.
         """
         return WindCSMProfile.normalize(mass_loss_rate, wind_velocity)
@@ -2358,7 +2357,7 @@ class WindBubbleCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        A : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.
         """
         return WindCSMProfile.normalize(mass_loss_rate, wind_velocity)
@@ -2705,6 +2704,12 @@ class TwoWindCSMProfile(StationaryCSMDensityProfile):
        ax.legend()
        plt.tight_layout()
 
+    See Also
+    --------
+    WindCSMProfile : Single steady-wind CSM profile.
+    SmoothTruncatedWindCSMProfile : Smooth transition from a wind to a floor.
+    SmoothBPLCSMProfile : Smooth transition between two power-law slopes.
+
     Notes
     -----
     The density is asymptotically wind-like on both sides of the transition:
@@ -2721,12 +2726,6 @@ class TwoWindCSMProfile(StationaryCSMDensityProfile):
 
     Inside the transition region, the effective local slope differs from
     :math:`-2` because :math:`A(r)` varies with radius.
-
-    See Also
-    --------
-    WindCSMProfile : Single steady-wind CSM profile.
-    SmoothTruncatedWindCSMProfile : Smooth transition from a wind to a floor.
-    SmoothBPLCSMProfile : Smooth transition between two power-law slopes.
     """
 
     @classmethod
@@ -2747,7 +2746,7 @@ class TwoWindCSMProfile(StationaryCSMDensityProfile):
 
         Returns
         -------
-        A : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Wind-density normalization in :math:`\mathrm{g\,cm^{-1}}`.
         """
         return WindCSMProfile.normalize(mass_loss_rate, wind_velocity)
@@ -2758,7 +2757,23 @@ class TwoWindCSMProfile(StationaryCSMDensityProfile):
         mass_loss_rate: "_UnitBearingScalarLike",
         wind_velocity: "_UnitBearingScalarLike",
     ) -> float:
-        r"""Compute the dimensionless wind-density parameter :math:`A_*`."""
+        r"""
+        Compute the dimensionless wind-density parameter :math:`A_*`.
+
+        Parameters
+        ----------
+        mass_loss_rate : float or ~astropy.units.Quantity
+            Progenitor mass-loss rate. Unit-bearing inputs are converted to :math:`\mathrm{g\,s^{-1}}`; bare values
+            are interpreted as :math:`\mathrm{g\,s^{-1}}`.
+        wind_velocity : float or ~astropy.units.Quantity
+            Wind velocity. Unit-bearing inputs are converted to :math:`\mathrm{cm\,s^{-1}}`; bare values are
+            interpreted as :math:`\mathrm{cm\,s^{-1}}`.
+
+        Returns
+        -------
+        float
+            The dimensionless wind-density parameter :math:`A_*`.
+        """
         return WindCSMProfile.normalize_A_star(mass_loss_rate, wind_velocity)
 
     @classmethod
@@ -2766,7 +2781,19 @@ class TwoWindCSMProfile(StationaryCSMDensityProfile):
         cls,
         A_star: float,
     ) -> u.Quantity:
-        r"""Compute :math:`A` from the dimensionless wind-density parameter."""
+        r"""
+        Compute :math:`A` from the dimensionless wind-density parameter.
+
+        Parameters
+        ----------
+        A_star : float
+            Dimensionless wind-density parameter, defined by :math:`A = 5\times10^{11}A_*\ {\rm g\,cm^{-1}}`.
+
+        Returns
+        -------
+        ~astropy.units.Quantity
+            The wind normalization :math:`A`, in g/cm.
+        """
         return WindCSMProfile.normalize_from_A_star(A_star)
 
     @classmethod
@@ -3097,6 +3124,11 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
        ax.legend()
        plt.tight_layout()
 
+    See Also
+    --------
+    PowerLawCSMProfile : Spherical single power law.
+    BrokenPowerLawCSMProfile : Spherical broken power law.
+
     Notes
     -----
     - The density is symmetric under :math:`\theta \to \pi - \theta` and :math:`\theta \to -\theta`.
@@ -3108,11 +3140,6 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
     References
     ----------
     .. footbibliography::
-
-    See Also
-    --------
-    PowerLawCSMProfile : Spherical single power law.
-    BrokenPowerLawCSMProfile : Spherical broken power law.
     """
 
     # ------------------------------------------------------------------ #
@@ -3306,6 +3333,16 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
         every call, and scalar radii are evaluated with plain scalar arithmetic. ODE right-hand sides call the
         density at a single radius thousands of times, where the array machinery dominates the cost. Array radii take
         the usual vectorized path.
+
+        Parameters
+        ----------
+        **parameters : dict
+            Profile parameters, as accepted by :meth:`eval`.
+
+        Returns
+        -------
+        callable
+            A function of ``(r, t)`` returning the unit-free density.
         """
         p = cls._validate_and_process_parameters(**parameters)
 

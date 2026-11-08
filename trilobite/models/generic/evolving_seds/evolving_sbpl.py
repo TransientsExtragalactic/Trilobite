@@ -404,7 +404,6 @@ class PL_Evolving_SBPL_Model(EvolvingSEDModel):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 

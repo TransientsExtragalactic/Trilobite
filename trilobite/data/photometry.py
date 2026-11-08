@@ -50,8 +50,8 @@ class RadioPhotometryContainer(DataContainer):
     (upper limits), optional epoch grouping, and safe conversion to NumPy arrays
     for numerical backends.
 
-    Key features
-    ------------
+    .. rubric:: Key features
+
     - **Schema enforcement**
         Input tables are validated against a predefined schema specifying required
         and optional columns, expected dtypes, and physical units. Missing or
@@ -83,8 +83,8 @@ class RadioPhotometryContainer(DataContainer):
         (via :meth:`to_cgs_array`), for use in likelihoods, samplers, or compiled
         backends.
 
-    Intended use
-    ------------
+    .. rubric:: Intended use
+
     This class is intended to represent **observed radio photometry**, not model
     predictions or simulated data. It deliberately avoids embedding any source-
     specific physical interpretation (e.g., supernovae, jets, or shocks), and
@@ -96,6 +96,18 @@ class RadioPhotometryContainer(DataContainer):
     - Grouping observations into epochs for joint modeling
     - Passing data to likelihood functions or samplers
     - Quick-look visualization of multi-frequency light curves
+
+    Parameters
+    ----------
+    table : ~astropy.table.Table
+        The photometry table. It must conform to the container schema.
+
+    See Also
+    --------
+    astropy.table.Table
+        Underlying data structure used for storage.
+    trilobite.inference.likelihood
+        Likelihood implementations that consume this container.
 
     Notes
     -----
@@ -113,13 +125,6 @@ class RadioPhotometryContainer(DataContainer):
     to convert absolute times (e.g. JD) to relative times. This ensures that all internal handling
     of time is consistent and relative, which is important for modeling and inference. If the input table
     already contains relative times, the user can simply omit the `time_starts` parameter.
-
-    See Also
-    --------
-    astropy.table.Table
-        Underlying data structure used for storage.
-    trilobite.inference.likelihood
-        Likelihood implementations that consume this container.
     """
 
     # ========================= SCHEMA DEFINITION ========================= #
@@ -202,7 +207,7 @@ class RadioPhotometryContainer(DataContainer):
 
         Parameters
         ----------
-        table: astropy.table.Table
+        table : astropy.table.Table
             Input table containing radio photometry data. The input data must conform
             to the schema defined in ``COLUMNS``.
         """
@@ -263,122 +268,158 @@ class RadioPhotometryContainer(DataContainer):
     # These are core properties and basic task methods.
     @property
     def detection_table(self) -> Table:
-        """Return a table containing only detections."""
+        """~astropy.table.Table: Return a table containing only detections."""
         return self.__table__[self.__detection_mask__].copy()
 
     @property
     def non_detection_table(self) -> Table:
-        """Return a table containing only non-detections (upper limits)."""
+        """~astropy.table.Table: Return a table containing only non-detections (upper limits)."""
         return self.__table__[self.__non_detection_mask__].copy()
 
     @property
     def detection_mask(self) -> np.ndarray:
-        """Boolean mask selecting detections (i.e. non-upper-limits)."""
+        """~numpy.ndarray: Boolean mask selecting detections (i.e. non-upper-limits)."""
         return self.__detection_mask__
 
     @property
     def non_detection_mask(self) -> np.ndarray:
-        """Boolean mask selecting upper limits."""
+        """~numpy.ndarray: Boolean mask selecting upper limits."""
         return self.__non_detection_mask__
 
     @property
     def n_obs(self) -> int:
-        """Return the number of observations."""
+        """int: Return the number of observations."""
         return len(self.__table__)
 
     @property
     def has_epochs(self) -> bool:
-        """Return True if epochs have been defined."""
+        """bool: Return True if epochs have been defined."""
         return self.__epoch_ids__ is not None
 
     @property
     def epoch_ids(self) -> np.ndarray:
-        """Return a copy of the epoch IDs array."""
+        """~numpy.ndarray: Return a copy of the epoch IDs array."""
         if self.__epoch_ids__ is None:
             raise AttributeError("No epochs defined.")
         return self.__epoch_ids__.copy()
 
     @property
     def n_epochs(self) -> Optional[int]:
-        """Return the number of unique epochs, or None if epochs are not defined."""
+        """`int` or `None`: Return the number of unique epochs, or None if epochs are not defined."""
         if self.__epoch_ids__ is None:
             return None
         return int(len(np.unique(self.__epoch_ids__)))
 
     def get_epoch_mask(self, epoch: int) -> np.ndarray:
-        """Return a boolean mask selecting observations in the specified epoch."""
+        """
+        Return a boolean mask selecting observations in the specified epoch.
+
+        Parameters
+        ----------
+        epoch : int
+            Epoch identifier.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Boolean mask selecting the observations in ``epoch``.
+        """
         if self.__epoch_ids__ is None:
             raise AttributeError("No epochs defined.")
         return self.__epoch_ids__ == epoch
 
     def get_epoch_table(self, epoch: int) -> Table:
-        """Return a table containing only observations in the specified epoch."""
+        """
+        Return a table containing only observations in the specified epoch.
+
+        Parameters
+        ----------
+        epoch : int
+            Epoch identifier.
+
+        Returns
+        -------
+        ~astropy.table.Table
+            Table containing only the observations in ``epoch``.
+        """
         return self.__table__[self.get_epoch_mask(epoch)].copy()
 
     def get_epoch(self, epoch: int) -> "RadioPhotometryEpochContainer":
-        """Return a RadioPhotometryContainer for the specified epoch."""
+        """
+        Return a RadioPhotometryContainer for the specified epoch.
+
+        Parameters
+        ----------
+        epoch : int
+            Epoch identifier.
+
+        Returns
+        -------
+        ~trilobite.data.photometry.RadioPhotometryEpoch
+            Photometry container holding only the observations in ``epoch``.
+        """
         epoch_table = self.get_epoch_table(epoch)
         return RadioPhotometryEpochContainer(epoch_table)
 
     @property
     def n_detections(self) -> int:
-        """Return the number of detections."""
+        """int: Return the number of detections."""
         return int(self.__detection_mask__.sum())
 
     @property
     def n_non_detections(self) -> int:
-        """Return the number of non-detections (upper limits)."""
+        """int: Return the number of non-detections (upper limits)."""
         return int(self.__non_detection_mask__.sum())
 
     @property
     def time(self) -> u.Quantity:
-        """Return observation times as an Astropy Quantity array."""
+        """~astropy.units.Quantity: Return observation times as an Astropy Quantity array."""
         return self.__table__["time"].quantity
 
     @property
     def freq(self) -> u.Quantity:
-        """Return observation frequencies as an Astropy Quantity array."""
+        """~astropy.units.Quantity: Return observation frequencies as an Astropy Quantity array."""
         return self.__table__["freq"].quantity
 
     @property
     def flux_density(self) -> u.Quantity:
-        """Return flux densities as an Astropy Quantity array."""
+        """~astropy.units.Quantity: Return flux densities as an Astropy Quantity array."""
         return self.__table__["flux_density"].quantity
 
     @property
     def flux_density_error(self) -> u.Quantity:
-        """Return flux density errors as an Astropy Quantity array."""
+        """~astropy.units.Quantity: Return flux density errors as an Astropy Quantity array."""
         return self.__table__["flux_density_error"].quantity
 
     @property
     def flux_upper_limit(self) -> u.Quantity:
-        """Return flux upper limits as an Astropy Quantity array."""
+        """~astropy.units.Quantity: Return flux upper limits as an Astropy Quantity array."""
         return self.__table__["flux_upper_limit"].quantity
 
     @property
     def obs_name(self) -> np.ndarray:
-        """Return observation names."""
+        """~numpy.ndarray: Return observation names."""
         if "obs_name" not in self.__table__.colnames:
             raise AttributeError("Column 'obs_name' not found in the table.")
         return self.__table__["obs_name"].data
 
     @property
     def obs_time(self) -> u.Quantity:
-        """Return observation durations as an Astropy Quantity array."""
+        """~astropy.units.Quantity: Return observation durations as an Astropy Quantity array."""
         if "obs_time" not in self.__table__.colnames:
             raise AttributeError("Column 'obs_time' not found in the table.")
         return self.__table__["obs_time"].quantity
 
     @property
     def band(self) -> np.ndarray:
-        """Return observation band identifiers."""
+        """~numpy.ndarray: Return observation band identifiers."""
         if "band" not in self.__table__.colnames:
             raise AttributeError("Column 'band' not found in the table.")
         return self.__table__["band"].data
 
     @property
     def comments(self) -> np.ndarray:
-        """Return observation comments."""
+        """~numpy.ndarray: Return observation comments."""
         if "comments" not in self.__table__.colnames:
             raise AttributeError("Column 'comments' not found in the table.")
         return self.__table__["comments"].data
@@ -521,8 +562,8 @@ class RadioPhotometryContainer(DataContainer):
         supplied model and constructs a fully validated
         :class:`InferenceData` instance.
 
-        Default behavior
-        ----------------
+        .. rubric:: Default behavior
+
         If ``variables`` and/or ``observables`` are not provided, sensible
         defaults are inferred from the model's declared interface:
 
@@ -616,7 +657,7 @@ class RadioPhotometryContainer(DataContainer):
                 \sigma = \frac{F_{\rm upper}}{\text{detection_threshold}}.
 
             This parameter has no effect unless ``infer_errors=True``.
-        mask: np.ndarray, optional
+        mask : np.ndarray, optional
             Optional boolean mask to apply to the data before conversion. Only rows where
             the mask is True will be included in the resulting InferenceData. This allows
             users to easily subset the data (e.g. by epoch, frequency, or detection status
@@ -634,6 +675,13 @@ class RadioPhotometryContainer(DataContainer):
             If automatic mapping fails because the model declares unknown
             variables or multiple observables without explicit mapping.
 
+        See Also
+        --------
+        InferenceData.from_table
+            Lower-level constructor used internally.
+        trilobite.inference.likelihood
+            Likelihood classes that consume :class:`InferenceData`.
+
         Notes
         -----
         This method does not perform any statistical validation. It
@@ -643,13 +691,6 @@ class RadioPhotometryContainer(DataContainer):
         Advanced workflows may bypass this method and construct
         :class:`InferenceData` objects manually via
         :meth:`~trilobite.data.core.InferenceData.from_table` for full control.
-
-        See Also
-        --------
-        InferenceData.from_table
-            Lower-level constructor used internally.
-        trilobite.inference.likelihood
-            Likelihood classes that consume :class:`InferenceData`.
         """
         # ------------------------------------------------------------
         # Default variable mapping
@@ -884,7 +925,6 @@ class RadioPhotometryContainer(DataContainer):
                 internal_time_format="relative",
             )
 
-
         Case 2 — Absolute times in MJD
 
         .. code-block:: python
@@ -899,7 +939,6 @@ class RadioPhotometryContainer(DataContainer):
                 time_starts=t0,
             )
 
-
         Case 3 — Absolute times in JD
 
         .. code-block:: python
@@ -913,7 +952,6 @@ class RadioPhotometryContainer(DataContainer):
                 internal_time_format="jd",
                 time_starts=t0,
             )
-
 
         Case 4 — Relative times with offset
 
@@ -1043,11 +1081,10 @@ class RadioPhotometryContainer(DataContainer):
             - ``"relative"`` → time column already represents elapsed time.
             - Any valid Astropy time format (e.g., ``"mjd"``, ``"jd"``,
               ``"iso"``, ``"unix"``).
-
         internal_time_scale : str, default="utc"
             Astropy time scale to use when interpreting absolute times.
             Only used if ``internal_time_format != "relative"``.
-        **kwargs:
+        **kwargs : dict
             Additional keyword arguments to pass to `astropy.table.Table.read`.
 
         Returns
@@ -1072,7 +1109,7 @@ class RadioPhotometryContainer(DataContainer):
         ----------
         path : str or pathlib.Path
             The file path where the FITS file will be saved.
-        **kwargs:
+        **kwargs : dict
             Additional keyword arguments to pass to `astropy.table.Table.write`.
         """
         self.__table__.write(path, **kwargs)
@@ -1093,19 +1130,19 @@ class RadioPhotometryContainer(DataContainer):
 
         Parameters
         ----------
-        fig: matplotlib.figure.Figure, optional
+        fig : matplotlib.figure.Figure, optional
             Figure to plot on. If None, a new figure will be created.
-        axes: matplotlib.axes.Axes, optional
-            Axes to plot on. If None, axes will be created or retrieved from the figure
-        show_upper_limits: bool, optional
+        axes : matplotlib.axes.Axes, optional
+            Axes to plot on. If None, axes will be created or retrieved from the figure.
+        show_upper_limits : bool, optional
             Whether to show upper limits in the plot. Default is True.
-        color: str, optional
+        color : str, optional
             If provided, use this color for all points instead of a colormap.
-        cmap: str, optional
+        cmap : str, optional
             Colormap to use for coloring points by time. Ignored if `color` is provided.
-        show_colorbar: bool, optional
+        show_colorbar : bool, optional
             Whether to show a colorbar when using a colormap. Default is True.
-        kwargs:
+        **kwargs : dict
             Additional keyword arguments for customizing the plot appearance.
             Supported kwargs include:
 
@@ -1123,9 +1160,9 @@ class RadioPhotometryContainer(DataContainer):
 
         Returns
         -------
-        fig: matplotlib.figure.Figure
+        fig : matplotlib.figure.Figure
             The figure containing the plot.
-        axes: matplotlib.axes.Axes
+        axes : matplotlib.axes.Axes
             The axes containing the plot.
         """
         # Import matplotlib and our various plotting utilities.
@@ -1249,6 +1286,13 @@ class RadioPhotometryContainer(DataContainer):
             Matplotlib style kwargs for detections.
         upper_limit_style : dict, optional
             Matplotlib style kwargs for upper limits.
+
+        Returns
+        -------
+        fig : ~matplotlib.figure.Figure
+            The figure containing the plot.
+        axes : ~matplotlib.axes.Axes
+            The axes containing the plot.
         """
         import matplotlib.pyplot as plt
 
@@ -1314,8 +1358,8 @@ class RadioPhotometryEpoch(XYDataContainer):
     ``(x, y)`` interface with optional uncertainties and censoring while retaining
     domain-specific column semantics relevant to radio astronomy.
 
-    Key features
-    ------------
+    .. rubric:: Key features
+
     - **Frequency-domain data**:
       The independent variable is observing frequency (``freq``), exposed via
       the :attr:`x` and :attr:`frequency` properties.
@@ -1333,8 +1377,8 @@ class RadioPhotometryEpoch(XYDataContainer):
       The underlying data table cannot be modified in place. All accessors return
       copies to ensure reproducibility during inference.
 
-    Intended use
-    ------------
+    .. rubric:: Intended use
+
     This container is intended to be consumed by likelihood classes that compare
     model-predicted spectra to observed radio photometry, including:
 
@@ -1342,6 +1386,15 @@ class RadioPhotometryEpoch(XYDataContainer):
     - broadband spectral index estimation,
     - forward modeling of physical emission models,
     - inference with censored data (upper limits).
+
+    See Also
+    --------
+    XYDataContainer
+        Base class providing generic ``(x, y)`` data access and censoring logic.
+    RadioLightCurveContainer
+        Container for single-frequency, time-domain radio observations.
+    trilobite.inference.likelihood
+        Likelihood implementations that operate on photometry containers.
 
     Notes
     -----
@@ -1354,15 +1407,6 @@ class RadioPhotometryEpoch(XYDataContainer):
     - This class makes no assumptions about the statistical treatment of
       detections or upper limits; such logic is handled entirely by the
       corresponding likelihood.
-
-    See Also
-    --------
-    XYDataContainer
-        Base class providing generic ``(x, y)`` data access and censoring logic.
-    RadioLightCurveContainer
-        Container for single-frequency, time-domain radio observations.
-    trilobite.inference.likelihood
-        Likelihood implementations that operate on photometry containers.
     """
 
     # ========================= SCHEMA DEFINITION ========================= #
@@ -1427,59 +1471,59 @@ class RadioPhotometryEpoch(XYDataContainer):
     # ========================= METADATA ========================= #
     @property
     def freq(self) -> u.Quantity:
-        """Observing frequency of the light curve."""
+        """~astropy.units.Quantity: Observing frequency of the light curve."""
         return self.x
 
     # ========================= DATA ACCESS ========================= #
     @property
     def flux_density(self) -> u.Quantity:
-        """Flux density measurements."""
+        """~astropy.units.Quantity: Flux density measurements."""
         return self.table["flux_density"].quantity
 
     @property
     def flux_density_error(self) -> u.Quantity:
-        """Flux density uncertainties."""
+        """~astropy.units.Quantity: Flux density uncertainties."""
         return self.table["flux_density_error"].quantity
 
     @property
     def flux_upper_limit(self) -> u.Quantity:
-        """Flux density upper limits."""
+        """~astropy.units.Quantity: Flux density upper limits."""
         return self.table["flux_upper_limit"].quantity
 
     # ========================= DETECTION LOGIC ========================= #
     @property
     def detection_mask(self) -> np.ndarray:
-        """Boolean mask selecting detections."""
+        """~numpy.ndarray: Boolean mask selecting detections."""
         return ~self.y_lim_mask
 
     @property
     def non_detection_mask(self) -> np.ndarray:
-        """Boolean mask selecting upper limits."""
+        """~numpy.ndarray: Boolean mask selecting upper limits."""
         return self.y_lim_mask
 
     @property
     def n_detections(self) -> int:
-        """Return the number of detections."""
+        """int: Return the number of detections."""
         return int(self.detection_mask.sum())
 
     @property
     def n_non_detections(self) -> int:
-        """Return the number of non-detections (upper limits)."""
+        """int: Return the number of non-detections (upper limits)."""
         return int(self.non_detection_mask.sum())
 
     @property
     def detection_table(self) -> Table:
-        """Return a table containing only detections."""
+        """~astropy.table.Table: Return a table containing only detections."""
         return self.__table__[self.detection_mask].copy()
 
     @property
     def non_detection_table(self) -> Table:
-        """Return a table containing only non-detections (upper limits)."""
+        """~astropy.table.Table: Return a table containing only non-detections (upper limits)."""
         return self.__table__[self.non_detection_mask].copy()
 
     @property
     def n_obs(self) -> int:
-        """Number of observations."""
+        """int: Number of observations."""
         return len(self)
 
     # ========================= CONSTRUCTORS ========================= #
@@ -1490,7 +1534,21 @@ class RadioPhotometryEpoch(XYDataContainer):
         *,
         column_map: Optional[dict] = None,
     ):
-        """Construct a :class:`RadioPhotometryEpoch` from an Astropy table."""
+        """
+        Construct a :class:`RadioPhotometryEpoch` from an Astropy table.
+
+        Parameters
+        ----------
+        table : ~astropy.table.Table
+            The epoch's photometry table.
+        column_map : dict, optional
+            Mapping from existing column names to the schema's column names.
+
+        Returns
+        -------
+        ~trilobite.data.photometry.RadioPhotometryEpoch
+            The constructed epoch.
+        """
         if column_map is not None:
             table = table.copy()
             table.rename_columns(list(column_map.keys()), list(column_map.values()))
@@ -1503,7 +1561,21 @@ class RadioPhotometryEpoch(XYDataContainer):
         path: Union[str, Path],
         **kwargs,
     ):
-        """Construct a :class:`RadioPhotometryEpoch` from a file on disk."""
+        """
+        Construct a :class:`RadioPhotometryEpoch` from a file on disk.
+
+        Parameters
+        ----------
+        path : str or ~pathlib.Path
+            Path to the file to read.
+        **kwargs : dict
+            Additional keyword arguments passed to ``astropy.table.Table.read``.
+
+        Returns
+        -------
+        ~trilobite.data.photometry.RadioPhotometryEpoch
+            The constructed epoch.
+        """
         table = Table.read(path, **kwargs)
         return cls(
             table,
@@ -1547,7 +1619,8 @@ class RadioPhotometryEpoch(XYDataContainer):
 
         Returns
         -------
-        InferenceData
+        ~trilobite.data.core.InferenceData
+            The inference dataset built from this epoch.
         """
         # ------------------------------------------------------------
         # Default variable mapping
@@ -1656,6 +1729,13 @@ class RadioPhotometryEpoch(XYDataContainer):
             Matplotlib style kwargs for detections.
         upper_limit_style : dict, optional
             Matplotlib style kwargs for upper limits.
+
+        Returns
+        -------
+        fig : ~matplotlib.figure.Figure
+            The figure containing the plot.
+        axes : ~matplotlib.axes.Axes
+            The axes containing the plot.
         """
         import matplotlib.pyplot as plt
 
@@ -1707,9 +1787,28 @@ class RadioPhotometryEpoch(XYDataContainer):
 
 
 class RadioPhotometryEpochContainer(RadioPhotometryEpoch):
-    """Deprecated alias for :class:`RadioPhotometryEpoch`. Use that name instead."""
+    """
+    Deprecated alias for :class:`RadioPhotometryEpoch`. Use that name instead.
+
+    Parameters
+    ----------
+    *args : tuple
+        Positional arguments forwarded to :class:`RadioPhotometryEpoch`.
+    **kwargs : dict
+        Keyword arguments forwarded to :class:`RadioPhotometryEpoch`.
+    """
 
     def __init__(self, *args, **kwargs):
+        """
+        Initialize the deprecated alias, emitting a :class:`DeprecationWarning`.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional arguments forwarded to :class:`RadioPhotometryEpoch`.
+        **kwargs : dict
+            Keyword arguments forwarded to :class:`RadioPhotometryEpoch`.
+        """
         _warnings.warn(
             "RadioPhotometryEpochContainer is deprecated and will be removed in a future release. "
             "Use RadioPhotometryEpoch instead.",

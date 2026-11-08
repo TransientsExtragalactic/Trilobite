@@ -4,8 +4,8 @@ General relativistic utility functions for Trilobite models.
 Provides radius, spin, angular-momentum, and orbital precession quantities
 for Schwarzschild and Kerr black holes.
 
-Two-level API
--------------
+.. rubric:: Two-level API
+
 Private ``_log_compute_*`` / ``_precession_per_orbit_log`` functions take
 bare log-CGS floats and return ``ln(quantity)`` (or a dimensionless float
 for spin).  Public ``compute_*`` wrappers accept
@@ -31,15 +31,15 @@ for spin).  Public ``compute_*`` wrappers accept
 | :func:`_precession_per_orbit`         |     :func:`compute_precession_per_orbit`  |
 +---------------------------------------+-------------------------------------------+
 
+See Also
+--------
+:mod:`trilobite.physics_utils.constants` : CGS constants consumed internally.
+
 Notes
 -----
 All log-space functions operate in CGS units (:math:`\text{cm}`,
 :math:`\text{g}`, :math:`\text{s}`).  The Kerr ISCO formula follows
 Bardeen, Press & Teukolsky (1972).
-
-See Also
---------
-:mod:`trilobite.physics_utils.constants` : CGS constants consumed internally.
 """
 
 from typing import Optional

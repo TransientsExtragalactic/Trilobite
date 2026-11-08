@@ -54,8 +54,8 @@ different definitions of the mean opacity:
     opaque) frequencies and is relevant for energy exchange and cooling
     in optically thin regimes.
 
-Organization
-------------
+.. rubric:: Organization
+
 Opacity laws are grouped by their averaging prescription:
 
 - :mod:`.rosseland` — Rosseland mean opacity laws

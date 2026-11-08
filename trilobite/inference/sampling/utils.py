@@ -79,7 +79,7 @@ def compute_gelman_rubin_rhat(x: np.ndarray) -> np.ndarray:
 
     Parameters
     ----------
-    x: np.ndarray
+    x : np.ndarray
         Array of shape (n, m, dim) containing samples from m chains of length n.
 
     Returns
@@ -122,7 +122,6 @@ def compute_gelman_rubin_rhat(x: np.ndarray) -> np.ndarray:
     References
     ----------
     .. footbibliography::
-
     """
     # Extract the number of chains, samples and dimensions from
     # the provided array.

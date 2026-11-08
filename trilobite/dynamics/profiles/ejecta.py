@@ -346,7 +346,7 @@ class EjectaDensityProfile(_DynamicalProfile):
 
         Returns
         -------
-        G : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Kernel value in :math:`\mathrm{g\,s^3\,cm^{-3}}`.
         """
         v_cgs = np.asarray(ensure_in_units(v, u.cm / u.s))
@@ -371,7 +371,7 @@ class EjectaDensityProfile(_DynamicalProfile):
 
         Returns
         -------
-        G : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Kernel value in :math:`\mathrm{g\,s^3\,cm^{-3}}`.
         """
         return cls._opt_eval_kernel(np.asarray(v, dtype=float), **parameters)
@@ -418,8 +418,8 @@ class BrokenPowerLawEjectaProfile(EjectaDensityProfile):
     Setting ``v_max=np.inf`` recovers the standard untruncated Chevalier profile
     :footcite:p:`chevalierSelfsimilarSolutionsInteraction1982`.
 
-    Parameters
-    ----------
+    .. rubric:: Parameters
+
     K : float or ~astropy.units.Quantity
         Inner-branch kernel normalization in
         :math:`\mathrm{g\,cm^{\delta-3}\,s^{3-\delta}}`.
@@ -535,6 +535,16 @@ class BrokenPowerLawEjectaProfile(EjectaDensityProfile):
         but evaluates scalar ``(r, t)`` arguments with plain scalar arithmetic instead of building
         arrays. ODE right-hand sides call the density at a single point thousands of times, where the array
         machinery dominates the cost. Array arguments take the usual vectorized path.
+
+        Parameters
+        ----------
+        **parameters : dict
+            Profile parameters, as accepted by :meth:`eval`.
+
+        Returns
+        -------
+        callable
+            A function of ``(r, t)`` returning the unit-free density.
         """
         p = cls._validate_and_process_parameters(**parameters)
         K_inner, K_outer, v_t, n, delta, v_max = (p[k] for k in ("K_inner", "K_outer", "v_t", "n", "delta", "v_max"))
@@ -589,8 +599,8 @@ class ExponentialEjectaProfile(EjectaDensityProfile):
     Setting ``v_min=0`` and ``v_max=np.inf`` recovers the standard untruncated
     exponential profile.
 
-    Parameters
-    ----------
+    .. rubric:: Parameters
+
     K : float or ~astropy.units.Quantity
         Kernel normalization in :math:`\mathrm{g\,s^3\,cm^{-3}}`.
     v_e : float or ~astropy.units.Quantity

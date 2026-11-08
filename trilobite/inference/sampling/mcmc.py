@@ -33,6 +33,16 @@ class EmceeSampler(Sampler):
     by a given inference problem. It is designed to work seamlessly with the
     Trilobite inference framework, allowing users to easily integrate MCMC sampling
     into their analysis workflows.
+
+    Parameters
+    ----------
+    inference_problem : InferenceProblem
+        The inference problem to sample.
+    n_walkers : int
+        Number of walkers / chains to be generated.
+    ensemble_kwargs : dict, optional
+        Extra keyword arguments passed to `emcee.EnsembleSampler`. This can include multi-processing pools or other
+        advanced configurations.
     """
 
     # -------------------------------------- #

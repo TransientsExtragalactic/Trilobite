@@ -743,7 +743,7 @@ class Model(ABC):
 
         Returns
         -------
-        ModelSpec
+        ~trilobite.models.core.serial.ModelSpec
             The specification (importable target plus constructor kwargs) from which the model can be rebuilt.
 
         Raises
@@ -823,18 +823,19 @@ class Model(ABC):
 
         Parameters
         ----------
-        spec : ModelSpec
+        spec : ~trilobite.models.core.serial.ModelSpec
             The specification to build the model from. Its target must be importable.
 
         Returns
         -------
-        Model
+        ~trilobite.models.core.base.Model
             The constructed model, guaranteed to be an instance of ``cls``.
 
         Raises
         ------
         TypeError
-            If ``spec`` is not a :class:`ModelSpec`, or the constructed object is not an instance of ``cls``.
+            If ``spec`` is not a :class:`~trilobite.models.core.serial.ModelSpec`, or the constructed object is not
+            an instance of ``cls``.
         """
         if not isinstance(spec, ModelSpec):
             raise TypeError("Expected ModelSpec.")

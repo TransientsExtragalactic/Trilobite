@@ -729,7 +729,7 @@ class InhomogeneousCylinderSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        dF_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Per-ring flux density contributions in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`. Summing over the
             last axis gives the total :math:`F_\nu`.
@@ -899,7 +899,7 @@ class InhomogeneousCylinderSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame spectral flux density in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
         """
@@ -1524,7 +1524,7 @@ class InhomogeneousSphereSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        dF_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Per-ray flux density contributions in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`. Summing over
             the last axis gives the total :math:`F_\nu`.
@@ -1658,7 +1658,7 @@ class InhomogeneousSphereSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame spectral flux density in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
         """

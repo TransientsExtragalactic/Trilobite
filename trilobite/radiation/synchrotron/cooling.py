@@ -454,6 +454,18 @@ class SynchrotronCoolingEngine(ABC):
 
         Subclasses may override this method to perform unit coercion
         or validation before dispatching to the core implementation.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional arguments forwarded to the core implementation.
+        **kwargs : dict
+            Keyword arguments forwarded to the core implementation.
+
+        Returns
+        -------
+        float or ~numpy.ndarray
+            The radiative cooling rate.
         """
         return self._compute_cooling_rate(*args, **kwargs)
 
@@ -463,6 +475,18 @@ class SynchrotronCoolingEngine(ABC):
 
         Subclasses may override this method to perform unit coercion
         or validation before dispatching to the core implementation.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional arguments forwarded to the core implementation.
+        **kwargs : dict
+            Keyword arguments forwarded to the core implementation.
+
+        Returns
+        -------
+        float or ~numpy.ndarray
+            The radiative cooling time.
         """
         return self._compute_cooling_time(*args, **kwargs)
 
@@ -472,6 +496,18 @@ class SynchrotronCoolingEngine(ABC):
 
         Subclasses may override this method to perform unit coercion
         or validation before dispatching to the core implementation.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional arguments forwarded to the core implementation.
+        **kwargs : dict
+            Keyword arguments forwarded to the core implementation.
+
+        Returns
+        -------
+        float or ~numpy.ndarray
+            The cooling Lorentz factor.
         """
         return self._compute_cooling_gamma(*args, **kwargs)
 
@@ -481,6 +517,18 @@ class SynchrotronCoolingEngine(ABC):
 
         Subclasses may override this method to perform unit coercion,
         validation, or composition with other physical processes.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional arguments forwarded to the core implementation.
+        **kwargs : dict
+            Keyword arguments forwarded to the core implementation.
+
+        Returns
+        -------
+        float or ~numpy.ndarray
+            The characteristic synchrotron frequency.
         """
         return self._compute_characteristic_frequency(*args, **kwargs)
 
@@ -577,7 +625,7 @@ class SynchrotronRadiativeCoolingEngine(SynchrotronCoolingEngine):
 
         Returns
         -------
-        dEdt : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Synchrotron cooling rate in erg/s.
         """
         B = ensure_in_units(B, u.G)
@@ -608,7 +656,7 @@ class SynchrotronRadiativeCoolingEngine(SynchrotronCoolingEngine):
 
         Returns
         -------
-        t_cool : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Synchrotron cooling time in seconds.
         """
         B = ensure_in_units(B, u.G)
@@ -639,7 +687,7 @@ class SynchrotronRadiativeCoolingEngine(SynchrotronCoolingEngine):
 
         Returns
         -------
-        gamma_c : float or array-like
+        float or array-like
             Synchrotron cooling Lorentz factor.
         """
         B = ensure_in_units(B, u.G)
@@ -677,7 +725,7 @@ class SynchrotronRadiativeCoolingEngine(SynchrotronCoolingEngine):
 
         Returns
         -------
-        nu : astropy.units.Quantity
+        astropy.units.Quantity
             Synchrotron characteristic frequency in Hz.
         """
         B = ensure_in_units(B, u.G)
@@ -710,6 +758,13 @@ class InverseComptonCoolingEngine(SynchrotronCoolingEngine):
 
     See :ref:`synchrotron_theory` for discussion of radiative cooling
     processes and their role in shaping non-thermal electron populations.
+
+    Parameters
+    ----------
+    pitch_averaged : bool, optional
+        Whether to use the pitch-angle–averaged synchrotron characteristic frequency. If True (default), the mapping
+        uses .. math:: \langle \sin\alpha \rangle = \frac{2}{\pi} If False, a specific pitch angle must be supplied
+        via ``sin_alpha`` when computing the characteristic frequency.
     """
 
     # --------------------------------------------------------- #
@@ -885,7 +940,7 @@ class InverseComptonCoolingEngine(SynchrotronCoolingEngine):
 
         Returns
         -------
-        dEdt : astropy.units.Quantity
+        astropy.units.Quantity
             Inverse Compton cooling rate in erg/s.
         """
         L_bol = ensure_in_units(L_bol, u.erg / u.s)
@@ -923,7 +978,7 @@ class InverseComptonCoolingEngine(SynchrotronCoolingEngine):
 
         Returns
         -------
-        t_cool : astropy.units.Quantity
+        astropy.units.Quantity
             Inverse Compton cooling time in seconds.
         """
         L_bol = ensure_in_units(L_bol, u.erg / u.s)
@@ -962,7 +1017,7 @@ class InverseComptonCoolingEngine(SynchrotronCoolingEngine):
 
         Returns
         -------
-        gamma_IC : float or array-like
+        float or array-like
             Inverse Compton cooling Lorentz factor.
         """
         L_bol = ensure_in_units(L_bol, u.erg / u.s)
@@ -1013,7 +1068,7 @@ class InverseComptonCoolingEngine(SynchrotronCoolingEngine):
 
         Returns
         -------
-        nu : astropy.units.Quantity
+        astropy.units.Quantity
             Synchrotron characteristic frequency of IC-cooled electrons.
         """
         B = ensure_in_units(B, u.G)

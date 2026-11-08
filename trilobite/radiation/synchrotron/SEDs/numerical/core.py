@@ -153,6 +153,17 @@ class NumericalSynchrotronEngine:
     one-zone synchrotron calculations and more sophisticated multi-zone or
     structured outflow models.
 
+    See Also
+    --------
+    :mod:`trilobite.radiation.synchrotron.core`
+        Low-level synchrotron kernel implementations and asymptotic approximations.
+
+    :mod:`trilobite.radiation.synchrotron.SEDs.one_zone`
+        Analytic one-zone synchrotron SED models.
+
+    scipy.interpolate.InterpolatedUnivariateSpline
+        Spline interpolator used for synchrotron kernel tabulation.
+
     Notes
     -----
     All local radiative quantities are assumed to be defined in the comoving frame
@@ -172,17 +183,6 @@ class NumericalSynchrotronEngine:
     The engine itself is geometry-agnostic. Higher-level SED classes are responsible
     for specifying emitting areas, angular structure, viewing geometry, and
     multi-zone integration strategies.
-
-    See Also
-    --------
-    :mod:`trilobite.radiation.synchrotron.core`
-        Low-level synchrotron kernel implementations and asymptotic approximations.
-
-    :mod:`trilobite.radiation.synchrotron.SEDs.one_zone`
-        Analytic one-zone synchrotron SED models.
-
-    scipy.interpolate.InterpolatedUnivariateSpline
-        Spline interpolator used for synchrotron kernel tabulation.
 
     References
     ----------
@@ -265,16 +265,46 @@ class NumericalSynchrotronEngine:
         return int(self.is_first_kernel_loaded) + int(self.is_avg_first_kernel_loaded)
 
     def __enter__(self):
-        """Enter the numerical synchrotron engine context."""
+        """
+        Enter the numerical synchrotron engine context.
+
+        Returns
+        -------
+        ~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine
+            The engine itself.
+        """
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Exit the numerical synchrotron engine context and clear interpolator caches."""
+        """
+        Exit the numerical synchrotron engine context and clear interpolator caches.
+
+        Parameters
+        ----------
+        exc_type : type or None
+            Type of the exception raised in the context, if any.
+        exc_val : BaseException or None
+            The exception raised in the context, if any.
+        exc_tb : traceback or None
+            Traceback of the exception raised in the context, if any.
+
+        Returns
+        -------
+        bool
+            Always ``False``, so exceptions raised in the context are not suppressed.
+        """
         self.clear()
         return False
 
     def __copy__(self):
-        """Return a shallow copy of the synchrotron engine."""
+        """
+        Return a shallow copy of the synchrotron engine.
+
+        Returns
+        -------
+        ~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine
+            A shallow copy of the engine that shares the loaded kernel caches.
+        """
         cls = self.__class__
         new = cls.__new__(cls)
         new.__dict__.update(self.__dict__)
@@ -285,131 +315,131 @@ class NumericalSynchrotronEngine:
     # --- Properties --- #
     @property
     def is_first_kernel_loaded(self) -> bool:
-        """Whether the first synchrotron kernel interpolator is loaded."""
+        """bool: Whether the first synchrotron kernel interpolator is loaded."""
         return self._interp_first_kernel is not None
 
     @property
     def is_avg_first_kernel_loaded(self) -> bool:
-        """Whether the pitch-angle-averaged kernel interpolator is loaded."""
+        """bool: Whether the pitch-angle-averaged kernel interpolator is loaded."""
         return self._interp_avg_first_kernel is not None
 
     @property
     def log_first_kernel_grid(self) -> np.ndarray:
-        """Natural-log x-grid for the first synchrotron kernel."""
+        """~numpy.ndarray: Natural-log x-grid for the first synchrotron kernel."""
         self.ensure_first_kernel_loaded()
         return self._log_x_first_kernel
 
     @property
     def first_kernel_grid(self) -> np.ndarray:
-        """Linear x-grid for the first synchrotron kernel."""
+        """~numpy.ndarray: Linear x-grid for the first synchrotron kernel."""
         self.ensure_first_kernel_loaded()
         return np.exp(self._log_x_first_kernel)
 
     @property
     def log_first_kernel_values(self) -> np.ndarray:
-        """Natural-log values of the first synchrotron kernel."""
+        """~numpy.ndarray: Natural-log values of the first synchrotron kernel."""
         self.ensure_first_kernel_loaded()
         return self._log_first_kernel
 
     @property
     def first_kernel_values(self) -> np.ndarray:
-        """Linear values of the first synchrotron kernel."""
+        """~numpy.ndarray: Linear values of the first synchrotron kernel."""
         self.ensure_first_kernel_loaded()
         return np.exp(self._log_first_kernel)
 
     @property
     def log_first_kernel_derivative(self) -> np.ndarray:
-        """Logarithmic derivative of the first synchrotron kernel."""
+        """~numpy.ndarray: Logarithmic derivative of the first synchrotron kernel."""
         self.ensure_first_kernel_loaded()
         return self._log_dfirst_kernel_dlog_x
 
     @property
     def first_kernel_interpolator(self) -> InterpolatedUnivariateSpline:
-        """Spline interpolator for the first synchrotron kernel."""
+        """~scipy.interpolate.InterpolatedUnivariateSpline: Spline interpolator for the first synchrotron kernel."""
         self.ensure_first_kernel_loaded()
         return self._interp_first_kernel
 
     @property
     def first_kernel_derivative_interpolator(self) -> InterpolatedUnivariateSpline:
-        """Spline interpolator for the first kernel logarithmic derivative."""
+        """~scipy.interpolate.InterpolatedUnivariateSpline: Spline interpolator for the first kernel log-derivative."""
         self.ensure_first_kernel_loaded()
         return self._interp_dfirst_kernel_dlog_x
 
     @property
     def first_kernel_min_x(self) -> float:
-        """Minimum x-value tabulated for the first synchrotron kernel."""
+        """float: Minimum x-value tabulated for the first synchrotron kernel."""
         self.ensure_first_kernel_loaded()
         return float(np.exp(self._log_x_first_kernel[0]))
 
     @property
     def first_kernel_max_x(self) -> float:
-        """Maximum x-value tabulated for the first synchrotron kernel."""
+        """float: Maximum x-value tabulated for the first synchrotron kernel."""
         self.ensure_first_kernel_loaded()
         return float(np.exp(self._log_x_first_kernel[-1]))
 
     @property
     def first_kernel_size(self) -> int:
-        """Number of tabulated points in the first synchrotron kernel."""
+        """int: Number of tabulated points in the first synchrotron kernel."""
         self.ensure_first_kernel_loaded()
         return len(self._log_x_first_kernel)
 
     @property
     def log_avg_first_kernel_grid(self) -> np.ndarray:
-        """Natural-log x-grid for the averaged synchrotron kernel."""
+        """~numpy.ndarray: Natural-log x-grid for the averaged synchrotron kernel."""
         self.ensure_avg_first_kernel_loaded()
         return self._log_x_avg_first_kernel
 
     @property
     def avg_first_kernel_grid(self) -> np.ndarray:
-        """Linear x-grid for the averaged synchrotron kernel."""
+        """~numpy.ndarray: Linear x-grid for the averaged synchrotron kernel."""
         self.ensure_avg_first_kernel_loaded()
         return np.exp(self._log_x_avg_first_kernel)
 
     @property
     def log_avg_first_kernel_values(self) -> np.ndarray:
-        """Natural-log values of the averaged synchrotron kernel."""
+        """~numpy.ndarray: Natural-log values of the averaged synchrotron kernel."""
         self.ensure_avg_first_kernel_loaded()
         return self._log_avg_first_kernel
 
     @property
     def avg_first_kernel_values(self) -> np.ndarray:
-        """Linear values of the averaged synchrotron kernel."""
+        """~numpy.ndarray: Linear values of the averaged synchrotron kernel."""
         self.ensure_avg_first_kernel_loaded()
         return np.exp(self._log_avg_first_kernel)
 
     @property
     def log_avg_first_kernel_derivative(self) -> np.ndarray:
-        """Logarithmic derivative of the averaged synchrotron kernel."""
+        """~numpy.ndarray: Logarithmic derivative of the averaged synchrotron kernel."""
         self.ensure_avg_first_kernel_loaded()
         return self._log_davg_first_kernel_dlog_x
 
     @property
     def avg_first_kernel_interpolator(self) -> InterpolatedUnivariateSpline:
-        """Spline interpolator for the averaged synchrotron kernel."""
+        """~scipy.interpolate.InterpolatedUnivariateSpline: Spline interpolator for the averaged kernel."""
         self.ensure_avg_first_kernel_loaded()
         return self._interp_avg_first_kernel
 
     @property
     def avg_first_kernel_derivative_interpolator(self) -> InterpolatedUnivariateSpline:
-        """Spline interpolator for the averaged kernel logarithmic derivative."""
+        """~scipy.interpolate.InterpolatedUnivariateSpline: Spline for the averaged kernel log-derivative."""
         self.ensure_avg_first_kernel_loaded()
         return self._interp_davg_first_kernel_dlog_x
 
     @property
     def avg_first_kernel_min_x(self) -> float:
-        """Minimum x-value tabulated for the averaged synchrotron kernel."""
+        """float: Minimum x-value tabulated for the averaged synchrotron kernel."""
         self.ensure_avg_first_kernel_loaded()
         return float(np.exp(self._log_x_avg_first_kernel[0]))
 
     @property
     def avg_first_kernel_max_x(self) -> float:
-        """Maximum x-value tabulated for the averaged synchrotron kernel."""
+        """float: Maximum x-value tabulated for the averaged synchrotron kernel."""
         self.ensure_avg_first_kernel_loaded()
         return float(np.exp(self._log_x_avg_first_kernel[-1]))
 
     @property
     def avg_first_kernel_size(self) -> int:
-        """Number of tabulated points in the averaged synchrotron kernel."""
+        """int: Number of tabulated points in the averaged synchrotron kernel."""
         self.ensure_avg_first_kernel_loaded()
         return len(self._log_x_avg_first_kernel)
 
@@ -463,9 +493,8 @@ class NumericalSynchrotronEngine:
         method : {"exact", "lu"}, optional
             Kernel evaluation method passed to :func:`_log_first_synchrotron_kernel`.
             Default is ``"exact"``.
-        derivative : bool, optional
-            Whether to compute and cache the derivative of the kernel with respect to log(x).
-            Passed to :func:`_log_first_synchrotron_kernel`. Default is True.
+        **kwargs : dict
+            Additional keyword arguments passed to :class:`scipy.interpolate.InterpolatedUnivariateSpline`.
         """
         if x is not None:
             x_grid = np.asarray(x, dtype=float)
@@ -516,9 +545,8 @@ class NumericalSynchrotronEngine:
         method : {"exact", "lu"}, optional
             Kernel evaluation method passed to
             :func:`_log_averaged_first_synchrotron_kernel`. Default is ``"exact"``.
-        derivative : bool, optional
-            Whether to compute and cache the logarithmic derivative of the kernel.
-            Passed to :func:`_log_averaged_first_synchrotron_kernel`. Default is True.
+        **kwargs : dict
+            Additional keyword arguments passed to :class:`scipy.interpolate.InterpolatedUnivariateSpline`.
         """
         if x is not None:
             x_grid = np.asarray(x, dtype=float)
@@ -650,7 +678,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        F : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             :math:`F(x)` at each input point.
 
         Raises
@@ -712,7 +740,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        dlogF_dlogx : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Logarithmic derivative :math:`d\log F/d\log x`.
 
         Raises
@@ -763,7 +791,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        F_avg : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Pitch-angle-averaged synchrotron kernel :math:`\bar{F}(x)`.
 
         Raises
@@ -825,7 +853,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        dlogFavg_dlogx : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Logarithmic derivative :math:`d\log \bar{F}/d\log x`.
 
         Raises
@@ -2637,7 +2665,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        j_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame emissivity, in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-3}\,Hz^{-1}\,sr^{-1}}`.
         """
@@ -2714,7 +2742,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        alpha_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame absorption coefficient,
             in :math:`\mathrm{cm^{-1}}`.
         """
@@ -2791,7 +2819,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        S_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame source function, in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.
         """
@@ -2875,7 +2903,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        I_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame specific intensity,
             in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.
         """
@@ -2972,7 +3000,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        I_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame specific intensity,
             in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.
         """
@@ -3098,7 +3126,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame spectral flux density,
             in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
         """
@@ -3243,7 +3271,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        T_B : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame brightness temperature, shape
             ``(*nu_shape, *zone_shape)``, in Kelvin.
         """
@@ -3361,7 +3389,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        L_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame spectral luminosity density, shape
             ``(*nu_shape, *zone_shape)``, in :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
         """
@@ -3487,7 +3515,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        L_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame spectral luminosity density, shape
             ``(*nu_shape, *zone_shape)``, in :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
         """
@@ -3631,7 +3659,7 @@ class NumericalSynchrotronEngine:
 
         Returns
         -------
-        L_iso : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Isotropic-equivalent spectral luminosity, shape
             ``(*nu_shape, *zone_shape)``, in :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
         """

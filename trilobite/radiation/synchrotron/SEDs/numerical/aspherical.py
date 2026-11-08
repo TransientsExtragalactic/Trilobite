@@ -56,6 +56,18 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
     from outflows where physical properties vary with polar angle, such as structured jets or spherical outflows
     with angular gradients.
 
+    Parameters
+    ----------
+    n_theta : int, optional
+        Number of Gauss-Legendre polar-angle quadrature nodes. Default is ``10``.
+
+    See Also
+    --------
+    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine`
+        Base engine providing kernel tables, gamma grids, and single-zone radiative
+        transfer.
+    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine`
+        Extension to arbitrary observer viewing angles.
 
     Notes
     -----
@@ -98,14 +110,6 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
     The electron distribution :math:`N(\gamma)` is passed as a call-time argument of
     shape ``(n_theta, n_gamma)`` (or a callable returning that shape), consistent with
     the parent class interface.
-
-    See Also
-    --------
-    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine`
-        Base engine providing kernel tables, gamma grids, and single-zone radiative
-        transfer.
-    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine`
-        Extension to arbitrary observer viewing angles.
 
     References
     ----------
@@ -153,6 +157,11 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
             velocity, slab depth, filling factor, and electron distribution, but
             increase the cost of each spectral evaluation. Default is ``10``.
 
+        Raises
+        ------
+        ValueError
+            Recommended if ``n_theta`` is not a positive integer.
+
         Notes
         -----
         This constructor does not load synchrotron kernel interpolation tables.
@@ -172,11 +181,6 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
         - ``gl_weights``: Gauss-Legendre weights for :math:`\int_0^1 f(\xi)\,d\xi`.
         - ``quad_weights``: composite weights ``gl_weights * cos_theta`` for
           :math:`\int_0^1 f(\xi)\xi\,d\xi`.
-
-        Raises
-        ------
-        ValueError
-            Recommended if ``n_theta`` is not a positive integer.
         """
         # Pass off to the super-class constructor.
         super().__init__()
@@ -198,6 +202,14 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
     # Dunder Methods                             #
     # ------------------------------------------ #
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the engine.
+
+        Returns
+        -------
+        str
+            The class name with the quadrature sizes and kernel-loading flags.
+        """
         return (
             f"{self.__class__.__name__}("
             f"n_theta={self._n_theta}, "
@@ -206,6 +218,14 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
         )
 
     def __str__(self) -> str:
+        """
+        Return a readable summary of the engine.
+
+        Returns
+        -------
+        str
+            The class name with the quadrature sizes and the loaded kernels.
+        """
         kernels = []
         if self.is_first_kernel_loaded:
             kernels.append("first kernel")
@@ -219,28 +239,28 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
     # ------------------------------------------ #
     @property
     def n_theta(self) -> int:
-        """Number of Gauss-Legendre angular quadrature nodes."""
+        """int: Number of Gauss-Legendre angular quadrature nodes."""
         return self._n_theta
 
     @property
     def theta(self) -> np.ndarray:
-        """Polar-angle quadrature nodes [rad]."""
+        """~numpy.ndarray: Polar-angle quadrature nodes [rad]."""
         return self._theta.copy()
 
     @property
     def cos_theta(self) -> np.ndarray:
-        r"""Cosine of the quadrature nodes :math:`\xi \in [0, 1]`."""
+        r"""~numpy.ndarray: Cosine of the quadrature nodes :math:`\xi \in [0, 1]`."""
         return self._cos_theta.copy()
 
     @property
     def gl_weights(self) -> np.ndarray:
-        r"""Gauss-Legendre weights for :math:`\int_0^1 f(\xi)\,d\xi`."""
+        r"""~numpy.ndarray: Gauss-Legendre weights for :math:`\int_0^1 f(\xi)\,d\xi`."""
         return self._gl_weights.copy()
 
     @property
     def quad_weights(self) -> np.ndarray:
         r"""
-        Composite weights for :math:`\int_0^1 f(\xi)\,\xi\,d\xi`.
+        ~numpy.ndarray: Composite weights for :math:`\int_0^1 f(\xi)\,\xi\,d\xi`.
 
         Equal to ``gl_weights * cos_theta``.
         """
@@ -582,7 +602,7 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        j_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame synchrotron emissivity per sightline in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-3}\,Hz^{-1}\,sr^{-1}}`.
 
@@ -669,7 +689,7 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        alpha_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame synchrotron self-absorption coefficient per sightline in
             :math:`\mathrm{cm^{-1}}`.
 
@@ -772,7 +792,7 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        I_rf : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame specific intensity per sightline in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.
 
@@ -872,7 +892,7 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        I_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame specific intensity per sightline in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.
 
@@ -970,7 +990,7 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        T_B_rf : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame brightness temperature per sightline in Kelvin.
 
         Notes
@@ -1068,7 +1088,7 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        T_B : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame brightness temperature per sightline in Kelvin.
 
         Notes
@@ -1208,7 +1228,7 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        F_ring : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Quadrature-weighted flux-density contribution from each angular
             sightline in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
 
@@ -1347,7 +1367,7 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Angle-integrated observer-frame spectral flux density in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
 
@@ -1490,7 +1510,7 @@ class OnAxisAsymmetricSynchrotronEngine(NumericalSynchrotronEngine):
 
         Returns
         -------
-        L_iso : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Angle-integrated isotropic-equivalent spectral luminosity in
             :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
 
@@ -1536,6 +1556,21 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
     outflow symmetry axis. Physical properties (magnetic field, electron distribution,
     radius, shell thickness, filling factor, bulk velocity) vary only with the zone
     polar angle :math:`\theta_\mathrm{jet}`, not with azimuth :math:`\phi`.
+
+    Parameters
+    ----------
+    n_theta : int, optional
+        Number of Gauss-Legendre polar-angle quadrature nodes. Default is ``20``.
+    n_phi : int, optional
+        Number of Gauss-Legendre azimuthal quadrature nodes. Default is ``20``.
+
+    See Also
+    --------
+    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OnAxisAsymmetricSynchrotronEngine`
+        On-axis engine; provides the multi-sightline inner radiative-transfer loop
+        reused here.
+    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine`
+        Base engine providing kernel tables and gamma-grid utilities.
 
     Notes
     -----
@@ -1601,14 +1636,6 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
     :math:`\pi`, recovering the on-axis formula up to quadrature differences from
     the different GL node placement on :math:`[-1,1]` vs :math:`[0,1]`.
 
-    See Also
-    --------
-    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OnAxisAsymmetricSynchrotronEngine`
-        On-axis engine; provides the multi-sightline inner radiative-transfer loop
-        reused here.
-    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine`
-        Base engine providing kernel tables and gamma-grid utilities.
-
     References
     ----------
     .. footbibliography::
@@ -1671,6 +1698,14 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
     # ------------------------------------------ #
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the engine.
+
+        Returns
+        -------
+        str
+            The class name with the quadrature sizes and kernel-loading flags.
+        """
         return (
             f"{self.__class__.__name__}("
             f"n_theta={self._n_theta}, "
@@ -1680,6 +1715,14 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
         )
 
     def __str__(self) -> str:
+        """
+        Return a readable summary of the engine.
+
+        Returns
+        -------
+        str
+            The class name with the quadrature sizes and the loaded kernels.
+        """
         kernels = []
         if self.is_first_kernel_loaded:
             kernels.append("first kernel")
@@ -1694,36 +1737,37 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
 
     @property
     def n_phi(self) -> int:
-        """Number of Gauss--Legendre azimuthal quadrature nodes."""
+        """int: Number of Gauss--Legendre azimuthal quadrature nodes."""
         return self._n_phi
 
     @property
     def sin_theta(self) -> np.ndarray:
-        r"""Sine of the polar quadrature nodes."""
+        r"""~numpy.ndarray: Sine of the polar quadrature nodes."""
         return self._sin_theta.copy()
 
     @property
     def gl_weights_theta(self) -> np.ndarray:
-        r"""Gauss--Legendre weights for :math:`\int_{-1}^{1} f(\mu)\,d\mu`."""
+        r"""~numpy.ndarray: Gauss--Legendre weights for :math:`\int_{-1}^{1} f(\mu)\,d\mu`."""
         return self._gl_weights_theta.copy()
 
     @property
     def phi(self) -> np.ndarray:
-        r"""Azimuthal quadrature nodes :math:`\phi_j \in [0,\pi]` [rad]."""
+        r"""~numpy.ndarray: Azimuthal quadrature nodes :math:`\phi_j \in [0,\pi]` [rad]."""
         return self._phi.copy()
 
     @property
     def gl_weights_phi(self) -> np.ndarray:
-        r"""Gauss--Legendre weights for :math:`\int_0^\pi f(\phi)\,d\phi`."""
+        r"""~numpy.ndarray: Gauss--Legendre weights for :math:`\int_0^\pi f(\phi)\,d\phi`."""
         return self._gl_weights_phi.copy()
 
     @property
     def cos_phi(self) -> np.ndarray:
-        r"""Cosine of the azimuthal quadrature nodes."""
+        r"""~numpy.ndarray: Cosine of the azimuthal quadrature nodes."""
         return self._cos_phi.copy()
 
     @property
     def gl_weights(self):
+        """None: Not available for the off-axis engine; use :attr:`gl_weights_theta` instead."""
         raise AttributeError(
             f"{self.__class__.__name__} does not expose 'gl_weights'. "
             "Use 'gl_weights_theta' for the polar GL weights on [-1, 1]."
@@ -1731,6 +1775,7 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
 
     @property
     def quad_weights(self):
+        """None: Not available for this engine; use :attr:`gl_weights_theta` and :attr:`gl_weights_phi`."""
         raise AttributeError(
             f"{self.__class__.__name__} does not expose 'quad_weights'. "
             "Use 'gl_weights_theta' and 'gl_weights_phi' instead."
@@ -2041,7 +2086,7 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
 
         Returns
         -------
-        I_rf : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame specific intensity in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.
         """
@@ -2117,7 +2162,7 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
 
         Returns
         -------
-        I_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame specific intensity in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.
         """
@@ -2191,7 +2236,7 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
 
         Returns
         -------
-        T_B_rf : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Comoving-frame brightness temperature in Kelvin.
         """
         log_nu, log_B, log_N, log_shell, beta_arr, log_gamma, log_weights, sin_alpha = self._coerce_off_axis_inputs(
@@ -2265,7 +2310,7 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
 
         Returns
         -------
-        T_B : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Observer-frame brightness temperature in Kelvin.
         """
         log_nu, log_B, log_N, log_shell, beta_arr, log_gamma, log_weights, sin_alpha = self._coerce_off_axis_inputs(
@@ -2337,22 +2382,33 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
         theta_obs : float
             Observer polar angle [rad].
         angular_diameter_distance : ~astropy.units.Quantity or None, optional
+            Source angular diameter distance.
         luminosity_distance : ~astropy.units.Quantity or None, optional
+            Source luminosity distance. Exactly one of ``luminosity_distance``, ``angular_diameter_distance``,
+            ``proper_distance``, or a non-zero ``z`` must be provided.
         proper_distance : ~astropy.units.Quantity or None, optional
+            Source comoving line-of-sight distance.
         z : float, optional
             Default is ``0.0``.
         cosmology : ~astropy.cosmology.FLRW or None, optional
+            Cosmological model used to convert distances. Defaults to the Trilobite configuration cosmology.
         f_A : float or array-like, optional
             Default is ``1.0``.
-        gamma : array-like or None, optional
-        alpha : float, array-like, ~astropy.units.Quantity, or None, optional
+        gamma : ~numpy.ndarray or None, optional
+            Explicit Lorentz factor grid. If ``None``, it is built from ``gamma_min``, ``gamma_max`` and ``n_gamma``.
+        alpha : float, ~astropy.units.Quantity, or None, optional
+            Comoving-frame pitch angle. Bare values are interpreted as radians. If ``None``, the pitch-angle-averaged
+            kernel is used.
         gamma_min : float, optional
+            Lower bound of the Lorentz factor grid (ignored if ``gamma`` is provided). Default is ``1.0``.
         gamma_max : float, optional
+            Upper bound of the Lorentz factor grid (ignored if ``gamma`` is provided). Default is ``1e8``.
         n_gamma : int, optional
+            Number of Lorentz factor grid points (ignored if ``gamma`` is provided). Default is ``200``.
 
         Returns
         -------
-        F_zone : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Quadrature-weighted flux-density contribution per zone in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
         """
@@ -2443,22 +2499,33 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
         theta_obs : float
             Observer polar angle :math:`\theta_\mathrm{obs}` [rad].
         angular_diameter_distance : ~astropy.units.Quantity or None, optional
+            Source angular diameter distance.
         luminosity_distance : ~astropy.units.Quantity or None, optional
+            Source luminosity distance. Exactly one of ``luminosity_distance``, ``angular_diameter_distance``,
+            ``proper_distance``, or a non-zero ``z`` must be provided.
         proper_distance : ~astropy.units.Quantity or None, optional
+            Source comoving line-of-sight distance.
         z : float, optional
             Default is ``0.0``.
         cosmology : ~astropy.cosmology.FLRW or None, optional
+            Cosmological model used to convert distances. Defaults to the Trilobite configuration cosmology.
         f_A : float or array-like, optional
             Default is ``1.0``.
-        gamma : array-like or None, optional
-        alpha : float, array-like, ~astropy.units.Quantity, or None, optional
+        gamma : ~numpy.ndarray or None, optional
+            Explicit Lorentz factor grid. If ``None``, it is built from ``gamma_min``, ``gamma_max`` and ``n_gamma``.
+        alpha : float, ~astropy.units.Quantity, or None, optional
+            Comoving-frame pitch angle. Bare values are interpreted as radians. If ``None``, the pitch-angle-averaged
+            kernel is used.
         gamma_min : float, optional
+            Lower bound of the Lorentz factor grid (ignored if ``gamma`` is provided). Default is ``1.0``.
         gamma_max : float, optional
+            Upper bound of the Lorentz factor grid (ignored if ``gamma`` is provided). Default is ``1e8``.
         n_gamma : int, optional
+            Number of Lorentz factor grid points (ignored if ``gamma`` is provided). Default is ``200``.
 
         Returns
         -------
-        F_nu : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Angle-integrated observer-frame spectral flux density in
             :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
 
@@ -2574,7 +2641,7 @@ class OffAxisAsymmetricSynchrotronEngine(OnAxisAsymmetricSynchrotronEngine):
 
         Returns
         -------
-        L_iso : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Isotropic-equivalent spectral luminosity in
             :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
         """

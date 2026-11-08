@@ -47,8 +47,8 @@ class Likelihood(ABC):
     Those responsibilities belong to the data ingestion layer
     (e.g. :class:`~trilobite.data.core.DataContainer` → :class:`~trilobite.data.core.InferenceData`).
 
-    Architectural Role
-    ------------------
+    .. rubric:: Architectural Role
+
     The inference stack is intentionally layered:
 
     1. **DataContainer**
@@ -67,16 +67,16 @@ class Likelihood(ABC):
     The :class:`~trilobite.inference.likelihood.base.Likelihood` layer is therefore a **pure statistical engine**
     operating on already-validated numerical data.
 
-    Design Principles
-    -----------------
+    .. rubric:: Design Principles
+
     - The likelihood should contain *only statistical logic*.
     - All unit validation and shape checking must already be complete.
     - Model–data compatibility must be explicitly validated.
     - The likelihood evaluation itself must be stateless with respect
       to model parameters.
 
-    Extending Likelihood
-    --------------------
+    .. rubric:: Extending Likelihood
+
     Concrete likelihood implementations must implement:
 
     - :meth:`_configure`
@@ -90,14 +90,8 @@ class Likelihood(ABC):
     - Calling the appropriate numerical backend
     - Implementing the statistical form of the likelihood
 
-    Notes
-    -----
-    - This class makes no assumptions about priors or sampling strategies.
-    - Parameter coercion is delegated to the model.
-    - Data validation is delegated to :class:`InferenceData`.
+    .. rubric:: Nuisance Parameters
 
-    Nuisance Parameters
-    -------------------
     A likelihood may own parameters of its own, such as a free systematic error term, which are sampled
     alongside the model parameters but belong to the statistical description of the data rather than to the
     physics. They are declared in the class-level :attr:`NUISANCE_PARAMETERS` tuple, which mirrors
@@ -109,6 +103,23 @@ class Likelihood(ABC):
     model and the nuisance parameters through their own :class:`~trilobite.models.core.parameters.ModelParameter`
     definitions, and calls ``_log_likelihood(parameters)`` or, when nuisance parameters are declared,
     ``_log_likelihood(parameters, nuisance)``. The model therefore never sees nuisance values.
+
+    Parameters
+    ----------
+    model : ~trilobite.models.core.base.Model
+        The forward model used to generate predicted observables. Must be an instance of
+        :class:`~trilobite.models.core.base.Model`.
+    data : InferenceData
+        Fully validated, immutable dataset containing numerical arrays required for likelihood evaluation. All unit
+        coercion and shape validation must already have been performed.
+    **kwargs :
+        Additional keyword arguments forwarded to :meth:`_configure`.
+
+    Notes
+    -----
+    - This class makes no assumptions about priors or sampling strategies.
+    - Parameter coercion is delegated to the model.
+    - Data validation is delegated to :class:`InferenceData`.
     """
 
     NUISANCE_PARAMETERS: ClassVar[tuple] = ()
@@ -126,7 +137,7 @@ class Likelihood(ABC):
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             The forward model used to generate predicted observables.
             Must be an instance of :class:`~trilobite.models.core.base.Model`.
 
@@ -379,16 +390,14 @@ class GaussianLikelihood(Likelihood):
     The summation is taken over **all data points and all observables**.
     Observables are stacked along the final axis.
 
-    Assumptions
-    -----------
+    .. rubric:: Assumptions
 
     - All observations are detections (no censoring).
     - Symmetric Gaussian uncertainties are provided.
     - Model output shape matches observed data shape.
     - Errors are independent (diagonal covariance).
 
-    Shape Conventions
-    -----------------
+    .. rubric:: Shape Conventions
 
     If there are:
 
@@ -403,8 +412,7 @@ class GaussianLikelihood(Likelihood):
 
     These arrays are cached during initialization for efficiency.
 
-    Performance Notes
-    -----------------
+    .. rubric:: Performance Notes
 
     - All data extraction occurs once during initialization.
     - The hot loop in :meth:`_log_likelihood` performs only:
@@ -416,7 +424,7 @@ class GaussianLikelihood(Likelihood):
 
     See Also
     --------
-    ~trilobite.inference.likelihood.gaussian.gaussian_loglikelihood : Low-level numerical backend.
+    :obj:`~trilobite.inference.likelihood.gaussian.gaussian_loglikelihood` : Low-level numerical backend.
     """
 
     # ============================================================
@@ -565,16 +573,15 @@ class GaussianCensoredLikelihood(Likelihood):
 
     The total log-likelihood is the sum over all data points and observables.
 
-    Assumptions
-    -----------
+    .. rubric:: Assumptions
 
     - Symmetric 1-sigma uncertainties are defined for all entries.
     - Censoring is indicated via `upper` and/or `lower` arrays.
     - Non-censored entries contain `np.nan` in the corresponding limit arrays.
     - Observables are independent (diagonal covariance).
 
-    Shape Conventions
-    -----------------
+    .. rubric:: Shape Conventions
+
     If there are:
 
     - `N` data points
@@ -589,8 +596,7 @@ class GaussianCensoredLikelihood(Likelihood):
     - ``y_lower`` has shape `(N, P)`
     - mask arrays have shape `(N, P)`
 
-    Performance Notes
-    -----------------
+    .. rubric:: Performance Notes
 
     - All data extraction and mask construction occurs once
       during initialization.
@@ -599,7 +605,7 @@ class GaussianCensoredLikelihood(Likelihood):
 
     See Also
     --------
-    ~trilobite.inference.likelihood.gaussian.censored_gaussian_loglikelihood : Low-level numerical backend.
+    :obj:`~trilobite.inference.likelihood.gaussian.censored_gaussian_loglikelihood` : Low-level numerical backend.
     """
 
     # ============================================================
@@ -751,8 +757,8 @@ class LogGaussianCensoredLikelihood(GaussianCensoredLikelihood):
         +
         \sigma_{\rm sys}^2 .
 
-    Parameters
-    ----------
+    .. rubric:: Parameters
+
     model : ~trilobite.models.core.base.Model
         The forward model. All of its outputs must be strictly positive.
     data : ~trilobite.data.core.InferenceData
@@ -761,6 +767,10 @@ class LogGaussianCensoredLikelihood(GaussianCensoredLikelihood):
         Systematic uncertainty floor in dex (:math:`\sigma_{\rm sys}`), added in quadrature to the
         propagated measurement error of every entry, including the censoring width of limits.
         Default is ``0``. If ``0``, every entry must have a nonzero reported error.
+
+    See Also
+    --------
+    :obj:`~trilobite.inference.likelihood.base.GaussianCensoredLikelihood` : The linear-space version.
 
     Notes
     -----
@@ -774,10 +784,6 @@ class LogGaussianCensoredLikelihood(GaussianCensoredLikelihood):
       comparable to those of the linear-space likelihoods (the parameter dependence, and hence
       all posteriors, are unaffected).
     - **Positivity.** Every observable in the dataset is assumed to be strictly positive.
-
-    See Also
-    --------
-    ~trilobite.inference.likelihood.base.GaussianCensoredLikelihood : The linear-space version.
     """
 
     #: Floor applied to non-negative model output before taking the logarithm.
@@ -907,8 +913,8 @@ class LogGaussianCensoredSysLikelihood(LogGaussianCensoredLikelihood):
     configured exactly as for a model parameter. Its starting value is set through
     ``problem.parameters["sys_dex"].initial_value``.
 
-    Parameters
-    ----------
+    .. rubric:: Parameters
+
     model : ~trilobite.models.core.base.Model
         Forward model producing strictly positive predictions.
     data : ~trilobite.data.core.InferenceData

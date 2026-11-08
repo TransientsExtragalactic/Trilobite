@@ -10,5 +10,4 @@ radiative cooling calculations where the Rosseland mean underestimates losses.
     Not yet implemented!  This subpackage is reserved for future Planck mean opacity implementations.
     For now, it serves as a placeholder to maintain a consistent API and directory structure
     as new opacity models are added.
-
 """

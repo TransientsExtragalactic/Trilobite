@@ -8,10 +8,9 @@ computing basic synchrotron quantities.
 
 See Also
 --------
-:ref:`synch_theory_populations` for the corresponding documentation on synchrotron theory.
-:ref:`synchrotron_theory` for a general introduction to synchrotron emission.
-:ref:`synchrotron_electron_distributions` for documentation on working with electron distributions in Trilobite.
-
+:ref:`synch_theory_populations` : The corresponding documentation on synchrotron theory.
+:ref:`synchrotron_theory` : A general introduction to synchrotron emission.
+:ref:`synchrotron_electron_distributions` : Working with electron distributions in Trilobite.
 """
 
 from abc import ABC, abstractmethod
@@ -84,7 +83,7 @@ def equipartition_magnetic_field(u_therm: "_UnitBearingArrayLike", epsilon_B: "_
 
     Returns
     -------
-    B : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         Equipartition magnetic field strength in Gauss.
 
     Notes
@@ -110,7 +109,6 @@ def equipartition_magnetic_field(u_therm: "_UnitBearingArrayLike", epsilon_B: "_
     ...     1e3 * u.erg / u.cm**3, 0.1
     ... )
     <Quantity 50.13256549 G>
-
     """
     u_cgs = ensure_in_units(u_therm, u.erg / u.cm**3)
     return np.sqrt(8.0 * np.pi * epsilon_B * u_cgs) * u.G
@@ -147,7 +145,7 @@ def equipartition_electron_energy(u_therm: "_UnitBearingArrayLike", epsilon_e: "
 
     Returns
     -------
-    u_e : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         Electron energy density in :math:`\mathrm{erg\,cm^{-3}}`.
 
     Notes
@@ -344,7 +342,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        N_gamma : ~numpy.ndarray
+        ~numpy.ndarray
             Differential electron distribution evaluated at ``gamma``. Values
             outside the distribution support should generally be zero.
 
@@ -383,9 +381,10 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        gamma_min, gamma_max : tuple
-            Lower and upper bounds of the region where :meth:`pdf` is non-zero.
-            The values should be returned as ``(gamma_min, gamma_max)``.
+        gamma_min : float
+            Lower bound of the region where :meth:`pdf` is non-zero.
+        gamma_max : float
+            Upper bound of the region where :meth:`pdf` is non-zero. May be ``numpy.inf``.
 
         Notes
         -----
@@ -418,7 +417,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        N_tot : float
+        float
             Total number of electrons.
         """
         return norm * cls.moment(0, **params)
@@ -479,7 +478,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        N_eff : float
+        float
             Synchrotron-effective electron count,
             :math:`N_{\rm eff} = \int \gamma^2 N(\gamma)\,d\gamma`.
         """
@@ -522,7 +521,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        N_between : float
+        float
             Number of electrons with Lorentz factors in the interval
             ``[a, b]``.
 
@@ -571,7 +570,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        N_eff_between : float
+        float
             Synchrotron-effective electron count in the interval ``[a, b]``.
 
         Notes
@@ -613,7 +612,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        F_gamma : ~numpy.ndarray
+        ~numpy.ndarray
             Cumulative integral of the electron distribution evaluated at ``gamma``.
 
         Notes
@@ -672,7 +671,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        S_gamma : ~numpy.ndarray
+        ~numpy.ndarray
             Survival integral of the electron distribution evaluated at ``gamma``.
         """
         total = cls.n_total(norm=norm, **params)
@@ -699,7 +698,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        log_N_gamma : ~numpy.ndarray
+        ~numpy.ndarray
             Natural logarithm of :math:`N_0 f(\gamma)` evaluated at ``gamma``.
         """
         return np.log(norm) + np.log(cls.pdf(gamma, norm=1.0, **params))
@@ -725,7 +724,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        log_F_gamma : ~numpy.ndarray
+        ~numpy.ndarray
             Natural logarithm of :meth:`cdf` evaluated at ``gamma``.
         """
         return np.log(cls.cdf(gamma, norm=norm, **params))
@@ -751,7 +750,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        log_S_gamma : ~numpy.ndarray
+        ~numpy.ndarray
             Natural logarithm of :meth:`sf` evaluated at ``gamma``.
         """
         return np.log(cls.sf(gamma, norm=norm, **params))
@@ -789,7 +788,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        M_k : float
+        float
             Raw :math:`k`-th moment of the shape function.
 
         Notes
@@ -842,7 +841,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        M_k_between : float
+        float
             Truncated raw moment of the shape function over the interval
             ``[a, b]``.
 
@@ -886,7 +885,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        mean_gamma : float
+        float
             Mean electron Lorentz factor.
         """
         m0 = cls.moment(0, **params)
@@ -912,7 +911,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        var_gamma : float
+        float
             Variance of the electron Lorentz factor.
         """
         m0 = cls.moment(0, **params)
@@ -940,7 +939,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        std_gamma : float
+        float
             Standard deviation of the electron Lorentz factor.
         """
         return np.sqrt(cls.var(**params))
@@ -975,7 +974,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        mean_energy : float
+        float
             Mean total relativistic electron energy in erg.
         """
         return electron_rest_energy_cgs * cls.mean(**params)
@@ -1011,7 +1010,7 @@ class ElectronDistribution(ABC):
 
         Returns
         -------
-        mean_kinetic_energy : float
+        float
             Mean kinetic electron energy in erg.
         """
         return electron_rest_energy_cgs * (cls.mean(**params) - 1.0)
@@ -1344,6 +1343,12 @@ class PowerLaw(ElectronDistribution):
           - Maximum Lorentz factor. Must satisfy
             ``gamma_max > gamma_min``. Default is ``numpy.inf``.
 
+    See Also
+    --------
+    BrokenPowerLaw : Power-law distribution with a spectral break.
+    MaxwellJuettner : Relativistic thermal (Maxwell-Jüttner) distribution.
+    MaxwellJuettnerPowerLaw : Mixed thermal plus power-law distribution.
+
     Notes
     -----
     Raw moments are computed analytically as
@@ -1378,12 +1383,6 @@ class PowerLaw(ElectronDistribution):
     This implementation treats ``p``, ``gamma_min``, ``gamma_max``, and
     ``norm`` as scalar parameters. The Lorentz factor ``gamma`` may be scalar
     or array-like.
-
-    See Also
-    --------
-    BrokenPowerLaw : Power-law distribution with a spectral break.
-    MaxwellJuettner : Relativistic thermal (Maxwell-Jüttner) distribution.
-    MaxwellJuettnerPowerLaw : Mixed thermal plus power-law distribution.
 
     Examples
     --------
@@ -1537,7 +1536,7 @@ class PowerLaw(ElectronDistribution):
 
         Returns
         -------
-        N_gamma : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Distribution evaluated at ``gamma``.
         """
         params = cls._validate_and_process_parameters(p=p, gamma_min=gamma_min, gamma_max=gamma_max)
@@ -1566,8 +1565,10 @@ class PowerLaw(ElectronDistribution):
 
         Returns
         -------
-        gamma_min, gamma_max : tuple of float
-            Lower and upper Lorentz-factor bounds.
+        gamma_min : float
+            Lower bound of the region where :meth:`pdf` is non-zero.
+        gamma_max : float
+            Upper bound of the region where :meth:`pdf` is non-zero. May be ``numpy.inf``.
         """
         gamma_min, gamma_max = _f8(gamma_min, gamma_max)
 
@@ -1615,7 +1616,7 @@ class PowerLaw(ElectronDistribution):
 
         Returns
         -------
-        M_k : float
+        float
             Raw moment of the shape function.
         """
         params = cls._validate_and_process_parameters(p=p, gamma_min=gamma_min, gamma_max=gamma_max)
@@ -1666,7 +1667,7 @@ class PowerLaw(ElectronDistribution):
 
         Returns
         -------
-        M_k_between : float
+        float
             Truncated raw moment over the clipped interval. Returns ``0.0`` if
             the requested interval does not overlap the support.
         """
@@ -1719,7 +1720,7 @@ class PowerLaw(ElectronDistribution):
 
         Returns
         -------
-        F_gamma : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Cumulative distribution evaluated at ``gamma``.
         """
         params = cls._validate_and_process_parameters(p=p, gamma_min=gamma_min, gamma_max=gamma_max)
@@ -1785,6 +1786,12 @@ class BrokenPowerLaw(ElectronDistribution):
           - Maximum Lorentz factor. Must satisfy
             ``gamma_max > gamma_min``. Default is ``numpy.inf``.
 
+    See Also
+    --------
+    PowerLaw : Single power-law distribution without a spectral break.
+    MaxwellJuettner : Relativistic thermal (Maxwell-Jüttner) distribution.
+    MaxwellJuettnerBrokenPowerLaw : Mixed thermal plus broken-power-law distribution.
+
     Notes
     -----
     Moments are computed analytically by splitting the integral at the break:
@@ -1806,12 +1813,6 @@ class BrokenPowerLaw(ElectronDistribution):
     This implementation treats ``p1``, ``p2``, ``gamma_c``, ``gamma_min``,
     ``gamma_max``, and ``norm`` as scalar parameters. The Lorentz factor
     ``gamma`` may be scalar or array-like.
-
-    See Also
-    --------
-    PowerLaw : Single power-law distribution without a spectral break.
-    MaxwellJuettner : Relativistic thermal (Maxwell-Jüttner) distribution.
-    MaxwellJuettnerBrokenPowerLaw : Mixed thermal plus broken-power-law distribution.
 
     Examples
     --------
@@ -2008,7 +2009,7 @@ class BrokenPowerLaw(ElectronDistribution):
 
         Returns
         -------
-        N_gamma : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Distribution evaluated at ``gamma``. Array-valued arguments follow standard NumPy broadcasting, so
             for example ``gamma[np.newaxis, :]`` with ``gamma_c[:, np.newaxis]`` gives a ``(len(gamma_c), len(gamma))``
             result.
@@ -2041,8 +2042,10 @@ class BrokenPowerLaw(ElectronDistribution):
 
         Returns
         -------
-        gamma_min, gamma_max : tuple of float
-            Lower and upper Lorentz-factor bounds.
+        gamma_min : float
+            Lower bound of the region where :meth:`pdf` is non-zero.
+        gamma_max : float
+            Upper bound of the region where :meth:`pdf` is non-zero. May be ``numpy.inf``.
         """
         gamma_min, gamma_max = _f8(gamma_min, gamma_max)
 
@@ -2099,7 +2102,7 @@ class BrokenPowerLaw(ElectronDistribution):
 
         Returns
         -------
-        M_k : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Raw moment of the shape function. Array-valued parameters are broadcast against one
             another and the result has the broadcast shape.
         """
@@ -2203,7 +2206,7 @@ class BrokenPowerLaw(ElectronDistribution):
 
         Returns
         -------
-        M_k_between : float
+        float
             Truncated raw moment over the clipped interval. Returns ``0.0`` if
             the requested interval does not overlap the support.
         """
@@ -2264,7 +2267,7 @@ class BrokenPowerLaw(ElectronDistribution):
 
         Returns
         -------
-        F_gamma : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Cumulative distribution evaluated at ``gamma``.
         """
         params = cls._validate_and_process_parameters(
@@ -2325,6 +2328,13 @@ class MaxwellJuettner(ElectronDistribution):
             Values :math:`\Theta \ll 1` are mildly relativistic;
             :math:`\Theta \gtrsim 1` are ultra-relativistic.
 
+    See Also
+    --------
+    PowerLaw : Non-thermal power-law distribution.
+    BrokenPowerLaw : Non-thermal broken power-law distribution.
+    MaxwellJuettnerPowerLaw : Mixed thermal plus power-law distribution.
+    MaxwellJuettnerBrokenPowerLaw : Mixed thermal plus broken-power-law distribution.
+
     Notes
     -----
     **Raw moments.** Because the distribution is probability-normalised, the
@@ -2354,13 +2364,6 @@ class MaxwellJuettner(ElectronDistribution):
 
     **Normalization.** The amplitude :math:`N_0` is equal to the total
     number density :math:`n_e` because :math:`M_0 = 1`.
-
-    See Also
-    --------
-    PowerLaw : Non-thermal power-law distribution.
-    BrokenPowerLaw : Non-thermal broken power-law distribution.
-    MaxwellJuettnerPowerLaw : Mixed thermal plus power-law distribution.
-    MaxwellJuettnerBrokenPowerLaw : Mixed thermal plus broken-power-law distribution.
 
     Examples
     --------
@@ -2530,7 +2533,7 @@ class MaxwellJuettner(ElectronDistribution):
 
         Returns
         -------
-        N_gamma : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Maxwell-Jüttner distribution evaluated at ``gamma``.
         """
         params = cls._validate_and_process_parameters(Theta=Theta)
@@ -2552,8 +2555,10 @@ class MaxwellJuettner(ElectronDistribution):
 
         Returns
         -------
-        gamma_min, gamma_max : tuple of float
-            Lower and upper support bounds ``(1, numpy.inf)``.
+        gamma_min : float
+            Lower bound of the region where :meth:`pdf` is non-zero.
+        gamma_max : float
+            Upper bound of the region where :meth:`pdf` is non-zero. May be ``numpy.inf``.
 
         Examples
         --------
@@ -2611,7 +2616,7 @@ class MaxwellJuettner(ElectronDistribution):
 
         Returns
         -------
-        moment_order : float
+        float
             Raw moment :math:`\langle \gamma^n \rangle`.
         """
         if order < 0:
@@ -2660,7 +2665,7 @@ class MaxwellJuettner(ElectronDistribution):
 
         Returns
         -------
-        first_moment : float
+        float
             Approximate first raw moment :math:`\langle\gamma\rangle`.
         """
         return cls._opt_approx_first_moment(**cls._validate_and_process_parameters(Theta=Theta))
@@ -2742,7 +2747,7 @@ class MaxwellJuettner(ElectronDistribution):
 
         Returns
         -------
-        first_kinetic_moment : float
+        float
             Approximate first kinetic moment
             :math:`\langle\gamma - 1\rangle`.
         """
@@ -2783,7 +2788,7 @@ class MaxwellJuettner(ElectronDistribution):
 
         Returns
         -------
-        F_gamma : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Cumulative distribution evaluated at ``gamma``.
         """
         Theta = cls._validate_and_process_parameters(Theta=Theta)["Theta"]
@@ -2866,6 +2871,12 @@ class MixedThermalNonThermal(ElectronDistribution):
     the non-thermal component is supplied by subclasses through
     ``NON_THERMAL_DISTRIBUTION``.
 
+    See Also
+    --------
+    MaxwellJuettnerPowerLaw : Concrete mixture with a power-law non-thermal component.
+    MaxwellJuettnerBrokenPowerLaw : Concrete mixture with a broken-power-law non-thermal component.
+    MaxwellJuettner : Thermal Maxwell-Jüttner component used in all subclasses.
+
     Notes
     -----
     The non-thermal classes in this module generally define shape functions
@@ -2894,12 +2905,6 @@ class MixedThermalNonThermal(ElectronDistribution):
     intended to represent the fraction of electron energy in the thermal
     population, the component normalizations should be computed separately from
     their energy budgets rather than treated as a direct PDF mixture weight.
-
-    See Also
-    --------
-    MaxwellJuettnerPowerLaw : Concrete mixture with a power-law non-thermal component.
-    MaxwellJuettnerBrokenPowerLaw : Concrete mixture with a broken-power-law non-thermal component.
-    MaxwellJuettner : Thermal Maxwell-Jüttner component used in all subclasses.
     """
 
     THERMAL_DISTRIBUTION: ClassVar[type[ElectronDistribution]] = MaxwellJuettner
@@ -3050,7 +3055,7 @@ class MixedThermalNonThermal(ElectronDistribution):
 
         Returns
         -------
-        N_gamma : float or ~numpy.ndarray
+        float or ~numpy.ndarray
             Mixed electron distribution evaluated at ``gamma``.
         """
         params = cls._validate_and_process_parameters(delta=delta, **params)
@@ -3071,8 +3076,10 @@ class MixedThermalNonThermal(ElectronDistribution):
 
         Returns
         -------
-        gamma_min, gamma_max : tuple of float
-            Lower and upper support bounds of the mixed distribution.
+        gamma_min : float
+            Lower bound of the region where :meth:`pdf` is non-zero.
+        gamma_max : float
+            Upper bound of the region where :meth:`pdf` is non-zero. May be ``numpy.inf``.
         """
         cls._validate_non_thermal_distribution()
 
@@ -3130,7 +3137,7 @@ class MixedThermalNonThermal(ElectronDistribution):
 
         Returns
         -------
-        M_k : float
+        float
             Raw moment of the normalized mixture shape.
         """
         params = cls._validate_and_process_parameters(delta=delta, **params)
@@ -3177,7 +3184,7 @@ class MixedThermalNonThermal(ElectronDistribution):
 
         Returns
         -------
-        M_k_between : float
+        float
             Truncated raw moment over the requested interval.
         """
         params = cls._validate_and_process_parameters(delta=delta, **params)
