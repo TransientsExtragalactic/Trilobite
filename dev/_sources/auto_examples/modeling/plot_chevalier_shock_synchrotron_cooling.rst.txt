@@ -301,7 +301,7 @@ must specify the emitting geometry and the source distance:
 Time sampling
 ^^^^^^^^^^^^^
 
-Finally, we choose a set of epochs spanning :math:`5`–:math:`10^3` days after
+Finally, we choose a set of epochs spanning :math:`1`–:math:`10^3` days after
 explosion, logarithmically spaced to capture the rapid early-time evolution
 as well as the slower late-time behavior.
 
@@ -348,7 +348,7 @@ as well as the slower late-time behavior.
     # Temporal sampling
     # --------------------------------------------------
     # Logarithmically spaced epochs to capture early and late evolution.
-    times = np.geomspace(5.0, 1.0e3, 50) * u.day
+    times = np.geomspace(1.0, 1.0e3, 50) * u.day
 
     # Add a smoothing parameter to control the sharpness of spectral breaks in the SED.
     smoothing = 1
@@ -399,7 +399,7 @@ four diagnostic panels showing the time dependence of:
 - Post-shock temperature,
 - Downstream magnetic field strength.
 
-.. GENERATED FROM PYTHON SOURCE LINES 356-422
+.. GENERATED FROM PYTHON SOURCE LINES 356-420
 
 .. code-block:: Python
 
@@ -424,11 +424,9 @@ four diagnostic panels showing the time dependence of:
     )
 
     # Calculate the magnetic field.
-    e_th = StrongColdShockConditions.compute_post_shock_thermal_energy_density(
-        shock_velocity=v_sh,
-        upstream_density=rho_up,
-    )
-    B = np.sqrt(8 * np.pi * epsilon_B * e_th.to_value(u.erg / u.cm**3)) * u.G
+    _R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
+    _U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
+    B = np.sqrt(8 * np.pi * epsilon_B * _U) * u.G
 
     # --------------------------------------------------
     # Diagnostic plots
@@ -481,7 +479,7 @@ four diagnostic panels showing the time dependence of:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 423-464
+.. GENERATED FROM PYTHON SOURCE LINES 421-462
 
 Synchrotron Cooling and the Cooling Break
 -----------------------------------------
@@ -525,7 +523,7 @@ The behavior of :math:`\gamma_c(t)` provides immediate physical insight:
 This distinction directly controls the ordering of synchrotron break
 frequencies and determines which spectral branches are active in the final SED.
 
-.. GENERATED FROM PYTHON SOURCE LINES 464-481
+.. GENERATED FROM PYTHON SOURCE LINES 462-479
 
 .. code-block:: Python
 
@@ -558,7 +556,7 @@ frequencies and determines which spectral branches are active in the final SED.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 482-538
+.. GENERATED FROM PYTHON SOURCE LINES 480-536
 
 Break Frequencies and SED Normalization
 ---------------------------------------
@@ -617,7 +615,7 @@ break. A detailed discussion of this construction can be found in
 We now evaluate these parameters as a function of time and track the evolution
 of the characteristic synchrotron frequencies :math:`(\nu_m, \nu_c, \nu_a)`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 538-584
+.. GENERATED FROM PYTHON SOURCE LINES 536-582
 
 .. code-block:: Python
 
@@ -679,7 +677,7 @@ of the characteristic synchrotron frequencies :math:`(\nu_m, \nu_c, \nu_a)`.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 585-611
+.. GENERATED FROM PYTHON SOURCE LINES 583-609
 
 Interpretation of the Break Frequencies
 ---------------------------------------
@@ -708,7 +706,7 @@ With the time-dependent break frequencies in hand, we now turn to the full
 synchrotron spectral energy distributions and examine how the broadband spectrum
 evolves across epochs.
 
-.. GENERATED FROM PYTHON SOURCE LINES 611-664
+.. GENERATED FROM PYTHON SOURCE LINES 609-662
 
 .. code-block:: Python
 
@@ -780,7 +778,7 @@ evolves across epochs.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.886 seconds)
+   **Total running time of the script:** (0 minutes 1.992 seconds)
 
 
 .. _sphx_glr_download_auto_examples_modeling_plot_chevalier_shock_synchrotron_cooling.py:

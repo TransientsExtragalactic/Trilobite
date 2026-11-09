@@ -53,6 +53,7 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'models/index';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
@@ -612,7 +613,7 @@ Optical</div>
 <p class="sd-card-text">Filter-convolved photometry</p>
 </div>
 <div class="sd-card-footer docutils">
-<p class="sd-card-text">3 models</p>
+<p class="sd-card-text">10 models</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="#optical-models"><span class="std std-ref">Optical Models</span></a></div>
 </div>
@@ -839,6 +840,60 @@ suited to multi-wavelength fitting and inference.</p>
 <tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../_as_gen/trilobite.models.supernovae.chevalier_shock.ChevalierShockModel.html#trilobite.models.supernovae.chevalier_shock.ChevalierShockModel" title="trilobite.models.supernovae.chevalier_shock.ChevalierShockModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierShockModel</span></code></a></p></td>
 <td><p class="sd-card-text"><span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">Unverified</span></p></td>
 <td><p class="sd-card-text">Supernova shock synchrotron emission model based on Chevalier (1982).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3 trilobite-dropdown" open="open">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Arnett diffusion models (optical)</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">One-zone diffusion models of the optical light curves of radioactively or centrally powered supernovae, built on
+the engines of <a class="reference internal" href="../_as_gen/trilobite.radiation.arnett.html#module-trilobite.radiation.arnett" title="trilobite.radiation.arnett"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.arnett</span></code></a> (see <a class="reference internal" href="../reference/physics/radiation/arnett.html#arnett"><span class="std std-ref">Arnett Engines</span></a>). The bolometric luminosity heats a blackbody
+photosphere whose spectrum is convolved with the filters of a
+<a class="reference internal" href="../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a>. The models differ in the power source: <span class="math notranslate nohighlight">\(^{56}\mathrm{Ni}\)</span>
+decay, magnetar spin-down, or both. Each also has a <code class="docutils literal notranslate"><span class="pre">Cutoff</span></code> version whose photosphere radiates a blackbody with
+a suppressed UV (see <a class="reference internal" href="../reference/physics/radiation/blackbody/blackbody.html#blackbody-cutoff"><span class="std std-ref">UV-Suppressed (Modified) Blackbody</span></a>), as is observed for superluminous supernovae.</p>
+<div class="pst-scrollable-table-container"><table class="model-table table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 12.0%" />
+<col style="width: 58.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p class="sd-card-text">Model</p></th>
+<th class="head"><p class="sd-card-text">Status</p></th>
+<th class="head"><p class="sd-card-text">Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../_as_gen/trilobite.models.supernovae.arnett.ArnettOpticalModel.html#trilobite.models.supernovae.arnett.ArnettOpticalModel" title="trilobite.models.supernovae.arnett.ArnettOpticalModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArnettOpticalModel</span></code></a></p></td>
+<td><p class="sd-card-text"><span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">Unverified</span></p></td>
+<td><p class="sd-card-text">Blackbody photosphere radiating an Arnett diffusion light curve, observed through optical filters.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../_as_gen/trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel.html#trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel" title="trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">MagnetarArnettCutoffModel</span></code></a></p></td>
+<td><p class="sd-card-text"><span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">Unverified</span></p></td>
+<td><p class="sd-card-text">Magnetar-powered Arnett diffusion light curve with a UV-suppressed blackbody, through optical filters.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../_as_gen/trilobite.models.supernovae.arnett.MagnetarArnettModel.html#trilobite.models.supernovae.arnett.MagnetarArnettModel" title="trilobite.models.supernovae.arnett.MagnetarArnettModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">MagnetarArnettModel</span></code></a></p></td>
+<td><p class="sd-card-text"><span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">Unverified</span></p></td>
+<td><p class="sd-card-text">Magnetar spin-down powered Arnett diffusion light curve observed through optical filters.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../_as_gen/trilobite.models.supernovae.arnett.MagnetarNickelArnettCutoffModel.html#trilobite.models.supernovae.arnett.MagnetarNickelArnettCutoffModel" title="trilobite.models.supernovae.arnett.MagnetarNickelArnettCutoffModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">MagnetarNickelArnettCutoffModel</span></code></a></p></td>
+<td><p class="sd-card-text"><span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">Unverified</span></p></td>
+<td><p class="sd-card-text">Magnetar and 56Ni powered Arnett light curve with a UV-suppressed blackbody, through optical filters.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../_as_gen/trilobite.models.supernovae.arnett.MagnetarNickelArnettModel.html#trilobite.models.supernovae.arnett.MagnetarNickelArnettModel" title="trilobite.models.supernovae.arnett.MagnetarNickelArnettModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">MagnetarNickelArnettModel</span></code></a></p></td>
+<td><p class="sd-card-text"><span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">Unverified</span></p></td>
+<td><p class="sd-card-text">Magnetar and 56Ni powered Arnett diffusion light curve observed through optical filters.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../_as_gen/trilobite.models.supernovae.arnett.NickelCobaltArnettCutoffModel.html#trilobite.models.supernovae.arnett.NickelCobaltArnettCutoffModel" title="trilobite.models.supernovae.arnett.NickelCobaltArnettCutoffModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">NickelCobaltArnettCutoffModel</span></code></a></p></td>
+<td><p class="sd-card-text"><span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">Unverified</span></p></td>
+<td><p class="sd-card-text">56Ni-powered Arnett diffusion light curve with a UV-suppressed blackbody, through optical filters.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../_as_gen/trilobite.models.supernovae.arnett.NickelCobaltArnettModel.html#trilobite.models.supernovae.arnett.NickelCobaltArnettModel" title="trilobite.models.supernovae.arnett.NickelCobaltArnettModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">NickelCobaltArnettModel</span></code></a></p></td>
+<td><p class="sd-card-text"><span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">Unverified</span></p></td>
+<td><p class="sd-card-text">56Ni-powered Arnett diffusion light curve observed through optical filters.</p></td>
 </tr>
 </tbody>
 </table>

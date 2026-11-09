@@ -765,6 +765,7 @@
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/arnett.html">Arnett Engines</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../physics/disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1796,8 +1797,8 @@ input data were expressed.</p>
 <li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – <p>Override the default variable mapping.  By default:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;time&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">time</span></code> column (converted to model units)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;band_index&quot;</span></code> → resolved from <code class="docutils literal notranslate"><span class="pre">band_name</span></code> via
-<code class="docutils literal notranslate"><span class="pre">model.bundle.filter_names</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;band_index&quot;</span></code> (or <code class="docutils literal notranslate"><span class="pre">&quot;band_idx&quot;</span></code>, whichever the model declares) → resolved
+from <code class="docutils literal notranslate"><span class="pre">band_name</span></code> via <code class="docutils literal notranslate"><span class="pre">model.bundle.filter_names</span></code></p></li>
 </ul>
 </p></li>
 <li><p><strong>observables</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – Override the default observable mapping.  By default, the single
@@ -2090,7 +2091,7 @@ Magnitudes are converted to physical flux densities before the
 InferenceData is constructed.</p>
 <p>Default mapping:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code>: <code class="docutils literal notranslate"><span class="pre">{&quot;band_index&quot;:</span> <span class="pre">&lt;resolved</span> <span class="pre">integer</span> <span class="pre">indices&gt;}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code>: <code class="docutils literal notranslate"><span class="pre">{&quot;band_index&quot;:</span> <span class="pre">&lt;resolved</span> <span class="pre">integer</span> <span class="pre">indices&gt;}</span></code> (<code class="docutils literal notranslate"><span class="pre">band_idx</span></code> for models that declare it)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">observables</span></code>: the single model output mapped to flux columns</p></li>
 </ul>
 <dl class="field-list simple">

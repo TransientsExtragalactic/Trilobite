@@ -496,6 +496,8 @@
     <span class="s2">"planck_flux"</span><span class="p">,</span>
     <span class="c1"># Specific luminosity of a spherical source (nu= or lam=, R)</span>
     <span class="s2">"planck_luminosity"</span><span class="p">,</span>
+    <span class="c1"># UV-suppressed (modified) blackbody</span>
+    <span class="s2">"planck_cutoff_fraction"</span><span class="p">,</span>
     <span class="c1"># Bolometric fluxes</span>
     <span class="s2">"stefan_boltzmann_flux"</span><span class="p">,</span>
     <span class="s2">"stefan_boltzmann_observed_flux"</span><span class="p">,</span>
@@ -510,7 +512,7 @@
 <span class="p">]</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_UnitBearingArrayLike</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_UnitBearingArrayLike</span><span class="p">,</span> <span class="n">_UnitBearingScalarLike</span>
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
 <span class="c1"># Pre-computed CGS coefficients (extracted once for MCMC performance)</span>
@@ -653,6 +655,7 @@
     <span class="n">log_R</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
     <span class="n">log_D</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
     <span class="n">z</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">lambda_cut</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_ArrayLike"</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Evaluate :math:`\ln f_\nu` for a spherical blackbody observed at distance.</span>
 
@@ -671,8 +674,13 @@
 
 <span class="sd">        f_{\nu,\mathrm{obs}}(\nu_{\mathrm{obs}})</span>
 <span class="sd">        =</span>
-<span class="sd">        \frac{L_{\nu,\mathrm{em}}((1+z)\nu_{\mathrm{obs}})}</span>
-<span class="sd">             {4\pi D_L^2 (1+z)}.</span>
+<span class="sd">        \frac{(1+z)\,L_{\nu,\mathrm{em}}((1+z)\nu_{\mathrm{obs}})}</span>
+<span class="sd">             {4\pi D_L^2},</span>
+
+<span class="sd">    which conserves the bolometric flux, :math:`\int f_\nu\,d\nu = L/4\pi D_L^2`.</span>
+
+<span class="sd">    If ``lambda_cut`` is given, the spectrum is multiplied by the UV-suppression factor of</span>
+<span class="sd">    :func:`_log_cutoff_factor_cgs` at the rest-frame wavelength.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -686,6 +694,8 @@
 <span class="sd">        Natural logarithm of luminosity distance in cm.</span>
 <span class="sd">    z : float, int, or ~numpy.ndarray, optional</span>
 <span class="sd">        Redshift. Default is 0.</span>
+<span class="sd">    lambda_cut : float, optional</span>
+<span class="sd">        Rest-frame cutoff wavelength in cm below which the spectrum is suppressed. Default is 0 (no suppression).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -693,17 +703,88 @@
 <span class="sd">        Logarithm of the observed specific flux density :math:`f_\nu` in</span>
 <span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.</span>
 <span class="sd">    """</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
-    <span class="n">log1pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">log1pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+    <span class="n">log_nu_rest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_nu</span><span class="p">)</span> <span class="o">+</span> <span class="n">log1pz</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">_log_planck_fnu_cgs</span><span class="p">(</span><span class="n">log_nu</span> <span class="o">+</span> <span class="n">log1pz</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span>
+        <span class="n">_log_planck_fnu_cgs</span><span class="p">(</span><span class="n">log_nu_rest</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span>
         <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
         <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_D</span><span class="p">))</span>
-        <span class="o">-</span> <span class="n">log1pz</span>
+        <span class="o">+</span> <span class="n">log1pz</span>
+        <span class="o">+</span> <span class="n">_log_cutoff_factor_cgs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c_cgs</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_nu_rest</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="p">)</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="c1"># Terms in the series for the surviving fraction of a UV-suppressed blackbody. At a cutoff of 3000 Angstrom the relative</span>
+<span class="c1"># error against a 30-digit reference is below 1e-14 for T &lt;= 3e5 K, 3e-11 at 1e6 K, and 5e-6 at 1e7 K, where the series</span>
+<span class="c1"># has not converged (the terms fall as exp(-n x_c), with x_c = hc / (lambda_cut k T)).</span>
+<span class="n">_CUTOFF_SERIES_N</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">257</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cutoff_transmitted_fraction_cgs</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_ArrayLike"</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Fraction of a blackbody's bolometric flux that survives linear suppression below ``lambda_cut``.</span>
+
+<span class="sd">    The suppression multiplies the spectrum by :math:`\min(1, \lambda/\lambda_{\rm cut})`, so</span>
+<span class="sd">    that the transmission is 100% at the cutoff and falls linearly to zero at :math:`\lambda = 0`. With</span>
+<span class="sd">    :math:`x_c = hc/(\lambda_{\rm cut} k_B T)`, the surviving fraction</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f(T) = \frac{\int B_\lambda \min(1, \lambda/\lambda_{\rm cut})\,d\lambda}{\int B_\lambda\,d\lambda}</span>
+<span class="sd">        = 1 - \frac{15}{\pi^4}\sum_{n=1}^{\infty} e^{-n x_c}</span>
+<span class="sd">        \left(\frac{x_c^2}{n^2} + \frac{4 x_c}{n^3} + \frac{6}{n^4}\right)</span>
+
+<span class="sd">    is evaluated exactly with the series, which converges geometrically.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : float or ~numpy.ndarray</span>
+<span class="sd">        Temperature in K.</span>
+<span class="sd">    lambda_cut : float</span>
+<span class="sd">        Cutoff wavelength in cm. A value of zero or less means no suppression and returns 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        The surviving fraction, between 0 and 1.</span>
+<span class="sd">    """</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lambda_cut</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">x_c</span> <span class="o">=</span> <span class="p">(</span><span class="n">_HC_OVER_KB_CGS</span> <span class="o">/</span> <span class="p">(</span><span class="n">lambda_cut</span> <span class="o">*</span> <span class="n">T</span><span class="p">))[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">_CUTOFF_SERIES_N</span>
+    <span class="n">series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">n</span> <span class="o">*</span> <span class="n">x_c</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_c</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">n</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">x_c</span> <span class="o">/</span> <span class="n">n</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="mf">6.0</span> <span class="o">/</span> <span class="n">n</span><span class="o">**</span><span class="mi">4</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="mf">15.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="n">series</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_cutoff_factor_cgs</span><span class="p">(</span><span class="n">log_wavelength</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span> <span class="n">log_T</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_ArrayLike"</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Evaluate :math:`\ln[\min(1, \lambda/\lambda_{\rm cut})/f(T)]`, the log of the UV-suppression factor.</span>
+
+<span class="sd">    The spectrum of a blackbody with a suppressed UV is the blackbody times this factor, which is the linear</span>
+<span class="sd">    suppression below ``lambda_cut`` divided by the surviving fraction :math:`f(T)` of</span>
+<span class="sd">    :func:`_cutoff_transmitted_fraction_cgs`, so that the bolometric flux is that of the plain blackbody.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_wavelength : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the **rest-frame** wavelength in cm.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the temperature in K.</span>
+<span class="sd">    lambda_cut : float</span>
+<span class="sd">        Cutoff wavelength in cm. Zero or less means no suppression, and the factor is 1 (its log is 0).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        The log of the factor, which broadcasts over its inputs.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">lambda_cut</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_wavelength</span><span class="p">)</span> <span class="o">/</span> <span class="n">lambda_cut</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+        <span class="n">_cutoff_transmitted_fraction_cgs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_T</span><span class="p">),</span> <span class="n">lambda_cut</span><span class="p">)</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_log_specific_rad_flux_flambda_cgs</span><span class="p">(</span>
@@ -742,6 +823,7 @@
     <span class="n">log_R</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
     <span class="n">log_D</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
     <span class="n">z</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">lambda_cut</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_ArrayLike"</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Evaluate :math:`\ln f_\lambda` for a spherical blackbody observed at distance.</span>
 
@@ -761,7 +843,12 @@
 <span class="sd">        f_{\lambda,\mathrm{obs}}(\lambda_{\mathrm{obs}})</span>
 <span class="sd">        =</span>
 <span class="sd">        \frac{L_{\lambda,\mathrm{em}}(\lambda_{\mathrm{obs}}/(1+z))}</span>
-<span class="sd">             {4\pi D_L^2 (1+z)^3}.</span>
+<span class="sd">             {4\pi D_L^2 (1+z)},</span>
+
+<span class="sd">    which conserves the bolometric flux, :math:`\int f_\lambda\,d\lambda = L/4\pi D_L^2`.</span>
+
+<span class="sd">    If ``lambda_cut`` is given, the spectrum is multiplied by the UV-suppression factor of</span>
+<span class="sd">    :func:`_log_cutoff_factor_cgs` at the rest-frame wavelength.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -775,6 +862,8 @@
 <span class="sd">        Natural logarithm of luminosity distance in cm.</span>
 <span class="sd">    z : float, int, or ~numpy.ndarray, optional</span>
 <span class="sd">        Redshift. Default is 0.</span>
+<span class="sd">    lambda_cut : float, optional</span>
+<span class="sd">        Rest-frame cutoff wavelength in cm below which the spectrum is suppressed. Default is 0 (no suppression).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -782,14 +871,15 @@
 <span class="sd">        Logarithm of the observed specific flux density :math:`f_\lambda` in</span>
 <span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}}`.</span>
 <span class="sd">    """</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
-    <span class="n">log1pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">log1pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+    <span class="n">log_lambda_rest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_lambda</span><span class="p">)</span> <span class="o">-</span> <span class="n">log1pz</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">_log_planck_flambda_cgs</span><span class="p">(</span><span class="n">log_lambda</span> <span class="o">-</span> <span class="n">log1pz</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span>
+        <span class="n">_log_planck_flambda_cgs</span><span class="p">(</span><span class="n">log_lambda_rest</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span>
         <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
         <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_D</span><span class="p">))</span>
-        <span class="o">-</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">log1pz</span>
+        <span class="o">-</span> <span class="n">log1pz</span>
+        <span class="o">+</span> <span class="n">_log_cutoff_factor_cgs</span><span class="p">(</span><span class="n">log_lambda_rest</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="p">)</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
@@ -800,6 +890,7 @@
     <span class="n">log_nu</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
     <span class="n">log_T</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
     <span class="n">log_R</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
+    <span class="n">lambda_cut</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_ArrayLike"</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Evaluate :math:`\ln L_\nu` for a spherical blackbody in CGS units.</span>
 
@@ -809,6 +900,9 @@
 
 <span class="sd">        L_\nu = 4\pi^2 R^2 B_\nu</span>
 
+<span class="sd">    If ``lambda_cut`` is given, the spectrum is multiplied by the UV-suppression factor of</span>
+<span class="sd">    :func:`_log_cutoff_factor_cgs`.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    log_nu : float, int, or ~numpy.ndarray</span>
@@ -817,6 +911,8 @@
 <span class="sd">        Natural logarithm of temperature in K.</span>
 <span class="sd">    log_R : float, int, or ~numpy.ndarray</span>
 <span class="sd">        Natural logarithm of source radius in cm.</span>
+<span class="sd">    lambda_cut : float, optional</span>
+<span class="sd">        Cutoff wavelength in cm below which the spectrum is suppressed. Default is 0 (no suppression).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -824,8 +920,12 @@
 <span class="sd">        Logarithm of the specific luminosity :math:`L_\nu` in</span>
 <span class="sd">        :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.</span>
 <span class="sd">    """</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">_log_planck_fnu_cgs</span><span class="p">(</span><span class="n">log_nu</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
-
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">_log_planck_fnu_cgs</span><span class="p">(</span><span class="n">log_nu</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">_log_cutoff_factor_cgs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c_cgs</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_nu</span><span class="p">),</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
 
@@ -833,6 +933,7 @@
     <span class="n">log_lambda</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
     <span class="n">log_T</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
     <span class="n">log_R</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
+    <span class="n">lambda_cut</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_ArrayLike"</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Evaluate :math:`\ln L_\lambda` for a spherical blackbody in CGS units.</span>
 
@@ -842,6 +943,9 @@
 
 <span class="sd">        L_\lambda = 4\pi^2 R^2 B_\lambda</span>
 
+<span class="sd">    If ``lambda_cut`` is given, the spectrum is multiplied by the UV-suppression factor of</span>
+<span class="sd">    :func:`_log_cutoff_factor_cgs`.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    log_lambda : float, int, or ~numpy.ndarray</span>
@@ -850,6 +954,8 @@
 <span class="sd">        Natural logarithm of temperature in K.</span>
 <span class="sd">    log_R : float, int, or ~numpy.ndarray</span>
 <span class="sd">        Natural logarithm of source radius in cm.</span>
+<span class="sd">    lambda_cut : float, optional</span>
+<span class="sd">        Cutoff wavelength in cm below which the spectrum is suppressed. Default is 0 (no suppression).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -857,8 +963,12 @@
 <span class="sd">        Logarithm of the specific luminosity :math:`L_\lambda` in</span>
 <span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-1}}`.</span>
 <span class="sd">    """</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">_log_planck_flambda_cgs</span><span class="p">(</span><span class="n">log_lambda</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
-
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">_log_planck_flambda_cgs</span><span class="p">(</span><span class="n">log_lambda</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">_log_cutoff_factor_cgs</span><span class="p">(</span><span class="n">log_lambda</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
 
@@ -1198,8 +1308,13 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)),</span> <span class="s2">"lam"</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_lambda_cut</span><span class="p">(</span><span class="n">lambda_cut</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Cutoff wavelength in cm from a Quantity, a bare number (cm), or ``None`` (no cutoff: 0)."""</span>
+    <span class="k">return</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">lambda_cut</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">lambda_cut</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+
+
 <div class="viewcode-block" id="planck_B">
-<a class="viewcode-back" href="../../../reference/physics/radiation/blackbody/blackbody.html#trilobite.radiation.blackbody.planck_B">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.planck_B.html#trilobite.radiation.blackbody.planck_B">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">planck_B</span><span class="p">(</span>
     <span class="n">T</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -1232,7 +1347,7 @@
 
 
 <div class="viewcode-block" id="planck_surface_flux">
-<a class="viewcode-back" href="../../../reference/physics/radiation/blackbody/blackbody.html#trilobite.radiation.blackbody.planck_surface_flux">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.planck_surface_flux.html#trilobite.radiation.blackbody.planck_surface_flux">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">planck_surface_flux</span><span class="p">(</span>
     <span class="n">T</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -1265,7 +1380,7 @@
 
 
 <div class="viewcode-block" id="planck_flux">
-<a class="viewcode-back" href="../../../reference/physics/radiation/blackbody/blackbody.html#trilobite.radiation.blackbody.planck_flux">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.planck_flux.html#trilobite.radiation.blackbody.planck_flux">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">planck_flux</span><span class="p">(</span>
     <span class="n">T</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span>
     <span class="n">R</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span>
@@ -1277,8 +1392,12 @@
     <span class="n">angular_diameter_distance</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">proper_distance</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">cosmology</span><span class="p">:</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">Cosmology</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lambda_cut</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Observed specific flux density :math:`f_\nu` or :math:`f_\lambda` from a spherical blackbody.</span>
+
+<span class="sd">    With ``lambda_cut`` the blackbody has a suppressed UV (see :func:`planck_cutoff_fraction` and</span>
+<span class="sd">    :ref:`blackbody_cutoff`); the bolometric flux is the same as that of the plain blackbody.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1301,6 +1420,10 @@
 <span class="sd">    cosmology : ~astropy.cosmology.Cosmology, optional</span>
 <span class="sd">        Cosmology used to convert between redshift and distance measures.</span>
 <span class="sd">        If not provided, the configured default cosmology is used.</span>
+<span class="sd">    lambda_cut : ~astropy.units.Quantity, optional</span>
+<span class="sd">        **Rest-frame** wavelength below which the spectrum is suppressed linearly, as</span>
+<span class="sd">        :math:`\min(1, \lambda/\lambda_{\rm cut})`, and then renormalised to conserve the luminosity. Convertible to cm.</span>
+<span class="sd">        If not provided (default), the spectrum is a plain blackbody.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1326,9 +1449,54 @@
     <span class="n">log_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="s2">"luminosity_distance"</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
     <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
     <span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="n">cut</span> <span class="o">=</span> <span class="n">_resolve_lambda_cut</span><span class="p">(</span><span class="n">lambda_cut</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"nu"</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_flux_fnu_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg s-1 cm-2 Hz-1"</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_flux_flambda_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg s-1 cm-2 cm-1"</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_flux_fnu_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">cut</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg s-1 cm-2 Hz-1"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_flux_flambda_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">cut</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg s-1 cm-2 cm-1"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="planck_cutoff_fraction">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.planck_cutoff_fraction.html#trilobite.radiation.blackbody.planck_cutoff_fraction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">planck_cutoff_fraction</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">,</span> <span class="n">lambda_cut</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Fraction of a blackbody's bolometric flux that survives a linear UV suppression.</span>
+
+<span class="sd">    The suppression multiplies the spectrum by :math:`\min(1, \lambda/\lambda_{\rm cut})`: it is 100% at</span>
+<span class="sd">    the cutoff wavelength and falls linearly to zero at :math:`\lambda = 0`. The surviving fraction</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f(T) = \frac{\int B_\lambda \min(1, \lambda/\lambda_{\rm cut})\,d\lambda}{\int B_\lambda\,d\lambda}</span>
+
+<span class="sd">    is evaluated exactly (see :ref:`blackbody_cutoff`). A spectrum that has been renormalised to conserve the</span>
+<span class="sd">    luminosity is the suppressed spectrum divided by this fraction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Blackbody temperature.  Convertible to K.</span>
+<span class="sd">    lambda_cut : ~astropy.units.Quantity</span>
+<span class="sd">        Cutoff wavelength.  Convertible to cm. Zero (or less) means no suppression.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~numpy.ndarray</span>
+<span class="sd">        The surviving fraction, between 0 and 1. It falls from 1 as the temperature rises: the hotter the</span>
+<span class="sd">        blackbody, the more of its flux is in the suppressed UV. It is accurate to :math:`10^{-14}` for</span>
+<span class="sd">        :math:`T \lesssim 3\times10^5` K at :math:`\lambda_{\rm cut} = 3000` Angstrom.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import astropy.units as u</span>
+<span class="sd">    &gt;&gt;&gt; from trilobite.radiation.blackbody import (</span>
+<span class="sd">    ...     planck_cutoff_fraction,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; planck_cutoff_fraction(</span>
+<span class="sd">    ...     [8000, 15000, 30000] * u.K, 3000 * u.AA</span>
+<span class="sd">    ... )</span>
+<span class="sd">    array([0.97..., 0.81..., 0.52...])</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">_cutoff_transmitted_fraction_cgs</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">),</span> <span class="n">_resolve_lambda_cut</span><span class="p">(</span><span class="n">lambda_cut</span><span class="p">))</span></div>
 
 
 
@@ -1340,8 +1508,12 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">nu</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">lam</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lambda_cut</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Specific luminosity :math:`L_\nu = 4\pi^2 R^2 B_\nu` or :math:`L_\lambda = 4\pi^2 R^2 B_\lambda`.</span>
+
+<span class="sd">    With ``lambda_cut`` the blackbody has a suppressed UV (see :func:`planck_cutoff_fraction` and</span>
+<span class="sd">    :ref:`blackbody_cutoff`); the bolometric luminosity is :math:`4\pi R^2 \sigma_{\rm SB} T^4` either way.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1353,6 +1525,10 @@
 <span class="sd">        Frequency.  Convertible to Hz.  Mutually exclusive with *lam*.</span>
 <span class="sd">    lam : ~astropy.units.Quantity, optional</span>
 <span class="sd">        Wavelength.  Convertible to cm.  Mutually exclusive with *nu*.</span>
+<span class="sd">    lambda_cut : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Wavelength below which the spectrum is suppressed linearly, as :math:`\min(1, \lambda/\lambda_{\rm cut})`, and</span>
+<span class="sd">        then renormalised to conserve the luminosity. Convertible to cm. If not provided (default), the spectrum is a</span>
+<span class="sd">        plain blackbody.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1363,14 +1539,15 @@
     <span class="n">log_x</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">_resolve_nu_lam</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">lam</span><span class="p">)</span>
     <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
     <span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="n">cut</span> <span class="o">=</span> <span class="n">_resolve_lambda_cut</span><span class="p">(</span><span class="n">lambda_cut</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"nu"</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_luminosity_fnu_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg s-1 Hz-1"</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_luminosity_flambda_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg s-1 cm-1"</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_luminosity_fnu_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">,</span> <span class="n">cut</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg s-1 Hz-1"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_luminosity_flambda_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">,</span> <span class="n">cut</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">"erg s-1 cm-1"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="stefan_boltzmann_flux">
-<a class="viewcode-back" href="../../../reference/physics/radiation/blackbody/blackbody.html#trilobite.radiation.blackbody.stefan_boltzmann_flux">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.stefan_boltzmann_flux.html#trilobite.radiation.blackbody.stefan_boltzmann_flux">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">stefan_boltzmann_flux</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Bolometric radiative flux :math:`F = \sigma_\mathrm{SB} T^4` per unit area of a blackbody surface.</span>
 
@@ -1448,7 +1625,7 @@
 
 
 <div class="viewcode-block" id="wien_peak_frequency">
-<a class="viewcode-back" href="../../../reference/physics/radiation/blackbody/blackbody.html#trilobite.radiation.blackbody.wien_peak_frequency">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.wien_peak_frequency.html#trilobite.radiation.blackbody.wien_peak_frequency">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">wien_peak_frequency</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Peak frequency :math:`\nu_\mathrm{peak}` from Wien's displacement law.</span>
 
@@ -1468,7 +1645,7 @@
 
 
 <div class="viewcode-block" id="wien_peak_wavelength">
-<a class="viewcode-back" href="../../../reference/physics/radiation/blackbody/blackbody.html#trilobite.radiation.blackbody.wien_peak_wavelength">[docs]</a>
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.wien_peak_wavelength.html#trilobite.radiation.blackbody.wien_peak_wavelength">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">wien_peak_wavelength</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="s2">"_UnitBearingArrayLike"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Peak wavelength :math:`\lambda_\mathrm{peak}` from Wien's displacement law.</span>
 

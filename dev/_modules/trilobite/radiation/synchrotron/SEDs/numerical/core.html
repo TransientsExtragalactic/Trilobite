@@ -547,7 +547,7 @@
 <span class="c1"># Core Synchrotron Engine Class                    #</span>
 <span class="c1"># ================================================ #</span>
 <div class="viewcode-block" id="NumericalSynchrotronEngine">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NumericalSynchrotronEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Numerical synchrotron engine base class.</span>
@@ -912,7 +912,7 @@
     <span class="c1"># Utility Functions                          #</span>
     <span class="c1"># ------------------------------------------ #</span>
 <div class="viewcode-block" id="NumericalSynchrotronEngine.clear">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.clear.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.clear">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.clear.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.clear">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Clear all cached synchrotron kernel tables and interpolators."""</span>
         <span class="c1"># First kernel caches.</span>
@@ -931,7 +931,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.load_first_kernel">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.load_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.load_first_kernel">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.load_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.load_first_kernel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_first_kernel</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -986,7 +986,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.load_avg_first_kernel">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.load_avg_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.load_avg_first_kernel">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.load_avg_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.load_avg_first_kernel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_avg_first_kernel</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1109,7 +1109,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_davg_first_kernel_dlog_x</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.ensure_first_kernel_loaded">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.ensure_first_kernel_loaded.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.ensure_first_kernel_loaded">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.ensure_first_kernel_loaded.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.ensure_first_kernel_loaded">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ensure_first_kernel_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Ensure that the first kernel interpolator is loaded. Raises if not.</span>
@@ -1124,7 +1124,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.ensure_avg_first_kernel_loaded">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.ensure_avg_first_kernel_loaded.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.ensure_avg_first_kernel_loaded">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.ensure_avg_first_kernel_loaded.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.ensure_avg_first_kernel_loaded">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ensure_avg_first_kernel_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Ensure that the pitch-angle averaged first kernel interpolator is loaded. Raises if not.</span>
@@ -1141,7 +1141,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_first_kernel">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_first_kernel">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_first_kernel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_first_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the first synchrotron kernel :math:`F(x)`.</span>
@@ -1199,7 +1199,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_first_kernel_derivative">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_first_kernel_derivative.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_first_kernel_derivative">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_first_kernel_derivative.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_first_kernel_derivative">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_first_kernel_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the logarithmic derivative of the first synchrotron kernel.</span>
@@ -1261,7 +1261,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_avg_first_kernel">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_avg_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_avg_first_kernel">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_avg_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_avg_first_kernel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_avg_first_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the pitch-angle-averaged synchrotron kernel :math:`\bar{F}(x)`.</span>
@@ -1318,7 +1318,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_avg_first_kernel_derivative">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_avg_first_kernel_derivative.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_avg_first_kernel_derivative">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_avg_first_kernel_derivative.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_avg_first_kernel_derivative">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_avg_first_kernel_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Evaluate the logarithmic derivative of the pitch-angle-averaged synchrotron kernel.</span>
@@ -3112,7 +3112,7 @@
     <span class="c1"># Public Radiative Quantities API</span>
     <span class="c1"># ------------------------------------------ #</span>
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_emissivity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_emissivity.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_emissivity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_emissivity.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_emissivity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_emissivity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3193,7 +3193,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_absorption">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_absorption.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_absorption">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_absorption.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_absorption">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_absorption</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3273,7 +3273,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_source_function">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_source_function.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_source_function">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_source_function.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_source_function">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_source_function</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3353,7 +3353,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_rest_frame_specific_intensity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_rest_frame_specific_intensity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3443,7 +3443,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_specific_intensity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_specific_intensity.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_specific_intensity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_specific_intensity.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_specific_intensity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_specific_intensity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3550,7 +3550,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_flux_density">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_flux_density.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_flux_density">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_flux_density.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_flux_density">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_flux_density</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3698,7 +3698,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_brightness_temperature">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_brightness_temperature.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_brightness_temperature">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_brightness_temperature.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_brightness_temperature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_brightness_temperature</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3839,7 +3839,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_rest_frame_luminosity_density">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_rest_frame_luminosity_density.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_rest_frame_luminosity_density">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_rest_frame_luminosity_density.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_rest_frame_luminosity_density">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_rest_frame_luminosity_density</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -3951,7 +3951,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_luminosity_density">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_luminosity_density.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_luminosity_density">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_luminosity_density.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_luminosity_density">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_luminosity_density</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
@@ -4087,7 +4087,7 @@
 
 
 <div class="viewcode-block" id="NumericalSynchrotronEngine.compute_isotropic_luminosity">
-<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_isotropic_luminosity.html#trilobite.radiation.synchrotron.SEDs.numerical.inhomogeneous.NumericalSynchrotronEngine.compute_isotropic_luminosity">[docs]</a>
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.compute_isotropic_luminosity.html#trilobite.radiation.synchrotron.SEDs.numerical.one_zone.NumericalSynchrotronEngine.compute_isotropic_luminosity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_isotropic_luminosity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>

@@ -67,7 +67,7 @@ Relevant API
 Setup
 -----
 
-.. GENERATED FROM PYTHON SOURCE LINES 50-64
+.. GENERATED FROM PYTHON SOURCE LINES 50-63
 
 .. code-block:: Python
 
@@ -77,7 +77,6 @@ Setup
     from astropy import units as u
 
     from trilobite.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
-    from trilobite.dynamics.shocks.core import StrongColdShockConditions
     from trilobite.radiation.free_free.absorption import compute_ff_RJ_optical_depth_from_quadrature
     from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
     from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
@@ -92,7 +91,7 @@ Setup
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-71
+.. GENERATED FROM PYTHON SOURCE LINES 64-70
 
 Physical Parameters
 -------------------
@@ -101,7 +100,7 @@ We use a moderately dense CSM (between the Type Ibc and Type IIn extremes)
 to ensure the FFA→SSA→optically-thin transition falls within a few hundred
 days — observable in a typical radio monitoring campaign.
 
-.. GENERATED FROM PYTHON SOURCE LINES 71-104
+.. GENERATED FROM PYTHON SOURCE LINES 70-103
 
 .. code-block:: Python
 
@@ -154,12 +153,12 @@ days — observable in a typical radio monitoring campaign.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 105-107
+.. GENERATED FROM PYTHON SOURCE LINES 104-106
 
 Shock Engine and FFA Infrastructure
 ------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 107-142
+.. GENERATED FROM PYTHON SOURCE LINES 106-141
 
 .. code-block:: Python
 
@@ -205,7 +204,7 @@ Shock Engine and FFA Infrastructure
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 143-151
+.. GENERATED FROM PYTHON SOURCE LINES 142-150
 
 Compute SEDs at Each Epoch
 --------------------------
@@ -216,7 +215,7 @@ For each epoch we compute:
 3. The FFA optical depth spectrum :math:`\tau_{\rm ff}(\nu)`.
 4. The observed SED: :math:`F_\nu^{\rm obs} = F_\nu^{\rm synch} \cdot e^{-\tau_{\rm ff}}`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 151-236
+.. GENERATED FROM PYTHON SOURCE LINES 150-233
 
 .. code-block:: Python
 
@@ -225,11 +224,9 @@ For each epoch we compute:
     r_sh = shock_outputs.radius.to(u.cm)
     v_sh = shock_outputs.velocity.to(u.cm / u.s)
     rho_up = (M_dot / (4 * np.pi * r_sh**2 * v_wind)).to(u.g / u.cm**3)
-    e_th = StrongColdShockConditions.compute_post_shock_thermal_energy_density(
-        shock_velocity=v_sh,
-        upstream_density=rho_up,
-    )
-    B_arr = np.sqrt(8 * np.pi * epsilon_B * e_th.to_value(u.erg / u.cm**3)) * u.G
+    _R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
+    _U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
+    B_arr = np.sqrt(8 * np.pi * epsilon_B * _U) * u.G
     gamma_c_arr = cooling_engine.compute_cooling_gamma(B=B_arr, t=epochs)
 
     # Store results
@@ -313,18 +310,18 @@ For each epoch we compute:
 
  .. code-block:: none
 
-      t =    10 d  |  R_sh = 1.90e+15 cm  |  tau_ff(1 GHz) = 3.13e+01  |  B = 1.206 G
-      t =    30 d  |  R_sh = 4.97e+15 cm  |  tau_ff(1 GHz) = 1.75e+00  |  B = 0.402 G
-      t =    70 d  |  R_sh = 1.04e+16 cm  |  tau_ff(1 GHz) = 1.89e-01  |  B = 0.172 G
-      t =   150 d  |  R_sh = 2.03e+16 cm  |  tau_ff(1 GHz) = 2.56e-02  |  B = 0.080 G
-      t =   300 d  |  R_sh = 3.72e+16 cm  |  tau_ff(1 GHz) = 4.15e-03  |  B = 0.040 G
-      t =   600 d  |  R_sh = 6.83e+16 cm  |  tau_ff(1 GHz) = 6.72e-04  |  B = 0.020 G
-      t =  1200 d  |  R_sh = 1.25e+17 cm  |  tau_ff(1 GHz) = 1.09e-04  |  B = 0.010 G
+      t =    10 d  |  R_sh = 1.90e+15 cm  |  tau_ff(1 GHz) = 3.13e+01  |  B = 0.603 G
+      t =    30 d  |  R_sh = 4.97e+15 cm  |  tau_ff(1 GHz) = 1.75e+00  |  B = 0.201 G
+      t =    70 d  |  R_sh = 1.04e+16 cm  |  tau_ff(1 GHz) = 1.89e-01  |  B = 0.086 G
+      t =   150 d  |  R_sh = 2.03e+16 cm  |  tau_ff(1 GHz) = 2.56e-02  |  B = 0.040 G
+      t =   300 d  |  R_sh = 3.72e+16 cm  |  tau_ff(1 GHz) = 4.15e-03  |  B = 0.020 G
+      t =   600 d  |  R_sh = 6.83e+16 cm  |  tau_ff(1 GHz) = 6.72e-04  |  B = 0.010 G
+      t =  1200 d  |  R_sh = 1.25e+17 cm  |  tau_ff(1 GHz) = 1.09e-04  |  B = 0.005 G
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 237-242
+.. GENERATED FROM PYTHON SOURCE LINES 234-239
 
 Time-Series SED Plot
 ---------------------
@@ -332,7 +329,7 @@ Time-Series SED Plot
 The central result: a time series of observed SEDs showing the three-phase
 spectral evolution. The color scale encodes the epoch (early = blue, late = red).
 
-.. GENERATED FROM PYTHON SOURCE LINES 242-272
+.. GENERATED FROM PYTHON SOURCE LINES 239-269
 
 .. code-block:: Python
 
@@ -378,7 +375,7 @@ spectral evolution. The color scale encodes the epoch (early = blue, late = red)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 273-278
+.. GENERATED FROM PYTHON SOURCE LINES 270-275
 
 FFA Optical Depth vs. Frequency at Each Epoch
 -----------------------------------------------
@@ -386,7 +383,7 @@ FFA Optical Depth vs. Frequency at Each Epoch
 The FFA optical depth spectrum :math:`\tau_{\rm ff}(\nu)` at each epoch.
 The :math:`\nu^{-2}` scaling (Rayleigh-Jeans regime) is clearly visible.
 
-.. GENERATED FROM PYTHON SOURCE LINES 278-304
+.. GENERATED FROM PYTHON SOURCE LINES 275-301
 
 .. code-block:: Python
 
@@ -428,7 +425,7 @@ The :math:`\nu^{-2}` scaling (Rayleigh-Jeans regime) is clearly visible.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 305-328
+.. GENERATED FROM PYTHON SOURCE LINES 302-325
 
 Summary: Identifying the Spectral Regime from Observations
 ----------------------------------------------------------
@@ -457,7 +454,7 @@ is one of the most powerful tools for CSM characterization in radio supernovae.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 37.718 seconds)
+   **Total running time of the script:** (1 minutes 44.657 seconds)
 
 
 .. _sphx_glr_download_auto_examples_modeling_plot_ffa_fadeout_evolution.py:
