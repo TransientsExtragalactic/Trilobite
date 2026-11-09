@@ -1,0 +1,112 @@
+# %ECSV 1.0
+# ---
+# datatype:
+# - {name: mjd, unit: d, datatype: float64}
+# - {name: phase, unit: d, datatype: float64}
+# - {name: band, datatype: string}
+# - {name: mag, unit: mag, datatype: float64}
+# - {name: mag_err, unit: mag, datatype: float64}
+# - {name: upper_limit, datatype: bool}
+# - {name: host_contaminated, datatype: bool}
+# - {name: instrument, datatype: string}
+# meta: !!omap
+# - {source: 'Nicholl et al. 2014, MNRAS 444, 2096 (arXiv:1405.1325), table of SN 2013dg photometry, transcribed from the arXiv TeX source'}
+# - {system: 'AB, SDSS-like griz. The CRTS points (CSS, MLS) are R-band converted to SDSS r by the authors.'}
+# - {not_corrected_for: Galactic extinction (E(B-V) = 0.047) and redshift effects; the magnitudes are as published}
+# - {phase: rest-frame days from the epoch of maximum light}
+# - {upper_limit: 'True: mag is a limiting magnitude and mag_err is NaN'}
+# - {host_contaminated: 'True: flagged by the authors as possibly including significant host-galaxy light'}
+# - {redshift: 0.265}
+# - {ebv_mw: 0.047}
+# - __serialized_columns__:
+#     mag:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id001 !astropy.units.Unit {unit: mag}
+#       value: !astropy.table.SerializedColumn {name: mag}
+#     mag_err:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: mag_err}
+#     mjd:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id002 !astropy.units.Unit {unit: d}
+#       value: !astropy.table.SerializedColumn {name: mjd}
+#     phase:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: phase}
+# schema: astropy-2.0
+mjd phase band mag mag_err upper_limit host_contaminated instrument
+56425.2 -19.0 r 20.27 0.54 False False CSS
+56429.2 -15.9 r 19.72 0.17 False False MLS
+56442.2 -5.6 r 19.16 0.23 False False CSS
+56449.2 0.0 r 19.11 0.17 False False CSS
+56456.0 5.4 g 19.26 0.03 False False LT
+56456.0 5.4 r 19.31 0.06 False False LT
+56456.0 5.4 i 19.5 0.07 False False LT
+56456.0 5.4 z 19.6 0.07 False False LT
+56456.9 6.1 g 19.36 0.03 False False LCO
+56456.9 6.1 r 19.31 0.06 False False LCO
+56456.9 6.1 i 19.56 0.1 False False LCO
+56457.9 6.9 g 19.26 0.07 False False LT
+56457.9 6.9 r 19.36 0.04 False False LT
+56457.9 6.9 i 19.39 0.08 False False LT
+56457.9 6.9 z 19.4 0.17 False False LT
+56459.1 7.9 g 19.41 0.03 False False LCO
+56459.1 7.9 r 19.36 0.07 False False LCO
+56459.3 8.0 i 19.47 0.08 False False FTN
+56459.3 8.0 z 19.44 0.22 False False FTN
+56459.9 8.5 g 19.42 0.1 False False LT
+56459.9 8.5 r 19.39 0.05 False False LT
+56459.9 8.5 i 19.56 0.1 False False LT
+56459.9 8.5 z 19.69 0.15 False False LT
+56460.1 8.7 g 19.48 0.06 False False LCO
+56460.1 8.7 r 19.34 0.05 False False LCO
+56463.4 11.3 r 19.52 0.17 False False FTN
+56464.1 11.8 g 19.57 0.05 False False LCO
+56464.1 11.8 r 19.55 0.05 False False LCO
+56464.1 11.8 i 19.68 0.12 False False LCO
+56465.9 13.3 g 19.68 0.1 False False LT
+56465.9 13.3 r 19.52 0.09 False False LT
+56465.9 13.3 i 19.71 0.13 False False LT
+56465.9 13.3 z 19.62 0.2 False False LT
+56468.0 14.9 g 19.81 0.05 False False LCO
+56468.0 14.9 r 19.54 0.05 False False LCO
+56468.0 14.9 i 19.61 0.05 False False LCO
+56473.0 18.9 g 20.03 0.03 False False LT
+56473.0 18.9 r 19.74 0.03 False False LT
+56473.0 18.9 i 20.04 0.22 False False LT
+56473.0 18.9 z 19.74 0.19 False False LT
+56475.0 20.5 g 20.2 0.03 False False LCO
+56475.0 20.5 r 19.81 0.04 False False LCO
+56475.0 20.5 i 19.93 0.06 False False LCO
+56475.3 20.7 g 20.25 0.17 False False FTN
+56475.3 20.7 r 19.8 0.14 False False FTN
+56475.3 20.7 i 19.84 0.08 False False FTN
+56475.3 20.7 z 19.92 0.18 False False FTN
+56476.0 21.3 g 20.26 0.04 False False LCO
+56476.0 21.3 r 19.87 0.04 False False LCO
+56476.0 21.3 i 20.02 0.08 False False LCO
+56483.8 27.5 g 20.71 0.08 False False LCO
+56483.8 27.5 r 20.23 0.08 False False LCO
+56483.8 27.5 i 20.27 0.11 False False LCO
+56487.0 30.0 g 20.95 0.07 False False FTN
+56487.0 30.0 r 20.23 0.06 False False FTN
+56487.0 30.0 i 20.24 0.11 False False FTN
+56502.0 41.9 g 21.48 0.23 False False NTT
+56502.0 41.9 r 20.82 0.39 False False NTT
+56502.0 41.9 i 20.88 0.22 False False NTT
+56502.0 41.9 z 20.52 0.3 False False NTT
+56508.0 46.7 g 22.23 0.05 False False NTT
+56508.0 46.7 r 21.21 0.04 False False NTT
+56508.0 46.7 i 20.95 0.06 False False NTT
+56508.0 46.7 z 20.79 0.1 False False NTT
+56519.0 55.4 r 21.88 0.07 False False NTT
+56520.0 56.2 i 21.62 0.16 False False NTT
+56520.5 56.6 z 20.91 0.3 False False NTT
+56688.3 189.8 r 25.21 0.41 False True NTT
+56688.3 189.8 i 24.68 0.28 False True NTT
+56696.3 196.1 r 25.48 0.36 False True NTT
+56696.3 196.1 i 25.21 0.36 False True NTT
+56770.0 254.6 r 25.63 nan True False NTT
+56770.0 254.6 i 25.06 nan True False NTT
