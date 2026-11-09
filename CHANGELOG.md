@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Python 3.14 is now supported and tested (CI matrix, package classifiers and wheel builds); the wheel build uses cibuildwheel v4.3.5 (was v2.21.3), which builds `cp314` and now defaults to the `manylinux_2_28` image.
 - `Prior.sample(size=None, rng=None)` (`trilobite/inference/prior.py`) — every built-in prior can now be drawn from, in physical space, via a new optional `_generate_sampler` hook; priors without a sampler (e.g. `CallablePrior`) raise `NotImplementedError`.
 - `InferenceProblem.sample_prior(n, rng=None)` (`trilobite/inference/problem.py`) — draws the free parameters from their priors and returns them in **sampling space** (transforms applied), shape `(n, n_free_parameters)`, ready for `_log_free_posterior` or `EmceeSampler.run(initial_state=...)`.
 - `EmceeSampler.generate_initial_state(from_prior=True, n_candidates=400)` — starts the walkers from the best `n_walkers` of a set of prior draws instead of a ball around the initial point.
@@ -45,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Gallery example `plot_nuisance_parameter_fit.py` demonstrating how a free systematic term recovers scatter that the quoted errors miss.
 
 ### Changed
+- **Breaking:** minimum supported Python is now 3.11 (`requires-python = ">=3.11"`). Python 3.9 (EOL Oct 2025) and 3.10 (EOL Oct 2026) are dropped from the package metadata, the CI test matrices and the wheel builds.
 - `InferenceProblem._PRIOR_REGISTRY` is now the shared `trilobite.inference.prior.PRIOR_REGISTRY` rather than a separate copy.
 - `InferenceProblem.set_prior` no longer applies unit conversion to the dimensionless arguments of a prior. Previously a `Quantity` passed as the `mean` or `sigma` of a `lognormal` prior was silently converted to the parameter's base units, producing a meaningless value; a dimensional `Quantity` for a dimensionless argument now raises `ValueError`. Bare floats are unaffected.
 - `MCMCSamplingResult.get_flat_samples`, `trace_plot` and `corner_plot` now return/plot **physical-space** values by default; previously a transformed parameter (e.g. `Log10Transform`) was returned as its raw sampling-space value under the parameter's own name. Pass `physical=False` for the old behaviour. `.samples`, the HDF5 format and the convergence diagnostics (autocorrelation time, ESS, MCSE, R-hat) remain in sampling space. Nothing changes for problems without transforms.
