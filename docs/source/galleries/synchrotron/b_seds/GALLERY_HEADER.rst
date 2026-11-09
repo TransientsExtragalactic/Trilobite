@@ -11,4 +11,4 @@ configuration, and to understand how spectral slopes change across different reg
 
 **Theory:** :ref:`synch_sed_theory`, :ref:`ssa`
 
-**API:** :ref:`synchrotron_seds`, :ref:`synchrotron_microphysics`
+**API:** :ref:`synchrotron_seds`, :ref:`synchrotron_core`

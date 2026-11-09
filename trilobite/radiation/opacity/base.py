@@ -38,6 +38,17 @@ class OpacityLaw:
         one of the concrete subclasses provided in the library, or create a custom
         subclass that implements the required log-space methods.
 
+    Parameters
+    ----------
+    **parameters : dict
+        Model-specific parameters forwarded to the C backend when :attr:`IS_C_BACKED` is ``True``.
+
+    See Also
+    --------
+    :obj:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` : Subclass for frequency-averaged
+     (grey) opacity laws.
+    :obj:`~trilobite.radiation.opacity.opacity_base.C_OpacityBase` : C-level companion class.
+
     Notes
     -----
     An opacity law describes how radiation interacts with matter through
@@ -73,12 +84,6 @@ class OpacityLaw:
     ``IS_C_BACKED = True`` and overriding :meth:`_initialize_C_object`.
     The private methods then automatically dispatch to the corresponding
     methods on the Cython object (see :mod:`trilobite.radiation.opacity.opacity_base`).
-
-    See Also
-    --------
-    ~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw : Subclass for frequency-averaged
-     (grey) opacity laws.
-    ~trilobite.radiation.opacity.opacity_base.C_OpacityBase : C-level companion class.
     """
 
     IS_C_BACKED: bool = False
@@ -359,7 +364,7 @@ class OpacityLaw:
 
         Returns
         -------
-        OpacityLaw
+        ~trilobite.radiation.opacity.base.OpacityLaw
             A fully initialised opacity instance.
 
         Examples

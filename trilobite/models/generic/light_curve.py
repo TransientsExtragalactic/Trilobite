@@ -47,6 +47,7 @@ import numpy as np
 from astropy import units as u
 
 from ..core import Model, ModelParameter, ModelVariable
+from ..core.status import ModelStatus
 
 __all__ = [
     "FRED",
@@ -154,15 +155,29 @@ class FRED(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`GeneralizedFRED`
+        Generalized fast-rise exponential-decay pulse.
+
+    :class:`GaussianPulse`
+        Symmetric Gaussian pulse.
+
+    :class:`NorrisPulse`
+        Norris GRB pulse.
+
     Notes
     -----
     The peak time depends non-trivially on the ratio :math:`\tau_r/\tau_d`.
     The model reduces to a simple exponential decay when
     :math:`\tau_r \rightarrow 0`.
 
+    References
+    ----------
+    .. footbibliography::
+
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -188,17 +203,9 @@ class FRED(Model):
         plt.title("FRED Model Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`GeneralizedFRED`
-    :class:`GaussianPulse`
-    :class:`NorrisPulse`
-
-    References
-    ----------
-    .. footbibliography::
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (
         ModelVariable(
@@ -342,6 +349,17 @@ class GeneralizedFRED(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`FRED`
+        Fast-rise exponential-decay pulse.
+
+    :class:`NorrisPulse`
+        Norris GRB pulse.
+
+    :class:`LogNormalPulse`
+        Asymmetric log-normal pulse.
+
     Notes
     -----
     - The peak time depends on both :math:`n` and the ratio
@@ -355,9 +373,12 @@ class GeneralizedFRED(Model):
     physically, as this model does not enforce energy conservation or
     radiative transfer consistency.
 
+    References
+    ----------
+    .. footbibliography::
+
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -383,17 +404,9 @@ class GeneralizedFRED(Model):
         plt.title("Generalized FRED Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`FRED`
-    :class:`NorrisPulse`
-    :class:`LogNormalPulse`
-
-    References
-    ----------
-    .. footbibliography::
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -523,6 +536,14 @@ class GaussianPulse(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`FRED`
+        Fast-rise exponential-decay pulse.
+
+    :class:`LogNormalPulse`
+        Asymmetric log-normal pulse.
+
     Notes
     -----
     The full width at half maximum (FWHM) is given by
@@ -536,7 +557,6 @@ class GaussianPulse(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -562,13 +582,9 @@ class GaussianPulse(Model):
         plt.title("Gaussian Pulse Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`FRED`
-    :class:`LogNormalPulse`
-
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -683,6 +699,14 @@ class LogNormalPulse(Model):
              - :math:`F(t)`
              - Flux at time :math:`t`.
 
+    See Also
+    --------
+    :class:`FRED`
+        Fast-rise exponential-decay pulse.
+
+    :class:`NorrisPulse`
+        Norris GRB pulse.
+
     Notes
     -----
     The peak time occurs at
@@ -696,7 +720,6 @@ class LogNormalPulse(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -722,13 +745,9 @@ class LogNormalPulse(Model):
         plt.title("Log-Normal Pulse Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`FRED`
-    :class:`NorrisPulse`
-
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -844,6 +863,11 @@ class BrokenPowerLawTime(Model):
              - :math:`F(t)`
              - Flux value.
 
+    See Also
+    --------
+    :class:`SmoothedBrokenPowerLawTime`
+        Smoothly broken power-law temporal model.
+
     Notes
     -----
     The derivative is discontinuous at :math:`t_b`. This model is therefore
@@ -851,7 +875,6 @@ class BrokenPowerLawTime(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -877,12 +900,9 @@ class BrokenPowerLawTime(Model):
         plt.title("Broken Power Law Time Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`SmoothedBrokenPowerLawTime`
-
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -933,15 +953,25 @@ class SmoothedBrokenPowerLawTime(Model):
 
         F(t) =
         A \left[
-            \left(\frac{t}{t_b}\right)^{\alpha_1/s}
-            +
-            \left(\frac{t}{t_b}\right)^{\alpha_2/s}
+            \frac{1}{2}\left(
+                \left(\frac{t}{t_b}\right)^{\alpha_1/s}
+                +
+                \left(\frac{t}{t_b}\right)^{\alpha_2/s}
+            \right)
         \right]^s + C,
 
-    where :math:`s` controls the smoothness of the transition.
+    so that :math:`F(t_b) = A + C` for every :math:`s`. The parameter :math:`s` controls both the smoothness and
+    the *convexity* of the transition:
 
-    - Small :math:`s` → sharp break
-    - Large :math:`s` → smooth transition
+    - :math:`|s|` small: sharp break; large :math:`|s|`: smooth transition.
+    - :math:`s < 0`: the flux follows the *lower* of the two power laws, so the curve is concave. Use this for a
+      light curve that rises and then falls (:math:`\alpha_1 > \alpha_2`), with :math:`\alpha_1` the early-time
+      and :math:`\alpha_2` the late-time slope.
+    - :math:`s > 0`: the flux follows the *higher* of the two power laws, so the curve is convex. Use this for a
+      slope that increases through the break (:math:`\alpha_1 < \alpha_2`), such as a decay that flattens.
+
+    If the sign of :math:`s` does not match the ordering of the slopes, the early- and late-time slopes are
+    swapped, so that the curve follows :math:`\alpha_2` before the break and :math:`\alpha_1` after it.
 
     This form is widely used in GRB afterglow modeling.
 
@@ -968,7 +998,8 @@ class SmoothedBrokenPowerLawTime(Model):
              - Late-time power-law slope.
            * - ``s``
              - :math:`s`
-             - Smoothness parameter controlling the sharpness of the break. Smaller values approach a sharp break.
+             - Smoothness and convexity of the break. Must be non-zero. :math:`s<0` gives a concave break (peak),
+               :math:`s>0` a convex break. Smaller :math:`|s|` approaches a sharp break.
            * - ``C``
              - :math:`C`
              - Constant background level.
@@ -999,14 +1030,18 @@ class SmoothedBrokenPowerLawTime(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`BrokenPowerLawTime`
+        Sharp broken power-law temporal model.
+
     Notes
     -----
     This model is continuous and differentiable for all
-    :math:`t > 0`.
+    :math:`t > 0`. The parameter ``s`` may be negative or positive but not zero.
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1032,12 +1067,9 @@ class SmoothedBrokenPowerLawTime(Model):
         plt.title("Smoothed Broken Power Law Time Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`BrokenPowerLawTime`
-
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1046,7 +1078,7 @@ class SmoothedBrokenPowerLawTime(Model):
         ModelParameter("t_b", 1.0, base_units=None, bounds=(1e-6, None)),
         ModelParameter("alpha_1", -1.0, base_units=None),
         ModelParameter("alpha_2", -2.0, base_units=None),
-        ModelParameter("s", 0.1, base_units=None, bounds=(1e-3, None)),
+        ModelParameter("s", -0.1, base_units=None, bounds=(None, None)),
         ModelParameter("C", 0.0, base_units=None),
     )
 
@@ -1071,8 +1103,14 @@ class SmoothedBrokenPowerLawTime(Model):
             parameters["C"],
         )
 
-        term = ((t / tb) ** (a1 / s) + (t / tb) ** (a2 / s)) ** s
-        return self.OUTPUTS(flux=A * term + C)
+        if s == 0:
+            raise ValueError("Smoothing parameter s must be non-zero.")
+
+        # Evaluate in log space so that small |s| does not overflow. The factor of 1/2 inside the bracket makes
+        # F(t_b) = A for every s.
+        log_ratio = np.log(t / tb)
+        log_term = s * (np.logaddexp((a1 / s) * log_ratio, (a2 / s) * log_ratio) - np.log(2.0))
+        return self.OUTPUTS(flux=A * np.exp(log_term) + C)
 
 
 class ExponentialRisePowerLawDecay(Model):
@@ -1149,6 +1187,10 @@ class ExponentialRisePowerLawDecay(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`BrokenPowerLawTime`
+        Sharp broken power-law temporal model.
 
     Notes
     -----
@@ -1157,7 +1199,6 @@ class ExponentialRisePowerLawDecay(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1183,12 +1224,9 @@ class ExponentialRisePowerLawDecay(Model):
         plt.title("Exponential Rise Power-Law Decay Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`BrokenPowerLawTime`
-
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1303,6 +1341,13 @@ class NorrisPulse(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`FRED`
+        Fast-rise exponential-decay pulse.
+
+    :class:`LogNormalPulse`
+        Asymmetric log-normal pulse.
 
     Notes
     -----
@@ -1312,9 +1357,12 @@ class NorrisPulse(Model):
 
         t_{\rm peak} = t_s + \sqrt{\tau_1 \tau_2}.
 
+    References
+    ----------
+    .. footbibliography::
+
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1340,16 +1388,9 @@ class NorrisPulse(Model):
         plt.title("Norris Pulse Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`FRED`
-    :class:`LogNormalPulse`
-
-    References
-    ----------
-    .. footbibliography::
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1462,6 +1503,13 @@ class WeibullPulse(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`NorrisPulse`
+        Norris GRB pulse.
+
+    :class:`LogNormalPulse`
+        Asymmetric log-normal pulse.
 
     Notes
     -----
@@ -1469,7 +1517,6 @@ class WeibullPulse(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1495,13 +1542,9 @@ class WeibullPulse(Model):
         plt.title("Weibull Pulse Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`NorrisPulse`
-    :class:`LogNormalPulse`
-
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 
@@ -1605,6 +1648,10 @@ class LogisticPulse(Model):
              - :math:`F(t)`
              - Flux evaluated at time :math:`t`.
 
+    See Also
+    --------
+    :class:`GaussianPulse`
+        Symmetric Gaussian pulse.
 
     Notes
     -----
@@ -1618,7 +1665,6 @@ class LogisticPulse(Model):
 
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -1644,12 +1690,9 @@ class LogisticPulse(Model):
         plt.title("Logistic Transition Example")
         plt.legend()
         plt.show()
-
-    See Also
-    --------
-    :class:`GaussianPulse`
-
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (ModelVariable("t", base_units=None),)
 

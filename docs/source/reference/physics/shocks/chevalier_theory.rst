@@ -120,7 +120,7 @@ Thin-Shell Normalization
    :math:`\zeta` in hand, the full shock dynamics are determined.
 
 .. dropdown:: Derivation: Thin-Shell Momentum Balance
-   :icon: book-open
+   :icon: book
 
    The net pressure force on the shell equals the rate of change of its
    momentum:
@@ -216,7 +216,7 @@ slope :math:`n`, motivated by hydrodynamical simulations:
       \frac{M_{\rm ej}}{v_t^{3-\delta}}.
 
 .. dropdown:: Derivation: Mass and Energy Integrals
-   :icon: book-open
+   :icon: book
 
    Mass conservation requires
 
@@ -517,7 +517,7 @@ The density derivative is then
    }{D}.
 
 .. dropdown:: Derivation: Similarity Reduction of the Euler Equations
-   :icon: book-open
+   :icon: book
 
    The starting point is the spherical Euler system
 
@@ -898,7 +898,7 @@ This is the dimensionless constant used in the two-shock solver to normalize
 the contact radius.
 
 .. dropdown:: Derivation: Pressure Matching and Radius Normalization
-   :icon: book-open
+   :icon: book
 
    The immediate post-forward-shock pressure is
 

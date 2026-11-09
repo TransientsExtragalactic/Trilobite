@@ -1,5 +1,4 @@
 """
-
 Trilobite models for supernovae transients.
 
 This module contains models specifically designed to simulate and analyze supernova

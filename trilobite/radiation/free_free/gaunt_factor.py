@@ -26,7 +26,6 @@ tabulated interpolators for accurate Gaunt factor evaluation.
 
 .. rubric:: Available Gaunt Factor Methods
 
-
 .. list-table::
    :header-rows: 1
    :widths: 15 20 20 45
@@ -60,8 +59,6 @@ tabulated interpolators for accurate Gaunt factor evaluation.
      - Trilinear interpolation including explicit :math:`Z` dependence.
        Use for :math:`T \gtrsim 10^8\,\mathrm{K}` where relativistic
        corrections are important.
-
-
 """
 
 from abc import ABC, abstractmethod
@@ -162,11 +159,30 @@ class GauntFactorInterpolatorBase(ABC):
         T: Union[float, "np.ndarray"],
         nu: Union[float, "np.ndarray"],
     ) -> Union[float, "np.ndarray"]:
-        """Evaluate the free–free Gaunt factor at ``(Z, T, nu)``."""
+        r"""
+        Evaluate the free–free Gaunt factor at ``(Z, T, nu)``.
+
+        Parameters
+        ----------
+        Z : int or array-like
+            Ion charge number (:math:`Z \geq 1`). Enters only through the :math:`\log_{10}\gamma^2` coordinate
+            transform.
+        T : float or array-like
+            Electron temperature in Kelvin.
+        nu : float or array-like
+            Photon frequency in Hz.
+        """
 
     @abstractmethod
     def __contains__(self, item: tuple) -> bool:
-        """Check whether ``(Z, T, nu)`` lies within the interpolation domain."""
+        """
+        Check whether ``(Z, T, nu)`` lies within the interpolation domain.
+
+        Parameters
+        ----------
+        item : tuple of (Z, T, nu)
+            A 3-tuple of scalar physical parameters.
+        """
 
     @property
     @abstractmethod
@@ -216,6 +232,16 @@ class NonRelativisticGauntFactorInterpolator(GauntFactorInterpolatorBase):
     """
 
     def __init__(self, path: Union[str, Path] = _VAN_HOOF_NON_REL_PATH, **kwargs) -> None:
+        """
+        Load the tabulated Gaunt factors.
+
+        Parameters
+        ----------
+        path : str or ~pathlib.Path, optional
+            Path to the HDF5 file. Defaults to the bundled ``gauntff_vanhoof_2014.hdf5`` table.
+        **kwargs :
+            Additional keyword arguments forwarded to :class:`~scipy.interpolate.RegularGridInterpolator`.
+        """
         self.path = Path(path).expanduser().resolve()
         datasets = self._load_hdf5(self.path)
 
@@ -293,9 +319,25 @@ class NonRelativisticGauntFactorInterpolator(GauntFactorInterpolatorBase):
     # Dunder helpers                                                       #
     # ------------------------------------------------------------------ #
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the interpolator.
+
+        Returns
+        -------
+        str
+            The class name, grid sizes and data path.
+        """
         return f"{type(self).__name__}(n_log_u={self.n_log_u}, n_log_gamma2={self.n_log_gamma2}, path='{self.path}')"
 
     def __str__(self) -> str:
+        """
+        Return a readable description of the interpolator.
+
+        Returns
+        -------
+        str
+            The class name, grid sizes and data path.
+        """
         return (
             f"NonRelativisticGauntFactorInterpolator\n"
             f"  Source  : {self.path.name}\n"
@@ -306,7 +348,14 @@ class NonRelativisticGauntFactorInterpolator(GauntFactorInterpolatorBase):
         )
 
     def __len__(self) -> int:
-        """Return the total number of tabulated Gaunt factor values."""
+        """
+        Return the total number of tabulated Gaunt factor values.
+
+        Returns
+        -------
+        int
+            The total number of tabulated Gaunt factor values.
+        """
         return int(np.prod(self._array.shape))
 
     def __contains__(self, item: tuple) -> bool:
@@ -434,6 +483,16 @@ class RelativisticGauntFactorInterpolator(GauntFactorInterpolatorBase):
     """
 
     def __init__(self, path: Union[str, Path] = _VAN_HOOF_REL_PATH, **kwargs) -> None:
+        """
+        Load the tabulated Gaunt factors.
+
+        Parameters
+        ----------
+        path : str or ~pathlib.Path, optional
+            Path to the HDF5 file. Defaults to the bundled ``gauntff_rel_vanhoof_2014.hdf5`` table.
+        **kwargs :
+            Additional keyword arguments forwarded to :class:`~scipy.interpolate.RegularGridInterpolator`.
+        """
         self.path = Path(path).expanduser().resolve()
         datasets = self._load_hdf5(self.path)
 
@@ -518,6 +577,14 @@ class RelativisticGauntFactorInterpolator(GauntFactorInterpolatorBase):
     # Dunder helpers                                                       #
     # ------------------------------------------------------------------ #
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the interpolator.
+
+        Returns
+        -------
+        str
+            The class name, grid sizes and data path.
+        """
         return (
             f"{type(self).__name__}("
             f"n_Z={self.n_Z}, "
@@ -527,6 +594,14 @@ class RelativisticGauntFactorInterpolator(GauntFactorInterpolatorBase):
         )
 
     def __str__(self) -> str:
+        """
+        Return a readable description of the interpolator.
+
+        Returns
+        -------
+        str
+            The class name, grid sizes and data path.
+        """
         return (
             f"RelativisticGauntFactorInterpolator\n"
             f"  Source  : {self.path.name}\n"
@@ -538,7 +613,14 @@ class RelativisticGauntFactorInterpolator(GauntFactorInterpolatorBase):
         )
 
     def __len__(self) -> int:
-        """Return the total number of tabulated Gaunt factor values."""
+        """
+        Return the total number of tabulated Gaunt factor values.
+
+        Returns
+        -------
+        int
+            The total number of tabulated Gaunt factor values.
+        """
         return int(np.prod(self._array.shape))
 
     def __contains__(self, item: tuple) -> bool:
@@ -1263,6 +1345,15 @@ def compute_ff_gaunt_factor(
     ValueError
         If *approx* is not one of the recognised keys.
 
+    See Also
+    --------
+    compute_ff_gaunt_factor_comp :
+        Composition-weighted effective Gaunt factor for a multi-species plasma.
+    get_default_gaunt_interpolator :
+        Direct access to the non-relativistic van Hoof interpolator.
+    get_default_relativistic_gaunt_interpolator :
+        Direct access to the relativistic van Hoof interpolator.
+
     Notes
     -----
     Four methods are available:
@@ -1312,15 +1403,6 @@ def compute_ff_gaunt_factor(
         Appropriate for high-temperature plasmas
         (:math:`T \gtrsim 10^8\,\mathrm{K}`) where relativistic corrections
         are significant.
-
-    See Also
-    --------
-    compute_ff_gaunt_factor_comp :
-        Composition-weighted effective Gaunt factor for a multi-species plasma.
-    get_default_gaunt_interpolator :
-        Direct access to the non-relativistic van Hoof interpolator.
-    get_default_relativistic_gaunt_interpolator :
-        Direct access to the relativistic van Hoof interpolator.
 
     References
     ----------
@@ -1400,6 +1482,13 @@ def compute_ff_gaunt_factor_comp(
         If *approx* is not recognised, or if *Zs* and *Xs* have incompatible
         shapes or are not 1-D.
 
+    See Also
+    --------
+    compute_ff_gaunt_factor :
+        Single-species Gaunt factor; documents all available *approx* methods.
+    get_default_gaunt_interpolator :
+        Direct access to the non-relativistic van Hoof interpolator.
+
     Notes
     -----
     For a fully ionised multi-species plasma the free–free volume emissivity
@@ -1419,13 +1508,6 @@ def compute_ff_gaunt_factor_comp(
     For the tabulated methods (``'vanhoof'``, ``'vanhoof_rel'``), the
     per-species evaluations iterate over species in a Python loop; the
     interpolator is lazy-loaded and cached on the first call.
-
-    See Also
-    --------
-    compute_ff_gaunt_factor :
-        Single-species Gaunt factor; documents all available *approx* methods.
-    get_default_gaunt_interpolator :
-        Direct access to the non-relativistic van Hoof interpolator.
 
     References
     ----------
@@ -1601,6 +1683,15 @@ def get_default_gaunt_interpolator(**kwargs) -> NonRelativisticGauntFactorInterp
     NonRelativisticGauntFactorInterpolator
         A pre-loaded, callable interpolator.
 
+    See Also
+    --------
+    NonRelativisticGauntFactorInterpolator : The underlying interpolator class.
+    get_default_relativistic_gaunt_interpolator : Relativistic counterpart.
+
+    References
+    ----------
+    .. footbibliography::
+
     Examples
     --------
     .. code-block:: python
@@ -1612,15 +1703,6 @@ def get_default_gaunt_interpolator(**kwargs) -> NonRelativisticGauntFactorInterp
         interp = get_default_gaunt_interpolator()
         gff = interp(Z=1, T=1e4, nu=1e10)
         print(f"g_ff = {gff:.4f}")
-
-    See Also
-    --------
-    NonRelativisticGauntFactorInterpolator : The underlying interpolator class.
-    get_default_relativistic_gaunt_interpolator : Relativistic counterpart.
-
-    References
-    ----------
-    .. footbibliography::
     """
     return NonRelativisticGauntFactorInterpolator(**kwargs)
 
@@ -1648,6 +1730,15 @@ def get_default_relativistic_gaunt_interpolator(**kwargs) -> RelativisticGauntFa
     RelativisticGauntFactorInterpolator
         A pre-loaded, callable interpolator.
 
+    See Also
+    --------
+    RelativisticGauntFactorInterpolator : The underlying interpolator class.
+    get_default_gaunt_interpolator : Non-relativistic counterpart.
+
+    References
+    ----------
+    .. footbibliography::
+
     Examples
     --------
     .. code-block:: python
@@ -1661,15 +1752,6 @@ def get_default_relativistic_gaunt_interpolator(**kwargs) -> RelativisticGauntFa
         )
         gff = interp(Z=1, T=1e8, nu=1e18)
         print(f"g_ff = {gff:.4f}")
-
-    See Also
-    --------
-    RelativisticGauntFactorInterpolator : The underlying interpolator class.
-    get_default_gaunt_interpolator : Non-relativistic counterpart.
-
-    References
-    ----------
-    .. footbibliography::
     """
     return RelativisticGauntFactorInterpolator(**kwargs)
 

@@ -39,17 +39,26 @@ class ConfigManager(MutableMapping):
 
     Parameters
     ----------
-    path: str or `Path`
+    path : str or `Path`
         Path to the YAML configuration file.
-    autosave: bool
+    autosave : bool
         If True, automatically save changes to disk. Defaults to True.
-
     """
 
     __YAML__ = unit_compatible_yaml
     """ The YAML manager."""
 
     def __init__(self, path: Union[str, Path], autosave: bool = True):
+        """
+        Initialize the manager and load the configuration file.
+
+        Parameters
+        ----------
+        path : str or `Path`
+            Path to the YAML configuration file.
+        autosave : bool
+            If True, automatically save changes to disk. Defaults to True.
+        """
         self._path = Path(path).expanduser().resolve()
         self._autosave = autosave
         self._data = self._load()
@@ -115,7 +124,6 @@ class ConfigManager(MutableMapping):
         ------
         KeyError
             If the specified key does not exist.
-
         """
         node, final_key = self._traverse(key)
         return node[final_key]
@@ -133,7 +141,6 @@ class ConfigManager(MutableMapping):
         Notes
         -----
         If `autosave` is enabled, the configuration will be written to disk after setting.
-
         """
         node, final_key = self._traverse(key, create_missing=True)
         node[final_key] = value
@@ -156,7 +163,6 @@ class ConfigManager(MutableMapping):
         Notes
         -----
         If `autosave` is enabled, the change is written to disk immediately.
-
         """
         node, final_key = self._traverse(key)
         del node[final_key]
@@ -170,7 +176,6 @@ class ConfigManager(MutableMapping):
         -------
         Iterator[str]
             An iterator over the top-level keys in the root configuration dictionary.
-
         """
         return iter(self._data)
 
@@ -181,7 +186,6 @@ class ConfigManager(MutableMapping):
         -------
         int
             Number of top-level entries in the configuration.
-
         """
         return len(self._data)
 
@@ -192,16 +196,31 @@ class ConfigManager(MutableMapping):
         -------
         str
             A string showing the path to the config file and current in-memory state.
-
         """
         return f"<ConfigManager path={self._path} data={self._data}>"
 
     def to_dict(self) -> dict:
-        """Return the full configuration data as a dictionary."""
+        """
+        Return the full configuration data as a dictionary.
+
+        Returns
+        -------
+        dict
+            The full configuration data.
+        """
         return self._data
 
     def update(self, mapping, **kwargs) -> None:
-        """Update the configuration with another dictionary."""
+        """
+        Update the configuration with another dictionary.
+
+        Parameters
+        ----------
+        mapping : dict
+            Mapping of configuration entries to merge into the configuration.
+        **kwargs : dict
+            Additional entries to merge, as for :meth:`dict.update`.
+        """
         self._data.update(mapping, **kwargs)
         if self._autosave:
             self._save()
@@ -212,7 +231,14 @@ __PCONFIG__ = None
 
 
 def get_config() -> ConfigManager:
-    """Return global trilobite configuration following precedence."""
+    """
+    Return global trilobite configuration following precedence.
+
+    Returns
+    -------
+    ~trilobite.utils.config.ConfigManager
+        The global configuration manager.
+    """
     # Seek out a global configuration in the
     # name space.
     global __PCONFIG__

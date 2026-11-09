@@ -19,16 +19,24 @@ No new model implementation should be merged into the
 codebase without a corresponding compliance test here.
 """
 
+import inspect
+import re
+
 import numpy as np
+import pytest
 from astropy import units as u
 from test_model_base import BaseModelTest
 
 from trilobite.models.generic.curves import (
+    BrokenPowerLaw,
     ConstantModel,
     ExponentialModel,
     LinearModel,
     PowerLawModel,
     QuadraticModel,
+    SmoothedBrokenPowerLaw,
+    SmoothedTripleBrokenPowerLaw,
+    TripleBrokenPowerLaw,
 )
 
 # ============================================================
@@ -79,3 +87,17 @@ class TestExponentialModel(BaseModelTest):
     PARAMETERS = {"A": 1.0, "k": 1.0}
     LOG_X = False
     LOG_Y = False
+
+
+# ============================================================
+# Documentation examples
+# ============================================================
+@pytest.mark.parametrize(
+    "cls", [BrokenPowerLaw, SmoothedBrokenPowerLaw, TripleBrokenPowerLaw, SmoothedTripleBrokenPowerLaw]
+)
+def test_docstring_example_imports_resolve(cls):
+    """The imports shown in each model's documented example must point at real modules."""
+    imports = re.findall(r"^\s*(from trilobite\S* import \S+)$", inspect.getdoc(cls), flags=re.MULTILINE)
+    assert imports, f"{cls.__name__} has no importable example"
+    for statement in imports:
+        exec(statement, {})

@@ -326,7 +326,6 @@ class EvolvingSEDModel(Model, ABC):
 
             The arrays will be broadcast following
             :func:`numpy.broadcast_arrays`.
-
         parameters : dict
             Model parameters. May include units. Values are coerced to the
             model's base units before evaluation.
@@ -344,6 +343,15 @@ class EvolvingSEDModel(Model, ABC):
         ValueError
             If required variables or parameters are missing, or if any
             bounds checks fail.
+
+        See Also
+        --------
+        compute_sed_norm
+            Evaluate the time-dependent normalization.
+        compute_sed_breaks
+            Evaluate the evolving spectral breaks.
+        :obj:`~trilobite.models.core.base.Model.forward_model`
+            Evaluate the full model.
 
         Notes
         -----
@@ -373,12 +381,6 @@ class EvolvingSEDModel(Model, ABC):
             shape = model.compute_sed_shape(
                 {"frequency": nu, "time": t}, parameters
             )
-
-        See Also
-        --------
-        compute_sed_norm
-        compute_sed_breaks
-        ~trilobite.models.core.base.Model.forward_model
         """
         vars_, pars_ = self._prepare_inputs(variables, parameters)
         return self._forward_model_sed_shape(vars_, pars_)
@@ -400,7 +402,6 @@ class EvolvingSEDModel(Model, ABC):
               Time since explosion.
 
             If ``"frequency"`` is provided, it is ignored.
-
         parameters : dict
             Model parameters. May include units. Values are coerced to base
             units prior to evaluation.
@@ -418,6 +419,13 @@ class EvolvingSEDModel(Model, ABC):
         ValueError
             If required variables or parameters are missing, or if bounds
             validation fails.
+
+        See Also
+        --------
+        compute_sed_shape
+            Evaluate the dimensionless spectral shape.
+        :obj:`~trilobite.models.core.base.Model.forward_model`
+            Evaluate the full model.
 
         Notes
         -----
@@ -443,11 +451,6 @@ class EvolvingSEDModel(Model, ABC):
             norm = model.compute_sed_norm(
                 {"time": 5.0 * u.day}, parameters
             )
-
-        See Also
-        --------
-        compute_sed_shape
-        ~trilobite.models.core.base.Model.forward_model
         """
         vars_, pars_ = self._prepare_inputs(variables, parameters)
         raw = self._forward_model_norm(vars_, pars_)
@@ -470,7 +473,6 @@ class EvolvingSEDModel(Model, ABC):
 
             - ``"time"`` : array-like or `~astropy.units.Quantity`
               Time since explosion.
-
         parameters : dict
             Model parameters. May include units. Values are coerced to base
             units before evaluation.
@@ -481,7 +483,7 @@ class EvolvingSEDModel(Model, ABC):
             Dictionary mapping break names to physical values.
 
             If a break name is not found in
-            :attr:`~trilobite.models.generic.evolving_seds.base.EvolvingSEDModel.BREAK_UNITS`,
+            ``BREAK_UNITS``,
             it is assumed to have units of Hz.
 
         Raises
@@ -489,6 +491,13 @@ class EvolvingSEDModel(Model, ABC):
         ValueError
             If required variables or parameters are missing, or if bounds
             validation fails.
+
+        See Also
+        --------
+        compute_sed_norm
+            Evaluate the time-dependent normalization.
+        compute_sed_shape
+            Evaluate the dimensionless spectral shape.
 
         Notes
         -----
@@ -519,11 +528,6 @@ class EvolvingSEDModel(Model, ABC):
             )
 
             nu_brk = breaks["nu_brk"]
-
-        See Also
-        --------
-        compute_sed_norm
-        compute_sed_shape
         """
         vars_, pars_ = self._prepare_inputs(variables, parameters)
         raw = self._forward_model_breaks(vars_, pars_)

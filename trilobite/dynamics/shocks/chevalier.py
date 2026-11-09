@@ -8,38 +8,6 @@ circumstellar medium (CSM). These models are useful for rapidly estimating the
 radius and velocity evolution of the shocked interface in regimes where the
 ejecta and external medium can be approximated by scale-free density profiles.
 
-The ejecta are modeled as a broken power law in homologous velocity
-:math:`v = r/t`,
-
-.. math::
-
-    \rho_{\rm ej}(r,t)
-    =
-    K_{\rm ej} t^{-3}
-    \begin{cases}
-        v^{-\delta}, & v < v_t, \\
-        v_t^{n-\delta} v^{-n}, & v \ge v_t,
-    \end{cases}
-
-where :math:`v_t` is the transition velocity, :math:`K_{\rm ej}` is the ejecta
-normalization, :math:`\delta` is the inner density index, and :math:`n` is the
-outer density index. The helper function :func:`normalize_bpl_ejecta`
-computes :math:`v_t` and :math:`K_{\rm ej}` from the total ejecta kinetic energy
-and mass.
-
-The CSM is modeled as a power-law density profile,
-
-.. math::
-
-    \rho_{\rm CSM}(r) = K_{\rm CSM} r^{-s},
-
-with utilities for constructing both general power-law normalizations and the
-special steady-wind case,
-
-.. math::
-
-    K_{\rm CSM} = \frac{\dot{M}}{4\pi v_w}.
-
 The primary classes are:
 
 - :class:`ChevalierSelfSimilarShockEngine`, which computes self-similar shock
@@ -47,8 +15,38 @@ The primary classes are:
 - :class:`ChevalierSelfSimilarWindShockEngine`, a convenience specialization for
   wind-like media with :math:`s = 2`.
 
-The module also provides helper functions for constructing callable ejecta and
-CSM density profiles suitable for use by other shock engines.
+.. rubric:: Model Assumptions
+
+The following assumptions are shared by all Chevalier self-similar shock models:
+
+1. The supernova ejecta are **homologously expanding**, meaning that the velocity field of
+   the fluid is :math:`u_{\rm ejecta}(r,t) = r/t`. This is a good approximation during the early
+   phases of supernova expansion after the initial explosion, before significant deceleration occurs.
+
+2. The ejecta density profile is a **broken power law** with an inner flat core and an outer steep envelope:
+
+   .. math::
+
+       \rho_{\rm ej}(r,t)
+       =
+       K_{\rm ej} t^{-3}
+       \begin{cases}
+           v^{-\delta}, & v < v_t, \\
+           v_t^{n-\delta} v^{-n}, & v \ge v_t,
+       \end{cases}
+
+   where :math:`v_t` is the transition velocity, :math:`K_{\rm ej}` is the ejecta
+   normalization, :math:`\delta` is the inner density index, and :math:`n` is the
+   outer density index. The helper function
+   :meth:`trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.normalize`
+   computes :math:`v_t` and :math:`K_{\rm ej}` from the total ejecta kinetic energy
+   and mass.
+
+3. The circumstellar medium (CSM) is a **power-law density profile**:
+
+   .. math::
+
+       \rho_{\rm CSM}(r) = K_{\rm CSM} r^{-s}.
 
 Notes
 -----
@@ -67,99 +65,225 @@ References
 .. footbibliography::
 """
 
+import warnings
 from typing import NamedTuple, Union
 
 import numpy as np
 from astropy import units as u
 
 from trilobite._typing import _ArrayLike, _UnitBearingArrayLike, _UnitBearingScalarLike
+from trilobite.dynamics.profiles.ejecta import _normalize_bpl_cgs as _normalize_BPL_ejecta_cgs
 from trilobite.dynamics.shocks.core.rankine_hugoniot import StrongColdShockConditions
 from trilobite.dynamics.shocks.core.shock_engine import ShockEngine
-from trilobite.dynamics.shocks.utils import _normalize_BPL_ejecta
-
-# ===================================================== #
-# Utility Functions                                     #
-# ===================================================== #
-# These are functions made available here because they are directly associated
-# with the Chevalier model, but they are not necessarily specific to the Chevalier model. They are
-# intended to be accessible to other shock engines as well, but they are not necessarily general enough to be moved
-# to a more general utilities module.
-
 
 # ==================================================== #
-# State Classes                                        #
+# Chevalier Solution Classes                           #
 # ==================================================== #
-# ==================================================== #
-# Utility Methods                                      #
-# ==================================================== #
+# These classes and functions are used to actually solve the Chevalier self-similar ODEs to
+# determine the fluid-dynamic structure of the shocked regions. These are then used to
+# provide necessary information for the shock engine classes below.
+
+
 class ChevalierSelfSimilarFunctions(NamedTuple):
     r"""
-    Dimensionless Chevalier self-similar two-shock structure.
+    Dimensionless Chevalier self-similar two-shock ODE solution.
 
-    The global similarity coordinate is
+    Returned by :func:`compute_self_similar_functions`. Stores the complete
+    dimensionless fluid-dynamic structure of the two shocked regions produced by
+    supernova ejecta interacting with a power-law CSM: the shocked CSM (outer region,
+    between the forward shock and the contact discontinuity) and the shocked ejecta
+    (inner region, between the contact discontinuity and the reverse shock).
+
+    All quantities are expressed in the global similarity coordinate
 
     .. math::
 
-        \xi = r / R_c,
+        \xi \equiv r / R_{\rm cd},
 
-    where :math:`R_c` is the contact-discontinuity radius. The returned grid
-    spans
+    where :math:`R_{\rm cd}` is the contact-discontinuity radius. The solution
+    spans :math:`\xi_{\rm rs} \le \xi \le \xi_{\rm fs}`, with the contact
+    discontinuity at :math:`\xi = 1`.
 
-    .. math::
+    The self-similar functions :math:`U`, :math:`\Omega`, and :math:`P` are
+    the dimensionless velocity, density, and pressure respectively. Their
+    connection to physical (CGS) quantities depends on which region is being
+    evaluated:
 
-        R_{\rm rs}/R_c \le \xi \le R_{\rm fs}/R_c.
+    - **Outer shocked CSM** (:math:`1 \le \xi \le \xi_{\rm fs}`):
 
-    The contact discontinuity is located at ``xi = 1``.
+      .. math::
+
+          u = \frac{r}{t}\,U, \quad
+          \rho = K_{\rm CSM}\,r^{-s}\,\Omega, \quad
+          p = K_{\rm CSM}\,t^{-2}\,r^{2-s}\,P.
+
+    - **Inner shocked ejecta** (:math:`\xi_{\rm rs} \le \xi \le 1`):
+
+      .. math::
+
+          u = \frac{r}{t}\,U, \quad
+          \rho = K_{\rm ej}\,t^{n-3}\,r^{-n}\,\Omega, \quad
+          p = K_{\rm ej}\,t^{n-5}\,r^{2-n}\,P.
+
+    The ``_inner`` and ``_outer`` array pairs hold the ODE solution on
+    uniformly-spaced :math:`\xi` grids for each region separately.  The
+    unprefixed ``xi``, ``U``, ``Omega``, ``P`` arrays are the two grids
+    concatenated (inner first, then outer) for convenience when plotting or
+    integrating across the full shock structure.  The ``density_hat``,
+    ``pressure_hat``, and ``velocity_hat`` arrays are contact-radius-scaled
+    profiles (normalized to the CSM convention) that can be plotted without
+    choosing physical normalization constants.
     """
 
+    # ------------------------------------------------------------------
+    # Input parameters
+    # ------------------------------------------------------------------
     n: float
+    r"""Outer ejecta density power-law index (``n > 5`` required)."""
+
     s: float
+    r"""CSM density power-law index (``s < 3`` required)."""
+
     gamma: float
+    r"""Adiabatic index of the shocked gas."""
+
+    # ------------------------------------------------------------------
+    # Derived kinematic exponents
+    # ------------------------------------------------------------------
     expansion_index: float
-    similarity_exponent: float
-
-    A: float
-    radius_fs_over_radius_cd: float
-    radius_rs_over_radius_cd: float
-
-    xi: np.ndarray
-    U: np.ndarray
-    Omega: np.ndarray
-    P: np.ndarray
-
-    density_hat: np.ndarray
-    pressure_hat: np.ndarray
-    velocity_hat: np.ndarray
-
-    xi_inner: np.ndarray
-    U_inner: np.ndarray
-    Omega_inner: np.ndarray
-    P_inner: np.ndarray
-
-    xi_outer: np.ndarray
-    U_outer: np.ndarray
-    Omega_outer: np.ndarray
-    P_outer: np.ndarray
-
-
-class ChevalierSelfSimilarCriticalGrid(NamedTuple):
     r"""
-    Critical Chevalier self-similar constants on an ``(n, s)`` grid.
+    Contact-discontinuity expansion exponent :math:`\lambda = (n-3)/(n-s)`.
 
-    Arrays are indexed as ``[i, j]``, where ``i`` indexes ``n_values`` and
-    ``j`` indexes ``s_values``.
+    The contact radius grows as :math:`R_{\rm cd} \propto t^\lambda`.
     """
 
-    n_values: np.ndarray
-    s_values: np.ndarray
-    gamma: float
+    similarity_exponent: float
+    r"""
+    Reciprocal of the expansion exponent, :math:`1/\lambda`.
 
-    expansion_index: np.ndarray
-    similarity_exponent: np.ndarray
+    Gives the time at which a given radius was first crossed:
+    :math:`t \propto r^{1/\lambda}`.
+    """
 
-    A: np.ndarray
-    radius_fs_over_radius_cd: np.ndarray
-    radius_rs_over_radius_cd: np.ndarray
+    # ------------------------------------------------------------------
+    # Dimensionless constants
+    # ------------------------------------------------------------------
+    A: float
+    r"""
+    Dimensionless normalization constant :math:`A`.
+
+    Determined by matching the pressure across the contact discontinuity.
+    It enters the contact-discontinuity radius as
+
+    .. math::
+
+        R_{\rm cd}(t) = \left(\frac{A\,K_{\rm ej}}{K_{\rm CSM}}\right)^{1/(n-s)} t^\lambda.
+    """
+
+    radius_fs_over_radius_cd: float
+    r"""
+    Forward-shock to contact-discontinuity radius ratio,
+    :math:`\xi_{\rm fs} = R_{\rm fs} / R_{\rm cd} > 1`.
+    """
+
+    radius_rs_over_radius_cd: float
+    r"""
+    Reverse-shock to contact-discontinuity radius ratio,
+    :math:`\xi_{\rm rs} = R_{\rm rs} / R_{\rm cd} < 1`.
+    """
+
+    # ------------------------------------------------------------------
+    # Global combined grids (inner + outer concatenated)
+    # ------------------------------------------------------------------
+    xi: np.ndarray
+    r"""
+    Global similarity coordinate :math:`\xi = r / R_{\rm cd}`, spanning
+    :math:`[\xi_{\rm rs},\, \xi_{\rm fs}]`. Concatenation of ``xi_inner``
+    followed by ``xi_outer``. Shape ``(n_points,)``.
+    """
+
+    U: np.ndarray
+    r"""
+    Dimensionless velocity :math:`U(\xi)` on the global grid.
+    Physical velocity: :math:`u = (r/t)\,U`. Shape ``(n_points,)``.
+    """
+
+    Omega: np.ndarray
+    r"""
+    Dimensionless density :math:`\Omega(\xi)` on the global grid.
+    See class docstring for the physical scaling on each side. Shape ``(n_points,)``.
+    """
+
+    P: np.ndarray
+    r"""
+    Dimensionless pressure :math:`P(\xi)` on the global grid.
+    See class docstring for the physical scaling on each side. Shape ``(n_points,)``.
+    """
+
+    # ------------------------------------------------------------------
+    # Contact-radius-scaled profiles (normalization-free, for plotting)
+    # ------------------------------------------------------------------
+    density_hat: np.ndarray
+    r"""
+    Contact-radius-scaled density profile on the global grid.
+
+    In the outer region this equals :math:`\xi^{-s}\,\Omega`; in the inner
+    region :math:`A^{-1}\,\xi^{-n}\,\Omega`. Both sides are normalized to
+    the outer (CSM) convention so the profile is continuous at :math:`\xi = 1`.
+    Shape ``(n_points,)``.
+    """
+
+    pressure_hat: np.ndarray
+    r"""
+    Contact-radius-scaled pressure profile on the global grid.
+
+    Outer: :math:`\xi^{2-s}\,P`; inner: :math:`A^{-1}\,\xi^{2-n}\,P`.
+    Shape ``(n_points,)``.
+    """
+
+    velocity_hat: np.ndarray
+    r"""
+    Dimensionless physical velocity :math:`\xi\,U` on the global grid,
+    equal to :math:`u\,t/R_{\rm cd}`. Shape ``(n_points,)``.
+    """
+
+    # ------------------------------------------------------------------
+    # Inner region: shocked ejecta (xi_rs <= xi <= 1)
+    # ------------------------------------------------------------------
+    xi_inner: np.ndarray
+    r"""
+    Similarity coordinate on the inner (shocked ejecta) grid,
+    uniformly spaced from :math:`\xi_{\rm rs}` to just below 1.
+    Shape ``(n_inner,)`` where ``n_inner = max(2, n_points // 2)``.
+    """
+
+    U_inner: np.ndarray
+    r"""Dimensionless velocity :math:`U` on the inner grid. Shape ``(n_points // 2,)``."""
+
+    Omega_inner: np.ndarray
+    r"""Dimensionless density :math:`\Omega` on the inner grid. Shape ``(n_points // 2,)``."""
+
+    P_inner: np.ndarray
+    r"""Dimensionless pressure :math:`P` on the inner grid. Shape ``(n_points // 2,)``."""
+
+    # ------------------------------------------------------------------
+    # Outer region: shocked CSM (1 <= xi <= xi_fs)
+    # ------------------------------------------------------------------
+    xi_outer: np.ndarray
+    r"""
+    Similarity coordinate on the outer (shocked CSM) grid,
+    uniformly spaced from just above 1 to :math:`\xi_{\rm fs}`.
+    Shape ``(n_outer,)`` where ``n_outer = max(2, n_points - max(2, n_points // 2))``.
+    """
+
+    U_outer: np.ndarray
+    r"""Dimensionless velocity :math:`U` on the outer grid. Shape ``(n_points // 2,)``."""
+
+    Omega_outer: np.ndarray
+    r"""Dimensionless density :math:`\Omega` on the outer grid. Shape ``(n_points // 2,)``."""
+
+    P_outer: np.ndarray
+    r"""Dimensionless pressure :math:`P` on the outer grid. Shape ``(n_points // 2,)``."""
 
 
 def compute_self_similar_functions(
@@ -312,14 +436,12 @@ def compute_self_similar_functions(
             x_span = (1.0, 1.0e-8)
             target_U = expansion_index - contact_epsilon
             direction = 1.0
-            max_step = 1.0e-3
 
         else:
             # Start at R_rs and integrate outward to R_c.
             x_span = (1.0, 100.0)
             target_U = expansion_index + contact_epsilon
             direction = -1.0
-            max_step = 1.0e-3
 
         def event_contact(x, y):
             return y[0] - target_U
@@ -335,7 +457,6 @@ def compute_self_similar_functions(
             events=event_contact,
             rtol=rtol,
             atol=atol,
-            max_step=max_step,
         )
 
         if solution.status != 1:
@@ -464,6 +585,95 @@ def compute_self_similar_functions(
         Omega_outer=Omega_outer,
         P_outer=P_outer,
     )
+
+
+# ===================================================== #
+# Chevalier Solution Tables and Interpolation           #
+# ===================================================== #
+# For most uses, the entire fluid dynamic solution is not useful; we instead care about
+# the boundaries of the shocked region (R_rs and R_fs) and the conditions at the contact discontinuity
+# (R_c). The following functions compute tables of these values for a grid of n,
+# s, and gamma, and then provide interpolation functions to get these values for arbitrary n, s, and gamma.
+class ChevalierSelfSimilarCriticalGrid(NamedTuple):
+    r"""
+    Chevalier self-similar constants tabulated on an ``(n, s)`` grid.
+
+    Returned by :func:`compute_self_similar_critical_grid`. Stores only the
+    dimensionless scalar constants extracted from the full ODE solution — the
+    expansion exponent, normalization constant :math:`A`, and the two shock-to-contact
+    radius ratios — for every combination of outer ejecta index ``n`` and CSM index
+    ``s`` on the input grids. The full fluid-dynamic profiles are discarded; use
+    :class:`ChevalierSelfSimilarFunctions` (via :func:`compute_self_similar_functions`)
+    if you need those.
+
+    All 2-D array fields are indexed as ``arr[i, j]``, where ``i`` runs over
+    ``n_values`` and ``j`` runs over ``s_values``.
+
+    The primary use-case is pre-tabulation for :class:`ChevalierTwoShockSelfSimilarEngine`,
+    which bilinearly interpolates :math:`A`, :math:`\xi_{\rm fs}`, and
+    :math:`\xi_{\rm rs}` at runtime to avoid re-solving the ODEs for every
+    ``(n, s)`` evaluation.
+    """
+
+    # ------------------------------------------------------------------
+    # Grid axes
+    # ------------------------------------------------------------------
+    n_values: np.ndarray
+    r"""1-D array of outer ejecta density indices (all must satisfy ``n > 5``). Shape ``(N_n,)``."""
+
+    s_values: np.ndarray
+    r"""1-D array of CSM density indices (all must satisfy ``s < 3``). Shape ``(N_s,)``."""
+
+    gamma: float
+    r"""Adiabatic index used when solving the self-similar ODEs at each grid point."""
+
+    # ------------------------------------------------------------------
+    # Kinematic exponents
+    # ------------------------------------------------------------------
+    expansion_index: np.ndarray
+    r"""
+    Contact-discontinuity expansion exponent :math:`\lambda_{ij} = (n_i - 3)/(n_i - s_j)`.
+
+    The contact radius grows as :math:`R_{\rm cd} \propto t^{\lambda}`.
+    Shape ``(N_n, N_s)``.
+    """
+
+    similarity_exponent: np.ndarray
+    r"""
+    Reciprocal of the expansion exponent, :math:`1/\lambda_{ij}`.
+    Shape ``(N_n, N_s)``.
+    """
+
+    # ------------------------------------------------------------------
+    # Dimensionless shock constants
+    # ------------------------------------------------------------------
+    A: np.ndarray
+    r"""
+    Dimensionless normalization constant :math:`A_{ij}`.
+
+    Determined by matching pressure across the contact discontinuity for each
+    ``(n, s)`` pair. Used to set the absolute contact-radius scale via
+
+    .. math::
+
+        R_{\rm cd}(t) = \left(\frac{A\,K_{\rm ej}}{K_{\rm CSM}}\right)^{1/(n-s)} t^\lambda.
+
+    Shape ``(N_n, N_s)``.
+    """
+
+    radius_fs_over_radius_cd: np.ndarray
+    r"""
+    Forward-shock to contact-discontinuity radius ratio,
+    :math:`\xi_{{\rm fs},ij} = R_{\rm fs} / R_{\rm cd} > 1`.
+    Shape ``(N_n, N_s)``.
+    """
+
+    radius_rs_over_radius_cd: np.ndarray
+    r"""
+    Reverse-shock to contact-discontinuity radius ratio,
+    :math:`\xi_{{\rm rs},ij} = R_{\rm rs} / R_{\rm cd} < 1`.
+    Shape ``(N_n, N_s)``.
+    """
 
 
 def compute_self_similar_critical_grid(
@@ -629,7 +839,8 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
     r"""
     Implementation of the "classical" Chevalier 1982 self-similar supernova shock model.
 
-    This :class:`~trilobite.dynamics.shock_engine.ShockEngine` subclass implements the self-similar shock solutions
+    This :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine` subclass implements the
+    self-similar shock solutions
     described in :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982` for the interaction between
     supernova ejecta and a surrounding circumstellar medium (CSM). The model assumes power-law density profiles
     for both the ejecta and the CSM, leading to a self-similar evolution of the shock structure over time.
@@ -643,9 +854,26 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
         A derivation of this model can be found on the :ref:`chevalier_theory` guide. Much of the
         relevant detail omitted here can be found there.
 
+    Parameters
+    ----------
+    gamma : float, optional
+        Adiabatic index of the shocked gas. Default is :math:`5/3` (monatomic ideal gas).
+    mu : float, optional
+        Mean molecular weight in units of the proton mass used for the post-shock temperature calculation. Default is
+        ``0.5`` (fully ionized hydrogen).
+    **kwargs :
+        Additional keyword arguments forwarded to the parent
+        :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
+
+    See Also
+    --------
+    ChevalierSelfSimilarWindShockEngine
+        Specialized version of :class:`ChevalierSelfSimilarShockEngine` for steady-wind CSM.
+    :obj:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+        A numerical implementation of thin-shell shock dynamics for arbitrary ejecta and CSM profiles.
+
     Notes
     -----
-
     .. important::
 
         This model is based off of the classical self-similar solutions for supernova ejecta interacting
@@ -718,17 +946,9 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
     from the total ejecta kinetic energy :math:`E_{\rm ej}` and ejecta mass :math:`M_{\rm ej}` instead of requiring
     them as direct inputs.
 
-    See Also
-    --------
-    ChevalierSelfSimilarWindShockEngine
-        Specialized version of :class:`ChevalierSelfSimilarShockEngine` for steady-wind CSM.
-    NumericalThinShellShockEngine
-        A numerical implementation of thin-shell shock dynamics for arbitrary ejecta and CSM profiles.
-
     References
     ----------
     .. footbibliography::
-
     """
 
     _STATE_CLASS = ChevalierShockState
@@ -770,9 +990,9 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
 
         Parameters
         ----------
-        n: float
+        n : float
             The outer ejecta density profile power-law index.
-        s: float
+        s : float
             The CSM density profile power-law index.
 
         Returns
@@ -791,6 +1011,16 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
 
         where :math:`\lambda = \frac{3-n}{s-n}`. A derivation of this parameter can be found in
         :ref:`chevalier_theory`.
+
+        .. note::
+
+            :math:`\zeta` is derived from momentum conservation and is **distinct** from the
+            pressure-matched normalization constant :math:`A` returned by
+            :func:`compute_self_similar_functions`. Both constants set the absolute
+            contact-radius scale, but :math:`A` is more accurate because it is obtained from the
+            full two-sided ODE solution. For highest fidelity, use
+            :class:`ChevalierTwoShockSelfSimilarEngine`, which tabulates :math:`A` at
+            construction time.
         """
         # Construct lambda from n and s.
         _lambda = (3 - n) / (s - n)
@@ -825,34 +1055,30 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
 
         Parameters
         ----------
-        time: ~astropy.units.Quantity or float or numpy.ndarray
+        time : ~astropy.units.Quantity or float or numpy.ndarray
             The time(s) at which to evaluate the shock properties. If units are provided,
             they will be taken into account. Otherwise, CGS units (seconds) are assumed.
             If ``time`` is provided as an array of shape ``(N,)``, the results will all have
             corresponding shapes ``(N,)``.
-        E_ej: ~astropy.units.Quantity or float
+        E_ej : ~astropy.units.Quantity or float
             The total energy in the ejecta from the explosion. If units are provided,
             they will be taken into account. Otherwise, CGS units (erg) are assumed.
-        M_ej: ~astropy.units.Quantity or float
+        M_ej : ~astropy.units.Quantity or float
             The total mass in the ejecta from the explosion. If units are provided,
             they will be taken into account. Otherwise, CGS units (grams) are assumed.
-        K_csm: ~astropy.units.Quantity or float, optional
+        K_csm : ~astropy.units.Quantity or float
             The scaling (:math:`K_{\rm CSM}`) for the CSM density profile of the form
             :math:`\rho_{\rm CSM}(r) = K_{\rm CSM} r^{-s}`. If units are provided, they will be
-            taken into account. Otherwise, CGS units (``g * cm^{(s-3)}``) are assumed. If not provided,
-            a default scaling based on a wind-like CSM with :math:`\dot{M} \sim 10^{-5} M_{\odot}/yr`
-            and :math:`v_w \sim 1000 km/s` is used at a radius of :math:`r = 10^{16} cm`.
-
-            .. note::
-
-                For science scenarios, ``K_csm`` should always be provided explicitly to ensure
-                physical accuracy. The default is only a placeholder.
-        n: float, optional
+            taken into account. Otherwise, CGS units (``g * cm^{(s-3)}``) are assumed. Must be
+            strictly positive. For a wind-like CSM (:math:`s = 2`), use
+            :class:`ChevalierSelfSimilarWindShockEngine`, which accepts :math:`\dot{M}` and
+            :math:`v_w` directly.
+        n : float, optional
             The outer ejecta density profile power-law index. Default is ``10.0``. Must be steeper than
             5 for convergence.
-        s: float, optional
+        s : float, optional
             The CSM density profile power-law index. Default is ``2.0``.
-        delta: float, optional
+        delta : float, optional
             The inner ejecta density profile power-law index. Default is ``0.0``. Must be less than
             3 for convergence. In general, it is suitable to use ``0.0``.
 
@@ -861,16 +1087,24 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
         ChevalierShockState
             Shock kinematics and post-shock thermodynamics at the requested time(s),
             with :class:`~astropy.units.Quantity` units attached to every field.
-
         """
-        # Validate inputs and determine a scaling for K_csm if one
-        # is not provided. To do this, we set a standard density based on a wind-like
-        # density profile. THIS IS PURELY A MEANS FOR PICKING A DEFAULT, IT SHOULD
-        # NOT BE USED IN SCIENCE RUNS.
+        # Require K_csm to be explicitly provided.
         if K_csm is None:
-            # Assume a generic wind-like CSM with M_dot ~ 1e-5 Msun/yr and v_w ~ 1000 km/s scaled
-            # at r = 1e16 cm.
-            K_csm = ((1e16 * u.cm) ** (s - 2)) * (1e-5 * u.Msun / u.yr) / (4.0 * np.pi * (1000 * u.km / u.s))
+            raise ValueError(
+                "K_csm must be provided. For a wind-like CSM (s=2), use "
+                "ChevalierSelfSimilarWindShockEngine, which accepts M_dot and v_wind directly."
+            )
+
+        # Validate n and s before converting K_csm (whose unit depends on s).
+        if n <= 5:
+            raise ValueError("The outer ejecta density profile index `n` must be greater than 5 for convergence.")
+        if s >= 3:
+            raise ValueError("The CSM density index `s` must be less than 3 for a convergent self-similar solution.")
+        if s >= n:
+            raise ValueError(
+                f"The CSM index s={s:.4g} must be strictly less than the ejecta index n={n:.4g} "
+                "for a physically valid (decelerating) forward shock."
+            )
 
         # Scale everything down to CGS for internal computation.
         if isinstance(E_ej, u.Quantity):
@@ -879,14 +1113,24 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
             M_ej = M_ej.to(u.g).value
         if isinstance(time, u.Quantity):
             time = time.to(u.s).value
+        time = np.asarray(time, dtype=float)
         if isinstance(K_csm, u.Quantity):
             K_csm = K_csm.to(u.g * u.cm ** (s - 3)).value
 
-        # Perform checks on ``n``, ``s``, and ``delta`` to ensure convergence.
+        # Validate remaining inputs.
+        if np.any(time <= 0):
+            raise ValueError("time must be strictly positive; the self-similar solution is undefined at t <= 0.")
+        if delta < 0:
+            warnings.warn(
+                f"Inner ejecta index delta={delta:.4g} is negative, implying density increases "
+                "with velocity in the ejecta core. This is unphysical for standard SN profiles.",
+                UserWarning,
+                stacklevel=2,
+            )
         if delta >= 3:
             raise ValueError("The inner ejecta density profile index `delta` must be less than 3 for convergence.")
-        if n <= 5:
-            raise ValueError("The outer ejecta density profile index `n` must be greater than 5 for convergence.")
+        if K_csm <= 0:
+            raise ValueError("K_csm must be strictly positive.")
 
         # Call the internal CGS computation method.
         shock_properties_cgs = self._compute_shock_properties_cgs(
@@ -943,14 +1187,11 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
             All fields are plain :class:`numpy.ndarray` values in CGS units.
 
         """
+        time = np.asarray(time, dtype=float)
+
         # Using the ``_compute_v_t_and_K_from_energetics_cgs`` static method to get v_t and K. We can
         # discard v_t, but K is necessary.
-        v_t, K = _normalize_BPL_ejecta(
-            E_ej=E_ej,
-            M_ej=M_ej,
-            n=n,
-            delta=delta,
-        )
+        K, v_t = _normalize_BPL_ejecta_cgs(E_ej, M_ej, n=n, delta=delta, v_max=np.inf)
 
         # Correct K since it needs to be multiplied by v_t^(n - delta) for the outer ejecta profile.
         K_EJ = K * v_t ** (n - delta)
@@ -1004,13 +1245,13 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
 
         Parameters
         ----------
-        rho_0: astropy.units.Quantity or float
+        rho_0 : astropy.units.Quantity or float
             The reference density of the CSM at radius :math:`r_0`. If units are provided,
             they will be taken into account. Otherwise, CGS units (``grams/cm^3``) are assumed.
-        r_0: astropy.units.Quantity or float
+        r_0 : astropy.units.Quantity or float
             The reference radius at which the density is specified. If units are provided,
             they will be taken into account. Otherwise, CGS units (``cm``) are assumed.
-        s: float
+        s : float
             The CSM density profile power-law index.
 
         Returns
@@ -1018,7 +1259,6 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
         K_csm: astropy.units.Quantity
             The computed normalization constant :math:`K_{\rm CSM}` with units of
             ``grams * cm^(s-3)``.
-
         """
         # Convert inputs to CGS for internal computation.
         if isinstance(rho_0, u.Quantity):
@@ -1051,22 +1291,22 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
         .. math::
 
             \rho_{\rm ej}(r,t) = K_{\rm ej} t^{-3} \left(\frac{r}{t}\right)^{-n} =
-            \rho_0 \left(\frac{r/t}{v_0}\right)^{-n} left(\frac{t}{t_0}\right)^{-3},
+            \rho_0 \left(\frac{r/t}{v_0}\right)^{-n} \left(\frac{t}{t_0}\right)^{-3},
 
         given a reference density :math:`\rho_0` at a reference velocity :math:`v_0` and time :math:`t_0`.
 
         Parameters
         ----------
-        rho_0: astropy.units.Quantity or float
+        rho_0 : astropy.units.Quantity or float
             The reference density of the ejecta at velocity :math:`v_0` and time :math:`t_0`. If units are provided,
             they will be taken into account. Otherwise, CGS units (``grams/cm^3``) are assumed.
-        v_0: astropy.units.Quantity or float
+        v_0 : astropy.units.Quantity or float
             The reference velocity at which the density is specified. If units are provided,
             they will be taken into account. Otherwise, CGS units (``cm/s``) are assumed.
-        t_0: astropy.units.Quantity or float
+        t_0 : astropy.units.Quantity or float
             The reference time at which the density is specified. If units are provided,
             they will be taken into account. Otherwise, CGS units (``s``) are assumed.
-        n: float
+        n : float
             The outer ejecta density profile power-law index.
 
         Returns
@@ -1074,7 +1314,6 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
         K_ej: astropy.units.Quantity
             The computed normalization constant :math:`K_{\rm ej}` with units of
             ``grams * cm^(n-3) * s^(3-n)``.
-
         """
         # Convert inputs to CGS for internal computation.
         if isinstance(rho_0, u.Quantity):
@@ -1117,6 +1356,16 @@ class ChevalierSelfSimilarWindShockEngine(ChevalierSelfSimilarShockEngine):
         A derivation of this model can be found on the :ref:`chevalier_theory` guide. Much of the
         relevant detail omitted here can be found there.
 
+    Parameters
+    ----------
+    gamma : float, optional
+        Adiabatic index of the shocked gas. Forwarded to :class:`ChevalierSelfSimilarShockEngine`. Default is
+        :math:`5/3`.
+    mu : float, optional
+        Mean molecular weight in units of the proton mass. Forwarded to :class:`ChevalierSelfSimilarShockEngine`.
+        Default is ``0.5``.
+    **kwargs :
+        Additional keyword arguments forwarded to the parent engine.
     """
 
     # =========================================== #
@@ -1158,29 +1407,29 @@ class ChevalierSelfSimilarWindShockEngine(ChevalierSelfSimilarShockEngine):
 
         Parameters
         ----------
-        time: ~astropy.units.Quantity or float or numpy.ndarray
+        time : ~astropy.units.Quantity or float or numpy.ndarray
             The time(s) at which to evaluate the shock properties. If units are provided,
             they will be taken into account. Otherwise, CGS units (seconds) are assumed.
             If ``time`` is provided as an array of shape ``(N,)``, the results will all have
             corresponding shapes ``(N,)``.
-        E_ej: ~astropy.units.Quantity or float
+        E_ej : ~astropy.units.Quantity or float
             The total energy in the ejecta from the explosion. If units are provided,
             they will be taken into account. Otherwise, CGS units (erg) are assumed.
-        M_ej: ~astropy.units.Quantity or float
+        M_ej : ~astropy.units.Quantity or float
             The total mass in the ejecta from the explosion. If units are provided,
             they will be taken into account. Otherwise, CGS units (grams) are assumed.
-        M_dot: ~astropy.units.Quantity or float
+        M_dot : ~astropy.units.Quantity or float
             The mass-loss rate of the progenitor star's wind. If units are provided,
             they will be taken into account. Otherwise, CGS units (grams/second) are assumed.
             By default, this is set to ``1e-5 Msun/yr``.
-        v_wind: ~astropy.units.Quantity or float
+        v_wind : ~astropy.units.Quantity or float
             The velocity of the progenitor star's wind. If units are provided,
             they will be taken into account. Otherwise, CGS units (cm/second) are assumed. By
             default, this is set to ``1000 km/s``.
-        n: float, optional
+        n : float, optional
             The outer ejecta density profile power-law index. Default is ``10.0``. Must be steeper than
             5 for convergence.
-        delta: float, optional
+        delta : float, optional
             The inner ejecta density profile power-law index. Default is ``0.0``. Must be less than
             3 for convergence. In general, it is suitable to use ``0.0``.
 
@@ -1189,7 +1438,6 @@ class ChevalierSelfSimilarWindShockEngine(ChevalierSelfSimilarShockEngine):
         ChevalierShockState
             Shock kinematics and post-shock thermodynamics at the requested time(s),
             with :class:`~astropy.units.Quantity` units attached to every field.
-
         """
         # Scale everything down to CGS for internal computation.
         if isinstance(E_ej, u.Quantity):
@@ -1202,8 +1450,22 @@ class ChevalierSelfSimilarWindShockEngine(ChevalierSelfSimilarShockEngine):
             M_dot = M_dot.to(u.g / u.s).value
         if isinstance(v_wind, u.Quantity):
             v_wind = v_wind.to(u.cm / u.s).value
+        time = np.asarray(time, dtype=float)
 
-        # Perform checks on ``n``, ``s``, and ``delta`` to ensure convergence.
+        # Validate inputs.
+        if np.any(time <= 0):
+            raise ValueError("time must be strictly positive; the self-similar solution is undefined at t <= 0.")
+        if M_dot <= 0:
+            raise ValueError("M_dot must be strictly positive.")
+        if v_wind <= 0:
+            raise ValueError("v_wind must be strictly positive.")
+        if delta < 0:
+            warnings.warn(
+                f"Inner ejecta index delta={delta:.4g} is negative, implying density increases "
+                "with velocity in the ejecta core. This is unphysical for standard SN profiles.",
+                UserWarning,
+                stacklevel=2,
+            )
         if delta >= 3:
             raise ValueError("The inner ejecta density profile index `delta` must be less than 3 for convergence.")
         if n <= 5:
@@ -1386,33 +1648,32 @@ class ChevalierTwoShockSelfSimilarEngine(ShockEngine):
     Parameters
     ----------
     gamma : float, optional
-        Adiabatic index of the shocked gas. Default is :math:`5/3`.
+        Adiabatic index.
     mu : float, optional
-        Mean molecular weight in proton-mass units for the post-shock temperature.
-        Default is ``0.5`` (fully ionized hydrogen).
+        Mean molecular weight.
     n_grid : array-like, optional
-        Outer ejecta indices at which to tabulate the self-similar constants.
-        All values must satisfy ``n > 5``. Defaults to ``np.arange(6.0, 15.0)``.
+        Grid of outer ejecta indices (all must be ``> 5``).
     s_grid : array-like, optional
-        CSM indices at which to tabulate. All values must satisfy ``s < 3``.
-        Defaults to ``[0.0, 0.5, 1.0, 1.5, 2.0, 2.5]``.
+        Grid of CSM indices (all must be ``< 3``).
     contact_epsilon : float, optional
-        Singularity offset forwarded to :func:`compute_self_similar_functions`.
+        Stop-before-contact offset for the ODE solver.
     rtol, atol : float, optional
-        ODE solver tolerances forwarded to :func:`compute_self_similar_functions`.
+        ODE solver tolerances.
     show_progress : bool, optional
-        Show a ``tqdm`` progress bar while building the table. Default ``False``.
+        Display a progress bar during table construction.
+    **kwargs :
+        Forwarded to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
+
+    See Also
+    --------
+    ChevalierSelfSimilarShockEngine : Single-surface (contact-CD only) engine.
+    ChevalierTwoShockSelfSimilarWindEngine : Wind-CSM specialization (``s = 2``).
 
     Notes
     -----
     Table construction calls :func:`compute_self_similar_functions` once per grid
     point. For the default 9 × 6 = 54-point grid this takes a few seconds on a
     modern machine.
-
-    See Also
-    --------
-    ChevalierSelfSimilarShockEngine : Single-surface (contact-CD only) engine.
-    ChevalierTwoShockSelfSimilarWindEngine : Wind-CSM specialization (``s = 2``).
     """
 
     _DEFAULT_N_GRID: np.ndarray = np.arange(6.0, 15.0, 1.0)
@@ -1431,7 +1692,7 @@ class ChevalierTwoShockSelfSimilarEngine(ShockEngine):
         contact_epsilon: float = 1.0e-6,
         rtol: float = 1.0e-9,
         atol: float = 1.0e-11,
-        show_progress: bool = False,
+        show_progress: bool = True,
         **kwargs,
     ):
         """
@@ -1558,9 +1819,11 @@ class ChevalierTwoShockSelfSimilarEngine(ShockEngine):
             Ejecta kinetic energy. Bare float assumed to be in erg.
         M_ej : ~astropy.units.Quantity or float
             Ejecta mass. Bare float assumed to be in grams.
-        K_csm : ~astropy.units.Quantity or float, optional
-            CSM normalization :math:`K_{\rm CSM}` in :math:`\mathrm{g\,cm^{s-3}}`.
-            A wind-like default is used if omitted.
+        K_csm : ~astropy.units.Quantity or float
+            CSM normalization :math:`K_{\rm CSM}` in :math:`\mathrm{g\,cm^{s-3}}`. Must be
+            strictly positive. For a wind-like CSM (:math:`s = 2`) use
+            :class:`ChevalierTwoShockSelfSimilarWindEngine`, which accepts :math:`\dot{M}` and
+            :math:`v_w` directly.
         n : float, optional
             Outer ejecta power-law index. Must lie within the tabulated ``n_grid``.
         s : float, optional
@@ -1574,8 +1837,23 @@ class ChevalierTwoShockSelfSimilarEngine(ShockEngine):
             Shock positions, velocities, and post-shock thermodynamics at all
             requested times, with astropy units attached to every field.
         """
+        # Require K_csm to be explicitly provided.
         if K_csm is None:
-            K_csm = ((1e16 * u.cm) ** (s - 2)) * (1e-5 * u.Msun / u.yr) / (4.0 * np.pi * (1000 * u.km / u.s))
+            raise ValueError(
+                "K_csm must be provided. For a wind-like CSM (s=2), use "
+                "ChevalierTwoShockSelfSimilarWindEngine, which accepts M_dot and v_wind directly."
+            )
+
+        # Validate n and s before converting K_csm (whose unit depends on s).
+        if n <= 5:
+            raise ValueError("The outer ejecta density profile index `n` must be greater than 5 for convergence.")
+        if s >= 3:
+            raise ValueError("The CSM density index `s` must be less than 3 for a convergent self-similar solution.")
+        if s >= n:
+            raise ValueError(
+                f"The CSM index s={s:.4g} must be strictly less than the ejecta index n={n:.4g} "
+                "for a physically valid (decelerating) forward shock."
+            )
 
         if isinstance(E_ej, u.Quantity):
             E_ej = E_ej.to(u.erg).value
@@ -1583,13 +1861,24 @@ class ChevalierTwoShockSelfSimilarEngine(ShockEngine):
             M_ej = M_ej.to(u.g).value
         if isinstance(time, u.Quantity):
             time = time.to(u.s).value
+        time = np.asarray(time, dtype=float)
         if isinstance(K_csm, u.Quantity):
             K_csm = K_csm.to(u.g * u.cm ** (s - 3)).value
 
+        # Validate remaining inputs.
+        if np.any(time <= 0):
+            raise ValueError("time must be strictly positive; the self-similar solution is undefined at t <= 0.")
+        if delta < 0:
+            warnings.warn(
+                f"Inner ejecta index delta={delta:.4g} is negative, implying density increases "
+                "with velocity in the ejecta core. This is unphysical for standard SN profiles.",
+                UserWarning,
+                stacklevel=2,
+            )
         if delta >= 3:
             raise ValueError("The inner ejecta density profile index `delta` must be less than 3 for convergence.")
-        if n <= 5:
-            raise ValueError("The outer ejecta density profile index `n` must be greater than 5 for convergence.")
+        if K_csm <= 0:
+            raise ValueError("K_csm must be strictly positive.")
 
         cgs = self._compute_shock_properties_cgs(time=time, E_ej=E_ej, M_ej=M_ej, K_csm=K_csm, n=n, s=s, delta=delta)
         return self._attach_units(cgs)
@@ -1628,8 +1917,10 @@ class ChevalierTwoShockSelfSimilarEngine(ShockEngine):
         ChevalierTwoShockState
             All fields are plain :class:`numpy.ndarray` values in CGS units.
         """
+        time = np.asarray(time, dtype=float)
+
         # Ejecta normalization: K_ej in g * cm^{n-3} * s^{3-n}
-        v_t, K_inner = _normalize_BPL_ejecta(E_ej=E_ej, M_ej=M_ej, n=n, delta=delta)
+        K_inner, v_t = _normalize_BPL_ejecta_cgs(E_ej, M_ej, n=n, delta=delta, v_max=np.inf)
         K_ej = K_inner * v_t ** (n - delta)
 
         _lambda = (n - 3.0) / (n - s)
@@ -1733,7 +2024,8 @@ class ChevalierTwoShockSelfSimilarWindEngine(ChevalierTwoShockSelfSimilarEngine)
 
         Returns
         -------
-        ChevalierTwoShockState
+        ~trilobite.dynamics.shocks.chevalier.ChevalierTwoShockState
+            The two-shock structure at each requested time.
         """
         if isinstance(time, u.Quantity):
             time = time.to(u.s).value
@@ -1745,7 +2037,22 @@ class ChevalierTwoShockSelfSimilarWindEngine(ChevalierTwoShockSelfSimilarEngine)
             M_dot = M_dot.to(u.g / u.s).value
         if isinstance(v_wind, u.Quantity):
             v_wind = v_wind.to(u.cm / u.s).value
+        time = np.asarray(time, dtype=float)
 
+        # Validate inputs.
+        if np.any(time <= 0):
+            raise ValueError("time must be strictly positive; the self-similar solution is undefined at t <= 0.")
+        if M_dot <= 0:
+            raise ValueError("M_dot must be strictly positive.")
+        if v_wind <= 0:
+            raise ValueError("v_wind must be strictly positive.")
+        if delta < 0:
+            warnings.warn(
+                f"Inner ejecta index delta={delta:.4g} is negative, implying density increases "
+                "with velocity in the ejecta core. This is unphysical for standard SN profiles.",
+                UserWarning,
+                stacklevel=2,
+            )
         if delta >= 3:
             raise ValueError("The inner ejecta density profile index `delta` must be less than 3 for convergence.")
         if n <= 5:

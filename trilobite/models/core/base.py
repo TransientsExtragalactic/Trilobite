@@ -27,6 +27,7 @@ from .._typing import (
 )
 from .parameters import ModelParameter, ModelVariable
 from .serial import ModelSpec
+from .status import ModelStatus, _warn_if_needed
 
 # --- TYPE ALIASES --- #
 # These are type aliases to allow for cleaner type hints throughout the codebase. They are
@@ -49,6 +50,11 @@ class Model(ABC):
     This abstract base class defines the structure that all Trilobite models must adhere to. Specifically, each
     model must declare its parameters and variables as class-level attributes, and implement the
     :meth:`~trilobite.models.core.base.Model._forward_model` method to compute the model's outputs.
+
+    Parameters
+    ----------
+    **kwargs : dict
+        Model-specific constructor arguments. The accepted keyword arguments are defined by each subclass.
     """
 
     # =============================================== #
@@ -143,15 +149,45 @@ class Model(ABC):
     textbook citation, or other authoritative source describing
     the model's origin or usage.
     """
+    STATUS: ModelStatus = ModelStatus.UNVERIFIED
+    """
+    ModelStatus: Development stage of the model.
+
+    One of :class:`~trilobite.models.core.status.ModelStatus`. The status is **not inherited**: a subclass that does
+    not declare its own ``STATUS`` is reset to :attr:`~trilobite.models.core.status.ModelStatus.UNVERIFIED`, since
+    verification of a parent class says nothing about a subclass that changes the physics. Strings (e.g.
+    ``"verified"``) are accepted and converted at class-definition time. Models with an ``EXPERIMENTAL`` or
+    ``DEPRECATED`` status emit a :class:`UserWarning` when instantiated.
+    """
+    STATUS_NOTE: str = ""
+    """
+    str: Optional free-text qualification of :attr:`STATUS`.
+
+    For example, what a verified model was checked against, why a novel model has no reference, or the replacement
+    for a deprecated one. Shown next to the status badge in the documentation. Like :attr:`STATUS`, it is not inherited.
+    """
 
     # =============================================== #
     # Initialization and Instantiation                #
     # =============================================== #
     def __init_subclass__(cls, **kwargs):
-        """Validate that the subclass has properly defined its parameters and variables."""
+        """
+        Validate that the subclass has properly defined its parameters and variables.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Additional keyword arguments forwarded to ``super().__init_subclass__``.
+        """
         # Hand off to the super-class initializer to ensure that any work
         # done there is not skipped.
         super().__init_subclass__(**kwargs)
+
+        # Status is per-class, never inherited: reset to the safe default unless declared on this class.
+        cls._status_declared = "STATUS" in cls.__dict__
+        cls.STATUS = ModelStatus.coerce(cls.__dict__.get("STATUS", ModelStatus.UNVERIFIED))
+        if "STATUS_NOTE" not in cls.__dict__:
+            cls.STATUS_NOTE = ""
 
         if len(cls.VARIABLES) == 0:
             raise ValueError("At least one VARIABLE must be defined.")
@@ -200,9 +236,35 @@ class Model(ABC):
         # Rebuild namedtuple with validated units
         cls.UNITS = type(cls.UNITS)(*unit_values)
 
+    def __new__(cls, *args, **kwargs):
+        """
+        Create the instance, warning if the model's :attr:`STATUS` calls for caution.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional constructor arguments; consumed by ``__init__``, not used here.
+        **kwargs : dict
+            Keyword constructor arguments; consumed by ``__init__``, not used here.
+
+        Returns
+        -------
+        Model
+            The newly created, not yet initialized, instance.
+        """
+        _warn_if_needed(cls)
+        return super().__new__(cls)
+
     @abstractmethod
     def __init__(self, **kwargs):
-        """Initialize the model with given parameters and variables."""
+        """
+        Initialize the model with given parameters and variables.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Model-specific constructor arguments, defined by each subclass.
+        """
 
     pass
 
@@ -295,12 +357,12 @@ class Model(ABC):
 
         Parameters
         ----------
-        variables: dict of str, array-like or ~astropy.units.Quantity
+        variables : dict of str, array-like or ~astropy.units.Quantity
             The model's input variables. Each variable must be provided as a key-value pair in the
             dictionary, where the key is the variable name and the value is the variable's value. Each element
             must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy
             broadcasting rules are applied throughout.
-        parameters: dict of str, array-like or ~astropy.units.Quantity
+        parameters : dict of str, array-like or ~astropy.units.Quantity
             The model's parameters. Each parameter must be provided as a key-value pair in the
             dictionary, where the key is the parameter name and the value is the parameter's value. Each element
             must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy
@@ -309,7 +371,7 @@ class Model(ABC):
 
         Returns
         -------
-        outputs : namedtuple
+        namedtuple
             NamedTuple containing the model outputs in the canonical
             order defined by :attr:`OUTPUTS`. Fields with defined units
             are returned as :class:`~astropy.units.Quantity` objects; fields
@@ -363,12 +425,12 @@ class Model(ABC):
 
         Parameters
         ----------
-        variables: dict of str, array-like or ~astropy.units.Quantity
+        variables : dict of str, array-like or ~astropy.units.Quantity
             The model's input variables. Each variable must be provided as a key-value pair in the
             dictionary, where the key is the variable name and the value is the variable's value. Each element
             must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy
             broadcasting rules are applied throughout.
-        parameters: dict of str, array-like or ~astropy.units.Quantity
+        parameters : dict of str, array-like or ~astropy.units.Quantity
             The model's parameters. Each parameter must be provided as a key-value pair in the
             dictionary, where the key is the parameter name and the value is the parameter's value. Each element
             must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy
@@ -377,7 +439,7 @@ class Model(ABC):
 
         Returns
         -------
-        outputs : namedtuple
+        namedtuple
             NamedTuple containing the model outputs in the canonical
             order defined by :attr:`OUTPUTS`. Fields with defined units
             are returned as :class:`~astropy.units.Quantity` objects; fields
@@ -588,7 +650,6 @@ class Model(ABC):
             Mapping of parameter names to their values. Values may be scalars,
             NumPy arrays, or :class:`~astropy.units.Quantity` objects.
 
-
         Raises
         ------
         ValueError
@@ -602,17 +663,57 @@ class Model(ABC):
     # Dunder Methods                                  #
     # =============================================== #
     def __repr__(self) -> str:
+        """
+        Return a concise string representation of the model.
+
+        Returns
+        -------
+        str
+            The class name and the model's :attr:`DESCRIPTION`.
+        """
         return f"<{self.__class__.__name__} Model: {self.DESCRIPTION}>"
 
     def __str__(self) -> str:
+        """
+        Return the same string as :meth:`__repr__`.
+
+        Returns
+        -------
+        str
+            The class name and the model's :attr:`DESCRIPTION`.
+        """
         return self.__repr__()
 
     def __len__(self) -> int:
-        """Compute the total number of parameters and variables."""
+        """
+        Compute the total number of parameters and variables.
+
+        Returns
+        -------
+        int
+            The number of parameters plus the number of variables.
+        """
         return len(self.PARAMETERS) + len(self.VARIABLES)
 
     def __getitem__(self, item: str) -> Union[ModelParameter, ModelVariable]:
-        """Get a parameter or variable by name."""
+        """
+        Get a parameter or variable by name.
+
+        Parameters
+        ----------
+        item : str
+            Name of the parameter or variable.
+
+        Returns
+        -------
+        ModelParameter or ModelVariable
+            The parameter or variable called ``item``.
+
+        Raises
+        ------
+        KeyError
+            If ``item`` is neither a parameter nor a variable name.
+        """
         for param in self.PARAMETERS:
             if param.name == item:
                 return param
@@ -640,11 +741,10 @@ class Model(ABC):
         """
         Serialize this model to a ModelSpec.
 
-        Requirements
-        ------------
-        - The model must have called `_register_init(...)` in its constructor.
-        - All registered kwargs must be JSON-serializable.
-        - The model class must be importable via module path.
+        Returns
+        -------
+        ~trilobite.models.core.serial.ModelSpec
+            The specification (importable target plus constructor kwargs) from which the model can be rebuilt.
 
         Raises
         ------
@@ -654,6 +754,12 @@ class Model(ABC):
             If constructor arguments are not JSON-serializable.
         ImportError
             If the model class is not importable.
+
+        Notes
+        -----
+        - The model must have called ``_register_init(...)`` in its constructor.
+        - All registered kwargs must be JSON-serializable.
+        - The model class must be importable via module path.
         """
         import importlib
         import json
@@ -715,10 +821,21 @@ class Model(ABC):
         """
         Construct a model from a ModelSpec.
 
-        Ensures:
-        - Spec is valid
-        - Target is importable
-        - Returned object is instance of Model
+        Parameters
+        ----------
+        spec : ~trilobite.models.core.serial.ModelSpec
+            The specification to build the model from. Its target must be importable.
+
+        Returns
+        -------
+        ~trilobite.models.core.base.Model
+            The constructed model, guaranteed to be an instance of ``cls``.
+
+        Raises
+        ------
+        TypeError
+            If ``spec`` is not a :class:`~trilobite.models.core.serial.ModelSpec`, or the constructed object is not
+            an instance of ``cls``.
         """
         if not isinstance(spec, ModelSpec):
             raise TypeError("Expected ModelSpec.")

@@ -7,4 +7,11 @@ of TDEs, allowing researchers to study their radio emissions, accretion dynamics
 and other relevant phenomena.
 """
 
-__all__ = []
+__all__ = [
+    "van_velzen",
+]
+
+from . import van_velzen
+from .van_velzen import *
+
+__all__.extend(van_velzen.__all__)

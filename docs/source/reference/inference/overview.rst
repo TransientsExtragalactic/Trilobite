@@ -16,7 +16,7 @@ you can take any compatible model and:
 The :mod:`trilobite.inference` subpackage provides a flexible and modular framework for
 constructing and running inference analyses. It supports:
 
-- integration with third-party samplers such as :mod:`emcee`,
+- integration with third-party samplers such as ``emcee``,
   ``dynesty``, and ``bilby``,
 - user-defined likelihood functions and prior distributions,
 - consistent parameter management and unit handling,
@@ -75,7 +75,7 @@ step by step:
 
 5. **Samplers**: With the inference problem defined, we can now use a sampling algorithm to explore the parameter
    space and estimate the posterior distribution of the model parameters. Trilobite integrates with several
-   third-party sampling libraries, including :mod:`emcee`, ``dynesty``, and ``bilby``. Each of these
+   third-party sampling libraries, including ``emcee``, ``dynesty``, and ``bilby``. Each of these
    samplers has its own strengths and weaknesses, and Trilobite provides a unified interface for using them through the
    :class:`~trilobite.inference.sampling.base.Sampler` class and its subclasses.
 
@@ -260,6 +260,15 @@ Below are the likelihood classes currently available in Trilobite.
     base.Likelihood
     base.GaussianLikelihood
     base.GaussianCensoredLikelihood
+    base.LogGaussianCensoredLikelihood
+
+.. tip::
+
+    For strictly positive observables that span several orders of magnitude (e.g., radio flux densities),
+    :class:`~trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood` compares model and data in
+    :math:`\log_{10}` space and accepts a systematic floor in dex (``sys_dex``). In linear space, the brightest
+    points dominate the fit, and a model that under-predicts a point is penalized far less than one that
+    over-predicts it by the same factor.
 
 ----
 
@@ -546,6 +555,54 @@ All priors are instances of :class:`~trilobite.inference.prior.Prior`, and Trilo
 built-in prior classes for common distributions (uniform, log-uniform, normal, etc.). It is also
 possible to define custom priors and to implement new prior classes; see :ref:`priors_dev` for more details.
 
+.. note::
+
+    A log-normal prior is specified by the mean :math:`\mu` and width :math:`\sigma` of the **natural**
+    logarithm of the parameter, :math:`\ln(x / x_{\rm ref})`, where :math:`x_{\rm ref}` is the reference unit in which
+    :math:`x` is expressed. Because :math:`\mu` depends on that reference unit, it is not a unit-bearing quantity
+    that can be converted. When using :meth:`~trilobite.inference.problem.InferenceProblem.set_prior`, give the
+    **median** :math:`e^{\mu}` instead, which does carry units:
+
+    .. code-block::
+
+        inf_prob.set_prior('B', 'lognormal', median=0.3*u.G, sigma=0.5)
+
+    The width ``sigma`` is dimensionless and independent of the unit; a width of :math:`\sigma_{\rm dex}` dex
+    corresponds to :math:`\sigma = \sigma_{\rm dex} \ln 10`.
+
+Drawing from the Priors
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Every built-in prior can be sampled with :meth:`~trilobite.inference.prior.Prior.sample`, which draws in physical
+parameter space:
+
+.. code-block::
+
+    rng = np.random.default_rng(42)
+    B_draws = inf_prob.parameters['B'].prior.sample(size=1000, rng=rng)
+
+To draw all of the free parameters at once, use :meth:`~trilobite.inference.problem.InferenceProblem.sample_prior`.
+It returns an array of shape ``(n, n_free_parameters)`` in **sampling space**, i.e. after the parameters' transforms
+have been applied, so the draws can be passed directly to the posterior or to a sampler:
+
+.. code-block::
+
+    z = inf_prob.sample_prior(400, rng=rng)
+    log_posterior = [inf_prob._log_free_posterior(z_i) for z_i in z]
+
+When the priors are wide and the posterior is narrow, a poor starting point can leave walkers stranded far from the
+posterior bulk. In that case, start the walkers from the best of a set of prior draws:
+
+.. code-block::
+
+    sampler = EmceeSampler(inf_prob, n_walkers=40)
+    initial_state = sampler.generate_initial_state(from_prior=True, n_candidates=400)
+    result = sampler.run(5000, initial_state=initial_state)
+
+This keeps the ``n_walkers`` candidates with the highest log-posterior. It does not guarantee that they all lie in the
+same posterior mode, so it is worth checking the result for stranded walkers with
+:meth:`~trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers`.
+
 Freezing and Free Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -630,27 +687,31 @@ parameters are represented.
 
         - parameters are ordered according to the underlying model definition,
         - only **free parameters** are included,
-        - all values are plain floats in base units.
+        - all values are plain floats in base units, in **sampling space**.
+
+        Sampling space is the space in which parameter transforms (e.g. a
+        :class:`~trilobite.inference.transform.Log10Transform`) are applied. For parameters without a
+        transform it is identical to physical space.
 
         The core entry point is calling the inference problem itself:
 
         .. code-block:: python
 
-            theta = inf_prob.initial_theta
-            logpost = inf_prob(theta)
+            z = inf_prob.initial_z
+            logpost = inf_prob(z)
 
         This is equivalent to calling:
 
         .. code-block:: python
 
-            logpost = inf_prob._log_free_posterior(theta)
+            logpost = inf_prob._log_free_posterior(z)
 
         Internally, the inference problem will:
 
-        - unpack the free parameter vector,
-        - reinsert frozen parameters,
-        - evaluate the log-prior and log-likelihood,
-        - and return their sum.
+        - map the free parameters to physical space with the inverse transforms (exactly once),
+        - reinsert frozen parameters (which are stored in physical space),
+        - evaluate the log-prior and log-likelihood in physical space,
+        - and return their sum plus the log-Jacobian of the transforms.
 
         This interface is used automatically by all built-in samplers.
 
@@ -733,4 +794,4 @@ Samplers
     For more information about sampler development, implementation, and integration, see :ref:`samplers_dev`.
 
 What is a sampler: a way to explore the parameter space and find the minimum of the posterior distribution.
-Trilobite provides interfaces to several popular sampling libraries, including :mod:`emcee`, ``dynesty``, and ``bilby``.
+Trilobite provides interfaces to several popular sampling libraries, including ``emcee``, ``dynesty``, and ``bilby``.

@@ -97,7 +97,7 @@ and extensible so that users can easily implement new shock models or extend exi
     chevalier_theory
     sedov_taylor_theory
     numerical_shocks_theory
-    numeric_shocks_overview
+    numerical_shocks_overview
     self_similar_overview
 
 References

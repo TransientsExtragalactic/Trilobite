@@ -7,7 +7,8 @@ the essential interfaces and behaviors that all specific model implementations m
 these should not be used directly, but rather extended by other modules to create concrete models.
 """
 
-__all__ = ["Model", "ModelParameter", "ModelVariable", "OpticalModel", "OpticalEpochModel"]
+__all__ = ["Model", "ModelParameter", "ModelVariable", "OpticalModel", "OpticalEpochModel", "ModelStatus"]
 from .base import Model
 from .optical import OpticalEpochModel, OpticalModel
 from .parameters import ModelParameter, ModelVariable
+from .status import ModelStatus

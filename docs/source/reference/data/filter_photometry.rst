@@ -1,8 +1,8 @@
 .. _filter_photometry:
 
-============================
+==============================
 Optical Filters and Photometry
-============================
+==============================
 
 Trilobite includes a complete system for filter-based optical photometry. Whether you are working
 with archival ZTF or LSST observations, or building a multi-band light curve model for inference, this

@@ -93,7 +93,7 @@ From an Astropy Table:
 
     lc = RadioLightCurveContainer(table, frequency=8.5 * u.GHz)
 
-From a file (any format supported by :meth:`astropy.table.Table.read`):
+From a file (any format supported by ``astropy.table.Table.read``):
 
 .. code-block:: python
 

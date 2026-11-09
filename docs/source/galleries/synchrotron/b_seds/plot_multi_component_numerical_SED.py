@@ -2,6 +2,8 @@
 Multi-Component Synchrotron SEDs with the Numerical Engine
 ===========================================================
 
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs.numerical.core
+
 The synchrotron spectra of astrophysical transients are often modelled with a simple
 power-law electron distribution, but more complete shock-acceleration models
 (e.g. :footcite:t:`2011ApJ...741...40T`) predict a **two-component** population: a
@@ -11,7 +13,7 @@ accelerated to high Lorentz factors.
 Analytic broken power-law SED approximations are not adequate for this case, because the
 transition between the two components is smooth and does not map cleanly onto a single
 spectral break. The
-:class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine` provides a
+:class:`NumericalSynchrotronEngine` provides a
 fully numerical alternative: given any sampled electron distribution, it directly
 evaluates the synchrotron emissivity integral and solves the radiative transfer equation
 along a line-of-sight depth :math:`R`, without any piecewise approximation.
@@ -162,7 +164,7 @@ plt.show()
 # ------------------
 #
 # We now pass the sampled distributions to
-# :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity`.
+# :meth:`NumericalSynchrotronEngine.compute_specific_intensity`.
 # The engine numerically integrates the synchrotron emissivity
 #
 # .. math::

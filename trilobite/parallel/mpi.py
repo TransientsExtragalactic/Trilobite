@@ -10,8 +10,8 @@ subclass for distributing likelihood evaluations across MPI ranks using the ``mp
     instantiating :class:`LikelihoodMPIPool` will raise :exc:`RuntimeError` if ``mpi4py`` is
     not installed. Install it with ``pip install trilobite[mpi]``.
 
-Design Overview
----------------
+.. rubric:: Design Overview
+
 The pool follows a classic master-worker pattern:
 
 - **Rank 0** is the *master*. It runs ``emcee`` (or any caller that invokes
@@ -82,8 +82,8 @@ class LikelihoodMPIPool(Pool[Any, float]):
     (``pool.map(func, iterable) -> list``) using MPI point-to-point
     communication for dynamic task dispatch.
 
-    Important
-    ---------
+    .. rubric:: Important
+
     The ``func`` argument to :meth:`map` is intentionally ignored.
     Likelihood evaluation is always performed via the ``InferenceProblem`` stored
     inside each rank after :meth:`__init__` broadcasts it.
@@ -204,6 +204,7 @@ class LikelihoodMPIPool(Pool[Any, float]):
         Returns
         -------
         bool
+            ``True`` if this process is the master rank (rank 0).
         """
         return self._rank == 0
 
@@ -369,7 +370,14 @@ class LikelihoodMPIPool(Pool[Any, float]):
     # ------------------------------------------------------------------
 
     def __enter__(self) -> "LikelihoodMPIPool":
-        """Return self to allow use as a context manager."""
+        """
+        Return self to allow use as a context manager.
+
+        Returns
+        -------
+        ~trilobite.parallel.mpi.LikelihoodMPIPool
+            The pool itself.
+        """
         return self
 
     def __exit__(self, exc_type: Any, exc: Any, tb: Any) -> None:
@@ -379,6 +387,15 @@ class LikelihoodMPIPool(Pool[Any, float]):
         On a clean exit, sends the stop sentinel to workers via :meth:`close`.
         On exception, calls :meth:`terminate` (``comm.Abort()``) for an immediate
         hard kill of all ranks.
+
+        Parameters
+        ----------
+        exc_type : type or None
+            Type of the exception raised in the context, if any.
+        exc : BaseException or None
+            The exception raised in the context, if any.
+        tb : traceback or None
+            Traceback of the exception raised in the context, if any.
         """
         if exc_type is not None:
             self.terminate()

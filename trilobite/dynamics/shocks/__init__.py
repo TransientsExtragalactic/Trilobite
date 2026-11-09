@@ -2,7 +2,8 @@
 Shock physics utilities for astrophysical transients.
 
 This subpackage provides the core shock abstractions and utilities used throughout
-the :mod:`trilobite.dynamics` module, including the abstract :class:`ShockEngine` base class,
+the :mod:`trilobite.dynamics` module, including the abstract
+:class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine` base class,
 Rankine-Hugoniot jump condition utilities, and general-purpose numerical shock engines.
 """
 
@@ -29,15 +30,14 @@ __all__ = [
     "ThinShellShockState",
     "MechanicalShockState",
     "MechanicalShockEngine",
+    "MomentumConservingShockState",
+    "MomentumConservingShockEngine",
     "PressureDrivenThinShellShockEngine",
     "RelativisticJumpConditions",
     "RelativisticShockConditions",
     "RelativisticColdShockConditions",
     "UltraRelativisticShockConditions",
     "UltraRelativisticColdShockConditions",
-    "normalize_bpl_ejecta",
-    "get_bpl_ejecta_kernel",
-    "get_wind_csm_density_func",
     "make_homologous_stationary_sources",
 ]
 from trilobite.dynamics.shocks import numerical
@@ -69,13 +69,10 @@ from trilobite.dynamics.shocks.core.relativistic_jump_conditions import (
 from trilobite.dynamics.shocks.numerical import (
     MechanicalShockEngine,
     MechanicalShockState,
+    MomentumConservingShockEngine,
+    MomentumConservingShockState,
     PressureDrivenThinShellShockEngine,
     ThinShellShockState,
 )
 from trilobite.dynamics.shocks.sedov_taylor import SedovTaylorShockEngine, SedovTaylorShockState, sedov_taylor_beta
-from trilobite.dynamics.shocks.utils import (
-    get_bpl_ejecta_kernel,
-    get_wind_csm_density_func,
-    make_homologous_stationary_sources,
-    normalize_bpl_ejecta,
-)
+from trilobite.dynamics.shocks.utils import make_homologous_stationary_sources

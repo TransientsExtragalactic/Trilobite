@@ -44,10 +44,10 @@ steps:
 1. **The Dynamical Model**: The user understands the dynamics of the emitting region (e.g. the shock speed, and radius,
    the jet opening angle, the density profile of the ambient medium, etc.). This is **not** the responsibility of the
    synchrotron module, but rather of the other physics modules.
-2. **Microphysical Closure**: The user must then convert the macroscopic shock parameters (e.g. the
-   post-shock thermal energy density) into the microphysical parameters
-   that govern the electron distribution and magnetic field strength. *Various such prescriptions exist in the literature*,
-   and are implemented in the :mod:`~trilobite.radiation.synchrotron.microphysics` submodule.
+2. **Electron Distributions**: The user must specify the distribution of electrons in the emitting region. This is typically done by
+   specifying a functional form for the distribution (e.g. a power law, or a Maxwell-Juettner distribution) and then
+   specifying the parameters of that distribution (e.g. the power law index, or the temperature). This is handled by
+   the :mod:`~trilobite.radiation.synchrotron.electron_distributions` submodule.
 3. **SED Modeling**: Finally, the user must compute the observable SED from the microphysical parameters.
    This is the responsibility of the :mod:`~trilobite.radiation.synchrotron.SEDs` submodule. Depending on the
    type of SED model (see details below), this step may have some sub-steps.
@@ -61,7 +61,7 @@ Module Structure
 The synchrotron module is organized into four submodules, each responsible for a
 distinct layer of the modeling stack.  Users working with high-level SED models
 typically only interact directly with :mod:`~trilobite.radiation.synchrotron.SEDs`
-and :mod:`~trilobite.radiation.synchrotron.microphysics`; the lower layers are
+and :mod:`~trilobite.radiation.synchrotron.electron_distributions`; the lower layers are
 used implicitly.
 
 .. list-table::
@@ -74,10 +74,10 @@ used implicitly.
       - Fundamental quantities relevant to synchrotron modeling. This module is of primary use
         to developers and domain experts who want to understand or modify the underlying algorithms.
         See :ref:`synchrotron_core`.
-    * - :mod:`~trilobite.radiation.synchrotron.microphysics`
+    * - :mod:`~trilobite.radiation.synchrotron.electron_distributions`
       - Tools for constructing and normalizing electron distribution functions and for connecting
         macroscopic shock parameters to microphysical parameters through closure relations.
-        See :ref:`synchrotron_microphysics`.
+        See :ref:`synchrotron_electron_distributions`.
     * - :mod:`~trilobite.radiation.synchrotron.SEDs`
       - SED models for computing the observable spectrum from a given set of physical parameters.
         This is the primary interface for users modeling synchrotron emission from astrophysical sources. It is
@@ -113,7 +113,7 @@ Synchrotron Microphysics
 
 .. seealso::
 
-    :ref:`synchrotron_microphysics` Describes the detailed API for synchrotron microphysics.
+    :ref:`synchrotron_electron_distributions` Describes the detailed API for synchrotron microphysics.
     :ref:`synchrotron_theory` Describes the theory of the synchrotron microphysical closures.
 
 Before generating an SED, the user must usually connect some knowledge of the macroscopic parameters of the
@@ -146,7 +146,7 @@ Combined with the closure relations that connect the macroscopic shock parameter
 of electron distribution then determines the normalization of the electron spectrum and the magnetic field strength, which
 in turn determine the characteristic frequencies and fluxes of the resulting synchrotron SED.
 
-The :mod:`~trilobite.radiation.synchrotron.microphysics` submodule provides a number of tools for doing these
+The :mod:`~trilobite.radiation.synchrotron.electron_distributions` submodule provides a number of tools for doing these
 sorts of calculations.
 
 .. dropdown:: Example: Normalize a Power-Law Electron Distribution
@@ -157,9 +157,8 @@ sorts of calculations.
 
     .. code-block:: python
 
-        import numpy as np
         import astropy.units as u
-        from trilobite.radiation.synchrotron.microphysics import compute_PL_norm_from_magnetic_field
+        from trilobite.radiation.synchrotron.electron_distributions import PowerLaw
 
         B = 0.5 * u.G
         epsilon_B = 0.1
@@ -168,7 +167,7 @@ sorts of calculations.
         gamma_min = 100.0
         p = 3.0
 
-        N0 = compute_PL_norm_from_magnetic_field(
+        N0 = PowerLaw.normalize_from_magnetic_field(
             B=B,
             p=p,
             epsilon_B=epsilon_B,
@@ -184,9 +183,8 @@ sorts of calculations.
 
     .. code-block:: python
 
-        import numpy as np
         import astropy.units as u
-        from trilobite.radiation.synchrotron.microphysics import compute_MJD_and_PL_norm_from_magnetic_field
+        from trilobite.radiation.synchrotron.electron_distributions import MaxwellJuettnerPowerLaw
 
         B = 0.5 * u.G
         epsilon_B = 0.1
@@ -197,7 +195,7 @@ sorts of calculations.
         p = 3.0
         delta = 0.5        # fraction of energy in thermal component
 
-        N_therm, N0_pl = compute_MJD_and_PL_norm_from_magnetic_field(
+        N0 = MaxwellJuettnerPowerLaw.normalize_from_magnetic_field(
             B=B,
             Theta=Theta,
             p=p,
@@ -211,28 +209,23 @@ API Summary
 ^^^^^^^^^^^^
 
 A few of the key functions in this module are included below. For a more in-depth introduction to
-this module, see :ref:`synchrotron_microphysics`. The full API can be found at
-:mod:`~trilobite.radiation.synchrotron.microphysics`.
+this module, see :ref:`synchrotron_electron_distributions`. The full API can be found at
+:mod:`~trilobite.radiation.synchrotron.electron_distributions`.
 
 .. dropdown:: API Summary
 
-    .. currentmodule:: trilobite.radiation.synchrotron.microphysics
+    .. currentmodule:: trilobite.radiation.synchrotron.electron_distributions
     .. autosummary::
        :nosignatures:
 
-       compute_equipartition_magnetic_field
-       compute_PL_norm_from_magnetic_field
-       compute_PL_norm_from_thermal_energy_density
-       compute_BPL_norm_from_magnetic_field
-       compute_BPL_norm_from_thermal_energy_density
-       compute_MJD_norm_from_magnetic_field
-       compute_MJD_norm_from_thermal_energy_density
-       compute_MJD_and_PL_norm_from_magnetic_field
-       compute_MJD_and_PL_norm_from_thermal_energy_density
-       compute_bol_emissivity
-       compute_bol_emissivity_from_thermal_energy_density
-       compute_bol_emissivity_BPL
-       compute_bol_emissivity_BPL_from_thermal_energy_density
+       equipartition_magnetic_field
+       equipartition_electron_energy
+       ElectronDistribution
+       PowerLaw
+       BrokenPowerLaw
+       MaxwellJuettner
+       MaxwellJuettnerPowerLaw
+       MaxwellJuettnerBrokenPowerLaw
 
 Generating Synchrotron SEDs
 ---------------------------
@@ -462,10 +455,9 @@ See :ref:`synchrotron_seds` for more details on the API and the physical assumpt
         from astropy import constants as const
 
         from trilobite.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
-        from trilobite.radiation.synchrotron.microphysics import (
-            compute_MJD_and_PL_norm_from_magnetic_field,
-            get_maxwell_juttner_distribution,
-            get_power_law_distribution,
+        from trilobite.radiation.synchrotron.electron_distributions import (
+            MaxwellJuettner,
+            PowerLaw,
         )
 
         # ---------------------------------------------------------------------
@@ -496,20 +488,17 @@ See :ref:`synchrotron_seds` for more details on the API and the physical assumpt
         # ---------------------------------------------------------------------
         # Normalize electron distributions (equipartition closure)
         # ---------------------------------------------------------------------
-        N_therm, N_pl = compute_MJD_and_PL_norm_from_magnetic_field(
-            B=B,
-            Theta=Theta,
-            p=p,
-            delta=delta,
-            epsilon_E=epsilon_e,
-            epsilon_B=epsilon_B,
-            gamma_min=gamma_min,
-            gamma_max=gamma_max,
+        N_therm = MaxwellJuettner.normalize_from_magnetic_field(
+            B=B, epsilon_B=epsilon_B, epsilon_E=epsilon_e * delta, Theta=Theta
+        )
+        N_pl = PowerLaw.normalize_from_magnetic_field(
+            B=B, epsilon_B=epsilon_B, epsilon_E=epsilon_e * (1 - delta),
+            p=p, gamma_min=gamma_min, gamma_max=gamma_max,
         )
 
-        mjd = get_maxwell_juttner_distribution(Theta, norm=N_therm)
-        pl  = get_power_law_distribution(p=p, norm=N_pl,
-                                         gamma_min=gamma_min, gamma_max=gamma_max)
+        mjd = MaxwellJuettner.as_callable(norm=N_therm.value, Theta=Theta)
+        pl  = PowerLaw.as_callable(norm=N_pl.value, p=p,
+                                   gamma_min=gamma_min, gamma_max=gamma_max)
 
         # ---------------------------------------------------------------------
         # Grids
@@ -549,7 +538,7 @@ See :ref:`synchrotron_seds` for more details on the API and the physical assumpt
 
     This example demonstrates how to construct a synchrotron spectrum from multiple
     emitting components. We combine emission from a simple power-law electron population
-    and a broken power-law population with different physical conditions, illustrating
+    and a broken power-law population representing a cooled electron spectrum, illustrating
     how complex spectra can arise from superposed regions.
 
     .. plot::
@@ -560,11 +549,9 @@ See :ref:`synchrotron_seds` for more details on the API and the physical assumpt
         from astropy import units as u
 
         from trilobite.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
-        from trilobite.radiation.synchrotron.microphysics import (
-            compute_PL_norm_from_magnetic_field,
-            compute_BPL_norm_from_magnetic_field,
-            get_power_law_distribution,
-            get_broken_power_law_distribution,
+        from trilobite.radiation.synchrotron.electron_distributions import (
+            PowerLaw,
+            BrokenPowerLaw,
         )
 
         # ---------------------------------------------------------------------
@@ -584,34 +571,35 @@ See :ref:`synchrotron_seds` for more details on the API and the physical assumpt
 
         # Electron distribution parameters
         p = 2.5
-        gamma_c = 1e2
+        gamma_c = 1e3    # cooling break Lorentz factor
         gamma_min = 1.0
         gamma_max = 1e10
 
         # ---------------------------------------------------------------------
         # Normalize electron distributions (equipartition closure)
+        # Component 1: uncooled power law; Component 2: cooling-break BPL
+        # (p1=injection slope, p2=cooled slope = p1+1)
         # ---------------------------------------------------------------------
-        N0_pl = compute_PL_norm_from_magnetic_field(
-            B1, p, epsilon_B, epsilon_e,
-            gamma_min=gamma_min, gamma_max=gamma_max
+        N0_pl = PowerLaw.normalize_from_magnetic_field(
+            B1, epsilon_B, epsilon_e,
+            p=p, gamma_min=gamma_min, gamma_max=gamma_max,
         )
 
-        N0_bpl = compute_BPL_norm_from_magnetic_field(
-            B2, -p, -(p + 1), gamma_c,
-            epsilon_B, epsilon_e,
-            gamma_min=gamma_min, gamma_max=gamma_max
+        N0_bpl = BrokenPowerLaw.normalize_from_magnetic_field(
+            B2, epsilon_B, epsilon_e,
+            p1=p, p2=p + 1, gamma_c=gamma_c,
+            gamma_min=gamma_min, gamma_max=gamma_max,
         )
 
         # Distribution functions
-        pl  = get_power_law_distribution(
-            p, norm=N0_pl,
-            gamma_min=gamma_min, gamma_max=gamma_max
+        pl  = PowerLaw.as_callable(
+            norm=N0_pl.value, p=p,
+            gamma_min=gamma_min, gamma_max=gamma_max,
         )
 
-        bpl = get_broken_power_law_distribution(
-            -p, -(p + 1), gamma_c,
-            norm=N0_bpl,
-            gamma_min=gamma_min, gamma_max=gamma_max
+        bpl = BrokenPowerLaw.as_callable(
+            norm=N0_bpl.value, p1=p, p2=p + 1, gamma_c=gamma_c,
+            gamma_min=gamma_min, gamma_max=gamma_max,
         )
 
         # ---------------------------------------------------------------------
@@ -720,15 +708,16 @@ API Summary
        NumericalSynchrotronEngine.compute_specific_intensity
        NumericalSynchrotronEngine.compute_flux_density
 
-    **Electron Distribution Factories** (:mod:`trilobite.radiation.synchrotron.microphysics`)
+    **Electron Distribution Callables** (:mod:`trilobite.radiation.synchrotron.electron_distributions`)
 
-    .. currentmodule:: trilobite.radiation.synchrotron.microphysics
+    .. currentmodule:: trilobite.radiation.synchrotron.electron_distributions
     .. autosummary::
        :nosignatures:
 
-       get_maxwell_juttner_distribution
-       get_power_law_distribution
-       get_broken_power_law_distribution
+       PowerLaw.as_callable
+       BrokenPowerLaw.as_callable
+       MaxwellJuettner.as_callable
+       MaxwellJuettnerPowerLaw.as_callable
 
 
 
@@ -819,7 +808,7 @@ The table below maps common modeling tasks to the relevant documentation:
     * - Work with fundamental quantities (kernels, single-electron spectra)
       - :ref:`synchrotron_core`
     * - Compute population-averaged emissivities and equipartition quantities
-      - :ref:`synchrotron_microphysics`
+      - :ref:`synchrotron_electron_distributions`
     * - Build or fit a broadband SED model
       - :ref:`synchrotron_seds`
     * - Understand the SED spectral-regime derivations
@@ -828,8 +817,8 @@ The table below maps common modeling tasks to the relevant documentation:
       - :ref:`synchrotron_cooling`
     * - Learn about stratified synchrotron self-absorption
       - :ref:`stratified_absorption`
-    * - Invert a relativistic synchrotron peak using equipartition (Barniol-Duran)
-      - :ref:`barnoil_duran`
+    * - Invert a break frequency and flux for the magnetic field and radius
+      - :ref:`synchrotron_spectral_inversion`
     * - Compute SEDs for arbitrary (non-power-law) electron distributions
       - :ref:`synch_numerical_sed_theory`
 

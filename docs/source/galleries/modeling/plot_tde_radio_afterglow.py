@@ -40,12 +40,9 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
+from trilobite.dynamics.profiles import BrokenPowerLawEjectaProfile, UniformCSMProfile
 from trilobite.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
-from trilobite.dynamics.shocks.utils import (
-    get_bpl_ejecta_kernel,
-    get_uniform_csm_density_func,
-    make_homologous_stationary_sources,
-)
+from trilobite.dynamics.shocks.utils import make_homologous_stationary_sources
 from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
 from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
 from trilobite.utils.plot_utils import set_plot_style
@@ -99,14 +96,15 @@ print(f"Distance        : {D_L}")
 # (:math:`R \propto t^{2/5}`) once the swept-up mass equals the ejecta mass.
 # With these parameters the transition occurs at roughly 500 days.
 #
-# We use :func:`~trilobite.dynamics.shocks.utils.get_uniform_csm_density_func`
-# and :func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel` to build
+# We use :class:`~trilobite.dynamics.profiles.csm.UniformCSMProfile` and
+# :class:`~trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile` to build
 # the upstream source callables, then combine them with
 # :func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources`.
 
-rho_csm = get_uniform_csm_density_func(rho_ISM)
-G_ej = get_bpl_ejecta_kernel(E_ej, M_ej, n=10, delta=0)
-rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(G_ej=G_ej, rho_csm=rho_csm)
+rho_csm = UniformCSMProfile.as_optimized_callable(rho_0=rho_ISM)
+K, v_t = BrokenPowerLawEjectaProfile.normalize(E_ej, M_ej, n=10, delta=0)
+rho_ej = BrokenPowerLawEjectaProfile.as_optimized_callable(K=K, v_t=v_t, n=10, delta=0)
+rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(rho_ej, rho_csm)
 
 t_init = 10.0 * u.day
 R_init = (v_init * t_init).to(u.cm)
@@ -288,8 +286,9 @@ fig, ax = plt.subplots(figsize=(9, 5))
 for E, label, color in zip(E_ej_values, E_labels, ["C0", "C1", "C2"]):
     M_ej_E = (2.0 * E / v_init**2).to(u.M_sun)
 
-    G_ej_E = get_bpl_ejecta_kernel(E, M_ej_E, n=10, delta=0)
-    rho_1_E, u_1_E, rho_4_E, u_4_E = make_homologous_stationary_sources(G_ej=G_ej_E, rho_csm=rho_csm)
+    K_E, v_t_E = BrokenPowerLawEjectaProfile.normalize(E, M_ej_E, n=10, delta=0)
+    rho_ej_E = BrokenPowerLawEjectaProfile.as_optimized_callable(K=K_E, v_t=v_t_E, n=10, delta=0)
+    rho_1_E, u_1_E, rho_4_E, u_4_E = make_homologous_stationary_sources(rho_ej_E, rho_csm)
 
     state_E = shock_engine.compute_shock_properties(
         times,

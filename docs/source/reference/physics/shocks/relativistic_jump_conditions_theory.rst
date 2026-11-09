@@ -1,4 +1,5 @@
 .. _relativistic_jump_conditions_theory:
+
 ==============================================
 Methods: (Relativistic) Jump Conditions
 ==============================================

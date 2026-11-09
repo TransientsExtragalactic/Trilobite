@@ -88,24 +88,24 @@ Choose based on which physical processes are important for your source:
      - Cooling
      - SSA
      - Use when…
-   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
+   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED`
      - ✗
      - ✗
      - Simple power-law spectra; no breaks beyond :math:`\nu_m`
-   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
+   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED`
      - ✓
      - ✗
      - Optically thin emission with a fast- or slow-cooling break
-   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED`
      - ✗
      - ✓
      - Compact or dense sources with an SSA turnover; electrons do not cool appreciably
-   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
+   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED`
      - ✓
      - ✓
      - Full broadband modeling (GRBs, SNe, TDEs); up to 8 spectral regimes
 
-:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw` is a phenomenological
+:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw` is a phenomenological
 alternative where the break frequency is supplied directly by the user rather than derived from
 microphysics, following the closure of :footcite:t:`demarchiRadioAnalysisSN2004C2022`. Use it
 when you prefer to fit the SSA turnover without invoking any closure assumptions.
@@ -141,7 +141,7 @@ hidden state.
 Calling ``sed()``
 ^^^^^^^^^^^^^^^^^
 
-The primary interface for evaluating a synchrotron spectrum is :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed`.
+The primary interface for evaluating a synchrotron spectrum is :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.sed`.
 Supply a frequency array and the phenomenological parameters:
 
 .. code-block:: python
@@ -204,9 +204,9 @@ The following example shows a slow-cooling spectrum with annotated break frequen
 
 .. note::
 
-   :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`,
-   :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`, and
-   :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED` use
+   :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED`,
+   :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED`, and
+   :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED` use
    keyword-only arguments after ``nu``; supplying parameters positionally will raise a
    ``TypeError``.
 
@@ -219,7 +219,7 @@ Normalizing from Physical Parameters
 
 If you have physical source parameters (magnetic field :math:`B`, radius :math:`R`,
 energy partition fractions :math:`\varepsilon_E`, :math:`\varepsilon_B`, …) rather than
-phenomenological ones, use :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params`
+phenomenological ones, use :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.from_physics_to_params`
 to compute all required SED inputs in one step.
 
 .. code-block:: python
@@ -246,7 +246,7 @@ to compute all required SED inputs in one step.
    )
    # params contains: F_norm, nu_m, nu_c, nu_a, nu_max, nu_peak, F_peak, regime (all with units)
 
-Pass the result directly to :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed`:
+Pass the result directly to :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.sed`:
 
 .. code-block:: python
 
@@ -294,7 +294,7 @@ Inverting the SED
 
 Given observed peak flux and peak frequency, you can recover physical source parameters
 (radius :math:`R`, magnetic field :math:`B`) using
-:meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics`:
+:meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.from_params_to_physics`:
 
 .. code-block:: python
 
@@ -339,19 +339,12 @@ Standalone Closure Functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 All closure logic is also available as standalone functions in
-:mod:`~radiation.synchrotron.SEDs.one_zone_closure`. These are useful when the SED class
-interface is not needed, or for specialized closures (e.g. the implicit-cooling or De Marchi SSA
-inversions) that are not exposed through any SED class method.
+:mod:`~trilobite.radiation.synchrotron.SEDs.one_zone.closure`. These are useful when the SED class
+interface is not needed. Closed-form inversions from a break frequency and flux alone (including the De Marchi
+inversion and self-consistent synchrotron and inverse-Compton cooling) are described in
+:ref:`synchrotron_spectral_inversion`.
 
-For **relativistic sources in the coasting phase**, the
-:func:`~trilobite.radiation.synchrotron.SEDs.one_zone_closure.invert_barniol_duran_coasting`
-function implements the :footcite:t:`duran2013radius` equipartition inversion, which
-simultaneously solves for the radius :math:`R`, bulk Lorentz factor :math:`\Gamma`,
-equipartition energy :math:`E`, and the derived microphysical quantities
-:math:`\gamma_e`, :math:`N_e`, and :math:`B`.  See :ref:`barnoil_duran` for the
-theoretical background.
-
-.. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone_closure
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone.closure
 
 .. rubric:: Public Inversion Functions
 
@@ -362,10 +355,6 @@ theoretical background.
    invert_powerlaw_cooling_sed
    invert_powerlaw_ssa_sed
    invert_powerlaw_cooling_ssa_sed
-   invert_powerlaw_implicit_cooling_sed
-   invert_powerlaw_implicit_cooling_ssa_sed
-   invert_powerlaw_ssa_sed_demarchi
-   invert_barniol_duran_coasting
 
 .. rubric:: Private (Low-Level) Inversion Functions
 
@@ -380,10 +369,6 @@ routines where unit overhead must be minimized.
    _invert_powerlaw_cooling_sed
    _invert_powerlaw_ssa_sed
    _invert_powerlaw_cooling_ssa_sed
-   _invert_powerlaw_implicit_cooling_sed
-   _invert_powerlaw_implicit_cooling_ssa_sed
-   _invert_powerlaw_ssa_sed_demarchi
-   _invert_barniol_duran_coasting
 
 ----
 
@@ -392,9 +377,9 @@ routines where unit overhead must be minimized.
 Inspecting the Spectral Regime
 -------------------------------
 
-For :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED` subclasses, you
+For :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED` subclasses, you
 can query which spectral regime was selected for a given set of parameters via
-:meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime`:
+:meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.determine_sed_regime`:
 
 .. code-block:: python
 
@@ -431,10 +416,10 @@ Quadrature SEDs
 
 .. seealso::
 
-    - :ref:`synch_numerical_theory` for the mathematics underlying the quadrature algorithm,
+    - :ref:`synch_numerical_sed_theory` for the mathematics underlying the quadrature algorithm,
       including kernel tabulation, the integration-by-parts form of the absorption coefficient,
       and the radiative transfer solution.
-    - The gallery example :ref:`sphx_glr_galleries_synchrotron_b_seds_plot_multi_component_numerical_SED.py`
+    - The gallery example :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_multi_component_numerical_SED.py`
       for a worked example with a mixed thermal and power-law electron distribution.
 
 The analytical SED classes described above are highly efficient, but they rest on the assumption that the
@@ -453,7 +438,7 @@ The entire computation is performed in log-space using :func:`~scipy.special.log
 numerically stable across the large dynamic range typical of synchrotron spectra and fast enough for use
 in inference hot loops.
 
-Unlike the stateless :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED` subclasses,
+Unlike the stateless :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED` subclasses,
 the engine is **stateful**: it pre-tabulates the synchrotron kernel on a grid and caches the resulting
 spline interpolator. This one-time setup cost is paid when the kernel is loaded; subsequent SED
 evaluations are fast lookups against that table.
@@ -637,6 +622,111 @@ to unity. The distance can be supplied in any of the same forms accepted by the 
 combined with an optional ``cosmology`` argument. By default the projected source area is :math:`\pi
 R^2`; pass ``A_eff`` to override this for non-spherical geometries.
 
+.. _num_sed_aspherical:
+
+Multi-Zone Aspherical Engines
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For sources whose physical properties vary with polar angle — structured jets, asymmetric
+supernova ejecta, or any transient with genuine angular structure — Trilobite provides two
+aspherical multi-zone engines that extend the single-zone slab approach to full spherical
+geometry.
+
+**On-axis engine.**
+:class:`~trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OnAxisAsymmetricSynchrotronEngine`
+handles an observer fixed on the outflow symmetry axis. Physical properties (:math:`B`, :math:`N`,
+radius, slab depth, filling factor, bulk speed) are supplied as :math:`(n_\theta,)` arrays, one value
+per Gauss--Legendre node in :math:`\cos\theta_\mathrm{jet} \in [0, 1]`. The engine computes the
+comoving-frame intensity at each node and integrates against the projected-area weight
+:math:`\cos\theta_\mathrm{jet}` to produce the angle-integrated flux:
+
+.. code-block:: python
+
+    import numpy as np
+    from astropy import units as u
+    from trilobite.radiation.synchrotron.SEDs.numerical import OnAxisAsymmetricSynchrotronEngine
+
+    engine = OnAxisAsymmetricSynchrotronEngine(n_theta=20)
+    engine.load_avg_first_kernel()
+
+    theta = engine.theta          # GL nodes in [0, pi/2]
+    B = 0.1 * (1 + np.cos(theta)) * u.G    # stronger near axis
+    R = 1e17 * np.ones(engine.n_theta) * u.cm
+    depth = 1e14 * np.ones(engine.n_theta) * u.cm
+
+    gamma = np.geomspace(1e2, 1e8, 300)
+    N0 = 1e4 * u.cm**-3
+    N_arr = N0.value * (gamma / 1e2) ** -2.5
+    N_2d = np.broadcast_to(N_arr, (engine.n_theta, len(gamma))).copy()
+
+    nu = np.geomspace(1e9, 1e15, 200) * u.Hz
+
+    F_nu = engine.compute_flux_density(
+        nu, B=B, N=N_2d, slab_depth=depth, R=R,
+        gamma=gamma, beta=0.3,
+        luminosity_distance=100 * u.Mpc,
+    )
+
+.. note::
+
+    The ``slab_depth`` parameter is the comoving line-of-sight transfer depth per zone — the caller is
+    responsible for any geometric correction (e.g. :math:`\Delta r / \cos\theta_\mathrm{jet}`).
+
+**Off-axis engine.**
+:class:`~trilobite.radiation.synchrotron.SEDs.numerical.aspherical.OffAxisAsymmetricSynchrotronEngine`
+generalizes the on-axis engine to an arbitrary observer polar angle
+:math:`\theta_\mathrm{obs}`. The :math:`\theta_\mathrm{jet}` nodes now span the full sphere
+(:math:`\cos\theta_\mathrm{jet} \in [-1, 1]`), and an additional azimuthal Gauss--Legendre
+quadrature over :math:`\phi \in [0, \pi]` is performed for each polar node. Back-facing zones
+(:math:`\mu_\mathrm{obs} \le 0`) are zeroed by the projected-area factor
+:math:`\max(\mu_\mathrm{obs}, 0)` automatically.
+
+The key API differences from the on-axis engine are:
+
+- ``shell_thickness`` (not ``slab_depth``): the perpendicular comoving shell thickness
+  :math:`\Delta r'(\theta_\mathrm{jet})`. The line-of-sight path
+  :math:`\ell' = \Delta r' / \max(\mu_\mathrm{obs}, 10^{-6})` is computed internally.
+- ``theta_obs``: the observer polar angle in radians, supplied at call time (not at construction).
+- Two independent quadrature grids: ``n_theta`` nodes for the polar integral and ``n_phi`` nodes for
+  the azimuthal integral (defaults: 20 each).
+
+.. code-block:: python
+
+    from trilobite.radiation.synchrotron.SEDs.numerical import OffAxisAsymmetricSynchrotronEngine
+
+    engine = OffAxisAsymmetricSynchrotronEngine(n_theta=20, n_phi=20)
+    engine.load_avg_first_kernel()
+
+    # Uniform outflow: same parameters at all polar angles
+    B = 0.1 * np.ones(engine.n_theta) * u.G
+    R = 1e17 * np.ones(engine.n_theta) * u.cm
+    shell = 1e14 * np.ones(engine.n_theta) * u.cm
+
+    gamma = np.geomspace(1e2, 1e8, 300)
+    N_1d = 1e4 * (gamma / 1e2) ** -2.5
+    N_2d = np.broadcast_to(N_1d, (engine.n_theta, len(gamma))).copy()
+
+    nu = np.geomspace(1e9, 1e15, 200) * u.Hz
+
+    # On-axis observer
+    F_on = engine.compute_flux_density(
+        nu, B=B, N=N_2d, shell_thickness=shell, R=R,
+        gamma=gamma, beta=0.3, theta_obs=0.0,
+        luminosity_distance=100 * u.Mpc,
+    )
+
+    # Off-axis observer at 45 degrees
+    F_off = engine.compute_flux_density(
+        nu, B=B, N=N_2d, shell_thickness=shell, R=R,
+        gamma=gamma, beta=0.3, theta_obs=np.pi / 4,
+        luminosity_distance=100 * u.Mpc,
+    )
+
+.. seealso::
+
+    :ref:`synch_off_axis_model` for the full derivation of the flux formula,
+    the LOS path length convention, and the on-axis limit.
+
 ----
 
 
@@ -647,10 +737,11 @@ API Reference
 
 .. rubric:: Analytical SED Classes
 
-.. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone.seds
 
 .. autosummary::
    :nosignatures:
+   :toctree: ../../../../_as_gen
 
    SynchrotronSED
    MultiSpectrumSynchrotronSED
@@ -666,6 +757,7 @@ API Reference
 
 .. autosummary::
    :nosignatures:
+   :toctree: ../../../../_as_gen
 
    NumericalSynchrotronEngine
    NumericalSynchrotronEngine.load_first_kernel
@@ -676,6 +768,17 @@ API Reference
    NumericalSynchrotronEngine.compute_rest_frame_specific_intensity
    NumericalSynchrotronEngine.compute_specific_intensity
    NumericalSynchrotronEngine.compute_flux_density
+
+.. rubric:: Multi-Zone Aspherical Engines
+
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs.numerical
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../../../../_as_gen
+
+   OnAxisAsymmetricSynchrotronEngine
+   OffAxisAsymmetricSynchrotronEngine
 
 ----
 
@@ -754,12 +857,13 @@ Shape Functions
 Shape functions define the mathematical form of spectral transitions independently of any
 specific physical scenario. They operate entirely in logarithmic space.
 
-.. currentmodule:: trilobite.radiation.synchrotron.SEDs._one_zone_functions
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone._functions
 
 .. rubric:: Shape Function API
 
 .. autosummary::
    :nosignatures:
+   :toctree: ../../../../_as_gen
 
    log_smoothed_SFBPL
    log_exp_cutoff_sed
@@ -770,14 +874,14 @@ specific physical scenario. They operate entirely in logarithmic space.
 - :func:`log_exp_cutoff_sed` — smooth exponential truncation at high frequencies
   (the :math:`\nu_{\max}` cutoff).
 - :func:`smoothed_BPL` — un-logged smoothed broken power law, used by
-  :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw`.
+  :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw`.
 
 .. rubric:: Log-Space SED Composition Example
 
 .. code-block:: python
 
    import numpy as np
-   from trilobite.radiation.synchrotron.SEDs._one_zone_functions import (
+   from trilobite.radiation.synchrotron.SEDs.one_zone._functions import (
        log_smoothed_SFBPL,
        log_exp_cutoff_sed,
    )
@@ -821,7 +925,7 @@ For example: ``_log_powerlaw_sbpl_sed_ssa_cool_7``
 .. dropdown:: Available Low-Level SED Functions
 
    The following low-level SED functions are implemented in
-   :mod:`trilobite.radiation.synchrotron.SEDs._one_zone_functions`. Each corresponds
+   :mod:`trilobite.radiation.synchrotron.SEDs.one_zone._functions`. Each corresponds
    to a unique spectral regime defined in :ref:`synch_sed_theory`.
 
    .. rubric:: Power Law (No Cooling, No SSA)
@@ -867,7 +971,7 @@ SSA Utilities
 SSA utilities compute the self-absorption frequency :math:`\nu_a` and select the physically
 consistent SSA regime for a given set of input parameters.
 
-.. currentmodule:: trilobite.radiation.synchrotron.SEDs._one_zone_ssa
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone._ssa
 
 .. rubric:: SSA Utility API
 
@@ -890,7 +994,7 @@ regimes or physical processes can be incorporated without modifying existing cod
 **Step 1: Implement any new low-level SED functions**
 
 If the new SED requires spectral shapes not already provided, add them to
-:mod:`trilobite.radiation.synchrotron.SEDs._one_zone_functions` following the established naming
+:mod:`trilobite.radiation.synchrotron.SEDs.one_zone._functions` following the established naming
 convention. Each function should:
 
 - Accept ``log_nu`` (natural log of frequency in Hz) and regime-specific break frequencies in
@@ -900,15 +1004,15 @@ convention. Each function should:
 
 **Step 2: Subclass the appropriate base class**
 
-For a **single-regime SED** (like :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`),
-subclass :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED` and implement:
+For a **single-regime SED** (like :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED`),
+subclass :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED` and implement:
 
 - ``_log_opt_sed(self, log_nu, **params)`` — the log-space kernel,
 - ``sed(self, nu, **params)`` — the unit-aware public interface.
 
 For a **multi-regime SED** (like
-:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`), subclass
-:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED` and implement:
+:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED`), subclass
+:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED` and implement:
 
 - ``_compute_sed_regime(self, **params) -> (regime, derived)`` — regime logic,
 - ``determine_sed_regime(self, **params) -> regime`` — unit-aware public wrapper,

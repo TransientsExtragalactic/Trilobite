@@ -559,12 +559,18 @@ class ThinDiskBase(ABC):
       the Planck function over the disk annuli.
     - :meth:`compute_bolometric_luminosity` — analytic L_bol = G M Ṁ / (2 R_in).
 
-    Design Notes
-    ------------
+    .. rubric:: Design Notes
+
     The base class is **stateless** with respect to the disk physical parameters:
     ``M_BH``, ``mdot``, and ``R_in`` are passed at call time, not stored at
     construction.  Subclass ``__init__`` methods may cache model-level constants
     (e.g. the viscosity parameter α) but must not cache physical state.
+
+    Parameters
+    ----------
+    **kwargs : dict
+        Model-level configuration (e.g. the viscosity parameter ``alpha``). Physical disk state must **not** be stored
+        here.
     """
 
     # =========================================================================
@@ -577,9 +583,9 @@ class ThinDiskBase(ABC):
 
         Parameters
         ----------
-        kwargs
-            Model-level configuration (e.g. viscosity parameter ``alpha``).
-            Physical disk state must **not** be stored here.
+        **kwargs : dict
+            Model-level configuration (e.g. the viscosity parameter ``alpha``). Physical disk state must **not** be
+            stored here.
         """
         pass
 
@@ -876,10 +882,26 @@ class ThinDiskBase(ABC):
         mdot: "_UnitBearingArrayLike",
         R_in: "_UnitBearingArrayLike",
     ) -> "dict[str, Union[u.Quantity, _ArrayLike]]":
-        """
+        r"""
         Evaluate the disk structure (alias for :meth:`compute`).
 
         See :meth:`compute` for full parameter and return documentation.
+
+        Parameters
+        ----------
+        radius : array-like or `~astropy.units.Quantity`
+            Radial coordinate(s) [cm or Quantity].
+        M_BH : float or `~astropy.units.Quantity`
+            Black-hole (central object) mass [g or Quantity].
+        mdot : float or `~astropy.units.Quantity`
+            Mass accretion rate :math:`\dot{M}` [g s⁻¹ or Quantity].
+        R_in : float or `~astropy.units.Quantity`
+            Inner truncation radius (e.g. ISCO) [cm or Quantity].
+
+        Returns
+        -------
+        dict
+            The disk structure, as returned by :meth:`compute`.
         """
         return self.compute(radius, M_BH, mdot, R_in)
 
@@ -968,6 +990,10 @@ class AlphaDisk(ThinDiskBase):
         Shakura-Sunyaev dimensionless viscosity parameter
         (:math:`0 < \alpha \lesssim 1`).
 
+    References
+    ----------
+    Shakura, N. I., & Sunyaev, R. A. 1973, A&A, 24, 337.
+
     Examples
     --------
     Evaluate the disk structure at three radii for a :math:`10\,M_\odot` black hole:
@@ -1012,10 +1038,6 @@ class AlphaDisk(ThinDiskBase):
             D_L=100 * u.Mpc,
         )
         print(sed["F_nu"])
-
-    References
-    ----------
-    Shakura, N. I., & Sunyaev, R. A. 1973, A&A, 24, 337.
     """
 
     def __init__(self, alpha: float):
@@ -1140,7 +1162,23 @@ class AlphaDisk(ThinDiskBase):
     # Dunder methods
     # -------------------------------------------------------------------------
     def __str__(self) -> str:
+        """
+        Return a readable description of the disk.
+
+        Returns
+        -------
+        str
+            The class name with the viscosity parameter.
+        """
         return f"AlphaDisk(alpha={self.alpha})"
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the disk.
+
+        Returns
+        -------
+        str
+            The class name with the viscosity parameter.
+        """
         return f"<AlphaDisk(alpha={self.alpha})>"

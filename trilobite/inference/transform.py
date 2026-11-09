@@ -105,6 +105,12 @@ class ParameterTransform(ABC):
     Transformations must be deterministic and reconstructible, as they
     may cross process boundaries (e.g., MPI workers) or be written to disk.
 
+    Parameters
+    ----------
+    **parameters : dict
+        Keyword arguments specifying the parameters of the transformation. The specific parameters depend on the type
+        of transformation and are defined by the concrete subclasses.
+
     Notes
     -----
     - The prior is always defined in physical parameter space.
@@ -120,7 +126,7 @@ class ParameterTransform(ABC):
 
         Parameters
         ----------
-        parameters:
+        **parameters : dict
             Keyword arguments specifying the parameters of the transformation. The specific parameters
             depend on the type of transformation and are defined by the concrete subclasses.
         """
@@ -180,12 +186,13 @@ class ParameterTransform(ABC):
 
         Parameters
         ----------
-        theta:
+        theta : float or ~numpy.ndarray
             The parameter value to transform.
 
         Returns
         -------
-        The transformed parameter value.
+        float
+            The transformed parameter value.
         """
         return self._forward(theta)
 
@@ -195,12 +202,13 @@ class ParameterTransform(ABC):
 
         Parameters
         ----------
-        z:
+        z : float or ~numpy.ndarray
             The transformed parameter value to invert.
 
         Returns
         -------
-        The original parameter value.
+        float
+            The original parameter value.
         """
         return self._inverse(z)
 
@@ -210,12 +218,13 @@ class ParameterTransform(ABC):
 
         Parameters
         ----------
-        theta:
+        theta : float or ~numpy.ndarray
             The parameter value at which to evaluate the jacobian.
 
         Returns
         -------
-        The jacobian of the transformation at the given parameter value.
+        float
+            The jacobian of the transformation at the given parameter value.
         """
         return self._log_abs_det_jacobian(theta)
 
@@ -228,7 +237,7 @@ class ParameterTransform(ABC):
 
         Parameters
         ----------
-        x: float
+        x : float
             The parameter value to transform.
 
         Returns
@@ -239,10 +248,26 @@ class ParameterTransform(ABC):
         return self.forward(x)
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the transform.
+
+        Returns
+        -------
+        str
+            The class name with the transform's parameters.
+        """
         params = ", ".join(f"{k}={v}" for k, v in self._parameters.items())
         return f"{self.__class__.__name__}({params})"
 
     def __str__(self) -> str:
+        """
+        Return a readable description of the transform.
+
+        Returns
+        -------
+        str
+            The class name with the transform's parameters.
+        """
         if self._parameters:
             params = ", ".join(f"{k}={v}" for k, v in self._parameters.items())
             return f"{self.__class__.__name__} with parameters ({params})"
@@ -261,6 +286,11 @@ class ParameterTransform(ABC):
             module.submodule:ClassName
 
         All constructor parameters must be JSON-serializable.
+
+        Returns
+        -------
+        dict
+            A JSON-safe dictionary describing the transform.
 
         Raises
         ------
@@ -388,8 +418,8 @@ class IdentityTransform(ParameterTransform):
 
         \left| \frac{d\theta}{dz} \right| = 1.
 
-    Use Cases
-    ---------
+    .. rubric:: Use Cases
+
     - Unconstrained parameters
     - Parameters already well-behaved in sampling space
     - Default transform when no reparameterization is needed
@@ -435,8 +465,8 @@ class LogTransform(ParameterTransform):
         =
         \theta.
 
-    Role in Inference
-    -----------------
+    .. rubric:: Role in Inference
+
     This transform is commonly used for:
 
     - Scale parameters
@@ -446,8 +476,8 @@ class LogTransform(ParameterTransform):
     Sampling in log-space typically improves convergence
     when the posterior is broad in linear space.
 
-    Domain
-    ------
+    .. rubric:: Domain
+
     :math:`\theta > 0`
 
     Notes
@@ -490,13 +520,13 @@ class Log10Transform(ParameterTransform):
         =
         \theta \ln(10).
 
-    Role in Inference
-    -----------------
+    .. rubric:: Role in Inference
+
     Useful when parameters are naturally interpreted
     in decades (e.g., luminosities, masses, densities).
 
-    Domain
-    ------
+    .. rubric:: Domain
+
     :math:`\theta > 0`
 
     Notes
@@ -543,15 +573,8 @@ class LogisticTransform(ParameterTransform):
         =
         \frac{(b - a) e^{-z}}{(1 + e^{-z})^{2}}.
 
-    Parameters
-    ----------
-    lower : float
-        Lower bound :math:`a`.
-    upper : float
-        Upper bound :math:`b`.
+    .. rubric:: Role in Inference
 
-    Role in Inference
-    -----------------
     Useful for:
 
     - Parameters constrained to finite intervals
@@ -559,9 +582,16 @@ class LogisticTransform(ParameterTransform):
     - Fractions
     - Probabilities
 
-    Domain
-    ------
+    .. rubric:: Domain
+
     :math:`a < \theta < b`
+
+    Parameters
+    ----------
+    lower : float
+        Lower bound :math:`a`.
+    upper : float
+        Upper bound :math:`b`.
 
     Notes
     -----
@@ -573,6 +603,16 @@ class LogisticTransform(ParameterTransform):
     """
 
     def __init__(self, lower: float, upper: float):
+        """
+        Initialize the transform.
+
+        Parameters
+        ----------
+        lower : float
+            Lower bound :math:`a`.
+        upper : float
+            Upper bound :math:`b`. Must be larger than ``lower``.
+        """
         if upper <= lower:
             raise ValueError("LogisticTransform requires upper > lower.")
         super().__init__(lower=float(lower), upper=float(upper))
@@ -631,13 +671,13 @@ class SoftplusTransform(ParameterTransform):
         =
         \frac{e^{z}}{1 + e^{z}}.
 
-    Role in Inference
-    -----------------
+    .. rubric:: Role in Inference
+
     The softplus transform is smoother near zero than the logarithmic
     transform and may improve numerical stability in some cases.
 
-    Domain
-    ------
+    .. rubric:: Domain
+
     :math:`\theta > 0`
 
     Notes

@@ -4,24 +4,23 @@
 Forward Modeling
 *****************************
 
-These examples show how to evaluate Trilobite' high-level physical models directly — without
-running inference — to generate synthetic light curves and SEDs, visualize model parameter
-sensitivity, and compare model predictions to observations.
+These examples evaluate Trilobite's physical models directly, without running inference, and compare the
+predictions with published observations of real transients. Each one is anchored to a specific source, with
+shock, wind and microphysics parameters taken from the literature, so the output can be checked against
+measured values.
 
-All models inherit from :class:`~trilobite.models.core.Model` and share a common interface:
-declare :attr:`PARAMETERS` (fixed or free) and call :meth:`~trilobite.models.core.Model.__call__`
-to evaluate. Examples range from Chevalier self-similar shock models for radio supernovae through
-phenomenological light-curve fitters and TDE radio afterglow models.
+The radio supernova examples follow the same pipeline: a shock model gives the radius and speed, the
+strong-shock jump conditions give the magnetic field, the cooling engine gives the cooling break, and the
+numerical synchrotron engine produces the SED. Absorption by the unshocked wind is added where it matters.
 
 .. rubric:: What you'll find here
 
-- Evaluating a Chevalier shock-synchrotron model with radiative cooling
-- Modeling free-free absorption (FFA) fadeout in the evolving SED of a dense-CSM supernova
-- Fitting a phenomenological light curve with a FRED-like model
-- Generating TDE radio afterglow predictions
-- Modeling a Type IIn supernova embedded in dense circumstellar material
+- A radio supernova in a red-supergiant wind (SN 1993J): shock speed, magnetic field and light curves
+- Free-free absorption in an extremely dense wind (SN 2010jl): when each radio band turns on
+- Fitting radio light curves with a phenomenological function to read off peak times and slopes
+- A TDE radio afterglow from a freely expanding outflow
 
 .. rubric:: API reference
 
-:mod:`trilobite.models` — :class:`~trilobite.models.core.Model`,
-:class:`~trilobite.models.core.ModelParameter`
+:mod:`trilobite.models` — :class:`~trilobite.models.core.base.Model`,
+:class:`~trilobite.models.core.parameters.ModelParameter`

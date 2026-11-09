@@ -54,7 +54,7 @@ The Metaclass: ``_OneZoneMeta``
 ---------------------------------
 
 All Python model classes are validated at **class-definition time** by
-:class:`~trilobite.dynamics.accretion.one_zone.base._OneZoneMeta`.  You do not
+``_OneZoneMeta``.  You do not
 interact with the metaclass directly, but you must satisfy its constraints: the four
 class-level declaration dicts must be present and well-formed, or a descriptive
 :exc:`TypeError` is raised immediately when the class body is evaluated.

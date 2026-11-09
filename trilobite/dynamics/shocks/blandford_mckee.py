@@ -219,15 +219,13 @@ class BlandfordMcKeeShockEngine(ShockEngine):
     Parameters
     ----------
     mu : float, optional
-        Mean molecular weight in units of the proton mass used for the post-shock
-        temperature calculation. Default is ``0.61`` (fully ionized, solar-composition
-        plasma).
+        Mean molecular weight in units of the proton mass. Default is ``0.61``.
     gamma_hat : float, optional
-        Adiabatic index of the shocked gas. Default is :math:`4/3` (ultra-relativistic
-        EOS).
+        Adiabatic index of the shocked gas. Default is :math:`4/3`.
     lorentz_warn_threshold : float, optional
-        Lorentz factor below which a :class:`RuntimeWarning` is emitted. Default
-        is ``2.0``.
+        Emit a :class:`RuntimeWarning` when :math:`\Gamma` falls below this value. Default is ``2.0``.
+    **kwargs :
+        Forwarded to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
 
     See Also
     --------
@@ -303,7 +301,7 @@ class BlandfordMcKeeShockEngine(ShockEngine):
 
         Returns
         -------
-        K : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Normalization constant with units
             :math:`\mathrm{g\,cm^{k-3}}`.
         """
@@ -533,14 +531,10 @@ class BlandfordMcKeeWindShockEngine(BlandfordMcKeeShockEngine):
         =
         \frac{9E}{8\pi K c^2}.
 
-    Parameters
-    ----------
-    mu : float, optional
-        Mean molecular weight. Default is ``0.61``.
-    gamma_hat : float, optional
-        Adiabatic index. Default is :math:`4/3`.
-    lorentz_warn_threshold : float, optional
-        Lorentz factor threshold for the ultra-relativistic warning. Default ``2.0``.
+    This class has no constructor of its own and accepts the same arguments as
+    :class:`BlandfordMcKeeShockEngine`: the mean molecular weight ``mu`` (default ``0.61``), the adiabatic index
+    ``gamma_hat`` (default :math:`4/3`) and the Lorentz-factor threshold ``lorentz_warn_threshold`` of the
+    ultra-relativistic warning (default ``2.0``).
 
     See Also
     --------

@@ -5,8 +5,8 @@ This module provides solvers for relativistic shock jump conditions, covering th
 full range from mildly relativistic to ultra-relativistic flows. All solvers accept
 lab-frame velocities and proper comoving-frame thermodynamic quantities as input.
 
-Classes
--------
+.. rubric:: Classes
+
 RelativisticJumpConditions
     Abstract base class for all relativistic jump-condition solvers.
 UltraRelativisticShockConditions
@@ -313,6 +313,14 @@ class RelativisticJumpConditions(ABC):
     """
 
     def __init_subclass__(cls, **kwargs):
+        """
+        Build the named-tuple result type from the subclass's ``OUTPUT_FIELDS``.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Forwarded to ``super().__init_subclass__``.
+        """
         super().__init_subclass__(**kwargs)
         if cls.OUTPUT_FIELDS:
             cls._result_type = namedtuple(
@@ -345,6 +353,13 @@ class RelativisticJumpConditions(ABC):
         Subclasses define the explicit input signature.  Physical quantities are
         returned as :class:`~astropy.units.Quantity` objects; dimensionless fields
         (β, Γ, compression ratio) are bare floats.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional arguments; defined by each subclass.
+        **kwargs : dict
+            Keyword arguments; defined by each subclass.
         """
         ...
 
@@ -600,6 +615,11 @@ class UltraRelativisticShockConditions(RelativisticJumpConditions):
     state.  Despite the analytic β₂, the shock velocity is still required because
     the compression ratio and downstream thermodynamic quantities depend on Γ₁.
 
+    See Also
+    --------
+    UltraRelativisticColdShockConditions : Simplified cold-upstream variant.
+    RelativisticShockConditions : General numerical solver.
+
     Notes
     -----
     Although Π₁ does not enter β₂ in the UR limit, the upstream enthalpy Ω₁ still
@@ -607,11 +627,6 @@ class UltraRelativisticShockConditions(RelativisticJumpConditions):
     :math:`T_2`.  Pass *upstream_pressure* or *upstream_temperature* to account for
     a warm upstream medium; leave both ``None`` to assume P₁ = 0 (equivalent to
     :class:`UltraRelativisticColdShockConditions`).
-
-    See Also
-    --------
-    UltraRelativisticColdShockConditions : Simplified cold-upstream variant.
-    RelativisticShockConditions : General numerical solver.
     """
 
     @classmethod
