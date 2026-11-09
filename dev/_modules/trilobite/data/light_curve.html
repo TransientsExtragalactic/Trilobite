@@ -472,7 +472,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceData</span><span class="p">,</span> <span class="n">XYDataContainer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">band_variable_name</span><span class="p">,</span> <span class="n">infer_err_from_non_detection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">infer_err_from_non_detection</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
@@ -1066,7 +1066,7 @@
 
 <span class="sd">        Default mapping:</span>
 
-<span class="sd">        - ``variables``: ``{"time": ..., "band_index": &lt;constant&gt;}`` (``band_idx`` for models that declare it)</span>
+<span class="sd">        - ``variables``: ``{"time": ..., "band_index": &lt;constant&gt;}``</span>
 <span class="sd">        - ``observables``: the single model output mapped to flux columns</span>
 
 <span class="sd">        Parameters</span>
@@ -1141,7 +1141,7 @@
         <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">"time"</span><span class="p">:</span> <span class="n">t_vals</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
-                <span class="n">band_variable_name</span><span class="p">(</span><span class="n">model</span><span class="p">):</span> <span class="n">idx_vals</span><span class="p">,</span>
+                <span class="s2">"band_index"</span><span class="p">:</span> <span class="n">idx_vals</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="k">if</span> <span class="n">observables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>

@@ -67,9 +67,11 @@ Relevant API
 Setup
 -----
 
-.. GENERATED FROM PYTHON SOURCE LINES 50-65
+.. GENERATED FROM PYTHON SOURCE LINES 50-68
 
 .. code-block:: Python
+
+    import warnings
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -77,6 +79,7 @@ Setup
     from astropy import units as u
 
     from trilobite.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
+    from trilobite.dynamics.shocks.core import StrongColdShockConditions
     from trilobite.radiation.free_free.absorption import (
         compute_ff_RJ_optical_depth_from_quadrature,
     )
@@ -93,7 +96,7 @@ Setup
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 66-74
+.. GENERATED FROM PYTHON SOURCE LINES 69-77
 
 Physical Parameters
 -------------------
@@ -104,7 +107,7 @@ high-energy explosions with very high mass-loss rates.
 The key parameter driving FFA is the **wind mass-loss rate** :math:`\dot{M}`.
 Higher :math:`\dot{M}` means denser CSM and stronger FFA at early times.
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-107
+.. GENERATED FROM PYTHON SOURCE LINES 77-110
 
 .. code-block:: Python
 
@@ -159,14 +162,14 @@ Higher :math:`\dot{M}` means denser CSM and stronger FFA at early times.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-112
+.. GENERATED FROM PYTHON SOURCE LINES 111-115
 
 Shock Evolution
 ---------------
 
 Compute the Chevalier self-similar shock radius and velocity as functions of time.
 
-.. GENERATED FROM PYTHON SOURCE LINES 112-139
+.. GENERATED FROM PYTHON SOURCE LINES 115-153
 
 .. code-block:: Python
 
@@ -189,29 +192,33 @@ Compute the Chevalier self-similar shock radius and velocity as functions of tim
     rho_up = (M_dot / (4 * np.pi * r_sh**2 * v_wind)).to(u.g / u.cm**3)
 
     # Post-shock magnetic field
-    _R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
-    _U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
-    B = np.sqrt(8 * np.pi * epsilon_B * _U) * u.G
+    e_th = StrongColdShockConditions.compute_post_shock_thermal_energy_density(
+        shock_velocity=v_sh,
+        upstream_density=rho_up,
+    )
+    B = np.sqrt(8 * np.pi * epsilon_B * e_th.to_value(u.erg / u.cm**3)) * u.G
 
     # Synchrotron cooling Lorentz factor
     cooling_engine = SynchrotronRadiativeCoolingEngine()
-    gamma_c = np.maximum(cooling_engine.compute_cooling_gamma(B=B, t=times), 1.0)
+
+
+    def cooling_gamma(B, t):
+        """Cooling Lorentz factor floored at ``gamma_min = 1`` (fast cooling). The engine warns when it is below 1."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            return np.maximum(cooling_engine.compute_cooling_gamma(B=B, t=t), 1.0)
+
+
+    gamma_c = cooling_gamma(B, times)
 
 
 
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    /home/runner/work/Trilobite/Trilobite/docs/source/galleries/modeling/plot_type_IIn_SN_dense_CSM.py:137: RuntimeWarning: Synchrotron cooling Lorentz factor gamma_c < 1 (unphysical). Check that B and t are physical.
-      gamma_c = np.maximum(cooling_engine.compute_cooling_gamma(B=B, t=times), 1.0)
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 140-158
+.. GENERATED FROM PYTHON SOURCE LINES 154-172
 
 Free-Free Optical Depth from the Unshocked Wind
 ------------------------------------------------
@@ -232,7 +239,7 @@ For a steady wind :math:`n_e \propto r^{-2}`, the integral converges analyticall
 
 We use the numerical quadrature API for generality.
 
-.. GENERATED FROM PYTHON SOURCE LINES 158-200
+.. GENERATED FROM PYTHON SOURCE LINES 172-214
 
 .. code-block:: Python
 
@@ -292,7 +299,7 @@ We use the numerical quadrature API for generality.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 201-207
+.. GENERATED FROM PYTHON SOURCE LINES 215-221
 
 FFA Attenuation Factor
 -----------------------
@@ -301,7 +308,7 @@ The FFA attenuation of the observed flux is :math:`e^{-\tau_{\rm ff}}`.
 At :math:`\tau_{\rm ff} \gg 1` the source is FFA-absorbed and the flux
 is exponentially suppressed. At :math:`\tau_{\rm ff} \ll 1` FFA is negligible.
 
-.. GENERATED FROM PYTHON SOURCE LINES 209-214
+.. GENERATED FROM PYTHON SOURCE LINES 223-228
 
 Compute Synchrotron SEDs
 -------------------------
@@ -309,7 +316,7 @@ Compute Synchrotron SEDs
 At each epoch compute the intrinsic synchrotron SED, then apply FFA
 attenuation to produce the observed SED.
 
-.. GENERATED FROM PYTHON SOURCE LINES 214-257
+.. GENERATED FROM PYTHON SOURCE LINES 228-271
 
 .. code-block:: Python
 
@@ -363,7 +370,7 @@ attenuation to produce the observed SED.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 258-264
+.. GENERATED FROM PYTHON SOURCE LINES 272-278
 
 Radio Light Curves: With and Without FFA
 -----------------------------------------
@@ -372,7 +379,7 @@ The key observational signature: at early times the low-frequency bands are
 completely absorbed. As the shock expands the FFA optical depth drops below
 unity and each frequency "turns on" in sequence — highest frequencies first.
 
-.. GENERATED FROM PYTHON SOURCE LINES 264-293
+.. GENERATED FROM PYTHON SOURCE LINES 278-307
 
 .. code-block:: Python
 
@@ -417,7 +424,7 @@ unity and each frequency "turns on" in sequence — highest frequencies first.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 294-299
+.. GENERATED FROM PYTHON SOURCE LINES 308-313
 
 FFA Optical Depth Evolution
 ----------------------------
@@ -425,7 +432,7 @@ FFA Optical Depth Evolution
 Plot the FFA optical depth vs. time at each frequency, with a horizontal
 line at :math:`\tau_{\rm ff} = 1` marking the onset of transparency.
 
-.. GENERATED FROM PYTHON SOURCE LINES 299-315
+.. GENERATED FROM PYTHON SOURCE LINES 313-329
 
 .. code-block:: Python
 
@@ -457,7 +464,7 @@ line at :math:`\tau_{\rm ff} = 1` marking the onset of transparency.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 316-321
+.. GENERATED FROM PYTHON SOURCE LINES 330-335
 
 Turn-On Time vs. Frequency
 ---------------------------
@@ -465,7 +472,7 @@ Turn-On Time vs. Frequency
 Find when each frequency becomes optically thin (:math:`\tau_{\rm ff} < 1`)
 and check whether the scaling :math:`t_{\rm on} \propto \nu^{-2/3}` holds.
 
-.. GENERATED FROM PYTHON SOURCE LINES 321-357
+.. GENERATED FROM PYTHON SOURCE LINES 335-371
 
 .. code-block:: Python
 
@@ -512,7 +519,7 @@ and check whether the scaling :math:`t_{\rm on} \propto \nu^{-2/3}` holds.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 358-363
+.. GENERATED FROM PYTHON SOURCE LINES 372-377
 
 Effect of Mass-Loss Rate
 -------------------------
@@ -520,7 +527,7 @@ Effect of Mass-Loss Rate
 Higher mass-loss rates produce denser CSM and delay the FFA turn-on.
 We compare three values of :math:`\dot{M}`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 363-443
+.. GENERATED FROM PYTHON SOURCE LINES 377-460
 
 .. code-block:: Python
 
@@ -540,9 +547,12 @@ We compare three values of :math:`\dot{M}`.
         r_i = so.radius.to(u.cm)
         v_i = so.velocity.to(u.cm / u.s)
         rho_i = (Mdot / (4 * np.pi * r_i**2 * v_wind)).to(u.g / u.cm**3)
-        _U_i = 1.5 * (_R - 1) / _R**2 * rho_i.to_value(u.g / u.cm**3) * v_i.to_value(u.cm / u.s) ** 2
-        B_i = np.sqrt(8 * np.pi * epsilon_B * _U_i) * u.G
-        gc_i = np.maximum(cooling_engine.compute_cooling_gamma(B=B_i, t=times), 1.0)
+        e_th_i = StrongColdShockConditions.compute_post_shock_thermal_energy_density(
+            shock_velocity=v_i,
+            upstream_density=rho_i,
+        )
+        B_i = np.sqrt(8 * np.pi * epsilon_B * e_th_i.to_value(u.erg / u.cm**3)) * u.G
+        gc_i = cooling_gamma(B_i, times)
 
         M_dot_cgs_i = Mdot.to(u.g / u.s).value
 
@@ -613,19 +623,10 @@ We compare three values of :math:`\dot{M}`.
    :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    /home/runner/work/Trilobite/Trilobite/docs/source/galleries/modeling/plot_type_IIn_SN_dense_CSM.py:381: RuntimeWarning: Synchrotron cooling Lorentz factor gamma_c < 1 (unphysical). Check that B and t are physical.
-      gc_i = np.maximum(cooling_engine.compute_cooling_gamma(B=B_i, t=times), 1.0)
-    /home/runner/work/Trilobite/Trilobite/docs/source/galleries/modeling/plot_type_IIn_SN_dense_CSM.py:381: RuntimeWarning: Synchrotron cooling Lorentz factor gamma_c < 1 (unphysical). Check that B and t are physical.
-      gc_i = np.maximum(cooling_engine.compute_cooling_gamma(B=B_i, t=times), 1.0)
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 444-449
+.. GENERATED FROM PYTHON SOURCE LINES 461-466
 
 The comparison demonstrates that denser winds (higher :math:`\dot{M}`) delay
 the radio turn-on and suppress the early-time flux. This is why Type IIn SNe
@@ -636,7 +637,7 @@ in weeks.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 30.981 seconds)
+   **Total running time of the script:** (0 minutes 11.239 seconds)
 
 
 .. _sphx_glr_download_auto_examples_modeling_plot_type_IIn_SN_dense_CSM.py:

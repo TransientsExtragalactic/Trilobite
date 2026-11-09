@@ -69,7 +69,7 @@
     <link rel="icon" href="../../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
-    <link rel="next" title="Arnett Engines" href="../arnett.html" />
+    <link rel="next" title="Accretion Disks" href="../../disks/index.html" />
     <link rel="prev" title="Opacity Theory" href="opacity_theory.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
@@ -765,7 +765,6 @@
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="opacity_theory.html">Opacity Theory</a></li>
 <li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">Developer Guide: Implementing Opacity Laws</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../arnett.html">Arnett Engines</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1268,7 +1267,7 @@ user-specified exponents).</p>
 <code class="docutils literal notranslate"><span class="pre">super().__init__()</span></code> with no keyword arguments; the C companion will remain <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a> provides default
+<p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html#trilobite.radiation.opacity.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a> provides default
 implementations of all three private methods that return <code class="docutils literal notranslate"><span class="pre">self._LOG_KAPPA</span></code> (for
 <code class="docutils literal notranslate"><span class="pre">_log_opacity</span></code>) and <code class="docutils literal notranslate"><span class="pre">0.0</span></code> (for the derivatives).  For a density- or
 temperature-dependent law you <strong>must</strong> override all three.  Only subclasses where
@@ -1334,13 +1333,13 @@ C class declared in <code class="docutils literal notranslate"><span class="pre"
 </pre></div>
 </div>
 <p>The six methods (scalar + array variants for each of the three quantities) are the
-full interface required by <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>.</p>
+full interface required by <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html#trilobite.radiation.opacity.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Array methods (<code class="docutils literal notranslate"><span class="pre">*_array</span></code>) receive <strong>typed memoryviews</strong> (<code class="docutils literal notranslate"><span class="pre">double[::1]</span></code>), not
 numpy arrays.  Use <code class="docutils literal notranslate"><span class="pre">np.ascontiguousarray(arr,</span> <span class="pre">dtype=np.float64)</span></code> before calling
 them if your arrays might not be C-contiguous.  The Python-layer
-<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a> does this automatically.</p>
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html#trilobite.radiation.opacity.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a> does this automatically.</p>
 </div>
 </section>
 <section id="step-2-write-the-python-class">
@@ -1594,11 +1593,11 @@ Cython import paths in the Python class</p></td>
       </div>
     </a>
     <a class="right-next"
-       href="../arnett.html"
+       href="../../disks/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Arnett Engines</p>
+        <p class="prev-next-title">Accretion Disks</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -269,7 +269,7 @@ sed = PowerLaw_Cooling_SSA_SynchrotronSED()
 # Time sampling
 # ^^^^^^^^^^^^^
 #
-# Finally, we choose a set of epochs spanning :math:`1`–:math:`10^3` days after
+# Finally, we choose a set of epochs spanning :math:`5`–:math:`10^3` days after
 # explosion, logarithmically spaced to capture the rapid early-time evolution
 # as well as the slower late-time behavior.
 
@@ -311,7 +311,7 @@ D_L = 35.0 * u.Mpc  # Luminosity distance to the source
 # Temporal sampling
 # --------------------------------------------------
 # Logarithmically spaced epochs to capture early and late evolution.
-times = np.geomspace(1.0, 1.0e3, 50) * u.day
+times = np.geomspace(5.0, 1.0e3, 50) * u.day
 
 # Add a smoothing parameter to control the sharpness of spectral breaks in the SED.
 smoothing = 1
@@ -374,9 +374,11 @@ T_sh = StrongColdShockConditions.compute_post_shock_temperature(
 )
 
 # Calculate the magnetic field.
-_R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
-_U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
-B = np.sqrt(8 * np.pi * epsilon_B * _U) * u.G
+e_th = StrongColdShockConditions.compute_post_shock_thermal_energy_density(
+    shock_velocity=v_sh,
+    upstream_density=rho_up,
+)
+B = np.sqrt(8 * np.pi * epsilon_B * e_th.to_value(u.erg / u.cm**3)) * u.G
 
 # --------------------------------------------------
 # Diagnostic plots
