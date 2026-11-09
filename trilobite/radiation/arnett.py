@@ -60,26 +60,17 @@ __all__ = [
 
 
 class DiffusionClock(NamedTuple):
-    r"""
-    The diffusion clock :math:`u(t)` of the relaxation equation :math:`dL/du = P - L`.
-
-    Parameters
-    ----------
-    u_diff : numba dispatcher
-        ``u_diff(t_hi, dt, p)`` returning :math:`u(t_\mathrm{hi}) - u(t_\mathrm{hi} - dt)`. Written in terms of
-        ``dt`` so the difference keeps its digits when ``dt`` is small.
-    dudt : numba dispatcher
-        ``dudt(t, p)`` returning :math:`du/dt`.
-    t_of_u : numba dispatcher
-        ``t_of_u(u, p)`` returning the inverse :math:`t(u)`, for :math:`u > 0`.
-    n_params : int
-        Length of the parameter row ``p``.
-    """
+    r"""The diffusion clock :math:`u(t)` of the relaxation equation :math:`dL/du = P - L`."""
 
     u_diff: CPUDispatcher
+    r"""numba dispatcher: ``u_diff(t_hi, dt, p)`` returning :math:`u(t_\mathrm{hi}) - u(t_\mathrm{hi} - dt)`.
+    Written in terms of ``dt`` so the difference keeps its digits when ``dt`` is small."""
     dudt: CPUDispatcher
+    r"""numba dispatcher: ``dudt(t, p)`` returning :math:`du/dt`."""
     t_of_u: CPUDispatcher
+    r"""numba dispatcher: ``t_of_u(u, p)`` returning the inverse :math:`t(u)`, for :math:`u > 0`."""
     n_params: int
+    """int: Length of the parameter row ``p``."""
 
 
 @njit(cache=True, inline="always")
@@ -298,24 +289,18 @@ class Channel(NamedTuple):
     One source of power: an injection function and optional incomplete trapping.
 
     An engine's luminosity is the sum over its channels, each solved on the same clock.
-
-    Parameters
-    ----------
-    name : str
-        Identifier; keys the channel's parameters in :meth:`ArnettEngine._solve`.
-    injection : numba dispatcher
-        ``F(t, params) -> float``: injected power in erg/s, receiving the channel's ``n_injection`` parameters.
-    n_injection : int
-        Number of injection parameters.
-    opacity : str, optional
-        Name of the opacity (a key of the ``opacities`` given to :meth:`ArnettEngine._solve`) governing the
-        channel's trapping :math:`1 - e^{-A/t^2}`. ``None`` means the channel is fully thermalized.
     """
 
     name: str
+    """str: Identifier; keys the channel's parameters in :meth:`ArnettEngine._solve`."""
     injection: CPUDispatcher
+    """numba dispatcher: ``F(t, params) -> float``, the injected power in erg/s, receiving the channel's
+    ``n_injection`` parameters."""
     n_injection: int
+    """int: Number of injection parameters."""
     opacity: Optional[str] = None
+    r"""str or None: Name of the opacity (a key of the ``opacities`` given to :meth:`ArnettEngine._solve`)
+    governing the channel's trapping :math:`1 - e^{-A/t^2}`. ``None`` means the channel is fully thermalized."""
 
 
 # =================================== #
@@ -349,7 +334,19 @@ class QuadratureRule(NamedTuple):
 
     @classmethod
     def gauss_legendre(cls, n_nodes: int) -> "QuadratureRule":
-        """Plain Gauss-Legendre: best for smooth integrands and interior features, weak at endpoints."""
+        """
+        Plain Gauss-Legendre: best for smooth integrands and interior features, weak at endpoints.
+
+        Parameters
+        ----------
+        n_nodes : int
+            Number of nodes.
+
+        Returns
+        -------
+        ~trilobite.radiation.arnett.QuadratureRule
+            The rule on [0, 1].
+        """
         return cls.gauss_legendre_power(n_nodes, power=1)
 
     @classmethod
@@ -359,6 +356,18 @@ class QuadratureRule(NamedTuple):
 
         Nodes are packed algebraically toward :math:`x = 0`, where fast engines (short spin-down times) live.
         ``power=1`` is plain GL.
+
+        Parameters
+        ----------
+        n_nodes : int
+            Number of nodes.
+        power : int, optional
+            The exponent :math:`p`, a positive integer. Default 3.
+
+        Returns
+        -------
+        ~trilobite.radiation.arnett.QuadratureRule
+            The rule on [0, 1].
         """
         _check_nodes(n_nodes, 1)
         if int(power) != power or power < 1:
@@ -378,6 +387,18 @@ class QuadratureRule(NamedTuple):
         Uses :math:`x = \tfrac12(1 + \tanh a)`, :math:`a = \tfrac{\pi}{2}\sinh k`, on ``n_nodes`` equally spaced
         ``k`` in ``[-k_max, k_max]``. Very strong at both endpoints, sparse in the interior. At ``k_max = 3.2``
         the end weights are below double precision.
+
+        Parameters
+        ----------
+        n_nodes : int
+            Number of nodes, at least 2.
+        k_max : float, optional
+            Half-width of the ``k`` grid. Default 3.2.
+
+        Returns
+        -------
+        ~trilobite.radiation.arnett.QuadratureRule
+            The rule on [0, 1].
         """
         _check_nodes(n_nodes, 2)
         if not k_max > 0:
@@ -410,7 +431,27 @@ _COMMON_UNITS = {
 
 
 class ArnettEngine(ABC):
-    r"""Abstract base class for Arnett-type diffusion engines."""
+    r"""
+    Abstract base class for Arnett-type diffusion engines.
+
+    Parameters
+    ----------
+    gamma_trapping : bool, optional
+        Include incomplete trapping of the high-energy photons (default ``True``). If ``False`` the source
+        power is fully thermalized.
+    quadrature : ~trilobite.radiation.arnett.QuadratureRule, optional
+        Quadrature rule used by the solver. Defaults to the subclass's choice.
+    window_depth : float, optional
+        Number of clock units of past injection retained by the solver. See
+        :func:`~trilobite.radiation.arnett.build_solver`.
+    beta : float, optional
+        Arnett's dimensionless opacity-geometry constant :math:`\beta`. Default ``13.8``.
+    clock : {"homologous", "finite_radius"}, optional
+        The diffusion clock. Default ``"homologous"``.
+    trapping_mode : {"deposition", "emergence"}, optional
+        Where the incomplete trapping :math:`1 - e^{-A/t^2}` of a leaky channel is applied. See
+        :ref:`arnett_trapping_mode`.
+    """
 
     _PARAMETER_UNITS: dict = dict(_COMMON_UNITS)
 
@@ -758,7 +799,21 @@ class ArnettEngine(ABC):
         """
 
     def __call__(self, time: "_UnitBearingArrayLike", **parameters) -> u.Quantity:
-        """Alias for :meth:`compute_luminosity`."""
+        r"""
+        Compute the bolometric luminosity; an alias for :meth:`compute_luminosity`.
+
+        Parameters
+        ----------
+        time : ~astropy.units.Quantity or float or numpy.ndarray
+            Time(s) since explosion. Bare numbers are in s.
+        **parameters
+            The engine's physical parameters.
+
+        Returns
+        -------
+        ~astropy.units.Quantity
+            :math:`L(t)` in :math:`\mathrm{erg\,s^{-1}}`.
+        """
         return self.compute_luminosity(time, **parameters)
 
     def _switches(self) -> str:
@@ -768,9 +823,25 @@ class ArnettEngine(ABC):
         )
 
     def __str__(self):
+        """
+        Return the engine name and its switches.
+
+        Returns
+        -------
+        str
+            For example ``"NickelCobaltArnettEngine(gamma_trapping=True, ...)"``.
+        """
         return f"{type(self).__name__}({self._switches()})"
 
     def __repr__(self):
+        """
+        Return the string form in angle brackets.
+
+        Returns
+        -------
+        str
+            The :meth:`__str__` form enclosed in ``<>``.
+        """
         return f"<{self}>"
 
 
@@ -868,14 +939,9 @@ class NickelCobaltArnettEngine(_PositronSwitchMixin, ArnettEngine):
       topology and ionization of the ejecta, so ``kappa_positron`` should be regarded as an effective
       parameter.
 
-    Parameters
-    ----------
-    gamma_trapping : bool, optional
-        As for :class:`~trilobite.radiation.arnett.ArnettEngine`.
-    positron_trapping : bool, optional
-        Include incomplete trapping of the positron channel. Default ``False``.
-    **kwargs
-        Forwarded to :class:`~trilobite.radiation.arnett.ArnettEngine`.
+    The constructor takes ``gamma_trapping`` (as for :class:`~trilobite.radiation.arnett.ArnettEngine`),
+    ``positron_trapping`` (include incomplete trapping of the positron channel; default ``False``), and further
+    keyword arguments that are forwarded to :class:`~trilobite.radiation.arnett.ArnettEngine`.
 
     Notes
     -----
@@ -1035,15 +1101,10 @@ class MagnetarNickelArnettEngine(_PositronSwitchMixin, ArnettEngine):
     ``kappa_gamma``, and the positrons (optionally) through ``kappa_positron``. Its parameters are the union of
     those of the two engines.
 
-    Parameters
-    ----------
-    gamma_trapping : bool, optional
-        As for :class:`~trilobite.radiation.arnett.ArnettEngine`; applies to the nickel gamma rays and to the
-        magnetar.
-    positron_trapping : bool, optional
-        Include incomplete trapping of the positron channel. Default ``False``.
-    **kwargs
-        Forwarded to :class:`~trilobite.radiation.arnett.ArnettEngine`.
+    The constructor takes ``gamma_trapping`` (as for :class:`~trilobite.radiation.arnett.ArnettEngine`; it applies
+    to the nickel gamma rays and to the magnetar), ``positron_trapping`` (include incomplete trapping of the
+    positron channel; default ``False``), and further keyword arguments that are forwarded to
+    :class:`~trilobite.radiation.arnett.ArnettEngine`.
     """
 
     _PARAMETER_UNITS = {**_COMMON_UNITS, **_NICKEL_UNITS, **_MAGNETAR_UNITS}

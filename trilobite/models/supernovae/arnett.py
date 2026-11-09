@@ -54,6 +54,7 @@ from astropy import units as u
 
 from trilobite.models.core.optical import OpticalModel
 from trilobite.models.core.parameters import ModelParameter
+from trilobite.models.core.status import ModelStatus
 from trilobite.physics_utils.cosmology import get_cosmology, resolve_cosmological_distances
 from trilobite.radiation.arnett import (
     ArnettEngine,
@@ -324,6 +325,8 @@ class ArnettOpticalModel(OpticalModel):
     .. footbibliography::
     """
 
+    STATUS = ModelStatus.UNVERIFIED
+
     ENGINE_CLASS: Optional[type] = None
     """type: The :class:`~trilobite.radiation.arnett.ArnettEngine` subclass that supplies the luminosity."""
 
@@ -342,6 +345,23 @@ class ArnettOpticalModel(OpticalModel):
         cosmology=None,
         **engine_kwargs,
     ) -> None:
+        """
+        Initialize the model.
+
+        Parameters
+        ----------
+        bundle : ~trilobite.utils.phot_utils.FilterBundle
+            The filter set defining the observable bands.
+        redshift : float, optional
+            Source redshift. Exactly one of ``redshift`` and ``luminosity_distance`` must be given.
+        luminosity_distance : float or ~astropy.units.Quantity, optional
+            Source luminosity distance. Bare values are interpreted as Mpc. A source at :math:`z = 0` must be given its
+            distance this way.
+        cosmology : ~astropy.cosmology.FLRW, optional
+            Cosmology relating redshift and distance. Defaults to the Trilobite configuration cosmology.
+        **engine_kwargs
+            Options forwarded to the engine constructor (for example ``gamma_trapping`` or ``beta``).
+        """
         if self.ENGINE_CLASS is None:
             raise TypeError(f"{type(self).__name__} does not define an ENGINE_CLASS; subclass it to choose one.")
         super().__init__(bundle)
@@ -573,6 +593,31 @@ class NickelCobaltArnettModel(ArnettOpticalModel):
              - :math:`t`
              - Observer-frame time, measured from the explosion if ``t_exp`` is zero.
 
+    Parameters
+    ----------
+    bundle : ~trilobite.utils.phot_utils.FilterBundle
+        The filter set defining the observable bands.
+    redshift : float, optional
+        Source redshift. Exactly one of ``redshift`` and ``luminosity_distance`` must be given.
+    luminosity_distance : float or ~astropy.units.Quantity, optional
+        Source luminosity distance. Bare values are interpreted as Mpc. A source at :math:`z = 0` must be given its
+        distance this way.
+    cosmology : ~astropy.cosmology.FLRW, optional
+        Cosmology relating redshift and distance. Defaults to the Trilobite configuration cosmology.
+    gamma_trapping : bool, optional
+        Include incomplete trapping of the high-energy photons. If ``False`` the source power is fully
+        thermalized. Default ``True``.
+    positron_trapping : bool, optional
+        Include incomplete trapping of the positron channel. Default ``False``.
+    trapping_mode : {"deposition", "emergence"}, optional
+        Where the incomplete trapping of a leaky channel is applied: to the power when it is deposited
+        (``"deposition"``, default) or to the diffused luminosity at the time of observation (``"emergence"``,
+        as in MOSFiT).
+    beta : float, optional
+        Arnett's dimensionless opacity-geometry constant :math:`\beta`. Default ``13.8``.
+    window_depth : float, optional
+        Number of clock units of past injection retained by the solver. Default ``40``.
+
     Notes
     -----
     See :class:`~trilobite.models.supernovae.arnett.ArnettOpticalModel` for the photosphere, the temperature floor,
@@ -596,6 +641,8 @@ class NickelCobaltArnettModel(ArnettOpticalModel):
     ... )
     """
 
+    STATUS = ModelStatus.UNVERIFIED
+
     ENGINE_CLASS = NickelCobaltArnettEngine
     _SOURCE_PARAMETERS = ("M_Ni", "kappa_gamma", "kappa_positron")
     PARAMETERS = _COMMON_PARAMETERS + _NICKEL_PARAMETERS
@@ -615,6 +662,34 @@ class NickelCobaltArnettModel(ArnettOpticalModel):
         beta: float = 13.8,
         window_depth: float = 40.0,
     ) -> None:
+        r"""
+        Initialize the model.
+
+        Parameters
+        ----------
+        bundle : ~trilobite.utils.phot_utils.FilterBundle
+            The filter set defining the observable bands.
+        redshift : float, optional
+            Source redshift. Exactly one of ``redshift`` and ``luminosity_distance`` must be given.
+        luminosity_distance : float or ~astropy.units.Quantity, optional
+            Source luminosity distance. Bare values are interpreted as Mpc. A source at :math:`z = 0` must be given its
+            distance this way.
+        cosmology : ~astropy.cosmology.FLRW, optional
+            Cosmology relating redshift and distance. Defaults to the Trilobite configuration cosmology.
+        gamma_trapping : bool, optional
+            Include incomplete trapping of the high-energy photons. If ``False`` the source power is fully
+            thermalized. Default ``True``.
+        positron_trapping : bool, optional
+            Include incomplete trapping of the positron channel. Default ``False``.
+        trapping_mode : {"deposition", "emergence"}, optional
+            Where the incomplete trapping of a leaky channel is applied: to the power when it is deposited
+            (``"deposition"``, default) or to the diffused luminosity at the time of observation (``"emergence"``,
+            as in MOSFiT).
+        beta : float, optional
+            Arnett's dimensionless opacity-geometry constant :math:`\beta`. Default ``13.8``.
+        window_depth : float, optional
+            Number of clock units of past injection retained by the solver. Default ``40``.
+        """
         super().__init__(
             bundle,
             redshift,
@@ -723,11 +798,36 @@ class MagnetarArnettModel(ArnettOpticalModel):
              - :math:`t`
              - Observer-frame time, measured from the explosion if ``t_exp`` is zero.
 
+    Parameters
+    ----------
+    bundle : ~trilobite.utils.phot_utils.FilterBundle
+        The filter set defining the observable bands.
+    redshift : float, optional
+        Source redshift. Exactly one of ``redshift`` and ``luminosity_distance`` must be given.
+    luminosity_distance : float or ~astropy.units.Quantity, optional
+        Source luminosity distance. Bare values are interpreted as Mpc. A source at :math:`z = 0` must be given its
+        distance this way.
+    cosmology : ~astropy.cosmology.FLRW, optional
+        Cosmology relating redshift and distance. Defaults to the Trilobite configuration cosmology.
+    gamma_trapping : bool, optional
+        Include incomplete trapping of the high-energy photons. If ``False`` the source power is fully
+        thermalized. Default ``True``.
+    trapping_mode : {"deposition", "emergence"}, optional
+        Where the incomplete trapping of a leaky channel is applied: to the power when it is deposited
+        (``"deposition"``, default) or to the diffused luminosity at the time of observation (``"emergence"``,
+        as in MOSFiT).
+    beta : float, optional
+        Arnett's dimensionless opacity-geometry constant :math:`\beta`. Default ``13.8``.
+    window_depth : float, optional
+        Number of clock units of past injection retained by the solver. Default ``40``.
+
     Notes
     -----
     See :class:`~trilobite.models.supernovae.arnett.ArnettOpticalModel` for the photosphere, the temperature floor,
     and the treatment of redshift, and :ref:`arnett` for the engine.
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     ENGINE_CLASS = MagnetarArnettEngine
     _SOURCE_PARAMETERS = ("P_spin", "B_dipole", "braking_index", "kappa_magnetar", "I_ns", "R_ns")
@@ -747,6 +847,32 @@ class MagnetarArnettModel(ArnettOpticalModel):
         beta: float = 13.8,
         window_depth: float = 40.0,
     ) -> None:
+        r"""
+        Initialize the model.
+
+        Parameters
+        ----------
+        bundle : ~trilobite.utils.phot_utils.FilterBundle
+            The filter set defining the observable bands.
+        redshift : float, optional
+            Source redshift. Exactly one of ``redshift`` and ``luminosity_distance`` must be given.
+        luminosity_distance : float or ~astropy.units.Quantity, optional
+            Source luminosity distance. Bare values are interpreted as Mpc. A source at :math:`z = 0` must be given its
+            distance this way.
+        cosmology : ~astropy.cosmology.FLRW, optional
+            Cosmology relating redshift and distance. Defaults to the Trilobite configuration cosmology.
+        gamma_trapping : bool, optional
+            Include incomplete trapping of the high-energy photons. If ``False`` the source power is fully
+            thermalized. Default ``True``.
+        trapping_mode : {"deposition", "emergence"}, optional
+            Where the incomplete trapping of a leaky channel is applied: to the power when it is deposited
+            (``"deposition"``, default) or to the diffused luminosity at the time of observation (``"emergence"``,
+            as in MOSFiT).
+        beta : float, optional
+            Arnett's dimensionless opacity-geometry constant :math:`\beta`. Default ``13.8``.
+        window_depth : float, optional
+            Number of clock units of past injection retained by the solver. Default ``40``.
+        """
         super().__init__(
             bundle,
             redshift,
@@ -790,11 +916,38 @@ class MagnetarNickelArnettModel(ArnettOpticalModel):
                :math:`I_{\rm ns}`, :math:`R_{\rm ns}`
              - Magnetar parameters.
 
+    Parameters
+    ----------
+    bundle : ~trilobite.utils.phot_utils.FilterBundle
+        The filter set defining the observable bands.
+    redshift : float, optional
+        Source redshift. Exactly one of ``redshift`` and ``luminosity_distance`` must be given.
+    luminosity_distance : float or ~astropy.units.Quantity, optional
+        Source luminosity distance. Bare values are interpreted as Mpc. A source at :math:`z = 0` must be given its
+        distance this way.
+    cosmology : ~astropy.cosmology.FLRW, optional
+        Cosmology relating redshift and distance. Defaults to the Trilobite configuration cosmology.
+    gamma_trapping : bool, optional
+        Include incomplete trapping of the high-energy photons. If ``False`` the source power is fully
+        thermalized. Default ``True``.
+    positron_trapping : bool, optional
+        Include incomplete trapping of the positron channel. Default ``False``.
+    trapping_mode : {"deposition", "emergence"}, optional
+        Where the incomplete trapping of a leaky channel is applied: to the power when it is deposited
+        (``"deposition"``, default) or to the diffused luminosity at the time of observation (``"emergence"``,
+        as in MOSFiT).
+    beta : float, optional
+        Arnett's dimensionless opacity-geometry constant :math:`\beta`. Default ``13.8``.
+    window_depth : float, optional
+        Number of clock units of past injection retained by the solver. Default ``40``.
+
     Notes
     -----
     See :class:`~trilobite.models.supernovae.arnett.ArnettOpticalModel` for the photosphere, the temperature floor,
     and the treatment of redshift, and :ref:`arnett` for the engine.
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     ENGINE_CLASS = MagnetarNickelArnettEngine
     _SOURCE_PARAMETERS = NickelCobaltArnettModel._SOURCE_PARAMETERS + MagnetarArnettModel._SOURCE_PARAMETERS
@@ -815,6 +968,34 @@ class MagnetarNickelArnettModel(ArnettOpticalModel):
         beta: float = 13.8,
         window_depth: float = 40.0,
     ) -> None:
+        r"""
+        Initialize the model.
+
+        Parameters
+        ----------
+        bundle : ~trilobite.utils.phot_utils.FilterBundle
+            The filter set defining the observable bands.
+        redshift : float, optional
+            Source redshift. Exactly one of ``redshift`` and ``luminosity_distance`` must be given.
+        luminosity_distance : float or ~astropy.units.Quantity, optional
+            Source luminosity distance. Bare values are interpreted as Mpc. A source at :math:`z = 0` must be given its
+            distance this way.
+        cosmology : ~astropy.cosmology.FLRW, optional
+            Cosmology relating redshift and distance. Defaults to the Trilobite configuration cosmology.
+        gamma_trapping : bool, optional
+            Include incomplete trapping of the high-energy photons. If ``False`` the source power is fully
+            thermalized. Default ``True``.
+        positron_trapping : bool, optional
+            Include incomplete trapping of the positron channel. Default ``False``.
+        trapping_mode : {"deposition", "emergence"}, optional
+            Where the incomplete trapping of a leaky channel is applied: to the power when it is deposited
+            (``"deposition"``, default) or to the diffused luminosity at the time of observation (``"emergence"``,
+            as in MOSFiT).
+        beta : float, optional
+            Arnett's dimensionless opacity-geometry constant :math:`\beta`. Default ``13.8``.
+        window_depth : float, optional
+            Number of clock units of past injection retained by the solver. Default ``40``.
+        """
         super().__init__(
             bundle,
             redshift,
@@ -894,6 +1075,8 @@ class NickelCobaltArnettCutoffModel(_CutoffSpectrumMixin, NickelCobaltArnettMode
     = L` (see :func:`~trilobite.radiation.blackbody.planck_cutoff_fraction`).
     """
 
+    STATUS = ModelStatus.UNVERIFIED
+
     PARAMETERS = NickelCobaltArnettModel.PARAMETERS + (_CUTOFF_PARAMETER,)
     DESCRIPTION = "56Ni-powered Arnett diffusion light curve with a UV-suppressed blackbody, through optical filters."
     REFERENCE = "Arnett 1982; Nicholl et al. 2017."
@@ -959,6 +1142,8 @@ class MagnetarArnettCutoffModel(_CutoffSpectrumMixin, MagnetarArnettModel):
     .. footbibliography::
     """
 
+    STATUS = ModelStatus.UNVERIFIED
+
     PARAMETERS = MagnetarArnettModel.PARAMETERS + (_CUTOFF_PARAMETER,)
     DESCRIPTION = (
         "Magnetar-powered Arnett diffusion light curve with a UV-suppressed blackbody, through optical filters."
@@ -991,6 +1176,8 @@ class MagnetarNickelArnettCutoffModel(_CutoffSpectrumMixin, MagnetarNickelArnett
              - Rest-frame cutoff wavelength, in Angstrom. Default ``3000``. Fix it unless the data reach the far UV.
                ``0`` gives the plain blackbody.
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     PARAMETERS = MagnetarNickelArnettModel.PARAMETERS + (_CUTOFF_PARAMETER,)
     DESCRIPTION = (
