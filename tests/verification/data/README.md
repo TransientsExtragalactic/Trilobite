@@ -1,13 +1,12 @@
 # Reference data
 
-ECSV tables with units; read with `astropy.table.QTable.read(path, format="ascii.ecsv")`. Missing values are masked.
-Citations live in `docs/source/docs_bib.bib`.
+ECSV tables with units; read with `astropy.table.QTable.read(path, format="ascii.ecsv")`. Missing values are NaN or
+masked. Citations live in `docs/source/docs_bib.bib`.
 
-- `sn2006aj/` — SN 2006aj / GRB 060218: `optical_photometry.ecsv` (UBVRI, host-subtracted and corrected for Galactic
-  extinction, see `band_corrections.ecsv`), `object.ecsv` (redshift). Source: `Mirabal2006GRB060218` (attribution of the
-  photometry itself unconfirmed).
-- `prentice2016/arnett_fits.ecsv` — Arnett-model fits for 38 stripped-envelope supernovae, doi:10.1093/mnras/stv2983
-  (BibTeX not yet added). `M_Ni`, `M_ej`, `E_K` carry `_err_up`/`_err_down`; `lit_*` are the literature values listed
-  alongside, with `_lo`/`_hi` bounds; `lit_refs` are reference numbers in the paper.
-
-Not yet known: Vega or AB magnitudes; t0 for SN 2006aj; cosmology; which Arnett formulation Prentice et al. used.
+- `sn2013dg/photometry.ecsv` — AB griz photometry of the superluminous supernova SN 2013dg (z = 0.265), transcribed from
+  the table of the discovery paper, `Nicholl_2014` (arXiv:1405.1325, from its TeX source, so the band of every cell is
+  unambiguous). The magnitudes are as published: not corrected for Galactic extinction (`ebv_mw` in the metadata).
+  Two limiting magnitudes are flagged `upper_limit`, and four measurements that the authors say may include host light
+  are flagged `host_contaminated`.
+- `sn2013dg/published_fit.ecsv` — the SN 2013dg row of the magnetar fits of `Nicholl_2017` (arXiv:1706.00825): median
+  with upper and lower 1-sigma errors, in the units of that table.

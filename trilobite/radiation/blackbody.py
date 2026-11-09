@@ -33,6 +33,8 @@ __all__ = [
     "planck_flux",
     # Specific luminosity of a spherical source (nu= or lam=, R)
     "planck_luminosity",
+    # UV-suppressed (modified) blackbody
+    "planck_cutoff_fraction",
     # Bolometric fluxes
     "stefan_boltzmann_flux",
     "stefan_boltzmann_observed_flux",
@@ -47,7 +49,7 @@ __all__ = [
 ]
 
 if TYPE_CHECKING:
-    from trilobite._typing import _ArrayLike, _UnitBearingArrayLike
+    from trilobite._typing import _ArrayLike, _UnitBearingArrayLike, _UnitBearingScalarLike
 
 # ---------------------------------------------------------------------------
 # Pre-computed CGS coefficients (extracted once for MCMC performance)
@@ -190,6 +192,7 @@ def _log_specific_flux_fnu_cgs(
     log_R: "_ArrayLike",
     log_D: "_ArrayLike",
     z: "_ArrayLike" = 0,
+    lambda_cut: float = 0.0,
 ) -> "_ArrayLike":
     r"""Evaluate :math:`\ln f_\nu` for a spherical blackbody observed at distance.
 
@@ -208,8 +211,13 @@ def _log_specific_flux_fnu_cgs(
 
         f_{\nu,\mathrm{obs}}(\nu_{\mathrm{obs}})
         =
-        \frac{L_{\nu,\mathrm{em}}((1+z)\nu_{\mathrm{obs}})}
-             {4\pi D_L^2 (1+z)}.
+        \frac{(1+z)\,L_{\nu,\mathrm{em}}((1+z)\nu_{\mathrm{obs}})}
+             {4\pi D_L^2},
+
+    which conserves the bolometric flux, :math:`\int f_\nu\,d\nu = L/4\pi D_L^2`.
+
+    If ``lambda_cut`` is given, the spectrum is multiplied by the UV-suppression factor of
+    :func:`_log_cutoff_factor_cgs` at the rest-frame wavelength.
 
     Parameters
     ----------
@@ -223,6 +231,8 @@ def _log_specific_flux_fnu_cgs(
         Natural logarithm of luminosity distance in cm.
     z : float, int, or ~numpy.ndarray, optional
         Redshift. Default is 0.
+    lambda_cut : float, optional
+        Rest-frame cutoff wavelength in cm below which the spectrum is suppressed. Default is 0 (no suppression).
 
     Returns
     -------
@@ -230,17 +240,88 @@ def _log_specific_flux_fnu_cgs(
         Logarithm of the observed specific flux density :math:`f_\nu` in
         :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
     """
-    z = np.asarray(z)
-    log1pz = np.log1p(z)
+    log1pz = np.log1p(np.asarray(z))
+    log_nu_rest = np.asarray(log_nu) + log1pz
 
     result = (
-        _log_planck_fnu_cgs(log_nu + log1pz, log_T)
+        _log_planck_fnu_cgs(log_nu_rest, log_T)
         + np.log(np.pi)
         + 2.0 * (np.asarray(log_R) - np.asarray(log_D))
-        - log1pz
+        + log1pz
+        + _log_cutoff_factor_cgs(np.log(c_cgs) - log_nu_rest, log_T, lambda_cut)
     )
 
     return result if np.ndim(result) > 0 else float(result)
+
+
+# Terms in the series for the surviving fraction of a UV-suppressed blackbody. At a cutoff of 3000 Angstrom the relative
+# error against a 30-digit reference is below 1e-14 for T <= 3e5 K, 3e-11 at 1e6 K, and 5e-6 at 1e7 K, where the series
+# has not converged (the terms fall as exp(-n x_c), with x_c = hc / (lambda_cut k T)).
+_CUTOFF_SERIES_N: np.ndarray = np.arange(1, 257, dtype=float)
+
+
+def _cutoff_transmitted_fraction_cgs(T: "_ArrayLike", lambda_cut: float) -> "_ArrayLike":
+    r"""Fraction of a blackbody's bolometric flux that survives linear suppression below ``lambda_cut``.
+
+    The suppression multiplies the spectrum by :math:`\min(1, \lambda/\lambda_{\rm cut})`, so
+    that the transmission is 100% at the cutoff and falls linearly to zero at :math:`\lambda = 0`. With
+    :math:`x_c = hc/(\lambda_{\rm cut} k_B T)`, the surviving fraction
+
+    .. math::
+
+        f(T) = \frac{\int B_\lambda \min(1, \lambda/\lambda_{\rm cut})\,d\lambda}{\int B_\lambda\,d\lambda}
+        = 1 - \frac{15}{\pi^4}\sum_{n=1}^{\infty} e^{-n x_c}
+        \left(\frac{x_c^2}{n^2} + \frac{4 x_c}{n^3} + \frac{6}{n^4}\right)
+
+    is evaluated exactly with the series, which converges geometrically.
+
+    Parameters
+    ----------
+    T : float or ~numpy.ndarray
+        Temperature in K.
+    lambda_cut : float
+        Cutoff wavelength in cm. A value of zero or less means no suppression and returns 1.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        The surviving fraction, between 0 and 1.
+    """
+    T = np.asarray(T, dtype=float)
+    if lambda_cut <= 0.0:
+        return np.ones_like(T)
+    x_c = (_HC_OVER_KB_CGS / (lambda_cut * T))[..., None]
+    n = _CUTOFF_SERIES_N
+    series = np.sum(np.exp(-n * x_c) * (x_c**2 / n**2 + 4.0 * x_c / n**3 + 6.0 / n**4), axis=-1)
+    return 1.0 - (15.0 / np.pi**4) * series
+
+
+def _log_cutoff_factor_cgs(log_wavelength: "_ArrayLike", log_T: "_ArrayLike", lambda_cut: float) -> "_ArrayLike":
+    r"""Evaluate :math:`\ln[\min(1, \lambda/\lambda_{\rm cut})/f(T)]`, the log of the UV-suppression factor.
+
+    The spectrum of a blackbody with a suppressed UV is the blackbody times this factor, which is the linear
+    suppression below ``lambda_cut`` divided by the surviving fraction :math:`f(T)` of
+    :func:`_cutoff_transmitted_fraction_cgs`, so that the bolometric flux is that of the plain blackbody.
+
+    Parameters
+    ----------
+    log_wavelength : float, int, or ~numpy.ndarray
+        Natural logarithm of the **rest-frame** wavelength in cm.
+    log_T : float, int, or ~numpy.ndarray
+        Natural logarithm of the temperature in K.
+    lambda_cut : float
+        Cutoff wavelength in cm. Zero or less means no suppression, and the factor is 1 (its log is 0).
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        The log of the factor, which broadcasts over its inputs.
+    """
+    if lambda_cut <= 0.0:
+        return 0.0
+    return np.log(np.minimum(np.exp(log_wavelength) / lambda_cut, 1.0)) - np.log(
+        _cutoff_transmitted_fraction_cgs(np.exp(log_T), lambda_cut)
+    )
 
 
 def _log_specific_rad_flux_flambda_cgs(
@@ -279,6 +360,7 @@ def _log_specific_flux_flambda_cgs(
     log_R: "_ArrayLike",
     log_D: "_ArrayLike",
     z: "_ArrayLike" = 0,
+    lambda_cut: float = 0.0,
 ) -> "_ArrayLike":
     r"""Evaluate :math:`\ln f_\lambda` for a spherical blackbody observed at distance.
 
@@ -298,7 +380,12 @@ def _log_specific_flux_flambda_cgs(
         f_{\lambda,\mathrm{obs}}(\lambda_{\mathrm{obs}})
         =
         \frac{L_{\lambda,\mathrm{em}}(\lambda_{\mathrm{obs}}/(1+z))}
-             {4\pi D_L^2 (1+z)^3}.
+             {4\pi D_L^2 (1+z)},
+
+    which conserves the bolometric flux, :math:`\int f_\lambda\,d\lambda = L/4\pi D_L^2`.
+
+    If ``lambda_cut`` is given, the spectrum is multiplied by the UV-suppression factor of
+    :func:`_log_cutoff_factor_cgs` at the rest-frame wavelength.
 
     Parameters
     ----------
@@ -312,6 +399,8 @@ def _log_specific_flux_flambda_cgs(
         Natural logarithm of luminosity distance in cm.
     z : float, int, or ~numpy.ndarray, optional
         Redshift. Default is 0.
+    lambda_cut : float, optional
+        Rest-frame cutoff wavelength in cm below which the spectrum is suppressed. Default is 0 (no suppression).
 
     Returns
     -------
@@ -319,14 +408,15 @@ def _log_specific_flux_flambda_cgs(
         Logarithm of the observed specific flux density :math:`f_\lambda` in
         :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}}`.
     """
-    z = np.asarray(z)
-    log1pz = np.log1p(z)
+    log1pz = np.log1p(np.asarray(z))
+    log_lambda_rest = np.asarray(log_lambda) - log1pz
 
     result = (
-        _log_planck_flambda_cgs(log_lambda - log1pz, log_T)
+        _log_planck_flambda_cgs(log_lambda_rest, log_T)
         + np.log(np.pi)
         + 2.0 * (np.asarray(log_R) - np.asarray(log_D))
-        - 3.0 * log1pz
+        - log1pz
+        + _log_cutoff_factor_cgs(log_lambda_rest, log_T, lambda_cut)
     )
 
     return result if np.ndim(result) > 0 else float(result)
@@ -337,6 +427,7 @@ def _log_specific_luminosity_fnu_cgs(
     log_nu: "_ArrayLike",
     log_T: "_ArrayLike",
     log_R: "_ArrayLike",
+    lambda_cut: float = 0.0,
 ) -> "_ArrayLike":
     r"""Evaluate :math:`\ln L_\nu` for a spherical blackbody in CGS units.
 
@@ -346,6 +437,9 @@ def _log_specific_luminosity_fnu_cgs(
 
         L_\nu = 4\pi^2 R^2 B_\nu
 
+    If ``lambda_cut`` is given, the spectrum is multiplied by the UV-suppression factor of
+    :func:`_log_cutoff_factor_cgs`.
+
     Parameters
     ----------
     log_nu : float, int, or ~numpy.ndarray
@@ -354,6 +448,8 @@ def _log_specific_luminosity_fnu_cgs(
         Natural logarithm of temperature in K.
     log_R : float, int, or ~numpy.ndarray
         Natural logarithm of source radius in cm.
+    lambda_cut : float, optional
+        Cutoff wavelength in cm below which the spectrum is suppressed. Default is 0 (no suppression).
 
     Returns
     -------
@@ -361,8 +457,12 @@ def _log_specific_luminosity_fnu_cgs(
         Logarithm of the specific luminosity :math:`L_\nu` in
         :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
     """
-    result = _log_planck_fnu_cgs(log_nu, log_T) + np.log(4.0 * np.pi**2) + 2.0 * np.asarray(log_R)
-
+    result = (
+        _log_planck_fnu_cgs(log_nu, log_T)
+        + np.log(4.0 * np.pi**2)
+        + 2.0 * np.asarray(log_R)
+        + _log_cutoff_factor_cgs(np.log(c_cgs) - np.asarray(log_nu), log_T, lambda_cut)
+    )
     return result if np.ndim(result) > 0 else float(result)
 
 
@@ -370,6 +470,7 @@ def _log_specific_luminosity_flambda_cgs(
     log_lambda: "_ArrayLike",
     log_T: "_ArrayLike",
     log_R: "_ArrayLike",
+    lambda_cut: float = 0.0,
 ) -> "_ArrayLike":
     r"""Evaluate :math:`\ln L_\lambda` for a spherical blackbody in CGS units.
 
@@ -379,6 +480,9 @@ def _log_specific_luminosity_flambda_cgs(
 
         L_\lambda = 4\pi^2 R^2 B_\lambda
 
+    If ``lambda_cut`` is given, the spectrum is multiplied by the UV-suppression factor of
+    :func:`_log_cutoff_factor_cgs`.
+
     Parameters
     ----------
     log_lambda : float, int, or ~numpy.ndarray
@@ -387,6 +491,8 @@ def _log_specific_luminosity_flambda_cgs(
         Natural logarithm of temperature in K.
     log_R : float, int, or ~numpy.ndarray
         Natural logarithm of source radius in cm.
+    lambda_cut : float, optional
+        Cutoff wavelength in cm below which the spectrum is suppressed. Default is 0 (no suppression).
 
     Returns
     -------
@@ -394,8 +500,12 @@ def _log_specific_luminosity_flambda_cgs(
         Logarithm of the specific luminosity :math:`L_\lambda` in
         :math:`\mathrm{erg\,s^{-1}\,cm^{-1}}`.
     """
-    result = _log_planck_flambda_cgs(log_lambda, log_T) + np.log(4.0 * np.pi**2) + 2.0 * np.asarray(log_R)
-
+    result = (
+        _log_planck_flambda_cgs(log_lambda, log_T)
+        + np.log(4.0 * np.pi**2)
+        + 2.0 * np.asarray(log_R)
+        + _log_cutoff_factor_cgs(log_lambda, log_T, lambda_cut)
+    )
     return result if np.ndim(result) > 0 else float(result)
 
 
@@ -735,6 +845,11 @@ def _resolve_nu_lam(nu, lam):
     return np.log(ensure_in_units(lam, u.cm)), "lam"
 
 
+def _resolve_lambda_cut(lambda_cut) -> float:
+    """Cutoff wavelength in cm from a Quantity, a bare number (cm), or ``None`` (no cutoff: 0)."""
+    return 0.0 if lambda_cut is None else float(ensure_in_units(lambda_cut, u.cm))
+
+
 def planck_B(
     T: "_UnitBearingArrayLike",
     *,
@@ -806,8 +921,12 @@ def planck_flux(
     angular_diameter_distance: "_UnitBearingArrayLike" = None,
     proper_distance: "_UnitBearingArrayLike" = None,
     cosmology: cosmo.Cosmology = None,
+    lambda_cut: "_UnitBearingScalarLike" = None,
 ) -> u.Quantity:
     r"""Observed specific flux density :math:`f_\nu` or :math:`f_\lambda` from a spherical blackbody.
+
+    With ``lambda_cut`` the blackbody has a suppressed UV (see :func:`planck_cutoff_fraction` and
+    :ref:`blackbody_cutoff`); the bolometric flux is the same as that of the plain blackbody.
 
     Parameters
     ----------
@@ -830,6 +949,10 @@ def planck_flux(
     cosmology : ~astropy.cosmology.Cosmology, optional
         Cosmology used to convert between redshift and distance measures.
         If not provided, the configured default cosmology is used.
+    lambda_cut : ~astropy.units.Quantity, optional
+        **Rest-frame** wavelength below which the spectrum is suppressed linearly, as
+        :math:`\min(1, \lambda/\lambda_{\rm cut})`, and then renormalised to conserve the luminosity. Convertible to cm.
+        If not provided (default), the spectrum is a plain blackbody.
 
     Returns
     -------
@@ -855,9 +978,51 @@ def planck_flux(
     log_D = np.log(ensure_in_units(distances["luminosity_distance"], u.cm))
     log_T = np.log(ensure_in_units(T, u.K))
     log_R = np.log(ensure_in_units(R, u.cm))
+    cut = _resolve_lambda_cut(lambda_cut)
     if mode == "nu":
-        return np.exp(_log_specific_flux_fnu_cgs(log_x, log_T, log_R, log_D, z)) * u.Unit("erg s-1 cm-2 Hz-1")
-    return np.exp(_log_specific_flux_flambda_cgs(log_x, log_T, log_R, log_D, z)) * u.Unit("erg s-1 cm-2 cm-1")
+        return np.exp(_log_specific_flux_fnu_cgs(log_x, log_T, log_R, log_D, z, cut)) * u.Unit("erg s-1 cm-2 Hz-1")
+    return np.exp(_log_specific_flux_flambda_cgs(log_x, log_T, log_R, log_D, z, cut)) * u.Unit("erg s-1 cm-2 cm-1")
+
+
+def planck_cutoff_fraction(T: "_UnitBearingArrayLike", lambda_cut: "_UnitBearingScalarLike") -> np.ndarray:
+    r"""Fraction of a blackbody's bolometric flux that survives a linear UV suppression.
+
+    The suppression multiplies the spectrum by :math:`\min(1, \lambda/\lambda_{\rm cut})`: it is 100% at
+    the cutoff wavelength and falls linearly to zero at :math:`\lambda = 0`. The surviving fraction
+
+    .. math::
+
+        f(T) = \frac{\int B_\lambda \min(1, \lambda/\lambda_{\rm cut})\,d\lambda}{\int B_\lambda\,d\lambda}
+
+    is evaluated exactly (see :ref:`blackbody_cutoff`). A spectrum that has been renormalised to conserve the
+    luminosity is the suppressed spectrum divided by this fraction.
+
+    Parameters
+    ----------
+    T : ~astropy.units.Quantity
+        Blackbody temperature.  Convertible to K.
+    lambda_cut : ~astropy.units.Quantity
+        Cutoff wavelength.  Convertible to cm. Zero (or less) means no suppression.
+
+    Returns
+    -------
+    ~numpy.ndarray
+        The surviving fraction, between 0 and 1. It falls from 1 as the temperature rises: the hotter the
+        blackbody, the more of its flux is in the suppressed UV. It is accurate to :math:`10^{-14}` for
+        :math:`T \lesssim 3\times10^5` K at :math:`\lambda_{\rm cut} = 3000` Angstrom.
+
+    Examples
+    --------
+    >>> import astropy.units as u
+    >>> from trilobite.radiation.blackbody import (
+    ...     planck_cutoff_fraction,
+    ... )
+    >>> planck_cutoff_fraction(
+    ...     [8000, 15000, 30000] * u.K, 3000 * u.AA
+    ... )
+    array([0.97..., 0.81..., 0.52...])
+    """
+    return _cutoff_transmitted_fraction_cgs(ensure_in_units(T, u.K), _resolve_lambda_cut(lambda_cut))
 
 
 def planck_luminosity(
@@ -866,8 +1031,12 @@ def planck_luminosity(
     *,
     nu: "_UnitBearingArrayLike" = None,
     lam: "_UnitBearingArrayLike" = None,
+    lambda_cut: "_UnitBearingScalarLike" = None,
 ) -> u.Quantity:
     r"""Specific luminosity :math:`L_\nu = 4\pi^2 R^2 B_\nu` or :math:`L_\lambda = 4\pi^2 R^2 B_\lambda`.
+
+    With ``lambda_cut`` the blackbody has a suppressed UV (see :func:`planck_cutoff_fraction` and
+    :ref:`blackbody_cutoff`); the bolometric luminosity is :math:`4\pi R^2 \sigma_{\rm SB} T^4` either way.
 
     Parameters
     ----------
@@ -879,6 +1048,10 @@ def planck_luminosity(
         Frequency.  Convertible to Hz.  Mutually exclusive with *lam*.
     lam : ~astropy.units.Quantity, optional
         Wavelength.  Convertible to cm.  Mutually exclusive with *nu*.
+    lambda_cut : ~astropy.units.Quantity, optional
+        Wavelength below which the spectrum is suppressed linearly, as :math:`\min(1, \lambda/\lambda_{\rm cut})`, and
+        then renormalised to conserve the luminosity. Convertible to cm. If not provided (default), the spectrum is a
+        plain blackbody.
 
     Returns
     -------
@@ -889,9 +1062,10 @@ def planck_luminosity(
     log_x, mode = _resolve_nu_lam(nu, lam)
     log_T = np.log(ensure_in_units(T, u.K))
     log_R = np.log(ensure_in_units(R, u.cm))
+    cut = _resolve_lambda_cut(lambda_cut)
     if mode == "nu":
-        return np.exp(_log_specific_luminosity_fnu_cgs(log_x, log_T, log_R)) * u.Unit("erg s-1 Hz-1")
-    return np.exp(_log_specific_luminosity_flambda_cgs(log_x, log_T, log_R)) * u.Unit("erg s-1 cm-1")
+        return np.exp(_log_specific_luminosity_fnu_cgs(log_x, log_T, log_R, cut)) * u.Unit("erg s-1 Hz-1")
+    return np.exp(_log_specific_luminosity_flambda_cgs(log_x, log_T, log_R, cut)) * u.Unit("erg s-1 cm-1")
 
 
 def stefan_boltzmann_flux(T: "_UnitBearingArrayLike") -> u.Quantity:

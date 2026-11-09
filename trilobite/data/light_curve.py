@@ -9,7 +9,7 @@ from astropy import units as u
 from astropy.table import Table
 
 from .core import InferenceData, XYDataContainer
-from .utils import infer_err_from_non_detection
+from .utils import band_variable_name, infer_err_from_non_detection
 
 if TYPE_CHECKING:
     from trilobite.models.core.base import Model
@@ -584,7 +584,7 @@ class OpticalLightCurveContainer(XYDataContainer):
 
         Default mapping:
 
-        - ``variables``: ``{"time": ..., "band_index": <constant>}``
+        - ``variables``: ``{"time": ..., "band_index": <constant>}`` (``band_idx`` for models that declare it)
         - ``observables``: the single model output mapped to flux columns
 
         Parameters
@@ -659,7 +659,7 @@ class OpticalLightCurveContainer(XYDataContainer):
         if variables is None:
             variables = {
                 "time": t_vals * u.day,
-                "band_index": idx_vals,
+                band_variable_name(model): idx_vals,
             }
         if observables is None:
             if len(model.output_names) != 1:
