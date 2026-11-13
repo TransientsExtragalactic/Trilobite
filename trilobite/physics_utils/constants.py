@@ -16,7 +16,9 @@ __all__ = [
     "k_B_cgs",
     "m_p_cgs",
     "c_cgs",
+    "m_e_cgs",
     "a_rad_cgs",
+    "_log_m_e_cgs",
     "_log_G_cgs",
     "_log_kappa_es_cgs",
     "_log_sigma_sb_cgs",
@@ -46,6 +48,9 @@ _log_m_p_cgs = np.log(m_p_cgs)
 
 c_cgs = const.c.cgs.value  # Speed of light  [cm s^-1]
 _log_c_cgs = np.log(c_cgs)
+
+m_e_cgs = const.m_e.cgs.value  # Electron mass  [g]
+_log_m_e_cgs = np.log(m_e_cgs)
 
 # Radiation (energy) density constant: a_rad = 4 sigma_sb / c  [erg cm^-3 K^-4]
 a_rad_cgs = 4.0 * sigma_sb_cgs / c_cgs

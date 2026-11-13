@@ -7257,8 +7257,8 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
 
     .. math::
 
-        \epsilon_E\,\frac{B^2}{8\pi} = \int_1^\infty
-            N(\gamma)\,\gamma\,m_e c^2\,\mathrm{d}\gamma.
+        \frac{\epsilon_E}{\epsilon_B}\,\frac{B^2}{8\pi} = \int_1^\infty
+            N(\gamma)\,(\gamma - 1)\,m_e c^2\,\mathrm{d}\gamma.
 
     The thermal peak of the distribution is at :math:`\gamma_{\rm peak} \approx 3\Theta`
     for :math:`\Theta \gg 1`, so the quadrature grid should be wide enough to

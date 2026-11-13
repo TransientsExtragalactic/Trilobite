@@ -19,8 +19,14 @@ from typing import TYPE_CHECKING, ClassVar, Optional, Union
 import numpy as np
 from astropy import units as u
 from scipy.integrate import quad
-from scipy.special import kve
 
+from trilobite.physics_utils.maxwell_juettner import (
+    _opt_mj_approx_mean_kinetic_energy,
+    _opt_mj_approx_mean_lorentz_factor,
+    _opt_mj_cdf,
+    _opt_mj_moment,
+    _opt_mj_pdf,
+)
 from trilobite.radiation.constants import c_cgs, electron_rest_energy_cgs, sigma_T_cgs
 from trilobite.utils.misc_utils import ensure_in_units
 
@@ -2359,11 +2365,24 @@ class MaxwellJuettner(ElectronDistribution):
         \approx
         \frac{15\Theta^2 + 11\Theta + 4}{4 + 5\Theta},
 
-    accurate to :math:`\lesssim 1\%` for all :math:`\Theta > 0`; see
+    accurate to :math:`\lesssim 1.3\%` for all :math:`\Theta > 0`; see
     :meth:`approx_first_moment`.
 
     **Normalization.** The amplitude :math:`N_0` is equal to the total
     number density :math:`n_e` because :math:`M_0 = 1`.
+
+    When :math:`N_0` is instead fixed by an energy budget
+    (:meth:`normalize_from_energy_density`, :meth:`normalize_from_magnetic_field`),
+    :math:`\varepsilon_E` is the fraction of the *internal* (thermal) energy density, which excludes rest mass, so
+
+    .. math::
+
+        N_0\, m_e c^2 \left\langle \gamma - 1 \right\rangle = \varepsilon_E\, u_{\rm int},
+
+    using the approximate kinetic moment of :meth:`approx_first_kinetic_moment`. This differs from the non-thermal
+    distributions in this module, which use :math:`\langle\gamma\rangle`; the two agree only for
+    :math:`\langle\gamma\rangle \gg 1`. For :math:`\Theta \ll 1` the rest-mass term would otherwise dominate
+    and :math:`N_0` would be too small by roughly :math:`2/(3\Theta)`.
 
     Examples
     --------
@@ -2433,53 +2452,22 @@ class MaxwellJuettner(ElectronDistribution):
     # Unvalidated backends                                               #
     # ------------------------------------------------------------------ #
     # No validation or coercion; floats or float64 arrays, broadcast with standard NumPy rules.
+    # The math lives in :mod:`trilobite.physics_utils.maxwell_juettner`; these are thin delegates.
     @classmethod
     def _opt_pdf(cls, gamma, norm, Theta, **_):
-        inside_support = gamma >= 1.0
-
-        # Clamp to 1.0 so sqrt(1 - gamma^{-2}) is defined for out-of-support elements;
-        # np.where selects 0.0 for those positions anyway.
-        gamma_safe = np.maximum(gamma, 1.0)
-        beta = np.sqrt(1.0 - gamma_safe**-2)
-
-        # Use exponentially scaled K_2 for numerical stability:
-        #
-        #   exp(-gamma/Theta) / K_2(1/Theta) = exp((1 - gamma)/Theta) / kve(2, 1/Theta).
-        normalization = Theta * kve(2, 1.0 / Theta)
-
-        return np.where(
-            inside_support,
-            norm * gamma_safe**2 * beta * np.exp((1.0 - gamma_safe) / Theta) / normalization,
-            0.0,
-        )[()]
+        return _opt_mj_pdf(gamma, Theta, norm)
 
     @classmethod
     def _opt_moment(cls, order, Theta, **_):
-        # Closed forms for orders 0-2; higher orders use quadrature, looped over any array of temperatures.
-        if order == 0:
-            return np.ones_like(Theta)[()]
-
-        z = 1.0 / Theta
-        k1_over_k2 = kve(1, z) / kve(2, z)
-
-        if order == 1:
-            return k1_over_k2 + 3.0 * Theta
-
-        if order == 2:
-            return 1.0 + 12.0 * Theta**2 + 3.0 * Theta * k1_over_k2
-
-        def _quad(theta):
-            return quad(lambda g: g**order * cls._opt_pdf(g, 1.0, theta), 1.0, np.inf)[0]
-
-        return np.vectorize(_quad, otypes=["f8"])(Theta)[()]
+        return _opt_mj_moment(order, Theta)
 
     @classmethod
     def _opt_approx_first_moment(cls, Theta, **_):
-        return (15.0 * Theta**2 + 11.0 * Theta + 4.0) / (5.0 * Theta + 4.0)
+        return _opt_mj_approx_mean_lorentz_factor(Theta)
 
     @classmethod
     def _opt_approx_first_kinetic_moment(cls, Theta, **_):
-        return Theta * (6.0 + 15.0 * Theta) / (4.0 + 5.0 * Theta)
+        return _opt_mj_approx_mean_kinetic_energy(Theta)
 
     # ---------------------------------------------- #
     # Statistical Methods                            #
@@ -2795,34 +2783,7 @@ class MaxwellJuettner(ElectronDistribution):
         if Theta.ndim != 0:
             raise ValueError("`MaxwellJuettner.cdf` shares one integration grid and requires a scalar `Theta`.")
 
-        gamma_array = np.asarray(gamma, dtype="f8")
-        scalar_input = gamma_array.ndim == 0
-        gamma_flat = np.atleast_1d(gamma_array).ravel()
-
-        Theta = float(Theta)
-        norm = float(norm)
-
-        # Practical upper limit: MJ PDF decays exponentially above ~20 Theta
-        g_upper = max(float(gamma_flat.max()), 1.0) * 1.01
-        g_upper = max(g_upper, 1.0 + 20.0 * Theta)
-
-        # Log-spaced grid is dense near gamma=1 (where the PDF rises steeply)
-        # and sparser at high gamma (where the PDF is negligible)
-        g_grid = np.exp(np.linspace(0.0, np.log(g_upper), 10_000))
-        pdf_grid = cls._opt_pdf(g_grid, 1.0, Theta)
-
-        # Vectorized cumulative trapezoidal rule; no additional imports needed
-        dg = np.diff(g_grid)
-        cdf_increments = 0.5 * (pdf_grid[:-1] + pdf_grid[1:]) * dg
-        cdf_grid = np.concatenate([[0.0], np.cumsum(cdf_increments)])
-
-        # Interpolate to requested values; clamp below gamma_min=1 to 0
-        result = np.interp(gamma_flat, g_grid, cdf_grid, left=0.0, right=cdf_grid[-1])
-        result = norm * np.where(gamma_flat <= 1.0, 0.0, result)
-
-        if scalar_input:
-            return float(result[0])
-        return result.reshape(gamma_array.shape)
+        return _opt_mj_cdf(gamma, Theta, norm)
 
     # ------------------------------------------------------------------ #
     # Normalization (Private)                                            #
@@ -2840,11 +2801,11 @@ class MaxwellJuettner(ElectronDistribution):
     @classmethod
     def _normalize_from_magnetic_field(cls, B: float, epsilon_B: float, epsilon_E: float, Theta=1.0, **_) -> float:
         u_B = B**2 / (8.0 * np.pi)
-        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * cls._opt_approx_first_moment(Theta))
+        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * _opt_mj_approx_mean_kinetic_energy(Theta))
 
     @classmethod
     def _normalize_from_energy_density(cls, u_therm: float, epsilon_E: float, Theta=1.0, **_) -> float:
-        return epsilon_E * u_therm / (electron_rest_energy_cgs * cls._opt_approx_first_moment(Theta))
+        return epsilon_E * u_therm / (electron_rest_energy_cgs * _opt_mj_approx_mean_kinetic_energy(Theta))
 
 
 # =========================================================================== #

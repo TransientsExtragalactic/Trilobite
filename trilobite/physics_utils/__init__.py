@@ -12,6 +12,7 @@ shared across multiple Trilobite modules.  It is organised by topic:
 - :mod:`.composition` — Mean molecular weight helpers.
 - :mod:`.special_relativity` — Lorentz / Doppler transformation utilities.
 - :mod:`.cosmology` — Redshift, distance, and look-back time helpers.
+- :mod:`.maxwell_juettner` — Maxwell-Juettner distribution, moments, and dimensionless-temperature helpers.
 """
 
 from .composition import (
@@ -52,6 +53,18 @@ from .gravity import (
     compute_hill_radius,
     compute_roche_lobe_radius,
     compute_tidal_radius,
+)
+from .maxwell_juettner import (
+    compute_dimensionless_temperature,
+    compute_mj_cdf,
+    compute_mj_mean_kinetic_energy,
+    compute_mj_mean_lorentz_factor,
+    compute_mj_moment,
+    compute_mj_number_density_from_internal_energy_density,
+    compute_mj_number_density_from_total_energy_density,
+    compute_mj_pdf,
+    compute_mj_theta_from_kinetic_energy,
+    compute_temperature_from_dimensionless,
 )
 from .special_relativity import (
     compute_beta_from_gamma,
@@ -103,6 +116,17 @@ __all__ = [
     "compute_rest_specific_intensity",
     "compute_lab_bolometric_intensity",
     "compute_rest_bolometric_intensity",
+    # Maxwell-Juettner
+    "compute_dimensionless_temperature",
+    "compute_temperature_from_dimensionless",
+    "compute_mj_pdf",
+    "compute_mj_cdf",
+    "compute_mj_moment",
+    "compute_mj_mean_lorentz_factor",
+    "compute_mj_mean_kinetic_energy",
+    "compute_mj_theta_from_kinetic_energy",
+    "compute_mj_number_density_from_total_energy_density",
+    "compute_mj_number_density_from_internal_energy_density",
     # Cosmology
     "get_cosmology",
     "resolve_cosmological_distances",
