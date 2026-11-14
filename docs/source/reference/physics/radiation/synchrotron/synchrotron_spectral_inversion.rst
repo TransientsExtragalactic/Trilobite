@@ -276,8 +276,17 @@ whether this holds for your solution is reported through the diagnostics describ
 
     The normalization :math:`N_0 = A_NB^2` is still set by the uncooled energy budget, which overestimates the
     electron energy by a factor :math:`1/(1-\delta_c)`, with
-    :math:`\delta_c = (\gamma_c/\gamma_m)^{2-p}/(p-1)` for :math:`\gamma_{\rm max}\to\infty` and :math:`p>2`. This is
-    returned as ``delta_c``. We write :math:`A_\nu^{(c)} = A_\nu(p+1)` and :math:`A_F^{(c)} = A_F(p+1)` below.
+    :math:`\delta_c` the kinetic energy :math:`\int N(\gamma-1)\,d\gamma` lost to cooling over the uncooled kinetic
+    energy,
+
+    .. math::
+
+        \delta_c = \frac{\gamma_c^{2-p}/[(p-1)(p-2)] - \gamma_c^{1-p}/[p(p-1)]}
+        {\gamma_m^{2-p}/(p-2) - \gamma_m^{1-p}/(p-1)}
+        \approx \frac{(\gamma_c/\gamma_m)^{2-p}}{p-1} \quad (\gamma_m \gg 1),
+
+    for :math:`\gamma_{\rm max}\to\infty` and :math:`p>2`. This is returned as ``delta_c``.
+    We write :math:`A_\nu^{(c)} = A_\nu(p+1)` and :math:`A_F^{(c)} = A_F(p+1)` below.
 
 .. dropdown:: Derivation: synchrotron cooling
     :icon: chevron-down
@@ -369,7 +378,7 @@ assumed rather than detected, each cooled inversion returns diagnostics for chec
 - ``accurate``: whether :math:`\nu_c < 0.1\,\nu_a`, for which the cooled asymptotic forms are good to better than
   0.1%,
 - ``slow_cooling``: whether :math:`\gamma_c > \gamma_{\min}`,
-- ``delta_c``: the fractional energy error of the uncooled normalization (NaN unless :math:`p>2` and
+- ``delta_c``: the fractional kinetic-energy error of the uncooled normalization (NaN unless :math:`p>2` and
   ``gamma_max`` is infinite), and
 - for the IC-cooled and combined inversions, the Compton parameter ``Y`` and ``ic_dominated`` (:math:`Y>1`).
 
