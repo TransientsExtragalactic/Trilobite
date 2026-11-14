@@ -30,6 +30,10 @@ from trilobite.physics_utils.maxwell_juettner import (
 from trilobite.radiation.constants import c_cgs, electron_rest_energy_cgs, sigma_T_cgs
 from trilobite.utils.misc_utils import ensure_in_units
 
+# Energy-budget normalizations divide by <gamma - 1> = M1 - M0, which loses ~log10(1e16 K) digits to cancellation. Below
+# this mean kinetic energy (in m_e c^2) the normalization is ill-conditioned and is refused.
+_MIN_KINETIC_MOMENT = 1e-8
+
 if TYPE_CHECKING:
     from trilobite._typing import _ArrayLike, _UnitBearingArrayLike
 
@@ -1039,13 +1043,27 @@ class ElectronDistribution(ABC):
         return n_eff / cls._opt_moment(2.0, **params)
 
     @classmethod
+    def _opt_first_kinetic_moment(cls, **params):
+        r"""Mean kinetic energy per particle in units of :math:`m_e c^2`, :math:`M^{(1)} - M^{(0)}`."""
+        return cls._opt_moment(1.0, **params) - cls._opt_moment(0.0, **params)
+
+    @classmethod
+    def _check_kinetic_moment(cls, **params) -> None:
+        r"""Refuse energy-budget normalizations of distributions with (almost) no kinetic energy."""
+        if np.any(cls._opt_first_kinetic_moment(**params) < _MIN_KINETIC_MOMENT):
+            raise ValueError(
+                f"The distribution carries almost no kinetic energy (mean kinetic energy < {_MIN_KINETIC_MOMENT:g} "
+                "m_e c^2), so an energy-based normalization is ill-conditioned."
+            )
+
+    @classmethod
     def _normalize_from_magnetic_field(cls, B: float, epsilon_B: float, epsilon_E: float, **params) -> float:
         u_B = B**2 / (8.0 * np.pi)
-        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * cls._opt_moment(1.0, **params))
+        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * cls._opt_first_kinetic_moment(**params))
 
     @classmethod
     def _normalize_from_energy_density(cls, u_therm: float, epsilon_E: float, **params) -> float:
-        return epsilon_E * u_therm / (electron_rest_energy_cgs * cls._opt_moment(1.0, **params))
+        return epsilon_E * u_therm / (electron_rest_energy_cgs * cls._opt_first_kinetic_moment(**params))
 
     # ------------------------------------------------------------------ #
     # Normalization (Public)                                             #
@@ -1101,11 +1119,12 @@ class ElectronDistribution(ABC):
 
         .. math::
 
-            N_0\, m_e c^2\, M^{(1)} = \\frac{\\varepsilon_E}{\\varepsilon_B}
-            \\frac{B^2}{8\pi}
+            N_0\, m_e c^2\, \langle \gamma - 1 \rangle
+            = \frac{\varepsilon_E}{\varepsilon_B} \frac{B^2}{8\pi}
 
-        for :math:`N_0`, where :math:`M^{(1)}` is the first moment of
-        :meth:`pdf`.
+        for :math:`N_0`, where :math:`\langle \gamma - 1 \rangle = M^{(1)} - M^{(0)}` is the mean kinetic energy per
+        particle of :meth:`pdf`, in units of :math:`m_e c^2`. Rest-mass energy is excluded because
+        :math:`\varepsilon_E` and :math:`\varepsilon_B` are fractions of the thermal (internal) energy density.
 
         Parameters
         ----------
@@ -1121,10 +1140,17 @@ class ElectronDistribution(ABC):
         Returns
         -------
         ~astropy.units.Quantity
-            Power-law normalization :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.
+            Distribution amplitude :math:`N_0` in :math:`\mathrm{cm^{-3}}`.
+
+        Raises
+        ------
+        ValueError
+            If the distribution carries almost no kinetic energy (:math:`\langle \gamma - 1 \rangle < 10^{-8}`), which
+            makes the normalization ill-conditioned.
         """
         B_cgs = ensure_in_units(B, u.G)
         params = cls._validate_and_process_parameters(**params)
+        cls._check_kinetic_moment(**params)
         return cls._normalize_from_magnetic_field(B_cgs, epsilon_B, epsilon_E, **params) * u.cm**-3
 
     @classmethod
@@ -1136,15 +1162,17 @@ class ElectronDistribution(ABC):
 
         .. math::
 
-            N_0\, m_e c^2\, M^{(1)} = \\varepsilon_E\, u_{\\rm int}
+            N_0\, m_e c^2\, \langle \gamma - 1 \rangle = \varepsilon_E\, u_{\rm int}
 
-        for :math:`N_0`.
+        for :math:`N_0`, where :math:`\langle \gamma - 1 \rangle = M^{(1)} - M^{(0)}` is the mean kinetic energy per
+        particle of :meth:`pdf`, in units of :math:`m_e c^2`, and :math:`u_{\rm int}` is the internal (thermal) energy
+        density, which excludes rest mass.
 
         Parameters
         ----------
         u_therm : float, array-like, or ~astropy.units.Quantity
-            Thermal energy density.  Bare values are interpreted as
-            :math:`\\mathrm{erg\,cm^{-3}}`.
+            Internal (thermal) energy density, excluding rest mass.  Bare values are interpreted as
+            :math:`\mathrm{erg\,cm^{-3}}`.
         epsilon_E : float or array-like
             Fraction of thermal energy in relativistic electrons.
         **params
@@ -1153,10 +1181,17 @@ class ElectronDistribution(ABC):
         Returns
         -------
         ~astropy.units.Quantity
-            Distribution amplitude :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.
+            Distribution amplitude :math:`N_0` in :math:`\mathrm{cm^{-3}}`.
+
+        Raises
+        ------
+        ValueError
+            If the distribution carries almost no kinetic energy (:math:`\langle \gamma - 1 \rangle < 10^{-8}`), which
+            makes the normalization ill-conditioned.
         """
         u_cgs = ensure_in_units(u_therm, u.erg / u.cm**3)
         params = cls._validate_and_process_parameters(**params)
+        cls._check_kinetic_moment(**params)
         return cls._normalize_from_energy_density(u_cgs, epsilon_E, **params) * u.cm**-3
 
     # ------------------------------------------------------------------ #
@@ -2372,17 +2407,9 @@ class MaxwellJuettner(ElectronDistribution):
     number density :math:`n_e` because :math:`M_0 = 1`.
 
     When :math:`N_0` is instead fixed by an energy budget
-    (:meth:`normalize_from_energy_density`, :meth:`normalize_from_magnetic_field`),
-    :math:`\varepsilon_E` is the fraction of the *internal* (thermal) energy density, which excludes rest mass, so
-
-    .. math::
-
-        N_0\, m_e c^2 \left\langle \gamma - 1 \right\rangle = \varepsilon_E\, u_{\rm int},
-
-    using the approximate kinetic moment of :meth:`approx_first_kinetic_moment`. This differs from the non-thermal
-    distributions in this module, which use :math:`\langle\gamma\rangle`; the two agree only for
-    :math:`\langle\gamma\rangle \gg 1`. For :math:`\Theta \ll 1` the rest-mass term would otherwise dominate
-    and :math:`N_0` would be too small by roughly :math:`2/(3\Theta)`.
+    (:meth:`normalize_from_energy_density`, :meth:`normalize_from_magnetic_field`), the kinetic energy per particle
+    :math:`\langle\gamma - 1\rangle = M_1 - 1` sets the amplitude, as for every distribution in this module. It is
+    exact, and is about :math:`3\Theta/2` for :math:`\Theta \ll 1`.
 
     Examples
     --------
@@ -2797,15 +2824,6 @@ class MaxwellJuettner(ElectronDistribution):
     @classmethod
     def _normalize_from_n_total(cls, n_total: float, **params) -> float:
         return n_total
-
-    @classmethod
-    def _normalize_from_magnetic_field(cls, B: float, epsilon_B: float, epsilon_E: float, Theta=1.0, **_) -> float:
-        u_B = B**2 / (8.0 * np.pi)
-        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * _opt_mj_approx_mean_kinetic_energy(Theta))
-
-    @classmethod
-    def _normalize_from_energy_density(cls, u_therm: float, epsilon_E: float, Theta=1.0, **_) -> float:
-        return epsilon_E * u_therm / (electron_rest_energy_cgs * _opt_mj_approx_mean_kinetic_energy(Theta))
 
 
 # =========================================================================== #

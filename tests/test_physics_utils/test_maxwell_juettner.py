@@ -7,6 +7,13 @@ from astropy import constants as const
 from scipy.integrate import quad
 
 from trilobite.physics_utils import maxwell_juettner as M
+from trilobite.radiation.synchrotron.electron_distributions import (
+    BrokenPowerLaw,
+    MaxwellJuettner,
+    MaxwellJuettnerBrokenPowerLaw,
+    MaxwellJuettnerPowerLaw,
+    PowerLaw,
+)
 from trilobite.physics_utils.maxwell_juettner import (
     compute_dimensionless_temperature,
     compute_mj_cdf,
@@ -250,25 +257,88 @@ class TestNormalization:
             compute_mj_number_density_from_internal_energy_density(1.0, -1.0)
 
 
-class TestElectronDistributionClassUnchanged:
-    """`MaxwellJuettner._normalize_*`: epsilon_E is a fraction of the *internal* energy, approximate <gamma - 1>."""
+class TestElectronDistributionNormalization:
+    """Every distribution fixes N0 from an energy budget through the kinetic energy <gamma - 1> (rest mass excluded)."""
 
-    @pytest.mark.parametrize("Theta", [0.1, 1.0, 5.0])
-    def test_energy_density_normalization(self, Theta):
-        from trilobite.radiation.constants import electron_rest_energy_cgs
-        from trilobite.radiation.synchrotron.electron_distributions import MaxwellJuettner
+    PL = {"p": 3.0, "gamma_min": 2.0, "gamma_max": 1e3}
+    PL_NONREL = {"p": 3.0, "gamma_min": 1.0, "gamma_max": 1e4}
+    BPL = {"p1": 2.5, "p2": 3.5, "gamma_c": 20.0, "gamma_min": 2.0, "gamma_max": 1e3}
 
-        u_therm, eps = 2.5e-3, 0.3
-        mean = Theta * (6.0 + 15.0 * Theta) / (4.0 + 5.0 * Theta)
-        expected = eps * u_therm / (electron_rest_energy_cgs * mean)
-        assert MaxwellJuettner._normalize_from_energy_density(u_therm, eps, Theta=Theta) == pytest.approx(expected)
+    @staticmethod
+    def _kinetic_energy_integral(cls, params):
+        """int N(gamma) (gamma - 1) d gamma for norm = 1, by quadrature of the class's own pdf."""
+        Theta = params.get("Theta", 1.0)
+        pts = {1.0, 1 + Theta, 1 + 10 * Theta, 1 + 80 * Theta}
+        upper = 1 + 80 * Theta
+        if "gamma_max" in params:
+            pts |= {params["gamma_min"], 10 * params["gamma_min"], 100 * params["gamma_min"], params["gamma_max"]}
+            pts |= {params["gamma_c"]} if "gamma_c" in params else set()
+            upper = params["gamma_max"]
+        edges = sorted(x for x in pts if x <= upper)
+        return sum(
+            quad(lambda g: (g - 1.0) * float(cls.pdf(g, **params)), a, b, epsabs=0.0, epsrel=1e-11, limit=400)[0]
+            for a, b in zip(edges[:-1], edges[1:])
+        )
 
-    @pytest.mark.parametrize("Theta", [0.1, 1.0, 5.0])
-    def test_magnetic_field_normalization(self, Theta):
-        from trilobite.radiation.constants import electron_rest_energy_cgs
-        from trilobite.radiation.synchrotron.electron_distributions import MaxwellJuettner
+    CASES = [
+        (PowerLaw, PL),
+        (PowerLaw, PL_NONREL),
+        (BrokenPowerLaw, BPL),
+        (MaxwellJuettner, {"Theta": 0.05}),
+        (MaxwellJuettner, {"Theta": 1.0}),
+        (MaxwellJuettner, {"Theta": 20.0}),
+        (MaxwellJuettnerPowerLaw, {"Theta": 0.5, "delta": 0.3, **PL}),
+        (MaxwellJuettnerPowerLaw, {"Theta": 5.0, "delta": 0.7, **PL_NONREL}),
+        (MaxwellJuettnerBrokenPowerLaw, {"Theta": 1.0, "delta": 0.5, **BPL}),
+    ]
 
-        B, eps_B, eps_E = 0.7, 0.1, 0.2
-        mean = Theta * (6.0 + 15.0 * Theta) / (4.0 + 5.0 * Theta)
-        expected = (eps_E / eps_B) * B**2 / (8.0 * np.pi) / (electron_rest_energy_cgs * mean)
-        assert MaxwellJuettner._normalize_from_magnetic_field(B, eps_B, eps_E, Theta=Theta) == pytest.approx(expected)
+    @pytest.mark.parametrize(("cls", "params"), CASES)
+    def test_energy_budget_is_kinetic(self, cls, params):
+        from trilobite.radiation.constants import electron_rest_energy_cgs as mc2
+
+        integral = self._kinetic_energy_integral(cls, params)
+        u_th, eps_E, B, eps_B = 2.5e-3, 0.3, 0.7, 0.1
+
+        N0_u = cls.normalize_from_energy_density(u_th, eps_E, **params).value
+        N0_B = cls.normalize_from_magnetic_field(B, eps_B, eps_E, **params).value
+        assert N0_u * mc2 * integral == pytest.approx(eps_E * u_th, rel=1e-8)
+        assert N0_B * mc2 * integral == pytest.approx((eps_E / eps_B) * B**2 / (8 * np.pi), rel=1e-8)
+
+    @pytest.mark.parametrize("Theta", [0.05, 1.0, 20.0])
+    @pytest.mark.parametrize(
+        ("mixed", "shape"),
+        [(MaxwellJuettnerPowerLaw, PL), (MaxwellJuettnerBrokenPowerLaw, BPL)],
+    )
+    def test_pure_thermal_mixture_matches_maxwell_juettner(self, mixed, shape, Theta):
+        # delta = 1 must reproduce the thermal class exactly, for every normalization route.
+        kwargs = {"Theta": Theta, "delta": 1.0, **shape}
+        for method, args in [
+            ("normalize_from_energy_density", (2.5e-3, 0.3)),
+            ("normalize_from_magnetic_field", (0.7, 0.1, 0.2)),
+        ]:
+            thermal = getattr(MaxwellJuettner, method)(*args, Theta=Theta).value
+            assert getattr(mixed, method)(*args, **kwargs).value == pytest.approx(thermal, rel=1e-10)
+
+    @pytest.mark.parametrize("Theta", [1e-3, 0.3, 5.0])
+    def test_maxwell_juettner_matches_utility(self, Theta):
+        n = compute_mj_number_density_from_internal_energy_density(0.3 * 2.5e-3, Theta)
+        assert MaxwellJuettner.normalize_from_energy_density(2.5e-3, 0.3, Theta=Theta).value == pytest.approx(
+            n.value, rel=1e-10
+        )
+
+    @pytest.mark.parametrize("p", [2.2, 2.5, 3.0, 3.5])
+    def test_power_law_down_to_gamma_min_one(self, p):
+        # int_1^inf (gamma - 1) gamma^-p d gamma = 1/(p - 2) - 1/(p - 1): finite and positive at gamma_min = 1.
+        from trilobite.radiation.constants import electron_rest_energy_cgs as mc2
+
+        N0 = PowerLaw.normalize_from_energy_density(1e-3, 0.1, p=p, gamma_min=1.0, gamma_max=np.inf).value
+        assert N0 == pytest.approx(0.1 * 1e-3 / (mc2 * (1 / (p - 2) - 1 / (p - 1))), rel=1e-12)
+
+    def test_energy_normalization_refused_when_ill_conditioned(self):
+        # All of the distribution sits within 1e-10 of gamma = 1: <gamma - 1> ~ 1e-21, below the cancellation limit.
+        squeezed = {"p": 3.0, "gamma_min": 1.0, "gamma_max": 1.0 + 1e-10}
+        with pytest.raises(ValueError, match="almost no kinetic energy"):
+            PowerLaw.normalize_from_energy_density(1e-3, 0.1, **squeezed)
+        with pytest.raises(ValueError, match="almost no kinetic energy"):
+            PowerLaw.normalize_from_magnetic_field(1.0, 0.1, 0.1, **squeezed)
+        assert PowerLaw.normalize_from_energy_density(1e-3, 0.1, p=3.0, gamma_min=1.0, gamma_max=1e4).value > 0

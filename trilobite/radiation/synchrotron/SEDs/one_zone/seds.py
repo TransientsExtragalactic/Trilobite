@@ -6247,8 +6247,8 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
 
     .. math::
 
-        \epsilon_E\,\frac{B^2}{8\pi} = \int_{\gamma_{\min}}^{\gamma_{\max}}
-            N(\gamma)\,\gamma\,m_e c^2\,\mathrm{d}\gamma.
+        \frac{\epsilon_E}{\epsilon_B}\,\frac{B^2}{8\pi} = \int_{\gamma_{\min}}^{\gamma_{\max}}
+            N(\gamma)\,(\gamma - 1)\,m_e c^2\,\mathrm{d}\gamma.
 
     .. rubric:: Radiative Transfer
 

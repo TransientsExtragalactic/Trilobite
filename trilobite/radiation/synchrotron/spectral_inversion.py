@@ -80,6 +80,7 @@ from trilobite.radiation.constants import (
     electron_rest_mass_cgs,
     sigma_T_cgs,
 )
+from trilobite.radiation.synchrotron.electron_distributions import PowerLaw
 from trilobite.radiation.synchrotron.utils import (
     c_1_cgs,
     c_1_gamma_cgs,
@@ -140,16 +141,13 @@ class _SSAMicrophysics:
             self.sin = np.sin(np.pi / 2 if alpha is None else np.asarray(alpha, dtype=float))
             self.A_s = 6.0 * np.pi * electron_rest_mass_cgs * c_cgs / (sigma_T_cgs * self.sin**2)
 
-        # First moment of the Lorentz-factor distribution, M = int gamma^(1-p) dgamma, evaluated for array inputs.
+        # First kinetic moment of the distribution, M = int (gamma - 1) gamma^-p dgamma, for array inputs.
         if np.any(self.gamma_max <= self.gamma_min):
             raise ValueError("`gamma_max` must be greater than `gamma_min`.")
-        e = 2.0 - self.p
         with np.errstate(divide="ignore", invalid="ignore", over="ignore"):
-            M1 = np.where(
-                e == 0.0,
-                np.log(self.gamma_max / self.gamma_min),
-                (self.gamma_max**e - self.gamma_min**e) / e,
-            )
+            M1 = PowerLaw._integral_power_law(
+                2.0 - self.p, self.gamma_min, self.gamma_max
+            ) - PowerLaw._integral_power_law(1.0 - self.p, self.gamma_min, self.gamma_max)
         if not np.all(np.isfinite(M1)):
             raise ValueError(
                 "The first moment of the electron distribution is not finite. Use p > 2 or a finite gamma_max."
