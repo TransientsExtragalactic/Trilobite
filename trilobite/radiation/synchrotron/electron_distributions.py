@@ -24,6 +24,7 @@ from trilobite.physics_utils.maxwell_juettner import (
     _opt_mj_approx_mean_kinetic_energy,
     _opt_mj_approx_mean_lorentz_factor,
     _opt_mj_cdf,
+    _opt_mj_exact_mean_kinetic_energy,
     _opt_mj_moment,
     _opt_mj_pdf,
 )
@@ -2489,6 +2490,10 @@ class MaxwellJuettner(ElectronDistribution):
         return _opt_mj_moment(order, Theta)
 
     @classmethod
+    def _opt_first_kinetic_moment(cls, Theta, **_):
+        return _opt_mj_exact_mean_kinetic_energy(Theta)  # not M1 - M0, which cancels at small Theta
+
+    @classmethod
     def _opt_approx_first_moment(cls, Theta, **_):
         return _opt_mj_approx_mean_lorentz_factor(Theta)
 
@@ -2833,22 +2838,25 @@ class MixedThermalNonThermal(ElectronDistribution):
     r"""
     Base class for mixed thermal and non-thermal electron distributions.
 
-    This class represents a mixture of a thermal Maxwell-Jüttner component and
-    a non-thermal component,
+    This class represents a mixture of a thermal Maxwell-Jüttner component and a non-thermal component supplied by
+    subclasses through ``NON_THERMAL_DISTRIBUTION``. The mixing parameter :math:`\delta` (:math:`0 \leq \delta \leq 1`)
+    is the **fraction of the electron kinetic energy** carried by the thermal component, the same split as
+    :math:`\epsilon_{e,\rm th} = \delta\,\epsilon_e`. The mixture is
 
     .. math::
 
         f_{\rm mix}(\gamma)
         =
-        \delta f_{\rm th}(\gamma)
-        +
-        (1-\delta) f_{\rm nth}(\gamma),
+        \frac{
+            (\delta / K_{\rm th})\, f_{\rm th}(\gamma)
+            + [(1-\delta) / K_{\rm nth}]\, f_{\rm nth}(\gamma)
+        }{
+            \delta / K_{\rm th} + (1-\delta) / K_{\rm nth}
+        },
 
-    where :math:`0 \leq \delta \leq 1`.
-
-    The thermal component is taken to be the Maxwell-Jüttner distribution, and
-    the non-thermal component is supplied by subclasses through
-    ``NON_THERMAL_DISTRIBUTION``.
+    where :math:`f_{\rm th}` and :math:`f_{\rm nth}` are unit-normalized components and
+    :math:`K = \langle \gamma - 1 \rangle` is the mean kinetic energy per electron of each component
+    (in units of :math:`m_e c^2`).
 
     See Also
     --------
@@ -2858,32 +2866,21 @@ class MixedThermalNonThermal(ElectronDistribution):
 
     Notes
     -----
-    The non-thermal classes in this module generally define shape functions
-    rather than probability-normalized distributions. Therefore, this class
-    internally normalizes the non-thermal shape by its zeroth moment,
+    The non-thermal classes in this module define shape functions rather than probability-normalized distributions,
+    so the non-thermal shape is divided by its zeroth moment first. Then :math:`\int f_{\rm mix}\,d\gamma = 1`, and
+    ``norm`` is the total electron number density.
+
+    The component electron fractions are proportional to :math:`\delta / K_{\rm th}` and
+    :math:`(1-\delta) / K_{\rm nth}`, which is what makes the energy split exact. The mixture's mean kinetic energy is
 
     .. math::
 
-        f_{\rm nth}(\gamma)
-        =
-        \frac{
-            f_{\rm shape,nth}(\gamma)
-        }{
-            M_{\rm nth}^{(0)}
-        }.
+        \langle \gamma - 1 \rangle_{\rm mix}
+        = \left[\frac{\delta}{K_{\rm th}} + \frac{1-\delta}{K_{\rm nth}}\right]^{-1},
 
-    With this convention,
-
-    .. math::
-
-        \int f_{\rm mix}(\gamma)\,d\gamma = 1,
-
-    and ``delta`` is a true number-fraction mixture weight.
-
-    This is distinct from an energy-fraction parameter. If ``delta`` is instead
-    intended to represent the fraction of electron energy in the thermal
-    population, the component normalizations should be computed separately from
-    their energy budgets rather than treated as a direct PDF mixture weight.
+    so an energy budget :math:`\epsilon_e u` fixes
+    :math:`N_0 = \epsilon_e u / (m_e c^2 \langle \gamma - 1 \rangle_{\rm mix})`, and the thermal and non-thermal
+    components receive :math:`\delta \epsilon_e u` and :math:`(1-\delta) \epsilon_e u`.
     """
 
     THERMAL_DISTRIBUTION: ClassVar[type[ElectronDistribution]] = MaxwellJuettner
@@ -2900,7 +2897,7 @@ class MixedThermalNonThermal(ElectronDistribution):
         Parameters
         ----------
         delta : float
-            Fractional weight of the thermal Maxwell-Jüttner component.
+            Fraction of the electron kinetic energy in the thermal component.
 
         Raises
         ------
@@ -2955,6 +2952,8 @@ class MixedThermalNonThermal(ElectronDistribution):
             )
         if np.any(m0 <= 0.0):
             raise ValueError("The zeroth moment of the non-thermal component must be positive.")
+        if np.any(cls._opt_kinetic_energies(**{**thermal, **non_thermal})[1] <= 0.0):
+            raise ValueError("The non-thermal component must carry kinetic energy, <gamma - 1> > 0.")
 
         return {**thermal, **non_thermal, "delta": _f8(delta)[0]}
 
@@ -2963,26 +2962,48 @@ class MixedThermalNonThermal(ElectronDistribution):
     # ------------------------------------------------------------------ #
     # No validation or coercion; ``params`` is the merged dictionary from `_validate_and_process_parameters`.
     @classmethod
+    def _opt_kinetic_energies(cls, **params):
+        r"""Mean kinetic energy :math:`\langle \gamma - 1 \rangle` of the thermal and the non-thermal component."""
+        K_th = cls.THERMAL_DISTRIBUTION._opt_first_kinetic_moment(**params)
+        K_nth = cls.NON_THERMAL_DISTRIBUTION._opt_first_kinetic_moment(**params) / cls._non_thermal_m0(**params)
+        return K_th, K_nth
+
+    @classmethod
+    def _opt_number_fractions(cls, delta, **params):
+        r"""Fractions of the electrons in the thermal and non-thermal components for the energy fraction ``delta``."""
+        K_th, K_nth = cls._opt_kinetic_energies(**params)
+        thermal, non_thermal = delta / K_th, (1.0 - delta) / K_nth
+        return thermal / (thermal + non_thermal), non_thermal / (thermal + non_thermal)
+
+    @classmethod
+    def _opt_first_kinetic_moment(cls, delta, **params):
+        K_th, K_nth = cls._opt_kinetic_energies(**params)
+        return 1.0 / (delta / K_th + (1.0 - delta) / K_nth)
+
+    @classmethod
     def _opt_pdf(cls, gamma, norm, delta, **params):
+        thermal, non_thermal = cls._opt_number_fractions(delta, **params)
         thermal_pdf = cls.THERMAL_DISTRIBUTION._opt_pdf(gamma, 1.0, **params)
         non_thermal_pdf = cls.NON_THERMAL_DISTRIBUTION._opt_pdf(gamma, 1.0, **params) / cls._non_thermal_m0(**params)
-        return norm * (delta * thermal_pdf + (1.0 - delta) * non_thermal_pdf)
+        return norm * (thermal * thermal_pdf + non_thermal * non_thermal_pdf)
 
     @classmethod
     def _opt_moment(cls, order, delta, **params):
         if order == 0:
             return 1.0
 
+        thermal, non_thermal = cls._opt_number_fractions(delta, **params)
         thermal_moment = cls.THERMAL_DISTRIBUTION._opt_moment(order, **params)
         non_thermal_moment = cls.NON_THERMAL_DISTRIBUTION._opt_moment(order, **params) / cls._non_thermal_m0(**params)
-        return delta * thermal_moment + (1.0 - delta) * non_thermal_moment
+        return thermal * thermal_moment + non_thermal * non_thermal_moment
 
     @classmethod
     def _opt_moment_between(cls, order, a, b, delta, **params):
         # The Maxwell-Juttner truncated moment is a scalar numerical integral (base-class quadrature).
+        thermal, non_thermal = cls._opt_number_fractions(delta, **params)
         thermal_moment = cls.THERMAL_DISTRIBUTION.moment_between(order, a, b, **params)
         non_thermal_moment = cls.NON_THERMAL_DISTRIBUTION._opt_moment_between(order, a, b, **params)
-        return delta * thermal_moment + (1.0 - delta) * non_thermal_moment / cls._non_thermal_m0(**params)
+        return thermal * thermal_moment + non_thermal * non_thermal_moment / cls._non_thermal_m0(**params)
 
     # ------------------------------------------------------------------ #
     # Distribution Interface                                             #
@@ -3003,18 +3024,12 @@ class MixedThermalNonThermal(ElectronDistribution):
 
         .. math::
 
-            N(\gamma)
-            =
-            N_0
-            \left[
-            \delta f_{\rm MJ}(\gamma)
-            +
-            (1-\delta) f_{\rm nth}(\gamma)
-            \right],
+            N(\gamma) = N_0\,f_{\rm mix}(\gamma),
 
-        where :math:`f_{\rm MJ}` is the normalized Maxwell-Jüttner
-        distribution and :math:`f_{\rm nth}` is the normalized non-thermal
-        component.
+        where :math:`f_{\rm mix}` is the mixture of the unit-normalized
+        Maxwell-Jüttner and non-thermal components defined in the class
+        docstring, with the thermal component carrying the energy fraction
+        :math:`\delta`.
 
         Parameters
         ----------
@@ -3024,8 +3039,8 @@ class MixedThermalNonThermal(ElectronDistribution):
         norm : float, optional
             Distribution amplitude :math:`N_0`. Default is ``1.0``.
         delta : float
-            Mixture weight of the thermal Maxwell-Jüttner component. Must
-            satisfy ``0 <= delta <= 1``.
+            Fraction of the electron kinetic energy in the thermal
+            Maxwell-Jüttner component. Must satisfy ``0 <= delta <= 1``.
         **params
             Parameters forwarded to the thermal and non-thermal component
             distributions. For example, ``Theta`` is used by the
@@ -3089,11 +3104,11 @@ class MixedThermalNonThermal(ElectronDistribution):
 
             M_k^{\rm mix}
             =
-            \delta M_k^{\rm MJ}
+            w_{\rm th} M_k^{\rm MJ}
             +
-            (1-\delta) M_k^{\rm nth,norm},
+            (1-w_{\rm th}) M_k^{\rm nth,norm},
 
-        where
+        where :math:`w_{\rm th}` is the thermal electron fraction set by :math:`\delta` (see the class docstring) and
 
         .. math::
 
@@ -3110,7 +3125,7 @@ class MixedThermalNonThermal(ElectronDistribution):
         order : float
             Moment order :math:`k`.
         delta : float
-            Mixture weight of the thermal Maxwell-Jüttner component.
+            Fraction of the electron kinetic energy in the thermal component.
         **params
             Parameters forwarded to the component distributions.
 
@@ -3141,12 +3156,13 @@ class MixedThermalNonThermal(ElectronDistribution):
 
             M_k^{\rm mix}(a,b)
             =
-            \delta M_k^{\rm MJ}(a,b)
+            w_{\rm th} M_k^{\rm MJ}(a,b)
             +
-            (1-\delta) M_k^{\rm nth,norm}(a,b),
+            (1-w_{\rm th}) M_k^{\rm nth,norm}(a,b),
 
-        where the non-thermal component is normalized by its full zeroth
-        moment.
+        where :math:`w_{\rm th}` is the thermal electron fraction set by
+        :math:`\delta` and the non-thermal component is normalized by its
+        full zeroth moment.
 
         Parameters
         ----------
@@ -3157,7 +3173,7 @@ class MixedThermalNonThermal(ElectronDistribution):
         b : float
             Requested upper Lorentz-factor bound.
         delta : float
-            Mixture weight of the thermal Maxwell-Jüttner component.
+            Fraction of the electron kinetic energy in the thermal component.
         **params
             Parameters forwarded to the component distributions.
 
@@ -3175,31 +3191,24 @@ class MaxwellJuettnerPowerLaw(MixedThermalNonThermal):
     r"""
     Mixed Maxwell-Jüttner plus power-law electron distribution.
 
-    The normalized mixture shape is
+    The thermal Maxwell-Jüttner component :math:`f_{\rm MJ}(\gamma;\Theta)` and the power-law component
+    :math:`f_{\rm PL}(\gamma;p,\gamma_{\min},\gamma_{\max}) / M_{\rm PL}^{(0)}`, normalized to unit integral by the
+    zeroth moment of the power-law shape, are mixed so that the thermal component carries the fraction
+    :math:`\delta` of the electron kinetic energy (see :class:`MixedThermalNonThermal`):
 
     .. math::
 
         f_{\rm mix}(\gamma)
         =
-        \delta f_{\rm MJ}(\gamma;\Theta)
-        +
-        (1-\delta)
         \frac{
-            f_{\rm PL}(\gamma;p,\gamma_{\min},\gamma_{\max})
+            (\delta / K_{\rm th})\, f_{\rm MJ}(\gamma)
+            + [(1-\delta) / K_{\rm nth}]\, f_{\rm PL}(\gamma) / M_{\rm PL}^{(0)}
         }{
-            M_{\rm PL}^{(0)}
+            \delta / K_{\rm th} + (1-\delta) / K_{\rm nth}
         },
+        \qquad \int f_{\rm mix}(\gamma)\,d\gamma = 1,
 
-    where :math:`f_{\rm MJ}` is the Maxwell-Jüttner shape (already
-    probability-normalised, :math:`\int f_{\rm MJ}\,d\gamma = 1`) and
-    :math:`M_{\rm PL}^{(0)} = \int f_{\rm PL}\,d\gamma` is the zeroth moment
-    of the power-law shape that re-normalises the non-thermal component to
-    unit integral.  With this convention :math:`\delta` is a true
-    number-fraction weight:
-
-    .. math::
-
-        \int f_{\rm mix}(\gamma)\,d\gamma = 1.
+    where :math:`K = \langle \gamma - 1 \rangle` for each component.
 
     The full distribution is
 
@@ -3218,10 +3227,11 @@ class MaxwellJuettnerPowerLaw(MixedThermalNonThermal):
           - Description
         * - ``delta``
           - float
-          - Fractional weight of the thermal Maxwell-Jüttner component.
-            Must satisfy :math:`0 \leq \delta \leq 1`.  Setting
-            ``delta=1`` gives a pure Maxwell-Jüttner distribution;
-            ``delta=0`` gives a pure (re-normalised) power-law.
+          - Fraction of the electron kinetic energy in the thermal
+            Maxwell-Jüttner component.  Must satisfy
+            :math:`0 \leq \delta \leq 1`.  Setting ``delta=1`` gives a pure
+            Maxwell-Jüttner distribution; ``delta=0`` gives a pure
+            (re-normalised) power-law.
         * - ``Theta``
           - float, optional
           - Dimensionless temperature of the thermal component,
@@ -3248,7 +3258,7 @@ class MaxwellJuettnerPowerLaw(MixedThermalNonThermal):
     Examples
     --------
     Evaluate the mixed distribution at :math:`\gamma = 2` with equal
-    thermal and non-thermal weights (:math:`\delta = 0.5`):
+    thermal and non-thermal energies (:math:`\delta = 0.5`):
 
     >>> float(
     ...     MaxwellJuettnerPowerLaw.pdf(
@@ -3287,31 +3297,24 @@ class MaxwellJuettnerBrokenPowerLaw(MixedThermalNonThermal):
     r"""
     Mixed Maxwell-Jüttner plus broken-power-law electron distribution.
 
-    The normalized mixture shape is
+    The thermal Maxwell-Jüttner component :math:`f_{\rm MJ}(\gamma;\Theta)` and the broken-power-law component
+    :math:`f_{\rm BPL}(\gamma;p_1,p_2,\gamma_c,\gamma_{\min},\gamma_{\max}) / M_{\rm BPL}^{(0)}`, normalized to unit
+    integral by the zeroth moment of the broken-power-law shape, are mixed so that the thermal component carries the
+    fraction :math:`\delta` of the electron kinetic energy (see :class:`MixedThermalNonThermal`):
 
     .. math::
 
         f_{\rm mix}(\gamma)
         =
-        \delta f_{\rm MJ}(\gamma;\Theta)
-        +
-        (1-\delta)
         \frac{
-            f_{\rm BPL}(\gamma;p_1,p_2,\gamma_c,\gamma_{\min},\gamma_{\max})
+            (\delta / K_{\rm th})\, f_{\rm MJ}(\gamma)
+            + [(1-\delta) / K_{\rm nth}]\, f_{\rm BPL}(\gamma) / M_{\rm BPL}^{(0)}
         }{
-            M_{\rm BPL}^{(0)}
+            \delta / K_{\rm th} + (1-\delta) / K_{\rm nth}
         },
+        \qquad \int f_{\rm mix}(\gamma)\,d\gamma = 1,
 
-    where :math:`f_{\rm MJ}` is the Maxwell-Jüttner shape (already
-    probability-normalised, :math:`\int f_{\rm MJ}\,d\gamma = 1`) and
-    :math:`M_{\rm BPL}^{(0)} = \int f_{\rm BPL}\,d\gamma` is the zeroth
-    moment of the broken-power-law shape that re-normalises the non-thermal
-    component to unit integral.  With this convention :math:`\delta` is a
-    true number-fraction weight:
-
-    .. math::
-
-        \int f_{\rm mix}(\gamma)\,d\gamma = 1.
+    where :math:`K = \langle \gamma - 1 \rangle` for each component.
 
     The full distribution is
 
@@ -3330,10 +3333,11 @@ class MaxwellJuettnerBrokenPowerLaw(MixedThermalNonThermal):
           - Description
         * - ``delta``
           - float
-          - Fractional weight of the thermal Maxwell-Jüttner component.
-            Must satisfy :math:`0 \leq \delta \leq 1`.  Setting
-            ``delta=1`` gives a pure Maxwell-Jüttner distribution;
-            ``delta=0`` gives a pure (re-normalised) broken-power-law.
+          - Fraction of the electron kinetic energy in the thermal
+            Maxwell-Jüttner component.  Must satisfy
+            :math:`0 \leq \delta \leq 1`.  Setting ``delta=1`` gives a pure
+            Maxwell-Jüttner distribution; ``delta=0`` gives a pure
+            (re-normalised) broken-power-law.
         * - ``Theta``
           - float, optional
           - Dimensionless temperature of the thermal component,
@@ -3369,7 +3373,7 @@ class MaxwellJuettnerBrokenPowerLaw(MixedThermalNonThermal):
     Examples
     --------
     Evaluate the mixed distribution at :math:`\gamma = 5` with equal
-    thermal and non-thermal weights (:math:`\delta = 0.5`):
+    thermal and non-thermal energies (:math:`\delta = 0.5`):
 
     >>> float(
     ...     MaxwellJuettnerBrokenPowerLaw.pdf(
@@ -3381,7 +3385,7 @@ class MaxwellJuettnerBrokenPowerLaw(MixedThermalNonThermal):
     ...         gamma_c=10.0,
     ...     )
     ... )  # doctest: +ELLIPSIS
-    0.07...
+    0.069...
 
     A pure thermal distribution (``delta=1``) agrees exactly with
     :class:`MaxwellJuettner`:

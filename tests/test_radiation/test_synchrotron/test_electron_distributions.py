@@ -311,6 +311,14 @@ class TestMaxwellJuettner(BaseTestElectronDistribution):
             )
 
 
+def _kinetic_energy_by_quadrature(dist, lower, upper, points=None, **params):
+    """Mean kinetic energy <gamma - 1> of a distribution shape, by direct quadrature."""
+    kwargs = {"epsabs": 1.0e-10, "epsrel": 1.0e-8, "limit": 500, "points": points}
+    m0 = quad(lambda g: dist.pdf(g, norm=1.0, **params), lower, upper, **kwargs)[0]
+    m1 = quad(lambda g: g * dist.pdf(g, norm=1.0, **params), lower, upper, **kwargs)[0]
+    return m1 / m0 - 1.0
+
+
 class TestMaxwellJuettnerPowerLaw(BaseTestElectronDistribution):
     DISTRIBUTION_CLASS = MaxwellJuettnerPowerLaw
     GAMMA_ARRAY = np.linspace(1, 1e6, 1000)
@@ -397,7 +405,11 @@ class TestMaxwellJuettnerPowerLaw(BaseTestElectronDistribution):
                 limit=500,
             )
 
-            expected_moment = delta * mj_moment_quad + (1.0 - delta) * pl_moment_quad / pl_m0_quad
+            # delta is the thermal share of the kinetic energy, so the electron fractions are ~ delta / K.
+            K_th = _kinetic_energy_by_quadrature(MaxwellJuettner, 1.0, np.inf, **mj_params)
+            K_nth = _kinetic_energy_by_quadrature(PowerLaw, pl_params["gamma_min"], pl_params["gamma_max"], **pl_params)
+            w_th = (delta / K_th) / (delta / K_th + (1.0 - delta) / K_nth)
+            expected_moment = w_th * mj_moment_quad + (1.0 - w_th) * pl_moment_quad / pl_m0_quad
 
             computed_moment = self.DISTRIBUTION_CLASS.moment(
                 order,
@@ -495,7 +507,16 @@ class TestMaxwellJuettnerBrokenPowerLaw(BaseTestElectronDistribution):
                 points=[params["gamma_c"]],
             )
 
-            expected_moment = delta * mj_moment_quad + (1.0 - delta) * pl_moment_quad / pl_m0_quad
+            K_th = _kinetic_energy_by_quadrature(MaxwellJuettner, 1.0, np.inf, **mj_params)
+            K_nth = _kinetic_energy_by_quadrature(
+                BrokenPowerLaw,
+                bpl_params["gamma_min"],
+                bpl_params["gamma_max"],
+                points=[params["gamma_c"]],
+                **bpl_params,
+            )
+            w_th = (delta / K_th) / (delta / K_th + (1.0 - delta) / K_nth)
+            expected_moment = w_th * mj_moment_quad + (1.0 - w_th) * pl_moment_quad / pl_m0_quad
 
             computed_moment = self.DISTRIBUTION_CLASS.moment(
                 order,

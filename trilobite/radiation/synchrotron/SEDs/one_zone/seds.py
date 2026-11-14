@@ -7701,7 +7701,8 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             +
             \underbrace{N_0\,\gamma^{-p}\,\mathbf{1}_{[\gamma_{\min},\gamma_{\max}]}(\gamma)}_{\text{non-thermal}},
 
-    where the energy budget is split via the thermal fraction :math:`\delta`:
+    where the energy budget is split via the thermal energy fraction :math:`\delta`, the same :math:`\delta` as in
+    :class:`~trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal`:
 
     .. math::
 

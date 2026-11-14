@@ -330,6 +330,24 @@ class TestElectronDistributionNormalization:
             thermal = getattr(MaxwellJuettner, method)(*args, Theta=Theta).value
             assert getattr(mixed, method)(*args, **kwargs).value == pytest.approx(thermal, rel=1e-10)
 
+    @pytest.mark.parametrize("Theta", [0.05, 1.0, 20.0])
+    @pytest.mark.parametrize("delta", [0.2, 0.7])
+    @pytest.mark.parametrize(
+        ("mixed", "component", "shape"),
+        [(MaxwellJuettnerPowerLaw, PowerLaw, PL), (MaxwellJuettnerBrokenPowerLaw, BrokenPowerLaw, BPL)],
+    )
+    def test_delta_is_the_thermal_share_of_the_energy_budget(self, mixed, component, shape, Theta, delta):
+        # Normalizing each component against its own share of epsilon_E (delta, 1 - delta), as the mixed SED does,
+        # gives the same electrons as the mixture with its single N0.
+        u_th, eps_E = 2.5e-3, 0.3
+        N_thermal = MaxwellJuettner.normalize_from_energy_density(u_th, delta * eps_E, Theta=Theta).value
+        N_non_thermal = component.normalize_from_energy_density(u_th, (1.0 - delta) * eps_E, **shape).value
+        N0 = mixed.normalize_from_energy_density(u_th, eps_E, Theta=Theta, delta=delta, **shape).value
+
+        gamma = np.geomspace(1.0 + 1e-3, shape["gamma_max"], 60)
+        separate = MaxwellJuettner.pdf(gamma, N_thermal, Theta=Theta) + component.pdf(gamma, N_non_thermal, **shape)
+        np.testing.assert_allclose(mixed.pdf(gamma, N0, Theta=Theta, delta=delta, **shape), separate, rtol=1e-9)
+
     @pytest.mark.parametrize("Theta", [1e-3, 0.3, 5.0])
     def test_maxwell_juettner_matches_utility(self, Theta):
         n = compute_mj_number_density_from_internal_energy_density(0.3 * 2.5e-3, Theta)

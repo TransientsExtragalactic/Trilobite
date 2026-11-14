@@ -1473,7 +1473,9 @@ Mixed Distributions
 In some scenarios, one encounters both a thermal and non-thermal population of electrons. In this case, equipartition is
 made somewhat more subtle on the basis that the fraction of the electrons which are / are not relativistic is
 a free parameter. We therefore introduce the :math:`\delta` parameter to represent the fraction of the electron
-energy in the **thermal** population. In this case,
+(kinetic) energy in the **thermal** population; the mixed distribution classes
+(:class:`~trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal`) and the mixed numerical SED
+use this same definition. In this case,
 
 .. math::
 
