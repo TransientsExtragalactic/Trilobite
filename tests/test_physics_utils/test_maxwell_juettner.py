@@ -127,6 +127,17 @@ class TestDistribution:
         with pytest.raises(ValueError):
             compute_mj_pdf(2.0, bad)
 
+    @pytest.mark.parametrize("Theta", [0.03, 0.5, 8.0])
+    def test_log_pdf_is_the_log_of_the_pdf(self, Theta):
+        gamma = np.geomspace(1.0, 50.0 * max(Theta, 1.0), 40)
+        got = np.exp(M._opt_mj_log_pdf(gamma, Theta, 2.5))
+        np.testing.assert_allclose(got, compute_mj_pdf(gamma, Theta, norm=2.5), rtol=1e-12, atol=0.0)
+
+    def test_log_pdf_is_minus_infinity_where_the_pdf_vanishes_and_broadcasts(self):
+        out = M._opt_mj_log_pdf(np.array([1.0, 1.5, 3.0]), 1.0, np.array([[1.0], [2.0]]))
+        assert out.shape == (2, 3)
+        assert np.all(np.isneginf(out[:, 0]))  # beta = 0 at gamma = 1
+
 
 class TestMoments:
     @pytest.mark.parametrize("Theta", THETAS)

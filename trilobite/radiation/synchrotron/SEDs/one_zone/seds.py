@@ -68,6 +68,7 @@ from trilobite.physics_utils.cosmology import (
     get_cosmology,
     resolve_cosmological_distances,
 )
+from trilobite.physics_utils.maxwell_juettner import _opt_mj_log_pdf
 from trilobite.radiation.constants import electron_rest_energy_cgs
 from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
 from trilobite.radiation.synchrotron.electron_distributions import BrokenPowerLaw, MaxwellJuettner, PowerLaw
@@ -7229,6 +7230,29 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
         return np.exp(log_flux) * u.erg / (u.cm**2 * u.s * u.Hz)
 
 
+# =========================================================================== #
+# Thermal electron distributions                                              #
+# =========================================================================== #
+_THERMAL_X_MIN = 1e-6  # smallest gamma - 1 on the default thermal grids
+_MIXED_X_MAX = 1e2  # largest gamma - 1 of the extra thermal points on the default mixed grid
+
+
+def _thermal_gamma_grid(gamma_min: float, gamma_max: float, n_gamma: int, mixed: bool = False) -> np.ndarray:
+    r"""Return the default Lorentz-factor grid for the thermal SEDs.
+
+    A thermal population sits at :math:`\gamma - 1 \sim \Theta`, so a grid log-spaced in :math:`\gamma` puts only a few
+    points across it for :math:`\Theta \lesssim 0.3`. Pure thermal SEDs therefore use ``n_gamma`` points log-spaced in
+    :math:`\gamma - 1`, which resolves the distribution for :math:`\Theta \gtrsim 10^{-3}`. Mixed SEDs also need the
+    log-spaced :math:`\gamma` grid for their power-law component, so they use its union with ``n_gamma // 2`` points
+    log-spaced in :math:`\gamma - 1` up to :math:`\gamma - 1 = 100`.
+    """
+    x = np.geomspace(max(gamma_min - 1.0, _THERMAL_X_MIN), gamma_max - 1.0, n_gamma)
+    if not mixed:
+        return 1.0 + x
+    x_thermal = np.geomspace(x[0], min(_MIXED_X_MAX, gamma_max - 1.0), n_gamma // 2)
+    return np.unique(np.concatenate([np.geomspace(gamma_min, gamma_max, n_gamma), 1.0 + x_thermal]))
+
+
 class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
     r"""
     Numerical one-zone thermal (Maxwell-Jüttner) synchrotron SED with self-absorption.
@@ -7248,11 +7272,12 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
 
     .. math::
 
-        N(\gamma) = \frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta},
+        N(\gamma) = N_{\rm therm}\,\frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)}\,e^{-\gamma/\Theta},
+        \qquad \beta = \sqrt{1 - \gamma^{-2}},
 
     where :math:`\Theta = kT/(m_e c^2)` is the dimensionless electron
-    temperature and :math:`N_{\rm therm}` is fixed by the equipartition
-    prescription (see
+    temperature, :math:`K_2` is the modified Bessel function of the second kind, and :math:`N_{\rm therm}`, the total
+    number density, is fixed by the equipartition prescription (see
     :meth:`~trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner._normalize_from_magnetic_field`):
 
     .. math::
@@ -7262,7 +7287,8 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
 
     The thermal peak of the distribution is at :math:`\gamma_{\rm peak} \approx 3\Theta`
     for :math:`\Theta \gg 1`, so the quadrature grid should be wide enough to
-    capture energies up to several multiples of :math:`\Theta`.
+    capture energies up to several multiples of :math:`\Theta`. By default the grid is log-spaced in
+    :math:`\gamma - 1`, which resolves the distribution for :math:`\Theta \gtrsim 10^{-3}`.
 
     .. rubric:: Radiative Transfer
 
@@ -7360,7 +7386,8 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
             Explicit Lorentz factor grid. If ``None``, a log-uniform grid is
             built from ``gamma_min``, ``gamma_max``, and ``n_gamma``.
         gamma_min : float, optional
-            Lower bound of the Lorentz factor grid. Default ``1.0``.
+            Lower bound of the Lorentz factor grid. Default ``1.0``. The default grid is log-spaced in
+            :math:`\gamma - 1`, starting at :math:`\max(\gamma_{\min} - 1, 10^{-6})`.
         gamma_max : float, optional
             Upper bound of the Lorentz factor grid. Default ``1e8``.
             Should extend to several times :math:`\Theta` to capture the
@@ -7385,12 +7412,9 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         super().__init__()
         self._engine = NumericalSynchrotronEngine()
 
-        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(
-            gamma=gamma,
-            gamma_min=gamma_min,
-            gamma_max=gamma_max,
-            n_gamma=n_gamma,
-        )
+        if gamma is None:
+            gamma = _thermal_gamma_grid(gamma_min, gamma_max, n_gamma)
+        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(gamma=gamma)
 
         kernel_kwargs = {"x_min": x_min, "x_max": x_max, "num_points": num_points, "spacing": spacing, "method": method}
         self._engine.load_avg_first_kernel(**kernel_kwargs)
@@ -7467,14 +7491,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
             dtype="f8",
         )
 
-        # Maxwell-Jüttner: N(gamma) = N_therm/(2 Theta^3) * gamma^2 * exp(-gamma/Theta)
-        log_N = (
-            np.log(N_therm)[..., np.newaxis]
-            - np.log(2.0)
-            - 3.0 * np.log(float(Theta))
-            + 2.0 * self._log_gamma
-            - np.exp(self._log_gamma) / float(Theta)
-        )
+        log_N = _opt_mj_log_pdf(np.exp(self._log_gamma), Theta, N_therm[..., np.newaxis])
 
         log_nu = np.log(np.asarray(nu, dtype="f8"))
         log_B = np.log(float(B))
@@ -7680,7 +7697,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
     .. math::
 
         N(\gamma) =
-            \underbrace{\frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta}}_{\text{thermal}}
+            \underbrace{N_{\rm therm}\,\frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)}\,e^{-\gamma/\Theta}}_{\text{thermal}}
             +
             \underbrace{N_0\,\gamma^{-p}\,\mathbf{1}_{[\gamma_{\min},\gamma_{\max}]}(\gamma)}_{\text{non-thermal}},
 
@@ -7773,7 +7790,9 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Explicit Lorentz factor grid. If ``None``, a log-uniform grid is
             built from ``gamma_min``, ``gamma_max``, and ``n_gamma``.
         gamma_min : float, optional
-            Lower bound of the Lorentz factor grid. Default ``1.0``.
+            Lower bound of the Lorentz factor grid. Default ``1.0``. The default grid is the union of ``n_gamma``
+            points log-spaced in :math:`\gamma` and ``n_gamma // 2`` points log-spaced in :math:`\gamma - 1`,
+            which resolve the thermal component for :math:`\Theta \gtrsim 10^{-3}`.
         gamma_max : float, optional
             Upper bound of the Lorentz factor grid. Default ``1e8``. Should be
             wide enough to capture the Maxwell-Jüttner tail (at least
@@ -7799,12 +7818,9 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         super().__init__()
         self._engine = NumericalSynchrotronEngine()
 
-        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(
-            gamma=gamma,
-            gamma_min=gamma_min,
-            gamma_max=gamma_max,
-            n_gamma=n_gamma,
-        )
+        if gamma is None:
+            gamma = _thermal_gamma_grid(gamma_min, gamma_max, n_gamma, mixed=True)
+        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(gamma=gamma)
 
         kernel_kwargs = {"x_min": x_min, "x_max": x_max, "num_points": num_points, "spacing": spacing, "method": method}
         self._engine.load_avg_first_kernel(**kernel_kwargs)
@@ -7909,13 +7925,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         )
 
         # Thermal component: Maxwell-Jüttner evaluated over the full grid.
-        log_N_mjd = (
-            np.log(N_therm)[..., np.newaxis]
-            - np.log(2.0)
-            - 3.0 * np.log(float(Theta))
-            + 2.0 * self._log_gamma
-            - np.exp(self._log_gamma) / float(Theta)
-        )
+        log_N_mjd = _opt_mj_log_pdf(np.exp(self._log_gamma), Theta, N_therm[..., np.newaxis])
 
         # Non-thermal component: power law gated to [gamma_min, gamma_max].
         gamma_arr = np.exp(self._log_gamma)

@@ -83,6 +83,12 @@ def _opt_mj_pdf(gamma, Theta, norm=1.0):
     return _opt_mj_pdf_excess(gamma - 1.0, Theta, norm)  # exact for gamma in [1/2, 2]
 
 
+def _opt_mj_log_pdf(gamma, Theta, norm=1.0):
+    r"""Natural log of the MJ distribution, ``-inf`` where it is zero or underflows (for log-space grids)."""
+    with np.errstate(divide="ignore"):
+        return np.log(_opt_mj_pdf(gamma, Theta, norm))
+
+
 def _opt_mj_cdf(gamma, Theta, norm=1.0):
     # Scalar Theta only. The grid depends on Theta alone, so a point's value never depends on the rest of the array.
     # In t = sqrt((gamma - 1) / Theta) the pdf's square-root singularity at gamma = 1 becomes dF/dt ~ t^2, which is
