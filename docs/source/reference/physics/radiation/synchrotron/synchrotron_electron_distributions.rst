@@ -370,9 +370,12 @@ electrons and magnetic fields respectively, the normalization satisfies
 
 .. math::
 
-    N_0\,m_e c^2\,M_1 = \frac{\varepsilon_e}{\varepsilon_B}\,\frac{B^2}{8\pi},
+    N_0\,m_e c^2\,\langle\gamma - 1\rangle = \frac{\varepsilon_e}{\varepsilon_B}\,\frac{B^2}{8\pi},
 
-which Trilobite solves via :meth:`~ElectronDistribution.normalize_from_magnetic_field`:
+where :math:`\langle\gamma - 1\rangle = M_1 - M_0` is the mean kinetic energy per particle in units of
+:math:`m_e c^2`. Rest mass is excluded because :math:`\varepsilon_e` and :math:`\varepsilon_B` are fractions of the
+thermal (internal) energy density; see :ref:`synch_equipartition_theory` for the convention and how it relates to
+studies that include rest mass. Trilobite solves this via :meth:`~ElectronDistribution.normalize_from_magnetic_field`:
 
 .. code-block:: python
 

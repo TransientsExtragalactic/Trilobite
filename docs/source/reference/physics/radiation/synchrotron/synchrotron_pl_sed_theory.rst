@@ -1032,11 +1032,14 @@ In both cases, the electron distribution may be written in separable form:
     N(\gamma) = N_0 f(\gamma),
 
 where :math:`f(\gamma)` encodes the shape of the distribution and possesses a known
-first moment
+first kinetic moment
 
 .. math::
 
-    M_\gamma^{(1)} \equiv \int \gamma f(\gamma)\, d\gamma.
+    M_\gamma^{(1)} \equiv \int (\gamma - 1) f(\gamma)\, d\gamma,
+
+the mean kinetic energy per particle in units of :math:`m_e c^2` (rest mass excluded, as the energy densities below
+are fractions of the thermal energy density; see :ref:`synch_equipartition_theory`).
 
 We assume that fixed fractions of the post-shock internal energy density
 are deposited into relativistic electrons and magnetic fields:

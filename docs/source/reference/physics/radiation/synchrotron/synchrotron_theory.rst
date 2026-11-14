@@ -1178,14 +1178,26 @@ that goes into relativistic electrons and magnetic fields, respectively.
 
 .. important::
 
-    In the case of :math:`\epsilon_e`, we follow the typical convention in the literature
-    (e.g. :footcite:t:`Margutti2019COW`,
-    :footcite:t:`demarchiRadioAnalysisSN2004C2022`, :footcite:t:`wuDelayedRadioEmission2025`, etc.) and
-    define :math:`U_e = \epsilon_e U_{\rm th}` such that :math:`U_e` is the
-    **total energy density in relativistic electrons**. In some cases, authors have instead defined :math:`\epsilon_e` such
-    that :math:`U_e = \epsilon_e U_{\rm th}` is the
-    **kinetic energy density in relativistic electrons**. This latter convention is less common, but it is
-    important to be aware of it when comparing results across the literature.
+    :math:`\epsilon_e` is the fraction of the thermal (internal) energy density that goes into relativistic electrons.
+    Because a thermal energy density excludes rest mass, we define :math:`U_e = \epsilon_e U_{\rm th}` as the
+    **kinetic energy density in relativistic electrons**,
+
+    .. math::
+
+        U_e = N_0\, m_e c^2 \left\langle \gamma - 1 \right\rangle,
+
+    and Trilobite uses this convention everywhere: in the electron distributions, in the analytic SED closures, and
+    in the spectral inversions.
+
+    Many studies (e.g. :footcite:t:`Margutti2019COW`, :footcite:t:`demarchiRadioAnalysisSN2004C2022`,
+    :footcite:t:`wuDelayedRadioEmission2025`) instead define :math:`U_e` as the **total energy density in
+    relativistic electrons**, including rest mass, which replaces :math:`\langle \gamma - 1 \rangle` by
+    :math:`\langle \gamma \rangle`. The two differ by the factor
+    :math:`\langle \gamma \rangle / \langle \gamma - 1 \rangle`, which is negligible for
+    :math:`\gamma_{\min} \gg 1` but approaches :math:`p - 1` as :math:`\gamma_{\min} \to 1`, so it must be accounted
+    for when comparing with those results.
+    :func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22` reproduces its published
+    equations and therefore uses the total-energy convention.
 
 Given a thermal energy density :math:`U_{\rm thermal}`, we can then write the energy densities in relativistic electrons
 and magnetic fields as:
@@ -1274,7 +1286,7 @@ equipartition)
 
     U_e = \epsilon_e U_{\rm thermal}.
 
-The total energy density of the electron population is
+The kinetic energy density of the electron population, which excludes rest mass, is
 
 .. tab-set::
 
@@ -1282,27 +1294,34 @@ The total energy density of the electron population is
 
         .. math::
 
-            U_e = m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma \frac{dN}{d\gamma} d\gamma
-            = N_0 m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{1 - p} d\gamma.
+            U_e = m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1) \frac{dN}{d\gamma} d\gamma
+            = N_0 m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1) \gamma^{-p} d\gamma.
 
     .. tab-item:: In Terms of Energy
 
         .. math::
 
-            U_e = \int_{E_{\min}}^{E_{\max}} E \frac{dN}{dE} dE = N_{E,0} \int_{E_{\min}}^{E_{\max}} E^{1 - p} dE.
+            U_e = \int_{E_{\min}}^{E_{\max}} (E - m_e c^2) \frac{dN}{dE} dE
+            = N_{E,0} \int_{E_{\min}}^{E_{\max}} (E - m_e c^2) E^{-p} dE.
 
 Letting
 
 .. math::
 
-    M^{(\ell)}_{\gamma} = N_0 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{\ell} \gamma^{-p} d\gamma,
+    M^{(\ell)}_{\gamma} = \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{\ell} \gamma^{-p} d\gamma
 
-be the :math:`\ell`-th moment of the Lorentz factor distribution, we can write the energy density as
+be the :math:`\ell`-th moment of the Lorentz factor shape function, and defining the **kinetic moment**
+
+.. math::
+
+    M^{(\rm kin)}_{\gamma} \equiv M^{(1)}_{\gamma} - M^{(0)}_{\gamma} = \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1) \gamma^{-p} d\gamma,
+
+we can write the energy density as
 
 .. math::
 
     \boxed{
-    U_e = m_e c^2 N_0 M^{(1)}_{\gamma}.
+    U_e = m_e c^2 N_0 M^{(\rm kin)}_{\gamma}.
     }
 
 Solving for :math:`N_0`, we find
@@ -1310,14 +1329,16 @@ Solving for :math:`N_0`, we find
 .. math::
 
     \boxed{
-    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2 M^{(1)}_{\gamma}}.
+    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2 M^{(\rm kin)}_{\gamma}}.
     }
 
 In terms of the magnetic field, we also have
 
 .. math::
 
-    B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 = \frac{\epsilon_e B^2}{8 \pi \epsilon_B m_e c^2 M^{(1)}_{\gamma}}.
+    B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 = \frac{\epsilon_e B^2}{8 \pi \epsilon_B m_e c^2 M^{(\rm kin)}_{\gamma}}.
+
+For :math:`\gamma_{\min} \gg 1` the kinetic moment reduces to :math:`M^{(1)}_{\gamma}`.
 
 .. important::
 
@@ -1345,7 +1366,7 @@ From equipartition, we know :math:`N_0` in terms of :math:`U_{\rm thermal}` and 
 
     \boxed{
     P_{\rm total} = \frac{4}{3} \sigma_T c \frac{\epsilon_e \epsilon_B u_{\rm therm}^2}{m_e c^2} \left(
-        \frac{M^{(2)}_{\gamma}}{M^{(1)}_{\gamma}}
+        \frac{M^{(2)}_{\gamma}}{M^{(\rm kin)}_{\gamma}}
     \right).
     }
 
@@ -1395,33 +1416,35 @@ equipartition)
 
     U_e = \epsilon_e U_{\rm thermal}.
 
-The total energy density of the electron population is
+The kinetic energy density of the electron population, which excludes rest mass, is
 
 .. math::
 
-    U_e = m_e c^2 N_0 \int_{0}^{\infty} \frac{\gamma^3 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right), d\gamma
+    U_e = m_e c^2 N_0 \int_{1}^{\infty} (\gamma - 1) \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)}
+    \exp\!\left(-\frac{\gamma}{\Theta}\right) d\gamma.
 
 This integral is\ :footcite:p:`1998ApJ...498..313G, 2000ApJ...541..234O, chandrasekhar1957introduction`
 
 .. math::
 
-    U_e = N_0 m_e c^2 \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)}\right],
+    U_e = N_0 m_e c^2 \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1\right],
 
-where :math:`K_1` and :math:`K_3` are the modified Bessel functions of the second kind. *In the literature, this
-result is more commonly presented in terms of the kinetic energy density*.
+where :math:`K_1` and :math:`K_3` are the modified Bessel functions of the second kind. The bracket tends to
+:math:`3\Theta/2` for :math:`\Theta \ll 1` and to :math:`3\Theta` for :math:`\Theta \gg 1`.
 
-which, in turn, is well approximated by\ :footcite:p:`1998ApJ...498..313G`
+It is well approximated by\ :footcite:p:`1998ApJ...498..313G`
 
 .. math::
 
-    U_e \approx N_0 m_e c^2 \frac{15\Theta^2 + 11\Theta + 4}{4 + 5 \Theta}
+    U_e \approx N_0 m_e c^2 \, \Theta \frac{6 + 15\Theta}{4 + 5 \Theta}.
 
 Solving for :math:`N_0`, we find
 
 .. math::
 
     \boxed{
-    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2} \left(\frac{4+5\Theta}{15\Theta^2 + 11\Theta + 4}\right).
+    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2} \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1\right]^{-1}
+    \approx \frac{\epsilon_e U_{\rm thermal}}{m_e c^2} \frac{4 + 5\Theta}{\Theta (6 + 15\Theta)}.
     }
 
 In terms of the magnetic field, we also have
@@ -1429,7 +1452,12 @@ In terms of the magnetic field, we also have
 .. math::
 
     B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 =\frac{B^2}{8 \pi m_e c^2}\frac{\epsilon_e}{\epsilon_B}
-     \left(\frac{4+5\Theta}{15\Theta^2 + 11\Theta + 4}\right).
+     \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1\right]^{-1}.
+
+The total energy density, which does include rest mass, would instead involve
+:math:`\langle \gamma \rangle = \left[3K_3(1/\Theta) + K_1(1/\Theta)\right] / \left[4K_2(1/\Theta)\right]`. For
+:math:`\Theta \ll 1` that is dominated by rest mass (:math:`\langle \gamma \rangle \to 1`), which would make
+:math:`N_0` too small by roughly :math:`2/(3\Theta)`.
 
 .. hint::
 
@@ -1456,8 +1484,8 @@ In this case, the normalization of the thermal and non-thermal electron distribu
 .. math::
 
     \begin{aligned}
-    N_{0,\rm \;thermal} &= \frac{\delta \epsilon_e U_{\rm thermal}}{m_e c^2 } \left(\frac{4+5\Theta}{15\Theta^2 + 11\Theta + 4}\right), \\
-    N_{0,\rm \;non-thermal} &= \frac{(1-\delta) \epsilon_e U_{\rm thermal}}{m_e c^2 M^{(1)}_{\gamma}}.
+    N_{0,\rm \;thermal} &= \frac{\delta \epsilon_e U_{\rm thermal}}{m_e c^2 } \frac{4+5\Theta}{\Theta (6 + 15\Theta)}, \\
+    N_{0,\rm \;non-thermal} &= \frac{(1-\delta) \epsilon_e U_{\rm thermal}}{m_e c^2 M^{(\rm kin)}_{\gamma}}.
     \end{aligned}
 
 and, in terms of the :math:`B` field,
@@ -1465,8 +1493,8 @@ and, in terms of the :math:`B` field,
 .. math::
 
     \begin{aligned}
-    N_{0,\rm \;thermal} &= \frac{B^2}{8 \pi m_e c^2 }\frac{\delta \epsilon_e}{\epsilon_B} \left(\frac{4+5\Theta}{15\Theta^2 + 11\Theta + 4}\right), \\
-    N_{0,\rm \;non-thermal} &= \frac{B^2}{8 \pi m_e c^2}\frac{(1-\delta) \epsilon_e}{\epsilon_B} \left(\frac{1}{M^{(1)}_{\gamma}}\right).
+    N_{0,\rm \;thermal} &= \frac{B^2}{8 \pi m_e c^2 }\frac{\delta \epsilon_e}{\epsilon_B} \frac{4+5\Theta}{\Theta (6 + 15\Theta)}, \\
+    N_{0,\rm \;non-thermal} &= \frac{B^2}{8 \pi m_e c^2}\frac{(1-\delta) \epsilon_e}{\epsilon_B} \left(\frac{1}{M^{(\rm kin)}_{\gamma}}\right).
     \end{aligned}
 
 ----

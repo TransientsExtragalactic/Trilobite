@@ -86,8 +86,8 @@ coefficients :math:`c_5` and :math:`c_6`, and, in the cooled inversions, the ang
 **Units.** Inputs may be :class:`~astropy.units.Quantity` objects or bare floats. Bare floats are interpreted in CGS
 (Hz, :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`, cm, s and :math:`\mathrm{erg\,s^{-1}}`), with the exception of
 :func:`invert_ssa_DeMarchi22`, which keeps the units of its original implementation (GHz, Jy and Mpc). Because the
-electron normalization uses the first moment of the distribution, ``p > 2`` is required unless ``gamma_max`` is
-finite.
+electron normalization uses the first kinetic moment of the distribution, ``p > 2`` is required unless ``gamma_max``
+is finite.
 
 **Broadcasting.** Every observable (``nu_brk``, ``F_brk``, ``distance``, ``t``, ``L``) and every microphysical
 parameter (``p``, ``epsilon_E``, ``epsilon_B``, ``f_A``, ``f_V``, ``alpha``, ``gamma_min``, ``gamma_max``) may be a
@@ -177,7 +177,9 @@ All of them share the same underlying forward model, summarized below.
         N_0 = A_N B^2, \qquad
         A_N = \frac{1}{8\pi m_ec^2}\,\frac{\epsilon_E}{\epsilon_B}\,\frac{1}{M_\gamma^{(1)}},
 
-    where :math:`M_\gamma^{(1)}` is the first moment of the Lorentz-factor distribution for the index :math:`p`.
+    where :math:`M_\gamma^{(1)} = \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1)\,\gamma^{-p}\,d\gamma` is the first
+    kinetic moment of the Lorentz-factor distribution for the index :math:`p` (rest mass excluded; see
+    :ref:`synch_equipartition_theory`).
     Collecting the dependence on :math:`B` and :math:`R`,
 
     .. math::
