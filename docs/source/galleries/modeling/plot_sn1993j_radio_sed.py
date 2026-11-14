@@ -21,8 +21,10 @@ The pipeline has four stages, each handled by one Trilobite component:
     electrons have :math:`p = 2.1`. The paper finds a magnetic energy density of 0.14 and a relativistic electron
     energy density of :math:`5\times10^{-4}` (extrapolating the spectrum to :math:`\gamma = 1`) relative to the
     thermal energy density, which it takes as :math:`\rho V^2`. The jump conditions give a thermal energy
-    density of :math:`\tfrac{9}{8}\rho V^2`, so both fractions are scaled by 8/9 here. Free-free absorption
-    and Coulomb losses, which the paper also includes, are not modeled.
+    density of :math:`\tfrac{9}{8}\rho V^2`, so both fractions are scaled by 8/9 here. Trilobite counts
+    :math:`\epsilon_E` as electron kinetic energy, :math:`\int N(\gamma-1)\,m_e c^2\,d\gamma`; for
+    :math:`\gamma_{\min} = 1` and :math:`p = 2.1` this sets the electron normalization about 14% higher than counting
+    total energy would. Free-free absorption and Coulomb losses, which the paper also includes, are not modeled.
 """
 
 import matplotlib.pyplot as plt

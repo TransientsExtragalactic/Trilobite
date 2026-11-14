@@ -91,11 +91,8 @@ def _maxwell_juttner_temperature_cgs(U_int, rho, mu):
 
     Notes
     -----
-    The coefficient in the discriminant is 240, not 120 as printed in the
-    ``relativistic_jump_conditions_theory`` reference page (typographical error there).
-    The value 240 = 4 · 15 · 4 follows directly from the quadratic formula applied to
-    ``15Θ² + (6 − 5ξ)Θ − 4ξ = 0`` and is confirmed by substituting Θ = 1
-    (ξ = 7/3) and recovering the identity.
+    The discriminant coefficient 240 = 4 · 15 · 4 follows from the quadratic formula applied to
+    ``15Θ² + (6 − 5ξ)Θ − 4ξ = 0``. Substituting Θ = 1 (ξ = 7/3) recovers the identity.
 
     Parameters
     ----------

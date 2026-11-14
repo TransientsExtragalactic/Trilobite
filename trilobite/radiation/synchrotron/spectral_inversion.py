@@ -862,7 +862,7 @@ def _invert_ssa_DeMarchi22(
     epsilon_B : float or array-like, optional
         Fraction of internal energy in magnetic fields.
     epsilon_E : float or array-like, optional
-        Fraction of internal energy in relativistic electrons.
+        Fraction of internal energy in the total energy (rest mass included) of the relativistic electrons.
     gamma_min : float or array-like, optional
         Minimum electron Lorentz factor.
     gamma_max : float or array-like, optional
@@ -1009,7 +1009,8 @@ def invert_ssa_DeMarchi22(
     theta : float or array-like, optional
         Pitch angle in radians.
     epsilon_B, epsilon_E : float or array-like, optional
-        Fractions of the internal energy in magnetic fields and in relativistic electrons.
+        Fractions of the internal energy in magnetic fields and in the **total** energy (rest mass included) of the
+        relativistic electrons; see the Notes.
     gamma_min, gamma_max : float or array-like, optional
         Bounds of the electron Lorentz-factor distribution. ``gamma_max`` matters only for :math:`p < 2`.
 
@@ -1028,6 +1029,14 @@ def invert_ssa_DeMarchi22(
 
         This inversion does **not** pitch-angle average. It uses the fixed pitch angle ``theta`` throughout. To
         use the isotropic pitch-angle coefficients, use :func:`invert_ssa_Diggins26`.
+
+    .. important::
+
+        This inversion reproduces the published equations, so ``epsilon_E`` is the fraction of the internal energy in
+        the **total** electron energy :math:`\int N\gamma\,m_e c^2\,d\gamma`. The other inversions in this module
+        use the kinetic energy :math:`\int N(\gamma-1)\,m_e c^2\,d\gamma`. The two differ by
+        :math:`\langle\gamma\rangle/\langle\gamma-1\rangle`, which is negligible for :math:`\gamma_{\min}\gg1`
+        and approaches :math:`p-1` as :math:`\gamma_{\min}\to1`.
 
     The source is treated as local and non-relativistic, as for the other inversions in this module.
 

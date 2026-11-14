@@ -85,7 +85,8 @@ coefficients :math:`c_5` and :math:`c_6`, and, in the cooled inversions, the ang
 
 **Units.** Inputs may be :class:`~astropy.units.Quantity` objects or bare floats. Bare floats are interpreted in CGS
 (Hz, :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`, cm, s and :math:`\mathrm{erg\,s^{-1}}`), with the exception of
-:func:`invert_ssa_DeMarchi22`, which keeps the units of its original implementation (GHz, Jy and Mpc). Because the
+:func:`invert_ssa_DeMarchi22`, which keeps the units of its original implementation (GHz, Jy and Mpc) and its
+total-energy convention for ``epsilon_E`` (see its section below). Because the
 electron normalization uses the first kinetic moment of the distribution, ``p > 2`` is required unless ``gamma_max``
 is finite.
 
@@ -430,6 +431,14 @@ directly with results in the literature.
 
     The De Marchi inversion does **not** pitch-angle average. It uses the fixed pitch angle ``theta`` throughout. To
     use the isotropic pitch-angle coefficients, use :func:`invert_ssa_Diggins26` with ``pitch_average=True``.
+
+.. important::
+
+    The De Marchi inversion reproduces the published equations, so ``epsilon_E`` is the fraction of the internal energy
+    in the **total** electron energy :math:`\int N\gamma\,m_e c^2\,d\gamma`. The other inversions in this module use
+    the kinetic energy :math:`\int N(\gamma-1)\,m_e c^2\,d\gamma` (see :ref:`synch_equipartition_theory`). The two differ by
+    :math:`\langle\gamma\rangle/\langle\gamma-1\rangle`, which is negligible for :math:`\gamma_{\min}\gg1` and
+    approaches :math:`p-1` as :math:`\gamma_{\min}\to1`, so compare results across the two with care.
 
 Its interface follows the original implementation more closely than the rest of the module: bare floats are in GHz,
 Jy and Mpc, the filling factor is called ``f``, and the singular case :math:`p = 2` is not supported.

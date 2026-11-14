@@ -392,7 +392,7 @@ To determine the temperature to assign to the post-shock fluid, we may invert th
 
 .. math::
 
-    \Theta = \frac{5\xi - 6 + \sqrt{(6-5\xi)^2 + 120\xi}}{30}.
+    \Theta = \frac{5\xi - 6 + \sqrt{(6-5\xi)^2 + 240\xi}}{30}.
 
 .. note::
 
