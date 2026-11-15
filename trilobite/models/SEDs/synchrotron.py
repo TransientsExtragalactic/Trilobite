@@ -137,10 +137,10 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
              - Electron power-law index.
            * - ``epsilon_E``
              - :math:`\epsilon_e`
-             - Fraction of post-shock energy in electrons.
+             - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
            * - ``epsilon_B``
              - :math:`\epsilon_B`
-             - Fraction of post-shock energy in magnetic fields.
+             - Fraction of the thermal (internal) energy density in the magnetic field.
            * - ``log_gamma_min``
              - :math:`\log \gamma_{\min}`
              - Log minimum electron Lorentz factor.
@@ -598,10 +598,10 @@ class SSA_SynchrotronSEDModel(Model):
              - Electron power-law index.
            * - ``epsilon_E``
              - :math:`\epsilon_e`
-             - Fraction of post-shock energy in electrons.
+             - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
            * - ``epsilon_B``
              - :math:`\epsilon_B`
-             - Fraction of post-shock energy in magnetic fields.
+             - Fraction of the thermal (internal) energy density in the magnetic field.
            * - ``log_gamma_min``
              - :math:`\log \gamma_{\min}`
              - Log minimum electron Lorentz factor.
@@ -1019,10 +1019,10 @@ class Cooling_SynchrotronSEDModel(Model):
              - Electron power-law index.
            * - ``epsilon_E``
              - :math:`\epsilon_e`
-             - Fraction of post-shock energy in electrons.
+             - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
            * - ``epsilon_B``
              - :math:`\epsilon_B`
-             - Fraction of post-shock energy in magnetic fields.
+             - Fraction of the thermal (internal) energy density in the magnetic field.
            * - ``log_gamma_min``
              - :math:`\log \gamma_{\min}`
              - Log minimum electron Lorentz factor.
@@ -1454,10 +1454,10 @@ class SynchrotronSEDModel(Model):
              - Electron power-law index.
            * - ``epsilon_E``
              - :math:`\epsilon_e`
-             - Fraction of post-shock energy in electrons.
+             - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
            * - ``epsilon_B``
              - :math:`\epsilon_B`
-             - Fraction of post-shock energy in magnetic fields.
+             - Fraction of the thermal (internal) energy density in the magnetic field.
            * - ``log_gamma_min``
              - :math:`\log \gamma_{\min}`
              - Log minimum electron Lorentz factor.

@@ -1186,8 +1186,10 @@ that goes into relativistic electrons and magnetic fields, respectively.
 
         U_e = N_0\, m_e c^2 \left\langle \gamma - 1 \right\rangle,
 
-    and Trilobite uses this convention everywhere: in the electron distributions, in the analytic SED closures, and
-    in the spectral inversions.
+    This is Trilobite's internal convention, used by the electron distributions, the analytic SED closures and the
+    spectral inversions. Where Trilobite provides a model or inversion that implements a specific published result, it
+    adopts that paper's convention instead, so that it reproduces the published equations; its documentation states
+    which convention applies.
 
     Many studies (e.g. :footcite:t:`Margutti2019COW`, :footcite:t:`demarchiRadioAnalysisSN2004C2022`,
     :footcite:t:`wuDelayedRadioEmission2025`) instead define :math:`U_e` as the **total energy density in
@@ -1195,9 +1197,10 @@ that goes into relativistic electrons and magnetic fields, respectively.
     :math:`\langle \gamma \rangle`. The two differ by the factor
     :math:`\langle \gamma \rangle / \langle \gamma - 1 \rangle`, which is negligible for
     :math:`\gamma_{\min} \gg 1` but approaches :math:`p - 1` as :math:`\gamma_{\min} \to 1`, so it must be accounted
-    for when comparing with those results.
-    :func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22` reproduces its published
-    equations and therefore uses the total-energy convention.
+    for when comparing with those results. For example,
+    :func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22` and
+    :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw` implement
+    :footcite:t:`demarchiRadioAnalysisSN2004C2022` and therefore use the total-energy convention.
 
 Given a thermal energy density :math:`U_{\rm thermal}`, we can then write the energy densities in relativistic electrons
 and magnetic fields as:

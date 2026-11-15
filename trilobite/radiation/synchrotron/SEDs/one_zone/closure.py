@@ -136,9 +136,9 @@ def _invert_powerlaw_sed(
         Power-law index of the electron distribution,
         :math:`N(\gamma) \propto \gamma^{-p}`.
     epsilon_E : float, optional
-        Fraction of internal energy carried by relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float, optional
-        Fraction of internal energy stored in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     f_V : float, optional
         Effective emitting-volume filling factor.
     gamma_bulk : float, optional
@@ -313,9 +313,9 @@ def _invert_powerlaw_cooling_sed(
     p : float, optional
         Electron energy power-law index.
     epsilon_E : float, optional
-        Fraction of internal energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float, optional
-        Fraction of internal energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     f_V : float, optional
         Effective emitting-volume filling factor.
     gamma_bulk : float, optional
@@ -525,9 +525,9 @@ def _invert_powerlaw_cooling_ssa_sed(
     p : float, optional
         Electron power-law index.
     epsilon_E : float, optional
-        Fraction of internal energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float, optional
-        Fraction of internal energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     f_V : float, optional
         Effective volume filling factor.
     f_A : float, optional
@@ -854,9 +854,9 @@ def _invert_powerlaw_ssa_sed(
     p : float, optional
         Electron power-law index.
     epsilon_E : float, optional
-        Fraction of internal energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float, optional
-        Fraction of internal energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     f_V : float, optional
         Effective volume filling factor.
     f_A : float, optional
@@ -1054,9 +1054,9 @@ def invert_powerlaw_sed(
     p : float, optional
         Electron power-law index.
     epsilon_E : float, optional
-        Fraction of internal energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float, optional
-        Fraction of internal energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     f_V : float, optional
         Effective emitting-volume filling factor.
     gamma_bulk : float, optional
@@ -1217,9 +1217,9 @@ def invert_powerlaw_cooling_ssa_sed(
     p : float, optional
         Electron power-law index.
     epsilon_E : float, optional
-        Fraction of internal energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float, optional
-        Fraction of internal energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     f_V : float, optional
         Effective volume filling factor.
     f_A : float, optional
@@ -1394,9 +1394,9 @@ def invert_powerlaw_cooling_sed(
     p : float, optional
         Electron power-law index.
     epsilon_E : float, optional
-        Fraction of internal energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float, optional
-        Fraction of internal energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     f_V : float, optional
         Effective emitting-volume filling factor.
     gamma_bulk : float, optional
@@ -1544,9 +1544,9 @@ def invert_powerlaw_ssa_sed(
     p : float, optional
         Electron power-law index.
     epsilon_E : float, optional
-        Fraction of internal energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float, optional
-        Fraction of internal energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     f_V : float, optional
         Effective volume filling factor.
     f_A : float, optional

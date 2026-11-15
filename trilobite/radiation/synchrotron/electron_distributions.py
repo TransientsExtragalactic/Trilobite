@@ -87,10 +87,8 @@ def equipartition_magnetic_field(u_therm: "_UnitBearingArrayLike", epsilon_B: "_
         If no units are attached, values are interpreted as
         :math:`\mathrm{erg\,cm^{-3}}`.
     epsilon_B : float or ~numpy.ndarray
-        Fraction of the thermal energy density placed in magnetic fields.
-        Physically, this should usually satisfy
-        :math:`0 \leq \epsilon_B \leq 1`, though this function does not
-        enforce that bound.
+        Fraction of the thermal (internal) energy density in the magnetic field. Physically, this should usually satisfy
+        :math:`0 \leq \epsilon_B \leq 1`, though this function does not enforce that bound.
 
     Returns
     -------
@@ -130,7 +128,7 @@ def equipartition_electron_energy(u_therm: "_UnitBearingArrayLike", epsilon_e: "
     Compute the electron energy density implied by a thermal energy density.
 
     This function assumes that a fixed fraction of the thermal/internal energy
-    density is placed into non-thermal electrons,
+    density is placed into the kinetic energy of relativistic electrons,
 
     .. math::
 
@@ -149,10 +147,8 @@ def equipartition_electron_energy(u_therm: "_UnitBearingArrayLike", epsilon_e: "
         If no units are attached, values are interpreted as
         :math:`\mathrm{erg\,cm^{-3}}`.
     epsilon_e : float or ~numpy.ndarray
-        Fraction of the thermal energy density placed in electrons.
-        Physically, this should usually satisfy
-        :math:`0 \leq \epsilon_e \leq 1`, though this function does not
-        enforce that bound.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons. Physically,
+        this should usually satisfy :math:`0 \leq \epsilon_e \leq 1`, though this function does not enforce that bound.
 
     Returns
     -------
@@ -163,7 +159,7 @@ def equipartition_electron_energy(u_therm: "_UnitBearingArrayLike", epsilon_e: "
     -----
     This is a simple equipartition-style closure for the electron energy
     reservoir. It does not specify the shape, normalization, or cutoffs of the
-    electron distribution function; it only computes the n_total electron energy
+    electron distribution function; it only computes the electron (kinetic) energy
     density available to that distribution.
 
     Examples
@@ -974,9 +970,9 @@ class ElectronDistribution(ABC):
         where :math:`M_k` is the :math:`k`-th raw moment of the electron
         Lorentz-factor shape function.
 
-        This includes the electron rest-mass energy and follows the standard
-        ultra-relativistic synchrotron convention in which electron energies
-        are written as :math:`E = \gamma m_e c^2`.
+        This includes the electron rest-mass energy, :math:`E = \gamma m_e c^2`.
+        Energy budgets (:math:`\epsilon_e`) use the kinetic energy instead; see
+        :meth:`mean_kinetic_energy`.
 
         Parameters
         ----------
@@ -1132,9 +1128,9 @@ class ElectronDistribution(ABC):
         B : float, array-like, or ~astropy.units.Quantity
             Magnetic field strength.  Bare values are interpreted as Gauss.
         epsilon_B : float or array-like
-            Fraction of thermal energy in the magnetic field.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         epsilon_E : float or array-like
-            Fraction of thermal energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         **params
             Distribution-specific parameters.
 
@@ -1175,7 +1171,7 @@ class ElectronDistribution(ABC):
             Internal (thermal) energy density, excluding rest mass.  Bare values are interpreted as
             :math:`\mathrm{erg\,cm^{-3}}`.
         epsilon_E : float or array-like
-            Fraction of thermal energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         **params
             Distribution-specific parameters.
 
@@ -1289,9 +1285,9 @@ class ElectronDistribution(ABC):
         B : float, array-like, or ~astropy.units.Quantity
             Magnetic field strength.  Bare values are interpreted as Gauss.
         epsilon_B : float or array-like
-            Fraction of thermal energy in the magnetic field.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         epsilon_E : float or array-like
-            Fraction of thermal energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         **params
             Distribution-specific parameters.
 
@@ -1320,9 +1316,9 @@ class ElectronDistribution(ABC):
             Thermal energy density.  Bare values are interpreted as
             :math:`\mathrm{erg\,cm^{-3}}`.
         epsilon_B : float or array-like
-            Fraction of thermal energy in the magnetic field.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         epsilon_E : float or array-like
-            Fraction of thermal energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         **params
             Distribution-specific parameters.
 
@@ -2671,9 +2667,8 @@ class MaxwellJuettner(ElectronDistribution):
 
         .. note::
 
-            Relative to the literature, we here maintain the standard convention and consider
-            the total (not just kinetic) energy of the electrons, i.e., we include the rest mass
-            energy in the definition of the Lorentz factor.
+            This is the mean of :math:`\gamma`, so it includes the rest mass. Energy budgets use the
+            kinetic energy :math:`\langle \gamma - 1 \rangle`; see :meth:`approx_first_kinetic_moment`.
 
         Parameters
         ----------

@@ -1112,10 +1112,10 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             Filling factor of the emitting region, encoding geometric effects.
 
         epsilon_E : float, optional
-            Fraction of post-shock energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
         epsilon_B : float, optional
-            Fraction of post-shock energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
         alpha : float, optional
             Electron pitch angle in radians. Ignored if
@@ -1229,10 +1229,10 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             Filling factor of the emitting region.
 
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
@@ -1441,9 +1441,9 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             Power-law index of the non-thermal electron distribution,
             :math:`N(\gamma) \propto \gamma^{-p}`.
         epsilon_E : float, optional
-            Fraction of internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         f_V : float, optional
             Effective volume filling factor of the emitting region.
 
@@ -1607,9 +1607,9 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         p : float, optional
             Power-law index of the electron energy distribution.
         epsilon_E : float, optional
-            Fraction of internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         f_V : float, optional
             Effective volume filling factor of the emitting region.
         gamma_bulk : float, optional
@@ -2355,9 +2355,9 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_A: float, optional
             Area filling factor.
         epsilon_E : float, optional
-            Fraction of post-shock energy in electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock energy in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Pitch angle in radians when ``pitch_average=False``.
         gamma_bulk : float, optional
@@ -2460,9 +2460,9 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_A : float, optional
             Area filling factor.
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
         gamma_bulk : float, optional
@@ -2742,15 +2742,13 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             shock-accelerated electron populations.
 
         epsilon_E : float, optional
-            Fraction of the post-shock internal energy carried by relativistic
-            electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
             This parameter enters the equipartition-style closure relation used
             to normalize the electron distribution.
 
         epsilon_B : float, optional
-            Fraction of the post-shock internal energy stored in magnetic
-            fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
             Together with ``epsilon_E``, this parameter determines the relative
             partition of energy between particles and magnetic fields in the
@@ -3472,9 +3470,9 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_V : float, optional
             Volume filling factor.
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Electron pitch angle in radians.
         gamma_bulk : float, optional
@@ -3569,9 +3567,9 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_V : float, optional
             Volume filling factor.
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
         gamma_bulk : float, optional
@@ -3769,11 +3767,10 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Power-law index of the electron energy distribution.
 
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic
-            electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
         f_V : float, optional
             Volume filling factor of the emitting region.
@@ -3994,15 +3991,13 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             shock-accelerated electron populations.
 
         epsilon_E : float, optional
-            Fraction of the post-shock internal energy carried by relativistic
-            electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
             This parameter enters the equipartition-style closure relation used
             to normalize the electron distribution.
 
         epsilon_B : float, optional
-            Fraction of the post-shock internal energy stored in magnetic
-            fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
             Together with ``epsilon_E``, this parameter determines the relative
             partition of energy between particles and magnetic fields in the
@@ -4805,9 +4800,9 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_A : float, optional
             Area filling factor.
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Electron pitch angle in radians.
         gamma_bulk : float, optional
@@ -4905,9 +4900,9 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_A : float, optional
             Area filling factor entering the effective solid angle.
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
         gamma_bulk : float, optional
@@ -5119,11 +5114,10 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Power-law index of the electron energy distribution.
 
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic
-            electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
         f_V : float, optional
             Volume filling factor of the emitting region.
@@ -5340,15 +5334,13 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             shock-accelerated electron populations.
 
         epsilon_E : float, optional
-            Fraction of the post-shock internal energy carried by relativistic
-            electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
             This parameter enters the equipartition-style closure relation used
             to normalize the electron distribution.
 
         epsilon_B : float, optional
-            Fraction of the post-shock internal energy stored in magnetic
-            fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
             Together with ``epsilon_E``, this parameter determines the relative
             partition of energy between particles and magnetic fields in the
@@ -5587,6 +5579,9 @@ class SSA_SED_PowerLaw(SynchrotronSED):
     - The special case :math:`p = 2` is not supported due to logarithmic
       divergences in the electron energy integral and must be handled
       separately.
+    - The closure reproduces the published equations, so ``epsilon_E`` is the fraction of the thermal energy in the
+      **total** electron energy (rest mass included). The other SED classes use the kinetic energy; see
+      :func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22`.
 
     References
     ----------
@@ -5757,9 +5752,10 @@ class SSA_SED_PowerLaw(SynchrotronSED):
             Default is ``pi/2`` (i.e., perpendicular). If provided as a float, the value is used for all SEDs.
             If provided as an array, its shape must be compatible with that of ``nu_brk``.
         epsilon_B: float or array-like
-            The fraction of post-shock energy in magnetic fields, :math:`\epsilon_B`.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         epsilon_E: float or array-like
-            The fraction of post-shock energy in relativistic electrons, :math:`\epsilon_E`.
+            Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the
+            relativistic electrons.
         gamma_min: float or array-like
             The minimum Lorentz factor :math:`\gamma_{\rm min}` of the electron energy.
         gamma_max: float or array-like
@@ -5866,12 +5862,12 @@ class SSA_SED_PowerLaw(SynchrotronSED):
             velocity, in radians. Default is ``\pi/2`` (isotropic average).
 
         epsilon_B : float or array-like, optional
-            Fraction of post-shock internal energy in magnetic fields,
-            :math:`\epsilon_B`. Default is ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default is ``0.1``.
 
         epsilon_E : float or array-like, optional
-            Fraction of post-shock internal energy in relativistic electrons,
-            :math:`\epsilon_E`. Default is ``0.1``.
+            Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the
+            relativistic electrons.
+            Default is ``0.1``.
 
         gamma_min : float or array-like, optional
             Minimum electron Lorentz factor :math:`\gamma_{\rm min}`. Default is ``1``.
@@ -6120,9 +6116,10 @@ class SSA_SED_PowerLaw(SynchrotronSED):
         theta : float or array-like
             Pitch angle in radians.
         epsilon_B : float or array-like
-            Fraction of the post-shock energy density in the magnetic field.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         epsilon_E : float or array-like
-            Fraction of the post-shock energy density in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the
+            relativistic electrons.
         gamma_min : float or array-like
             Minimum electron Lorentz factor.
         gamma_max : float or array-like
@@ -6302,10 +6299,10 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             grid. Must lie within the grid range set at instantiation.
         * - Magnetic equipartition fraction
           - :math:`\epsilon_B`
-          - Fraction of the post-shock energy density in magnetic fields.
+          - Fraction of the thermal (internal) energy density in the magnetic field.
         * - Electron equipartition fraction
           - :math:`\epsilon_E`
-          - Fraction of the post-shock energy density in relativistic electrons.
+          - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         * - Volume filling factor
           - :math:`f_V`
           - Fraction of the sphere occupied by emitting material. Controls the
@@ -6461,9 +6458,10 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         z : float, optional
             Source redshift. Default ``0.0``.
         epsilon_B : float, optional
-            Magnetic equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Electron equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
+            Default ``0.1``.
         gamma_min : float, optional
             Minimum electron Lorentz factor active in the power law.
             Default ``1.0``.
@@ -6585,9 +6583,9 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Electron pitch angle. Bare values are treated as radians.
             ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
         epsilon_B : float, optional
-            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Fraction of post-shock energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
             Default ``0.1``.
         gamma_min : float, optional
             Minimum electron Lorentz factor active in the power law.
@@ -6927,9 +6925,10 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
         z : float, optional
             Source redshift. Default ``0.0``.
         epsilon_B : float, optional
-            Magnetic equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Electron equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
+            Default ``0.1``.
         gamma_min : float, optional
             Minimum electron Lorentz factor active in the power law.
             Default ``1.0``.
@@ -7111,9 +7110,9 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
             Electron pitch angle. Bare values are treated as radians.
             ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
         epsilon_B : float, optional
-            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Fraction of post-shock energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
             Default ``0.1``.
         gamma_min : float, optional
             Minimum electron Lorentz factor active in the power law.
@@ -7319,10 +7318,10 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
             Maxwell-Jüttner distribution.
         * - Magnetic equipartition fraction
           - :math:`\epsilon_B`
-          - Fraction of the post-shock energy density in magnetic fields.
+          - Fraction of the thermal (internal) energy density in the magnetic field.
         * - Electron equipartition fraction
           - :math:`\epsilon_E`
-          - Fraction of the post-shock energy density in thermal electrons.
+          - Fraction of the thermal (internal) energy density in the kinetic energy of the thermal electrons.
         * - Volume filling factor
           - :math:`f_V`
           - Fraction of the sphere occupied by emitting material; controls
@@ -7471,9 +7470,10 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         z : float, optional
             Source redshift. Default ``0.0``.
         epsilon_B : float, optional
-            Magnetic equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Electron equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
+            Default ``0.1``.
 
         Returns
         -------
@@ -7577,9 +7577,9 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
             Electron pitch angle. Bare values are treated as radians.
             ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
         epsilon_B : float, optional
-            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Fraction of post-shock energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
             Default ``0.1``.
         redshift : float, optional
             Source redshift.
@@ -7868,7 +7868,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         p : float, optional
             Power-law index of the non-thermal component. Default ``3.0``.
         delta : float, optional
-            Fraction of total electron energy in the thermal component.
+            Fraction of the electron kinetic energy in the thermal component.
             Must satisfy :math:`0 \le \delta \le 1`. Default ``0.5``.
         f_V : float, optional
             Volume filling factor. Effective LOS path length is :math:`f_V R`.
@@ -7887,9 +7887,10 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         z : float, optional
             Source redshift. Default ``0.0``.
         epsilon_B : float, optional
-            Magnetic equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Total electron equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons. It is
+            shared between the thermal and power-law components according to ``delta``. Default ``0.1``.
         gamma_min : float, optional
             Minimum Lorentz factor of the non-thermal power-law component.
             Default ``1.0``.
@@ -8012,7 +8013,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         p : float, optional
             Power-law index of the non-thermal electron component. Default ``3.0``.
         delta : float, optional
-            Fraction of total electron energy in the thermal component
+            Fraction of the electron kinetic energy in the thermal component
             (:math:`0 \le \delta \le 1`). Default ``0.5``.
         f_V : float, optional
             Volume filling factor; the effective LOS path length is
@@ -8029,10 +8030,10 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Electron pitch angle. Bare values are treated as radians.
             ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
         epsilon_B : float, optional
-            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Total fraction of post-shock energy in relativistic electrons.
-            Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons. It is
+            shared between the thermal and power-law components according to ``delta``. Default ``0.1``.
         gamma_min : float, optional
             Minimum Lorentz factor of the non-thermal power-law component.
             Default ``1.0``.

@@ -150,7 +150,7 @@ class _SSAMicrophysics:
             ) - PowerLaw._integral_power_law(1.0 - self.p, self.gamma_min, self.gamma_max)
         if not np.all(np.isfinite(M1)):
             raise ValueError(
-                "The first moment of the electron distribution is not finite. Use p > 2 or a finite gamma_max."
+                "The mean kinetic energy of the electron distribution is not finite. Use p > 2 or a finite gamma_max."
             )
         self.A_N = (np.asarray(epsilon_E, dtype=float) / np.asarray(epsilon_B, dtype=float)) / (
             8.0 * np.pi * electron_rest_energy_cgs * M1
@@ -386,7 +386,8 @@ def invert_ssa_Diggins26(
     p : float or array-like, optional
         Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
     epsilon_E, epsilon_B : float or array-like, optional
-        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the
+        magnetic field.
     f_A, f_V : float or array-like, optional
         Area and volume filling factors.
     alpha : float or array-like, optional
@@ -466,7 +467,8 @@ def invert_ssa_synchrotron_cooled_Diggins26(
     p : float or array-like, optional
         Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
     epsilon_E, epsilon_B : float or array-like, optional
-        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the
+        magnetic field.
     f_A, f_V : float or array-like, optional
         Area and volume filling factors.
     alpha : float or array-like, optional
@@ -558,7 +560,8 @@ def invert_ssa_ic_cooled_Diggins26(
     p : float or array-like, optional
         Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
     epsilon_E, epsilon_B : float or array-like, optional
-        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the
+        magnetic field.
     f_A, f_V : float or array-like, optional
         Area and volume filling factors.
     alpha : float or array-like, optional
@@ -641,7 +644,8 @@ def invert_ssa_combined_cooled_Diggins26(
     p : float or array-like, optional
         Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
     epsilon_E, epsilon_B : float or array-like, optional
-        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the
+        magnetic field.
     f_A, f_V : float or array-like, optional
         Area and volume filling factors.
     alpha : float or array-like, optional
@@ -725,7 +729,8 @@ def invert_ssa_with_cooling_Diggins26(
     p : float or array-like, optional
         Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
     epsilon_E, epsilon_B : float or array-like, optional
-        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the
+        magnetic field.
     f_A, f_V : float or array-like, optional
         Area and volume filling factors.
     alpha : float or array-like, optional
@@ -860,9 +865,10 @@ def _invert_ssa_DeMarchi22(
     theta : float or array-like, optional
         Pitch angle in radians.
     epsilon_B : float or array-like, optional
-        Fraction of internal energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     epsilon_E : float or array-like, optional
-        Fraction of internal energy in the total energy (rest mass included) of the relativistic electrons.
+        Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the relativistic
+        electrons.
     gamma_min : float or array-like, optional
         Minimum electron Lorentz factor.
     gamma_max : float or array-like, optional
@@ -1009,8 +1015,8 @@ def invert_ssa_DeMarchi22(
     theta : float or array-like, optional
         Pitch angle in radians.
     epsilon_B, epsilon_E : float or array-like, optional
-        Fractions of the internal energy in magnetic fields and in the **total** energy (rest mass included) of the
-        relativistic electrons; see the Notes.
+        Fractions of the thermal (internal) energy density in the magnetic field and in the **total** energy (rest mass
+        included) of the relativistic electrons; see the Notes.
     gamma_min, gamma_max : float or array-like, optional
         Bounds of the electron Lorentz-factor distribution. ``gamma_max`` matters only for :math:`p < 2`.
 

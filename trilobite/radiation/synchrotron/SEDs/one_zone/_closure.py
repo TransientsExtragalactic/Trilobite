@@ -429,9 +429,9 @@ def compute_log_N0_fast_cooling(
     p : float
         Electron power-law index.
     epsilon_e : float
-        Fraction of the post-shock energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float
-        Fraction of the post-shock energy in the magnetic field.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     gamma_max : float, optional
         Maximum electron Lorentz factor. Default is ``numpy.inf``.
 
@@ -474,9 +474,9 @@ def compute_log_N0_slow_cooling(
     p : float
         Electron power-law index.
     epsilon_e : float
-        Fraction of the post-shock energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float
-        Fraction of the post-shock energy in the magnetic field.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     gamma_max : float, optional
         Maximum electron Lorentz factor. Default is ``numpy.inf``.
 
@@ -515,9 +515,9 @@ def compute_log_N0_no_cooling(
     p : float
         Electron power-law index.
     epsilon_e : float
-        Fraction of the post-shock energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float
-        Fraction of the post-shock energy in the magnetic field.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     gamma_max : float, optional
         Maximum electron Lorentz factor. Default is ``numpy.inf``.
 
