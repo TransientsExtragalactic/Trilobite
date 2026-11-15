@@ -211,7 +211,8 @@ LFBOT Models
 Circumstellar interaction of luminous fast blue optical transients (LFBOTs). The two-component model follows an
 equatorial and a polar sightline through an axisymmetric CSM, each with its own thin-shell shock, synchrotron
 emission and free-free attenuation. It provides both a paired ``(time, frequency)`` path for inference and a
-``tabulate`` path for analysis and plotting.
+``tabulate`` path for analysis and plotting. A relativistic version solves the shock with the relativistic thin-shell
+engine and adds a thermal Maxwell-Juettner electron population.
 
 .. dropdown:: Two-component synchrotron model
    :open:

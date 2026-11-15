@@ -15,6 +15,7 @@ Three properties are checked:
 
 import numpy as np
 import pytest
+from astropy import units as u
 from numpy.testing import assert_allclose
 
 from trilobite.dynamics.shocks.chevalier import ChevalierSelfSimilarShockEngine
@@ -148,6 +149,57 @@ class TestRelativisticThinShellClosure:
         _, eta, _ = _rel_shock_face_closure(_RHO0, beta, 4 / 3, engine._beta_grid, engine._beta_3_grid)
 
         assert 1.0 <= eta <= 1 / np.sqrt(1 - beta**2) * (1 + 1e-9)
+
+
+class TestRelativisticThinShellPostShockGas:
+    @pytest.mark.parametrize("gamma_hat", [4 / 3, 5 / 3])
+    @pytest.mark.parametrize("beta_0", [0.05, 0.5, 0.95])
+    def test_thermal_energy_and_density_are_the_closure(self, gamma_hat, beta_0):
+        """e_3 = P_3 / (gamma_hat - 1) = (eta_3 - 1) rho_3 c^2, with rho_3 the compressed upstream density."""
+        engine = RelPressureDrivenThinShellShockEngine(gamma_1=gamma_hat, gamma_4=gamma_hat)
+        sol = _sweep_uniform_csm(beta_0, n_times=20, r_max=1.0, gamma_1=gamma_hat, gamma_4=gamma_hat)
+
+        for i in range(len(sol.radius)):
+            P, eta, compression = _rel_shock_face_closure(
+                _RHO0, sol.beta_rel_fs[i], gamma_hat, engine._beta_grid, engine._beta_3_grid
+            )
+            assert_allclose(sol.density_3[i], compression * _RHO0, rtol=1e-12)
+        assert_allclose(sol.thermal_energy_density_3, sol.pressure_3 / (gamma_hat - 1), rtol=1e-12)
+        assert_allclose(sol.thermal_energy_density_3, (sol.eta_3 - 1) * sol.density_3 * c_cgs**2, rtol=1e-8, atol=0)
+
+    def test_inactive_reverse_shock_has_no_thermal_energy(self):
+        sol = _sweep_uniform_csm(0.5, n_times=20, r_max=1.0)
+
+        assert np.all(sol.thermal_energy_density_2 == 0.0)
+        assert np.all(sol.density_2 == 0.0)  # the (zero) upstream ejecta density
+        assert np.all(sol.thermal_energy_density_3 > 0.0)
+        assert np.all(sol.density_3 > _RHO0)
+
+    def test_public_interface_attaches_units(self):
+        engine = RelPressureDrivenThinShellShockEngine()
+        sol = engine.compute_shock_properties(
+            [1e6, 2e6] * u.s, rho_1=_zero, rho_4=_uniform_csm, beta_1=_zero, beta_4=_zero, R_0=1e13, beta_0=0.3, M_0=_M0
+        )
+
+        assert sol.density_3.unit == u.g / u.cm**3
+        assert sol.thermal_energy_density_3.unit == u.erg / u.cm**3
+
+    def test_nonrelativistic_thermal_energy_density_matches_the_nonrelativistic_engine(self):
+        """For a slow shell into a uniform medium both engines report the strong-shock thermal energy density."""
+        beta = 0.01
+        R_0, t_0 = 1e15, 1e15 / (beta * c_cgs)
+        times = np.array([t_0, 1.5 * t_0])
+        M_0 = 4 * np.pi / 3 * R_0**3 * _RHO0
+
+        nonrel = PressureDrivenThinShellShockEngine()._compute_shock_properties_cgs(
+            times, rho_1=_zero, rho_4=_uniform_csm, u_1=_zero, u_4=_zero, R_0=R_0, v_0=beta * c_cgs, M_0=M_0, t_0=t_0
+        )
+        rel_sol = RelPressureDrivenThinShellShockEngine(gamma_1=5 / 3, gamma_4=5 / 3)._compute_shock_properties_cgs(
+            times, rho_1=_zero, rho_4=_uniform_csm, beta_1=_zero, beta_4=_zero, R_0=R_0, beta_0=beta, M_0=M_0, t_0=t_0
+        )
+
+        assert_allclose(rel_sol.thermal_energy_density_3, nonrel.thermal_energy_density, rtol=1e-3)
+        assert_allclose(rel_sol.density_3, nonrel.post_shock_density, rtol=1e-3)
 
 
 class TestRelativisticThinShellNonRelativisticLimit:

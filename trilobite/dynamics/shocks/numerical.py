@@ -612,6 +612,33 @@ class RelThinShellShockState(NamedTuple):
     It tends to 1 for slow shocks and stays below :math:`\Gamma_{\rm rel,3}` otherwise.
     """
 
+    # ------------------------------------------------------------------ #
+    # Post-shock gas                                                      #
+    # ------------------------------------------------------------------ #
+    density_2: Union[np.ndarray, u.Quantity]
+    r"""
+    Shell-frame (proper) rest-mass density :math:`\rho_2` of the shocked ejecta from the thin-shell closure used by
+    the ODE, in :math:`\mathrm{g\,cm^{-3}}`. An inactive reverse shock leaves the upstream density.
+    """
+
+    density_3: Union[np.ndarray, u.Quantity]
+    r"""
+    Shell-frame (proper) rest-mass density :math:`\rho_3` of the shocked CSM from the thin-shell closure used by the
+    ODE, in :math:`\mathrm{g\,cm^{-3}}`. An inactive forward shock leaves the upstream density.
+    """
+
+    thermal_energy_density_2: Union[np.ndarray, u.Quantity]
+    r"""
+    Shell-frame thermal (internal, rest mass excluded) energy density of the shocked ejecta,
+    :math:`e_2 = P_2/(\hat\gamma_1 - 1) = (\eta_2 - 1)\rho_2 c^2`, in :math:`\mathrm{erg\,cm^{-3}}`.
+    """
+
+    thermal_energy_density_3: Union[np.ndarray, u.Quantity]
+    r"""
+    Shell-frame thermal (internal, rest mass excluded) energy density of the shocked CSM,
+    :math:`e_3 = P_3/(\hat\gamma_4 - 1) = (\eta_3 - 1)\rho_3 c^2`, in :math:`\mathrm{erg\,cm^{-3}}`.
+    """
+
 
 class PressureDrivenThinShellShockEngine(ShockEngine):
     r"""
@@ -1399,6 +1426,10 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
             pressure_3=cgs.pressure_3 * (u.dyn / u.cm**2),
             eta_2=cgs.eta_2,
             eta_3=cgs.eta_3,
+            density_2=cgs.density_2 * (u.g / u.cm**3),
+            density_3=cgs.density_3 * (u.g / u.cm**3),
+            thermal_energy_density_2=cgs.thermal_energy_density_2 * (u.erg / u.cm**3),
+            thermal_energy_density_3=cgs.thermal_energy_density_3 * (u.erg / u.cm**3),
         )
 
     def _compute_shock_properties_cgs(
@@ -1503,15 +1534,23 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
         pressure_3 = np.zeros(n_steps)
         eta_2 = np.ones(n_steps)
         eta_3 = np.ones(n_steps)
+        density_2 = rho1_arr.copy()
+        density_3 = rho4_arr.copy()
         for i in range(n_steps):
             if rho1_arr[i] > 0.0 and b1_arr[i] > beta_sh[i] and beta_rel_rs[i] > self._beta_grid[0]:
-                pressure_2[i], eta_2[i], _ = _rel_shock_face_closure(
+                pressure_2[i], eta_2[i], compression = _rel_shock_face_closure(
                     rho1_arr[i], beta_rel_rs[i], self._gamma_ad_1, self._beta_grid, self._beta_2_grid
                 )
+                density_2[i] = compression * rho1_arr[i]
             if rho4_arr[i] > 0.0 and beta_sh[i] > b4_arr[i] and beta_rel_fs[i] > self._beta_grid[0]:
-                pressure_3[i], eta_3[i], _ = _rel_shock_face_closure(
+                pressure_3[i], eta_3[i], compression = _rel_shock_face_closure(
                     rho4_arr[i], beta_rel_fs[i], self._gamma_ad_4, self._beta_grid, self._beta_3_grid
                 )
+                density_3[i] = compression * rho4_arr[i]
+
+        # The thermal energy density excludes rest mass: e = P / (gamma_hat - 1) = (eta - 1) rho c^2.
+        thermal_energy_density_2 = pressure_2 / (self._gamma_ad_1 - 1.0)
+        thermal_energy_density_3 = pressure_3 / (self._gamma_ad_4 - 1.0)
 
         return RelThinShellShockState(
             radius=R_sh,
@@ -1529,6 +1568,10 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
             pressure_3=pressure_3,
             eta_2=eta_2,
             eta_3=eta_3,
+            density_2=density_2,
+            density_3=density_3,
+            thermal_energy_density_2=thermal_energy_density_2,
+            thermal_energy_density_3=thermal_energy_density_3,
         )
 
 

@@ -130,6 +130,10 @@ class Diggins26SectorDynamics(NamedTuple):
     """Shell mass."""
     thermal_energy_density: u.Quantity
     """Post-shock thermal energy density."""
+    density: Optional[u.Quantity] = None
+    """Post-shock proper rest-mass density, or ``None`` if the shock solver does not report it."""
+    lorentz_factor: Optional[np.ndarray] = None
+    """Lorentz factor of the shell, or ``None`` for the non-relativistic shock solver."""
 
 
 class Diggins26Dynamics(NamedTuple):
@@ -182,6 +186,13 @@ class Diggins26SectorRadiation(NamedTuple):
     """The sector's volume fraction :math:`f_V`, with :math:`V = f_V\\,4\\pi R^3/3`."""
     path_length_ratio: float
     """The sector's mean path length through the emitting shell in units of its radius, :math:`\\ell / R`."""
+    thermal_temperature: Optional[np.ndarray] = None
+    """
+    Dimensionless temperature :math:`\\Theta_e` of the thermal electrons, shape ``(n_t,)``, or ``None`` for a model
+    without a thermal electron component.
+    """
+    thermal_electron_density: Optional[u.Quantity] = None
+    """Number density of the thermal electrons, shape ``(n_t,)``, or ``None`` without a thermal component."""
 
 
 class Diggins26Tabulation(NamedTuple):
@@ -208,6 +219,21 @@ class _SectorState(NamedTuple):
     velocity: np.ndarray
     mass: np.ndarray
     eth: np.ndarray
+    density: Optional[np.ndarray] = None  # post-shock proper rest-mass density (relativistic solver only)
+    lorentz_factor: Optional[np.ndarray] = None  # shell Lorentz factor (relativistic solver only)
+
+
+class _Microphysics(NamedTuple):
+    """Electron microphysics at every epoch of one sector (internal)."""
+
+    B: np.ndarray
+    """Magnetic field, shape ``(n_t,)``."""
+    gamma_c: np.ndarray
+    """Cooling Lorentz factor, shape ``(n_t,)``."""
+    N0: np.ndarray
+    """Amplitude of the cooled broken power law, shape ``(n_t,)``."""
+    log_N: np.ndarray
+    """Natural log of the electron distribution on the Lorentz-factor grid, shape ``(n_t, n_gamma)``."""
 
 
 # =========================================================================== #
@@ -1050,6 +1076,47 @@ class Diggins26_TwoComponentModel(Model):
             except IntegrationWarning:
                 return float("nan")
 
+    def _integrate_sector(self, prep: dict, rho_csm, M_0: float, t_rest: np.ndarray) -> _SectorState:
+        """
+        Integrate the shock along one sightline.
+
+        Parameters
+        ----------
+        prep : dict
+            The ejecta callable and starting conditions from :meth:`_prepare`.
+        rho_csm : callable
+            Unit-free CSM density ``rho(r, t)`` along the sightline.
+        M_0 : float
+            CSM mass swept up inside the starting radius, in g.
+        t_rest : numpy.ndarray
+            Source-frame epochs, in s.
+
+        Raises
+        ------
+        RuntimeError
+            If the integration fails.
+        """
+        rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(rho_ej=prep["rho_ej"], rho_csm=rho_csm)
+        shock = self._shock_engine._compute_shock_properties_cgs(
+            time=t_rest,
+            rho_1=rho_1,
+            rho_4=rho_4,
+            u_1=u_1,
+            u_4=u_4,
+            R_0=prep["R_0"],
+            v_0=prep["v_0"],
+            M_0=M_0,
+            t_0=self._t_0,
+            gamma=self._adiabatic_index,
+            **self._integrator_kw,
+        )
+        return _SectorState(
+            radius=np.asarray(shock.radius),
+            velocity=np.asarray(shock.velocity),
+            mass=np.asarray(shock.mass),
+            eth=np.asarray(shock.thermal_energy_density),
+        )
+
     def _solve_dynamics(self, p: dict, prep: dict, t_rest: np.ndarray):
         """
         Solve the shock along both sightlines at the unique source-frame epochs.
@@ -1064,7 +1131,6 @@ class Diggins26_TwoComponentModel(Model):
         states = []
         for theta in (_THETA_EQUATOR, _THETA_POLE):
             rho_csm = self._sector_density(p, theta)
-            rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(rho_ej=prep["rho_ej"], rho_csm=rho_csm)
 
             # The starting shell holds the CSM swept up inside R_0 along this sightline.
             M_0 = self._swept_mass(rho_csm, prep["R_0"], self._r_min)
@@ -1075,29 +1141,11 @@ class Diggins26_TwoComponentModel(Model):
                 )
 
             try:
-                shock = self._shock_engine._compute_shock_properties_cgs(
-                    time=t_rest,
-                    rho_1=rho_1,
-                    rho_4=rho_4,
-                    u_1=u_1,
-                    u_4=u_4,
-                    R_0=prep["R_0"],
-                    v_0=prep["v_0"],
-                    M_0=M_0,
-                    t_0=self._t_0,
-                    gamma=self._adiabatic_index,
-                    **self._integrator_kw,
-                )
+                state = self._integrate_sector(prep, rho_csm, M_0, t_rest)
             except RuntimeError as exc:
                 return None, f"The shock ODE integration failed: {exc}"
 
-            state = _SectorState(
-                radius=np.asarray(shock.radius),
-                velocity=np.asarray(shock.velocity),
-                mass=np.asarray(shock.mass),
-                eth=np.asarray(shock.thermal_energy_density),
-            )
-            if not all(np.all(np.isfinite(a)) for a in state) or np.any(state.radius <= 0):
+            if not all(np.all(np.isfinite(a)) for a in state if a is not None) or np.any(state.radius <= 0):
                 return None, "The shock solution is non-finite."
             states.append(state)
         return tuple(states), None
@@ -1161,6 +1209,10 @@ class Diggins26_TwoComponentModel(Model):
         n_gamma = max(int(np.ceil(n_per_decade * np.log10(p["gamma_max"] / p["gamma_min"]))) + 1, 16)
         return np.geomspace(p["gamma_min"], p["gamma_max"], n_gamma)
 
+    def _quadrature(self, gamma: np.ndarray) -> tuple:
+        """Natural log of the Lorentz-factor grid and of its quadrature weights."""
+        return self._synchrotron_engine._build_gamma_grid(gamma)
+
     # ----- Electrons ---------------------------------------------------------------------------------------------- #
     def _seed_luminosity_cgs(self, t_rest: np.ndarray) -> np.ndarray:
         """Evaluate the user's seed photon luminosity L(t) at the source-frame epochs, in erg/s."""
@@ -1193,7 +1245,7 @@ class Diggins26_TwoComponentModel(Model):
         """
         Magnetic field, cooling break, and electron distribution at every epoch.
 
-        Returns ``(B, gamma_c, N0, log_N)``, where ``log_N`` has shape ``(n_epochs, n_gamma)``.
+        Returns a :class:`_Microphysics`, where ``log_N`` has shape ``(n_epochs, n_gamma)``.
         """
         # Equipartition magnetic field from the post-shock thermal energy density.
         B = np.sqrt(8.0 * np.pi * p["epsilon_B"] * state.eth)
@@ -1216,7 +1268,7 @@ class Diggins26_TwoComponentModel(Model):
         N0 = BrokenPowerLaw._normalize_from_magnetic_field(B, p["epsilon_B"], p["epsilon_e"], gamma_c=gamma_c, **shape)
         with np.errstate(divide="ignore"):  # ln(0) = -inf outside the support
             log_N = np.log(BrokenPowerLaw._opt_pdf(gamma[None, :], N0[:, None], gamma_c=gamma_c[:, None], **shape))
-        return B, gamma_c, N0, log_N
+        return _Microphysics(B, gamma_c, N0, log_N)
 
     # ----- Free-free ---------------------------------------------------------------------------------------------- #
     def _sightlines(self, inclination: float) -> tuple:
@@ -1361,8 +1413,8 @@ class Diggins26_TwoComponentModel(Model):
         ``nu_groups[i]`` holds the observer-frame frequencies to evaluate at epoch ``i``. ``geometry`` holds the
         sector's ``f_A`` and ``ell_over_R``. Returns a list of arrays (one per epoch) in CGS flux units.
         """
-        B, _, _, log_N = micro
-        log_gamma, log_weights = self._synchrotron_engine._build_gamma_grid(gamma)
+        B, log_N = micro.B, micro.log_N
+        log_gamma, log_weights = self._quadrature(gamma)
 
         # A sector with no projected area does not radiate.
         if not geometry["f_A"] > 0.0:
@@ -1544,6 +1596,8 @@ class Diggins26_TwoComponentModel(Model):
                 velocity=s.velocity * (u.cm / u.s),
                 mass=s.mass * u.g,
                 thermal_energy_density=s.eth * (u.erg / u.cm**3),
+                density=None if s.density is None else s.density * (u.g / u.cm**3),
+                lorentz_factor=s.lorentz_factor,
             )
 
         return Diggins26Dynamics(
@@ -1604,6 +1658,8 @@ class Diggins26_TwoComponentModel(Model):
                 velocity=d.velocity.to_value(u.cm / u.s),
                 mass=d.mass.to_value(u.g),
                 eth=d.thermal_energy_density.to_value(u.erg / u.cm**3),
+                density=None if d.density is None else d.density.to_value(u.g / u.cm**3),
+                lorentz_factor=d.lorentz_factor,
             )
             for d in (dynamics.equatorial, dynamics.polar)
         )
@@ -1622,19 +1678,22 @@ class Diggins26_TwoComponentModel(Model):
             with np.errstate(divide="ignore"):
                 tau = -np.log(transmission)
             total = total + attenuated
-            B, gamma_c, N0, _ = micro
             results.append(
                 Diggins26SectorRadiation(
                     flux_density=(1e23 * flux) * u.Jy,
                     flux_density_attenuated=(1e23 * attenuated) * u.Jy,
                     tau_ff=tau,
                     emission_measure=EM.mean(axis=0) * u.cm**-5,
-                    magnetic_field=B * u.G,
-                    gamma_c=gamma_c,
-                    electron_normalization=N0 * u.cm**-3,
+                    magnetic_field=micro.B * u.G,
+                    gamma_c=micro.gamma_c,
+                    electron_normalization=micro.N0 * u.cm**-3,
                     area_fraction=geometry["f_A"],
                     volume_fraction=geometry["f_V"],
                     path_length_ratio=geometry["ell_over_R"],
+                    thermal_temperature=getattr(micro, "theta_e", None),
+                    thermal_electron_density=(
+                        None if getattr(micro, "n_thermal", None) is None else micro.n_thermal * u.cm**-3
+                    ),
                 )
             )
 
