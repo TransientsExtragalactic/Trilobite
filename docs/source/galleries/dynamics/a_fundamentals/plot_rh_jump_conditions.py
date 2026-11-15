@@ -31,7 +31,7 @@ number of different physical regimes and assumptions. In this example, we compar
 In this example, we'll show how these different solvers behave across a few different shock parameters.
 We apply all three to a cold, stationary CSM across
 :math:`\beta = 10^{-3}` to :math:`\beta = 0.99` and compare the predicted
-compression ratio, post-shock temperature, and post-shock pressure.
+compression ratio, post-shock thermal energy per unit rest mass, and post-shock pressure.
 
 .. seealso::
 
@@ -135,9 +135,17 @@ nr_R = np.array([r.compression_ratio for r in nr_results])
 rel_R = np.array([r.compression_ratio for r in rel_results])
 ur_R = np.array([r.compression_ratio for r in ur_results])
 
-nr_T = np.array([r.post_shock_temperature.to_value(u.K) for r in nr_results])
-rel_T = np.array([r.post_shock_temperature.to_value(u.K) for r in rel_results])
-ur_T = np.array([r.post_shock_temperature.to_value(u.K) for r in ur_results])
+
+def thermal_energy_per_rest_mass(results):
+    """Return the post-shock thermal energy density in units of the rest-mass energy density."""
+    return np.array(
+        [(r.post_shock_thermal_energy_density / (r.post_shock_density * const.c**2)).decompose().value for r in results]
+    )
+
+
+nr_xi = thermal_energy_per_rest_mass(nr_results)
+rel_xi = thermal_energy_per_rest_mass(rel_results)
+ur_xi = thermal_energy_per_rest_mass(ur_results)
 
 nr_P = np.array([r.post_shock_pressure.to_value(u.dyn / u.cm**2) for r in nr_results])
 rel_P = np.array([r.post_shock_pressure.to_value(u.dyn / u.cm**2) for r in rel_results])
@@ -178,30 +186,31 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Post-shock Temperature
-# ----------------------
+# Post-shock Thermal Energy
+# -------------------------
 #
-# In the Newtonian regime, the post-shock temperature scales simply as:
+# The jump conditions fix the post-shock thermal energy density :math:`u_{\rm th}`, not the temperatures of the
+# individual species. A convenient dimensionless measure is the thermal energy per unit rest-mass energy,
+# :math:`\xi = u_{\rm th} / (\rho_2 c^2)`. For a cold upstream medium, energy conservation gives
+# :math:`\xi = \Gamma_{\rm rel} - 1`, where :math:`\Gamma_{\rm rel}` is the Lorentz factor of the downstream
+# fluid relative to the upstream.
 #
-# .. math::
-#     T_2 \propto v_{\rm sh}^2
+# In the Newtonian regime :math:`\xi \propto v_{\rm sh}^2`. As the shock becomes relativistic, this scaling breaks
+# down and :math:`\xi` grows with the Lorentz factor instead. The ultra-relativistic solution again converges only
+# in the :math:`\Gamma \gg 1` limit.
 #
-# This produces a clean power-law relation. As the shock becomes relativistic,
-# this scaling breaks down, and the temperature grows more slowly as energy is
-# redistributed into relativistic degrees of freedom.
-#
-# The ultra-relativistic solution again converges only in the
-# :math:`\Gamma \gg 1` limit.
+# How :math:`u_{\rm th}` is shared between ions and electrons sets their temperatures; see
+# :func:`~trilobite.physics_utils.thermal_partition.compute_ion_electron_theta`.
 
 fig, ax = plt.subplots(figsize=(5, 4))
 
-ax.loglog(betas, nr_T, ls="--", color="#4C72B0", label="Newtonian")
-ax.loglog(betas, rel_T, lw=2.2, color="#DD8452", label="Relativistic")
-ax.loglog(betas[ur_mask], ur_T, ls=":", lw=2.2, color="#55A868", label=r"Ultra-relativistic")
+ax.loglog(betas, nr_xi, ls="--", color="#4C72B0", label="Newtonian")
+ax.loglog(betas, rel_xi, lw=2.2, color="#DD8452", label="Relativistic")
+ax.loglog(betas[ur_mask], ur_xi, ls=":", lw=2.2, color="#55A868", label=r"Ultra-relativistic")
 
 ax.set_xlabel(r"$\beta = v_{\rm sh}/c$")
-ax.set_ylabel(r"$T_2\ (\mathrm{K})$")
-ax.set_title("Post-shock Temperature")
+ax.set_ylabel(r"$u_{\rm th} / (\rho_2 c^2)$")
+ax.set_title("Post-shock Thermal Energy")
 
 ax.legend(frameon=False)
 ax.grid(alpha=0.25, which="both")
@@ -212,7 +221,7 @@ plt.show()
 # Post-shock Pressure
 # -------------------
 #
-# The post-shock pressure follows a similar trend to the temperature:
+# The post-shock pressure follows a similar trend to the thermal energy:
 #
 # - Newtonian: :math:`P_2 \propto \rho_1 v_{\rm sh}^2`
 # - Relativistic: modified by Lorentz transformations of energy and momentum

@@ -72,48 +72,6 @@ def _shock_frame_beta(beta_shock, beta_upstream):
     return (beta_shock - beta_upstream) / (1.0 - beta_shock * beta_upstream)
 
 
-def _maxwell_juttner_temperature_cgs(U_int, rho, mu):
-    r"""Post-shock temperature from the Maxwell–Jüttner internal energy relation.
-
-    Inverts the Gammie–McKinney approximation :footcite:p:`1998ApJ...498..313G`
-
-    .. math::
-
-        U_{\rm int} \approx \rho c^2 \Theta \frac{6 + 15\Theta}{4 + 5\Theta},
-
-    where :math:`\Theta = k_B T / (\mu m_p c^2)`, to obtain
-
-    .. math::
-
-        \Theta = \frac{5\xi - 6 + \sqrt{(6 - 5\xi)^2 + 240\xi}}{30},
-
-    with :math:`\xi = U_{\rm int} / (\rho c^2)`.
-
-    Notes
-    -----
-    The discriminant coefficient 240 = 4 · 15 · 4 follows from the quadratic formula applied to
-    ``15Θ² + (6 − 5ξ)Θ − 4ξ = 0``. Substituting Θ = 1 (ξ = 7/3) recovers the identity.
-
-    Parameters
-    ----------
-    U_int : float
-        Proper internal energy density (erg cm⁻³).
-    rho : float
-        Proper rest-mass density (g cm⁻³).
-    mu : float
-        Mean molecular weight.
-
-    Returns
-    -------
-    float
-        Post-shock temperature (K).
-    """
-    xi = U_int / (rho * c_cgs**2)
-    discriminant = (6.0 - 5.0 * xi) ** 2 + 240.0 * xi
-    theta = (5.0 * xi - 6.0 + np.sqrt(discriminant)) / 30.0
-    return theta * mu * m_p_cgs * c_cgs**2 / k_B_cgs
-
-
 def _relativistic_implicit_eq(beta2, beta1, gamma1, omega1, pi1, gamma_hat):
     r"""Residual of the relativistic jump condition.
 
@@ -197,9 +155,8 @@ def _reconstruct_state_cgs(beta1, beta2, rho1, omega1, gamma_hat, mu):
     U_int2 = P2 / (gamma_hat - 1.0)
     e2 = rho2 * c_cgs**2 + U_int2
 
-    # Proper number density and temperature
+    # Proper number density of all particles
     n2 = rho2 / (mu * m_p_cgs)
-    T2 = _maxwell_juttner_temperature_cgs(U_int2, rho2, mu)
 
     return {
         "compression_ratio": R,
@@ -208,7 +165,7 @@ def _reconstruct_state_cgs(beta1, beta2, rho1, omega1, gamma_hat, mu):
         "post_shock_density": rho2,
         "post_shock_number_density": n2,
         "post_shock_pressure": P2,
-        "post_shock_temperature": T2,
+        "post_shock_thermal_energy_density": U_int2,
         "post_shock_energy_density": e2,
     }
 
@@ -300,7 +257,7 @@ class RelativisticJumpConditions(ABC):
         ("post_shock_density", u.g / u.cm**3),
         ("post_shock_number_density", u.cm**-3),
         ("post_shock_pressure", u.dyn / u.cm**2),
-        ("post_shock_temperature", u.K),
+        ("post_shock_thermal_energy_density", u.erg / u.cm**3),
         ("post_shock_energy_density", u.erg / u.cm**3),
     )
     """tuple: Post-shock output fields as ``(name, unit)`` pairs.
@@ -620,9 +577,8 @@ class UltraRelativisticShockConditions(RelativisticJumpConditions):
     Notes
     -----
     Although Π₁ does not enter β₂ in the UR limit, the upstream enthalpy Ω₁ still
-    affects :math:`w_2` and therefore :math:`P_2`, :math:`U_{\rm int,2}`, and
-    :math:`T_2`.  Pass *upstream_pressure* or *upstream_temperature* to account for
-    a warm upstream medium; leave both ``None`` to assume P₁ = 0 (equivalent to
+    affects :math:`w_2` and therefore :math:`P_2` and :math:`U_{\rm int,2}`.  Pass *upstream_pressure* or
+    *upstream_temperature* to account for a warm upstream medium; leave both ``None`` to assume P₁ = 0 (equivalent to
     :class:`UltraRelativisticColdShockConditions`).
     """
 

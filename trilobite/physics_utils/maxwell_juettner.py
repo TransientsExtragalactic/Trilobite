@@ -45,6 +45,7 @@ _CDF_TAIL_WIDTHS = 50.0  # the CDF grid ends at gamma - 1 = 50 Theta; <1e-18 of 
 _SERIES_THETA = 1e-4  # below this <gamma - 1> uses its series expansion
 _KVE_ASYMPTOTIC_Z = 1e8  # above this kve(2, z) uses its asymptotic series (scipy returns NaN beyond ~1e10)
 _EXP_UNDERFLOW = -746.0  # exp(x) is zero below this
+_THETA_NEWTON_STEPS = 4  # the seed is within 1.6%, so Newton converges to machine precision in 3 steps
 
 
 # ============================================================================ #
@@ -166,6 +167,21 @@ def _opt_mj_theta_from_kinetic_energy(xi):
         8.0 * xi / (discriminant + 6.0 - 5.0 * xi),
         (5.0 * xi - 6.0 + discriminant) / 30.0,
     )[()]
+
+
+def _opt_mj_exact_theta_from_kinetic_energy(xi):
+    # Newton's method on <gamma - 1>(Theta) = xi, seeded with the closed-form inverse of the Gammie & McKinney fit
+    # (within 1.6%). The slope is d<gamma>/dTheta = Var(gamma) / Theta^2, because the MJ distribution is an exponential
+    # family in gamma with natural parameter 1 / Theta; it needs no Bessel-function derivatives.
+    xi = np.asarray(xi, dtype="f8")
+    Theta = np.asarray(_opt_mj_theta_from_kinetic_energy(xi), dtype="f8")
+    for _ in range(_THETA_NEWTON_STEPS):
+        kinetic = _opt_mj_exact_mean_kinetic_energy(Theta)
+        variance = 3.0 * Theta**2 + 3.0 * Theta + 3.0 * Theta * kinetic - 2.0 * kinetic - kinetic**2
+        series_slope = 1.5 + Theta * (3.75 - 5.625 * Theta)
+        slope = np.where(Theta < _SERIES_THETA, series_slope, variance / Theta**2)
+        Theta = Theta - (kinetic - xi) / slope
+    return Theta[()]
 
 
 # ============================================================================ #
@@ -414,28 +430,38 @@ def compute_mj_mean_kinetic_energy(
     return backend(_validate_Theta(Theta))
 
 
-def compute_mj_theta_from_kinetic_energy(xi: Union[_ArrayLike, _ScalarLike]) -> Union[_ScalarLike, np.ndarray]:
+def compute_mj_theta_from_kinetic_energy(
+    xi: Union[_ArrayLike, _ScalarLike], approximate: bool = False
+) -> Union[_ScalarLike, np.ndarray]:
     r"""
-    Invert the approximate mean kinetic energy to obtain :math:`\Theta`.
+    Invert the mean kinetic energy to obtain :math:`\Theta`.
 
     Given :math:`\xi = U_{\rm int} / (\rho c^2)`, the internal energy per unit rest-mass energy, this solves
-    :math:`\xi = \Theta (6 + 15\Theta) / (4 + 5\Theta)` :footcite:p:`1998ApJ...498..313G`, a quadratic with solution
+    :math:`\xi = \langle \gamma - 1 \rangle(\Theta)` for the Maxwell-Juettner distribution. The exact inversion
+    uses Newton's method on :func:`compute_mj_mean_kinetic_energy`. With ``approximate=True`` it instead solves the
+    fit :math:`\xi = \Theta (6 + 15\Theta) / (4 + 5\Theta)` :footcite:p:`1998ApJ...498..313G`, a quadratic with the
+    closed-form solution
 
     .. math::
 
-        \Theta = \frac{5\xi - 6 + \sqrt{(6 - 5\xi)^2 + 240\xi}}{30}.
+        \Theta = \frac{5\xi - 6 + \sqrt{(6 - 5\xi)^2 + 240\xi}}{30},
+
+    which is within 1.6% of the exact mean kinetic energy.
 
     Parameters
     ----------
     xi : float or array-like
         Internal energy per unit rest-mass energy. Must be positive.
+    approximate : bool, optional
+        Use the closed-form inversion of the fit instead of the exact one. Default is ``False``.
 
     Returns
     -------
     float or ~numpy.ndarray
         The dimensionless temperature :math:`\Theta = k_B T / (m c^2)` of the particle that carries the rest mass.
     """
-    return _opt_mj_theta_from_kinetic_energy(_check(_as_dimensionless(xi, "xi"), "xi"))
+    xi = _check(_as_dimensionless(xi, "xi"), "xi")
+    return _opt_mj_theta_from_kinetic_energy(xi) if approximate else _opt_mj_exact_theta_from_kinetic_energy(xi)
 
 
 # ============================================================================ #

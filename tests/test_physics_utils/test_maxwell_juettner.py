@@ -178,14 +178,31 @@ class TestMoments:
         assert compute_mj_mean_kinetic_energy(1e-3, approximate=True) == pytest.approx(1.5e-3, rel=1e-2)
         assert compute_mj_mean_kinetic_energy(1e3, approximate=True) == pytest.approx(3e3, rel=1e-2)
 
-    def test_theta_inversion_round_trip(self):
+    @pytest.mark.parametrize("Theta", [1e-12, 1e-6, 1e-3, 0.1, 1.0, 30.0, 1e3, 1e6])
+    def test_exact_theta_inversion_round_trip(self, Theta):
+        xi = compute_mj_mean_kinetic_energy(Theta)
+        assert compute_mj_theta_from_kinetic_energy(xi) == pytest.approx(Theta, rel=1e-10)
+
+    def test_exact_theta_inversion_round_trip_array(self):
+        Theta = np.logspace(-10, 6, 500)
+        np.testing.assert_allclose(
+            compute_mj_theta_from_kinetic_energy(compute_mj_mean_kinetic_energy(Theta)), Theta, rtol=1e-10
+        )
+
+    def test_approximate_theta_inversion_round_trip(self):
         Theta = np.array([1e-3, 0.1, 1.0, 30.0])
         xi = compute_mj_mean_kinetic_energy(Theta, approximate=True)
-        np.testing.assert_allclose(compute_mj_theta_from_kinetic_energy(xi), Theta, rtol=1e-10)
+        np.testing.assert_allclose(compute_mj_theta_from_kinetic_energy(xi, approximate=True), Theta, rtol=1e-10)
 
-    def test_theta_inversion_known_point(self):
-        # Theta = 1 gives xi = 21/9 = 7/3 (the identity noted in the jump-condition docs).
-        assert compute_mj_theta_from_kinetic_energy(7.0 / 3.0) == pytest.approx(1.0)
+    def test_approximate_theta_inversion_known_point(self):
+        # Theta = 1 gives xi = 21/9 = 7/3 for the fit (the identity noted in the jump-condition docs).
+        assert compute_mj_theta_from_kinetic_energy(7.0 / 3.0, approximate=True) == pytest.approx(1.0)
+
+    def test_exact_and_approximate_theta_agree_to_the_fit_accuracy(self):
+        xi = np.logspace(-8, 6, 200)
+        exact = compute_mj_theta_from_kinetic_energy(xi)
+        approx = compute_mj_theta_from_kinetic_energy(xi, approximate=True)
+        assert np.max(np.abs(approx / exact - 1.0)) < 0.02
 
     def test_theta_inversion_rejects_nonpositive(self):
         with pytest.raises(ValueError):
