@@ -12,6 +12,7 @@ from trilobite.radiation.synchrotron.electron_distributions import (
     MaxwellJuettner,
     MaxwellJuettnerBrokenPowerLaw,
     MaxwellJuettnerPowerLaw,
+    MixedThermalNonThermal,
     PowerLaw,
 )
 from trilobite.physics_utils.maxwell_juettner import (
@@ -308,69 +309,157 @@ class TestElectronDistributionNormalization:
             for a, b in zip(edges[:-1], edges[1:])
         )
 
+    # (class, shape parameters, budget fractions, fraction of u_th the class's electrons carry as kinetic energy).
+    # Thermal electrons carry eps_T (1 - eps_B - eps_E) / (1 + eps_T); the non-thermal ones carry eps_E.
     CASES = [
-        (PowerLaw, PL),
-        (PowerLaw, PL_NONREL),
-        (BrokenPowerLaw, BPL),
-        (MaxwellJuettner, {"Theta": 0.05}),
-        (MaxwellJuettner, {"Theta": 1.0}),
-        (MaxwellJuettner, {"Theta": 20.0}),
-        (MaxwellJuettnerPowerLaw, {"Theta": 0.5, "delta": 0.3, **PL}),
-        (MaxwellJuettnerPowerLaw, {"Theta": 5.0, "delta": 0.7, **PL_NONREL}),
-        (MaxwellJuettnerBrokenPowerLaw, {"Theta": 1.0, "delta": 0.5, **BPL}),
+        (PowerLaw, PL, {"epsilon_B": 0.1, "epsilon_E": 0.3}, 0.3),
+        (PowerLaw, PL_NONREL, {"epsilon_B": 0.1, "epsilon_E": 0.3}, 0.3),
+        (BrokenPowerLaw, BPL, {"epsilon_B": 0.1, "epsilon_E": 0.3}, 0.3),
+        (MaxwellJuettner, {"Theta": 0.05}, {"epsilon_B": 0.1, "epsilon_T": 0.5}, 0.5 * 0.9 / 1.5),
+        (MaxwellJuettner, {"Theta": 1.0}, {"epsilon_B": 0.1, "epsilon_T": 2.0}, 2.0 * 0.9 / 3.0),
+        (MaxwellJuettner, {"Theta": 20.0}, {"epsilon_B": 0.2, "epsilon_T": 0.1, "epsilon_E": 0.3}, 0.1 * 0.5 / 1.1),
+        (
+            MaxwellJuettnerPowerLaw,
+            {"Theta": 0.5, **PL},
+            {"epsilon_B": 0.1, "epsilon_T": 0.4, "epsilon_E": 0.2},
+            0.4 * 0.7 / 1.4 + 0.2,
+        ),
+        (
+            MaxwellJuettnerPowerLaw,
+            {"Theta": 5.0, **PL_NONREL},
+            {"epsilon_B": 0.1, "epsilon_T": 3.0, "epsilon_E": 0.05},
+            3.0 * 0.85 / 4.0 + 0.05,
+        ),
+        (
+            MaxwellJuettnerBrokenPowerLaw,
+            {"Theta": 1.0, **BPL},
+            {"epsilon_B": 0.1, "epsilon_T": 1.0, "epsilon_E": 0.1},
+            1.0 * 0.8 / 2.0 + 0.1,
+        ),
     ]
 
-    @pytest.mark.parametrize(("cls", "params"), CASES)
-    def test_energy_budget_is_kinetic(self, cls, params):
+    @staticmethod
+    def _pdf_params(cls, params, budget):
+        """Parameters for ``cls.pdf``: the mixed classes take the budget fractions as shape parameters."""
+        return {**params, **budget} if issubclass(cls, MixedThermalNonThermal) else params
+
+    @staticmethod
+    def _normalize_from_energy_density(cls, u_th, params, budget):
+        if cls in (PowerLaw, BrokenPowerLaw):
+            return cls.normalize_from_energy_density(u_th, budget["epsilon_E"], **params)
+        return cls.normalize_from_energy_density(u_th, **budget, **params)
+
+    @staticmethod
+    def _normalize_from_magnetic_field(cls, B, params, budget):
+        budget = dict(budget)
+        epsilon_B = budget.pop("epsilon_B")
+        if cls in (PowerLaw, BrokenPowerLaw):
+            return cls.normalize_from_magnetic_field(B, epsilon_B, budget["epsilon_E"], **params)
+        return cls.normalize_from_magnetic_field(B, epsilon_B, **budget, **params)
+
+    @pytest.mark.parametrize(("cls", "params", "budget", "electron_fraction"), CASES)
+    def test_energy_budget_is_kinetic(self, cls, params, budget, electron_fraction):
         from trilobite.radiation.constants import electron_rest_energy_cgs as mc2
 
-        integral = self._kinetic_energy_integral(cls, params)
-        u_th, eps_E, B, eps_B = 2.5e-3, 0.3, 0.7, 0.1
+        integral = self._kinetic_energy_integral(cls, self._pdf_params(cls, params, budget))
+        u_th, B = 2.5e-3, 0.7
+        u_B = B**2 / (8 * np.pi)
 
-        N0_u = cls.normalize_from_energy_density(u_th, eps_E, **params).value
-        N0_B = cls.normalize_from_magnetic_field(B, eps_B, eps_E, **params).value
-        assert N0_u * mc2 * integral == pytest.approx(eps_E * u_th, rel=1e-8)
-        assert N0_B * mc2 * integral == pytest.approx((eps_E / eps_B) * B**2 / (8 * np.pi), rel=1e-8)
+        N0_u = self._normalize_from_energy_density(cls, u_th, params, budget).value
+        N0_B = self._normalize_from_magnetic_field(cls, B, params, budget).value
+        assert N0_u * mc2 * integral == pytest.approx(electron_fraction * u_th, rel=1e-8)
+        # u_th = u_B / epsilon_B in the magnetic-field route.
+        assert N0_B * mc2 * integral == pytest.approx(electron_fraction * u_B / budget["epsilon_B"], rel=1e-8)
 
     @pytest.mark.parametrize("Theta", [0.05, 1.0, 20.0])
     @pytest.mark.parametrize(
         ("mixed", "shape"),
         [(MaxwellJuettnerPowerLaw, PL), (MaxwellJuettnerBrokenPowerLaw, BPL)],
     )
-    def test_pure_thermal_mixture_matches_maxwell_juettner(self, mixed, shape, Theta):
-        # delta = 1 must reproduce the thermal class exactly, for every normalization route.
-        kwargs = {"Theta": Theta, "delta": 1.0, **shape}
-        for method, args in [
-            ("normalize_from_energy_density", (2.5e-3, 0.3)),
-            ("normalize_from_magnetic_field", (0.7, 0.1, 0.2)),
-        ]:
-            thermal = getattr(MaxwellJuettner, method)(*args, Theta=Theta).value
-            assert getattr(mixed, method)(*args, **kwargs).value == pytest.approx(thermal, rel=1e-10)
+    def test_mixture_without_non_thermal_electrons_matches_maxwell_juettner(self, mixed, shape, Theta):
+        # epsilon_E = 0 must reproduce the thermal class exactly, for every normalization route.
+        budget = {"epsilon_T": 0.7, "epsilon_E": 0.0}
+        thermal_energy = MaxwellJuettner.normalize_from_energy_density(
+            2.5e-3, epsilon_B=0.1, epsilon_T=0.7, Theta=Theta
+        )
+        mixed_energy = mixed.normalize_from_energy_density(2.5e-3, epsilon_B=0.1, **budget, Theta=Theta, **shape)
+        assert mixed_energy.value == pytest.approx(thermal_energy.value, rel=1e-10)
+        thermal_field = MaxwellJuettner.normalize_from_magnetic_field(0.7, 0.1, epsilon_T=0.7, Theta=Theta)
+        mixed_field = mixed.normalize_from_magnetic_field(0.7, 0.1, **budget, Theta=Theta, **shape)
+        assert mixed_field.value == pytest.approx(thermal_field.value, rel=1e-10)
 
     @pytest.mark.parametrize("Theta", [0.05, 1.0, 20.0])
-    @pytest.mark.parametrize("delta", [0.2, 0.7])
+    @pytest.mark.parametrize(("epsilon_T", "epsilon_E"), [(0.2, 0.05), (1.5, 0.2)])
     @pytest.mark.parametrize(
         ("mixed", "component", "shape"),
         [(MaxwellJuettnerPowerLaw, PowerLaw, PL), (MaxwellJuettnerBrokenPowerLaw, BrokenPowerLaw, BPL)],
     )
-    def test_delta_is_the_thermal_share_of_the_energy_budget(self, mixed, component, shape, Theta, delta):
-        # Normalizing each component against its own share of epsilon_E (delta, 1 - delta), as the mixed SED does,
-        # gives the same electrons as the mixture with its single N0.
-        u_th, eps_E = 2.5e-3, 0.3
-        N_thermal = MaxwellJuettner.normalize_from_energy_density(u_th, delta * eps_E, Theta=Theta).value
-        N_non_thermal = component.normalize_from_energy_density(u_th, (1.0 - delta) * eps_E, **shape).value
-        N0 = mixed.normalize_from_energy_density(u_th, eps_E, Theta=Theta, delta=delta, **shape).value
+    def test_mixture_is_the_sum_of_separately_normalized_components(
+        self, mixed, component, shape, Theta, epsilon_T, epsilon_E
+    ):
+        # The thermal electrons carry eps_T (1 - eps_B - eps_E) / (1 + eps_T) of u_th and the non-thermal ones eps_E.
+        # Normalizing each component against its own share gives the same electrons as the mixture with its single N0.
+        u_th, epsilon_B = 2.5e-3, 0.1
+        N_thermal = MaxwellJuettner.normalize_from_energy_density(
+            u_th, epsilon_T=epsilon_T, epsilon_B=epsilon_B, epsilon_E=epsilon_E, Theta=Theta
+        ).value
+        N_non_thermal = component.normalize_from_energy_density(u_th, epsilon_E, **shape).value
+        budget = {"epsilon_T": epsilon_T, "epsilon_B": epsilon_B, "epsilon_E": epsilon_E}
+        N0 = mixed.normalize_from_energy_density(u_th, **budget, Theta=Theta, **shape).value
 
         gamma = np.geomspace(1.0 + 1e-3, shape["gamma_max"], 60)
         separate = MaxwellJuettner.pdf(gamma, N_thermal, Theta=Theta) + component.pdf(gamma, N_non_thermal, **shape)
-        np.testing.assert_allclose(mixed.pdf(gamma, N0, Theta=Theta, delta=delta, **shape), separate, rtol=1e-9)
+        np.testing.assert_allclose(mixed.pdf(gamma, N0, Theta=Theta, **budget, **shape), separate, rtol=1e-9)
 
     @pytest.mark.parametrize("Theta", [1e-3, 0.3, 5.0])
     def test_maxwell_juettner_matches_utility(self, Theta):
-        n = compute_mj_number_density_from_internal_energy_density(0.3 * 2.5e-3, Theta)
-        assert MaxwellJuettner.normalize_from_energy_density(2.5e-3, 0.3, Theta=Theta).value == pytest.approx(
-            n.value, rel=1e-10
+        thermal_fraction = 0.3 * 0.9 / 1.3
+        n = compute_mj_number_density_from_internal_energy_density(thermal_fraction * 2.5e-3, Theta)
+        got = MaxwellJuettner.normalize_from_energy_density(2.5e-3, epsilon_T=0.3, epsilon_B=0.1, Theta=Theta)
+        assert got.value == pytest.approx(n.value, rel=1e-10)
+
+    def test_budget_arguments_are_keyword_only(self):
+        # The base-class signature takes epsilon_E third; a positional epsilon_E must not be read as epsilon_T.
+        with pytest.raises(TypeError):
+            MaxwellJuettner.normalize_from_magnetic_field(0.7, 0.1, 0.3, Theta=1.0)
+        with pytest.raises(TypeError):
+            MaxwellJuettner.normalize_from_energy_density(2.5e-3, 0.3, Theta=1.0)
+
+    def test_non_thermal_electrons_reduce_the_thermal_electrons(self):
+        thermal_only = MaxwellJuettner.normalize_from_energy_density(1e-3, epsilon_T=1.0, epsilon_B=0.1, Theta=1.0)
+        with_non_thermal = MaxwellJuettner.normalize_from_energy_density(
+            1e-3, epsilon_T=1.0, epsilon_B=0.1, epsilon_E=0.3, Theta=1.0
         )
+        assert with_non_thermal.value == pytest.approx(thermal_only.value * (1.0 - 0.1 - 0.3) / (1.0 - 0.1), rel=1e-12)
+
+    def test_mixture_shape_depends_on_the_magnetic_energy(self):
+        # The magnetic energy is removed from the budget first, so epsilon_B changes the thermal share of the electrons.
+        kwargs = {"Theta": 1.0, **self.PL, "epsilon_T": 1.0, "epsilon_E": 0.1}
+        low = MaxwellJuettnerPowerLaw.pdf(3.0, epsilon_B=0.01, **kwargs)
+        high = MaxwellJuettnerPowerLaw.pdf(3.0, epsilon_B=0.5, **kwargs)
+        assert low != high
+
+    @pytest.mark.parametrize("cls", [MaxwellJuettnerPowerLaw, MaxwellJuettnerBrokenPowerLaw])
+    def test_mixture_needs_the_whole_budget(self, cls):
+        shape = self.PL if cls is MaxwellJuettnerPowerLaw else self.BPL
+        with pytest.raises(TypeError):
+            cls.pdf(3.0, epsilon_T=1.0, epsilon_B=0.1, **shape)
+        with pytest.raises(ValueError, match="required"):
+            cls.normalize_from_energy_density(1e-3, epsilon_T=1.0, epsilon_B=0.1, **shape)
+        with pytest.raises(ValueError, match="cannot both be zero"):
+            cls.pdf(3.0, epsilon_T=0.0, epsilon_B=0.1, epsilon_E=0.0, **shape)
+
+    @pytest.mark.parametrize(
+        "kwargs",
+        [
+            {"epsilon_T": -1.0, "epsilon_B": 0.1},
+            {"epsilon_T": 1.0, "epsilon_B": 0.7, "epsilon_E": 0.3},
+            {"epsilon_T": np.nan, "epsilon_B": 0.1},
+        ],
+    )
+    def test_invalid_budget_raises(self, kwargs):
+        with pytest.raises(ValueError):
+            MaxwellJuettner.normalize_from_energy_density(1e-3, Theta=1.0, **kwargs)
 
     @pytest.mark.parametrize("p", [2.2, 2.5, 3.0, 3.5])
     def test_power_law_down_to_gamma_min_one(self, p):

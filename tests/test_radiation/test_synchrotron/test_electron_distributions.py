@@ -19,6 +19,7 @@ from trilobite.radiation.synchrotron.electron_distributions import (
     MaxwellJuettner,
     MaxwellJuettnerBrokenPowerLaw,
     MaxwellJuettnerPowerLaw,
+    MixedThermalNonThermal,
     PowerLaw,
 )
 
@@ -319,17 +320,34 @@ def _kinetic_energy_by_quadrature(dist, lower, upper, points=None, **params):
     return m1 / m0 - 1.0
 
 
+def _budget_for_delta(delta, epsilon_B=0.1, epsilon_E=0.05):
+    """Energy-budget fractions for which the thermal share of the electron kinetic energy is ``delta``."""
+    delta = np.asarray(delta, dtype=float)
+    if np.all(delta == 1.0):
+        return {"epsilon_T": 1.0, "epsilon_B": epsilon_B, "epsilon_E": 0.0}
+    thermal = epsilon_E * delta / (1.0 - delta)  # u_e,th / u_th
+    epsilon_T = thermal / (1.0 - epsilon_B - epsilon_E - thermal)
+    return {"epsilon_T": epsilon_T, "epsilon_B": epsilon_B, "epsilon_E": epsilon_E}
+
+
+def _thermal_share(params):
+    """Thermal share of the electron kinetic energy implied by the budget fractions in ``params``."""
+    epsilon_T, epsilon_B, epsilon_E = params["epsilon_T"], params["epsilon_B"], params["epsilon_E"]
+    thermal = epsilon_T * (1.0 - epsilon_B - epsilon_E) / (1.0 + epsilon_T)
+    return thermal / (thermal + epsilon_E)
+
+
 class TestMaxwellJuettnerPowerLaw(BaseTestElectronDistribution):
     DISTRIBUTION_CLASS = MaxwellJuettnerPowerLaw
     GAMMA_ARRAY = np.linspace(1, 1e6, 1000)
 
     PARAMETER_SETS = [
-        {"Theta": 0.1, "p": 2.5, "gamma_min": 1, "gamma_max": 1e6, "delta": 1.0},
-        {"Theta": 1.0, "p": 3.0, "gamma_min": 10, "gamma_max": 1e5, "delta": 1.0},
-        {"Theta": 10.0, "p": 2.0, "gamma_min": 1, "gamma_max": 1e4, "delta": 1.0},
-        {"Theta": 0.1, "p": 2.5, "gamma_min": 1, "gamma_max": 1e6, "delta": 0.5},
-        {"Theta": 1.0, "p": 3.0, "gamma_min": 10, "gamma_max": 1e5, "delta": 0.5},
-        {"Theta": 10.0, "p": 2.0, "gamma_min": 1, "gamma_max": 1e4, "delta": 0.5},
+        {"Theta": 0.1, "p": 2.5, "gamma_min": 1, "gamma_max": 1e6, **_budget_for_delta(1.0)},
+        {"Theta": 1.0, "p": 3.0, "gamma_min": 10, "gamma_max": 1e5, **_budget_for_delta(1.0)},
+        {"Theta": 10.0, "p": 2.0, "gamma_min": 1, "gamma_max": 1e4, **_budget_for_delta(1.0)},
+        {"Theta": 0.1, "p": 2.5, "gamma_min": 1, "gamma_max": 1e6, **_budget_for_delta(0.5)},
+        {"Theta": 1.0, "p": 3.0, "gamma_min": 10, "gamma_max": 1e5, **_budget_for_delta(0.5)},
+        {"Theta": 10.0, "p": 2.0, "gamma_min": 1, "gamma_max": 1e4, **_budget_for_delta(0.5)},
     ]
     EXPECTED_SUPPORTS = [
         (1, np.inf),
@@ -349,7 +367,7 @@ class TestMaxwellJuettnerPowerLaw(BaseTestElectronDistribution):
     def test_composition_quadrature(self, order):
         """Test mixed moments by quadraturing each component separately."""
         for params in self.PARAMETER_SETS:
-            delta = params["delta"]
+            delta = _thermal_share(params)
 
             mj_params = {
                 "Theta": params["Theta"],
@@ -405,7 +423,7 @@ class TestMaxwellJuettnerPowerLaw(BaseTestElectronDistribution):
                 limit=500,
             )
 
-            # delta is the thermal share of the kinetic energy, so the electron fractions are ~ delta / K.
+            # delta is the thermal share of the electron kinetic energy, so the electron fractions are ~ delta / K.
             K_th = _kinetic_energy_by_quadrature(MaxwellJuettner, 1.0, np.inf, **mj_params)
             K_nth = _kinetic_energy_by_quadrature(PowerLaw, pl_params["gamma_min"], pl_params["gamma_max"], **pl_params)
             w_th = (delta / K_th) / (delta / K_th + (1.0 - delta) / K_nth)
@@ -432,9 +450,33 @@ class TestMaxwellJuettnerBrokenPowerLaw(BaseTestElectronDistribution):
     GAMMA_ARRAY = np.linspace(1, 1e6, 1000)
 
     PARAMETER_SETS = [
-        {"Theta": 0.1, "p1": 2.0, "p2": 3.0, "gamma_c": 100, "delta": 0.5, "gamma_min": 1, "gamma_max": 1e6},
-        {"Theta": 1.0, "p1": 2.5, "p2": 3.5, "gamma_c": 500, "delta": 0.5, "gamma_min": 10, "gamma_max": 1e5},
-        {"Theta": 10.0, "p1": 1.5, "p2": 2.5, "gamma_c": 50, "delta": 0.5, "gamma_min": 1, "gamma_max": 1e4},
+        {
+            "Theta": 0.1,
+            "p1": 2.0,
+            "p2": 3.0,
+            "gamma_c": 100,
+            **_budget_for_delta(0.5),
+            "gamma_min": 1,
+            "gamma_max": 1e6,
+        },
+        {
+            "Theta": 1.0,
+            "p1": 2.5,
+            "p2": 3.5,
+            "gamma_c": 500,
+            **_budget_for_delta(0.5),
+            "gamma_min": 10,
+            "gamma_max": 1e5,
+        },
+        {
+            "Theta": 10.0,
+            "p1": 1.5,
+            "p2": 2.5,
+            "gamma_c": 50,
+            **_budget_for_delta(0.5),
+            "gamma_min": 1,
+            "gamma_max": 1e4,
+        },
     ]
     EXPECTED_SUPPORTS = [
         (1, np.inf),
@@ -451,7 +493,7 @@ class TestMaxwellJuettnerBrokenPowerLaw(BaseTestElectronDistribution):
     def test_composition_quadrature(self, order):
         """Test mixed moments by quadraturing each component separately."""
         for params in self.PARAMETER_SETS:
-            delta = params["delta"]
+            delta = _thermal_share(params)
 
             mj_params = {
                 "Theta": params["Theta"],
@@ -695,12 +737,12 @@ ARRAY_CASES = {
     "MaxwellJuettner": (MaxwellJuettner, {"Theta": _THETA}),
     "MaxwellJuettnerPowerLaw": (
         MaxwellJuettnerPowerLaw,
-        {"delta": np.array([0.2, 0.5, 0.8]), "Theta": _THETA, "p": 2.5, "gamma_min": 1.0, "gamma_max": 1e4},
+        {**_budget_for_delta(np.array([0.2, 0.5, 0.8])), "Theta": _THETA, "p": 2.5, "gamma_min": 1.0, "gamma_max": 1e4},
     ),
     "MaxwellJuettnerBrokenPowerLaw": (
         MaxwellJuettnerBrokenPowerLaw,
         {
-            "delta": 0.3,
+            **_budget_for_delta(0.3),
             "Theta": _THETA,
             "p1": 2.0,
             "p2": 3.0,
@@ -711,6 +753,16 @@ ARRAY_CASES = {
     ),
 }
 ARRAY_GAMMA = np.array([1.5, 30.0, 700.0])
+
+
+def _normalize_from_B(dist, B, params):
+    """Call ``normalize_from_magnetic_field`` with the budget arguments the distribution family takes."""
+    params = dict(params)
+    if dist is MaxwellJuettner:
+        return dist.normalize_from_magnetic_field(B, 0.01, epsilon_T=0.3, **params)
+    if issubclass(dist, MixedThermalNonThermal):
+        return dist.normalize_from_magnetic_field(B, params.pop("epsilon_B"), **params)
+    return dist.normalize_from_magnetic_field(B, 0.01, 0.1, **params)
 
 
 @pytest.mark.parametrize("case", ARRAY_CASES)
@@ -745,8 +797,8 @@ class TestArrayParameters:
     def test_normalize_from_magnetic_field(self, case):
         dist, params = ARRAY_CASES[case]
         B = np.array([0.1, 1.0, 5.0])
-        vec = dist.normalize_from_magnetic_field(B, 0.01, 0.1, **params)
-        ref = [dist.normalize_from_magnetic_field(b, 0.01, 0.1, **_element(params, i)).value for i, b in enumerate(B)]
+        vec = _normalize_from_B(dist, B, params)
+        ref = [_normalize_from_B(dist, b, _element(params, i)).value for i, b in enumerate(B)]
         assert vec.unit == u.cm**-3
         assert np.allclose(vec.value, ref, rtol=1e-10, atol=0.0)
 
@@ -759,7 +811,7 @@ class TestArrayParameters:
         with pytest.raises(ValueError):
             dist.pdf(ARRAY_GAMMA, **bad)
         with pytest.raises(ValueError):
-            dist.normalize_from_magnetic_field(1.0, 0.01, 0.1, **bad)
+            _normalize_from_B(dist, 1.0, bad)
 
 
 @pytest.mark.parametrize("case", ["PowerLaw", "BrokenPowerLaw"])

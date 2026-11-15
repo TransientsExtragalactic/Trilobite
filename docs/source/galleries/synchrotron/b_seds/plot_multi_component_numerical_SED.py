@@ -21,7 +21,7 @@ along a line-of-sight depth :math:`R`, without any piecewise approximation.
 In this example we:
 
 1. Construct a mixed **thermal + power-law** electron distribution.
-2. Normalise each component to its share of the electron energy budget and verify it.
+2. Normalise each component to its share of the thermal energy budget and verify it.
 3. Compute the resulting synchrotron SED and compare the contributions from each
    component.
 
@@ -43,6 +43,7 @@ import numpy as np
 from astropy import units as u
 from scipy.integrate import trapezoid
 
+from trilobite.physics_utils import compute_thermal_electron_energy_fraction
 from trilobite.radiation.constants import electron_rest_energy_cgs
 from trilobite.radiation.synchrotron.electron_distributions import MaxwellJuettner, PowerLaw
 from trilobite.radiation.synchrotron.SEDs.numerical import NonRelativisticSphericalSynchrotronEngine
@@ -55,18 +56,22 @@ engine.load_avg_first_kernel()
 # The Electron Distribution
 # --------------------------
 #
-# We split the electron energy budget between the two components with the **thermal energy fraction**
-# :math:`\delta`:
+# The post-shock thermal energy density :math:`u_{\rm th}` is shared between ions, thermal electrons, non-thermal
+# electrons and the magnetic field. Trilobite describes the split with three fractions:
+#
+# - :math:`\epsilon_B`: the fraction of :math:`u_{\rm th}` in the magnetic field,
+# - :math:`\epsilon_E`: the fraction in the kinetic energy of the non-thermal electrons,
+# - :math:`\epsilon_T`: the ratio of the thermal-electron to the ion energy.
+#
+# Removing the magnetic and non-thermal energies first, the thermal electrons carry
 #
 # .. math::
 #
-#     \epsilon_{E,\rm therm} = \delta\,\epsilon_E,
-#     \qquad
-#     \epsilon_{E,\rm PL} = (1-\delta)\,\epsilon_E,
+#     f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}
 #
-# where :math:`\epsilon_E` is the fraction of the thermal energy that goes into the electrons, counted as kinetic
-# energy :math:`\int N(\gamma-1)\,m_e c^2\,d\gamma`. Each component is then normalised by equipartition with the
-# magnetic field, so that it carries :math:`\epsilon_{E,i}/\epsilon_B` times :math:`B^2/8\pi`.
+# of :math:`u_{\rm th}`. Electron energies are kinetic, :math:`\int N(\gamma-1)\,m_e c^2\,d\gamma`, and each component
+# is normalized by equipartition with the magnetic field, so that it carries its fraction of
+# :math:`B^2 / (8\pi \epsilon_B)`.
 #
 # **Thermal component** -- the Maxwell-Juettner distribution,
 # :class:`~trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner`,
@@ -77,7 +82,7 @@ engine.load_avg_first_kernel()
 #         = N_{0,\rm therm}\,\frac{\gamma^2\beta}{\theta K_2(1/\theta)}\,e^{-\gamma/\theta},
 #     \qquad \beta = \sqrt{1-\gamma^{-2}},
 #
-# where :math:`\theta = kT/m_e c^2` is the dimensionless temperature. For :math:`\theta \gg 1` this peaks near
+# where :math:`\theta = kT/m_e c^2` is the dimensionless electron temperature. For :math:`\theta \gg 1` this peaks near
 # :math:`\gamma \approx 2\theta`.
 #
 # **Non-thermal power-law component** -- a truncated power law,
@@ -89,36 +94,40 @@ engine.load_avg_first_kernel()
 #     \qquad \gamma_{\min} \le \gamma \le \gamma_{\max}.
 
 B = 0.1 * u.G  # magnetic field
-epsilon_B, epsilon_E = 0.1, 0.01  # magnetic and electron energy fractions
-delta = 0.5  # thermal fraction of the electron energy
+epsilon_B, epsilon_E, epsilon_T = (
+    0.1,
+    0.005,
+    0.006,
+)  # magnetic, non-thermal electron, and thermal-electron/ion fractions
 theta = 10  # dimensionless temperature kT / m_e c^2
 p = 2.5  # non-thermal power-law index
 gamma_min, gamma_max = 50, 1e6  # power-law Lorentz factor bounds
 
-N0_therm = MaxwellJuettner.normalize_from_magnetic_field(B, epsilon_B, delta * epsilon_E, Theta=theta)
-N0_pl = PowerLaw.normalize_from_magnetic_field(
-    B, epsilon_B, (1 - delta) * epsilon_E, p=p, gamma_min=gamma_min, gamma_max=gamma_max
+N0_therm = MaxwellJuettner.normalize_from_magnetic_field(
+    B, epsilon_B, epsilon_T=epsilon_T, epsilon_E=epsilon_E, Theta=theta
 )
+N0_pl = PowerLaw.normalize_from_magnetic_field(B, epsilon_B, epsilon_E, p=p, gamma_min=gamma_min, gamma_max=gamma_max)
 
 
 def N_therm(gamma):
-    """Return the Maxwell-Juettner distribution, carrying a fraction ``delta`` of the electron energy."""
+    """Return the Maxwell-Juettner distribution of the thermal electrons."""
     return MaxwellJuettner.pdf(gamma, N0_therm.value, Theta=theta) * u.cm**-3
 
 
 def N_pl(gamma):
-    """Return the truncated power law, carrying a fraction ``1 - delta`` of the electron energy."""
+    """Return the truncated power law of the non-thermal electrons."""
     return PowerLaw.pdf(gamma, N0_pl.value, p=p, gamma_min=gamma_min, gamma_max=gamma_max) * u.cm**-3
 
 
 # %%
 # We evaluate both components on a logarithmically-spaced :math:`\gamma` grid that spans non-relativistic through
 # ultra-relativistic energies, with a node placed at :math:`\gamma_{\min}` so the sharp edge of the power law is
-# sampled exactly. Integrating each component confirms that it carries its share of the energy budget
-# :math:`(\epsilon_E/\epsilon_B)\,B^2/8\pi`.
+# sampled exactly. Integrating each component confirms that it carries its fraction of the thermal energy density
+# :math:`u_{\rm th} = B^2 / (8\pi \epsilon_B)`.
 
 gamma_array = np.unique(np.append(np.geomspace(1, gamma_max, 400), gamma_min))
-u_budget = epsilon_E / epsilon_B * B.value**2 / (8 * np.pi)  # erg cm^-3
+u_th = B.value**2 / (8 * np.pi * epsilon_B)  # erg cm^-3
+f_th = compute_thermal_electron_energy_fraction(epsilon_T, epsilon_B, epsilon_E)
 
 
 def kinetic_energy_density(N):
@@ -130,8 +139,8 @@ N_therm_array = N_therm(gamma_array)
 N_pl_array = N_pl(gamma_array)
 N_total_array = N_therm_array + N_pl_array
 
-print(f"thermal energy fraction: {kinetic_energy_density(N_therm_array) / u_budget:.3f} (delta = {delta})")
-print(f"power-law energy fraction: {kinetic_energy_density(N_pl_array) / u_budget:.3f} (1 - delta = {1 - delta})")
+print(f"thermal electrons: {kinetic_energy_density(N_therm_array) / u_th:.5f} of u_th (expected {f_th:.5f})")
+print(f"non-thermal electrons: {kinetic_energy_density(N_pl_array) / u_th:.5f} of u_th (expected {epsilon_E:.5f})")
 
 # %%
 # Visualising the Distribution

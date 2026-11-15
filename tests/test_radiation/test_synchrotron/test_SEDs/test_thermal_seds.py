@@ -13,7 +13,7 @@ from trilobite.radiation.synchrotron.SEDs import (
 from trilobite.radiation.synchrotron.SEDs.one_zone.seds import _thermal_gamma_grid
 
 NU = np.logspace(7, 18, 60) * u.Hz
-SED_KWARGS = {"epsilon_B": 0.1, "epsilon_E": 0.1, "luminosity_distance": 100 * u.Mpc}
+SED_KWARGS = {"epsilon_B": 0.1, "epsilon_T": 0.1, "luminosity_distance": 100 * u.Mpc}
 B, R = 1.0 * u.G, 1e16 * u.cm
 FLUX_UNIT = u.erg / u.cm**2 / u.s / u.Hz
 
@@ -46,7 +46,7 @@ def mixed_dense():
 
 
 def _flux(sed, Theta, **extra):
-    return sed.sed(NU, B, R, Theta, **extra, **SED_KWARGS).to_value(FLUX_UNIT)
+    return sed.sed(NU, B, R, Theta, **{**SED_KWARGS, **extra}).to_value(FLUX_UNIT)
 
 
 def _max_relative_error(flux, reference):
@@ -122,16 +122,18 @@ class TestSpectra:
         assert error < 1e-2
 
     @pytest.mark.parametrize("Theta", [0.1, 3.0])
-    @pytest.mark.parametrize("delta", [0.0, 0.5, 1.0])
-    def test_mixed_sed_converges_to_a_dense_grid(self, mixed, mixed_dense, Theta, delta):
-        extra = {"delta": delta, "p": 3.0, "gamma_min": 3.0, "gamma_max": 1e6}
+    @pytest.mark.parametrize(("epsilon_T", "epsilon_E"), [(0.0, 0.1), (0.1, 0.1), (0.1, 0.0)])
+    def test_mixed_sed_converges_to_a_dense_grid(self, mixed, mixed_dense, Theta, epsilon_T, epsilon_E):
+        extra = {"epsilon_T": epsilon_T, "epsilon_E": epsilon_E, "p": 3.0, "gamma_min": 3.0, "gamma_max": 1e6}
         error = _max_relative_error(_flux(mixed, Theta, **extra), _flux(mixed_dense, Theta, **extra))
         assert error < 1e-2
 
     @pytest.mark.parametrize("Theta", [0.1, 1.0, 10.0])
-    def test_mixed_sed_at_delta_one_is_the_thermal_sed(self, Theta):
+    def test_mixed_sed_without_non_thermal_electrons_is_the_thermal_sed(self, Theta):
         # Same grid, so the two computations are identical.
         gamma = np.geomspace(1.0 + 1e-6, 1e8, 150)
         thermal = Numerical_Thermal_SSA_SynchrotronSED(gamma=gamma)
         mixed = Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(gamma=gamma)
-        np.testing.assert_allclose(_flux(mixed, Theta, delta=1.0, p=3.0), _flux(thermal, Theta), rtol=1e-10, atol=0.0)
+        np.testing.assert_allclose(
+            _flux(mixed, Theta, epsilon_E=0.0, p=3.0), _flux(thermal, Theta), rtol=1e-10, atol=0.0
+        )
