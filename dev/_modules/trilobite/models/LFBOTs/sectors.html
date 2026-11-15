@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>trilobite.models.LFBOTs.sectors &#8212; Trilobite dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=6a604523" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../../_static/design-tabs.js?v=fcb327ea"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/trilobite/models/LFBOTs/sectors';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../../_static/model_search.js?v=f6414914"></script>
+    <link rel="icon" href="../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">trilobite.models.LFBOTs.sectors</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for trilobite.models.LFBOTs.sectors</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Angular segmentation and emitting geometry of the N-component Diggins26 models.</span>
+
+<span class="sd">The N-component models split the sphere into ``N`` axisymmetric, north-south symmetric segments, each a range of</span>
+<span class="sd">colatitude :math:`[\theta_a, \theta_b]` (mirrored about the equator) with a shock solved along one representative</span>
+<span class="sd">sightline. This module holds the geometry shared by the models:</span>
+
+<span class="sd">- :func:`compute_segmentation` places the segment edges and representative sightlines,</span>
+<span class="sd">- :func:`segment_volume_fractions` gives each segment's analytic share of the shell volume, and</span>
+<span class="sd">- :func:`projected_area_fractions` and :func:`build_segment_filling_table` give each segment's sky-projected area</span>
+<span class="sd">  fraction, in either of two definitions (see below).</span>
+
+<span class="sd">.. rubric:: Segmentation</span>
+
+<span class="sd">The disk half-maximum latitude :math:`\phi_e = \arctan(b\ln 2)` (see</span>
+<span class="sd">:meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.disk_half_opening_angle`) is always a segment</span>
+<span class="sd">edge, so the equatorial (disk) and polar regions stay distinct at any ``N``. The segments are split between them by a</span>
+<span class="sd">rule that does not depend on the model parameters, ``n_polar = N // 2`` and ``n_equatorial = N - n_polar``, so that the</span>
+<span class="sd">sampled likelihood is continuous. The disk density is :math:`G(\theta) = f_{\rm pole} + (1 - f_{\rm pole})e^{-u}`</span>
+<span class="sd">with :math:`u = |\cot\theta|/b`; edges are spaced evenly in :math:`u` over the equatorial region</span>
+<span class="sd">(:math:`u \in [0, \ln 2]`) and evenly in :math:`s = e^{-u}` over the polar region (:math:`s \in [0, 1/2]`), so that</span>
+<span class="sd">segments concentrate where the density changes. For ``N = 2`` the only interior edge is :math:`\phi_e`, which is the</span>
+<span class="sd">split of :class:`~trilobite.models.LFBOTs.diggins26.Diggins26_TwoComponentModel`.</span>
+
+<span class="sd">.. rubric:: Projected areas</span>
+
+<span class="sd">``mode="hit"`` is the area of the sky pixels whose line of sight touches the segment's shell, which is the definition</span>
+<span class="sd">of the two-component model. It is correct for a segment on its own, but the segments overlap on the sky: summing the</span>
+<span class="sd">fluxes of independent slabs counts a sightline that crosses several segments once per segment, and the</span>
+<span class="sd">optically thick flux overcounts roughly in proportion to the sum of the areas, which grows with ``N``.</span>
+<span class="sd">``mode="chord"`` instead gives each segment, for every pixel, the share of the pixel's area equal to the segment's</span>
+<span class="sd">share of that sightline's path through the shell. The segments' areas then partition the shell's projected area, and</span>
+<span class="sd">:math:`\ell_k = V_k/A_k` remains the mean path length that the one-zone synchrotron engine needs.</span>
+
+<span class="sd">Both are computed in units of each segment's own shock radius (every segment is a unit-radius shell</span>
+<span class="sd">:math:`1 - \eta &lt; r &lt; 1` with :math:`\eta = 1 - (1 - f)^{1/3}`), as in</span>
+<span class="sd">:meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table`. They do not</span>
+<span class="sd">capture the depth ordering of segments whose radii differ.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.profiles.csm</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisymmetricCSMDensityProfile</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Segmentation"</span><span class="p">,</span>
+    <span class="s2">"compute_segmentation"</span><span class="p">,</span>
+    <span class="s2">"segment_volume_fractions"</span><span class="p">,</span>
+    <span class="s2">"projected_area_fractions"</span><span class="p">,</span>
+    <span class="s2">"build_segment_filling_table"</span><span class="p">,</span>
+    <span class="s2">"interpolate_segment_filling_table"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">AREA_MODES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"chord"</span><span class="p">,</span> <span class="s2">"hit"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Segmentation">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.Segmentation.html#trilobite.models.LFBOTs.sectors.Segmentation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Segmentation</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The segments of the sphere, ordered from the pole (index 0) to the equator."""</span>
+
+    <span class="n">edges</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="w">    </span><span class="sd">"""Colatitudes of the ``N + 1`` segment edges in radians, from ``0`` (pole) to ``pi / 2`` (equator)."""</span>
+    <span class="n">colatitude</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="w">    </span><span class="sd">"""Colatitude of each segment's representative sightline in radians, shape ``(N,)``."""</span>
+    <span class="n">n_polar</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">"""Number of polar segments; segments ``0 .. n_polar - 1`` are polar and the rest equatorial."""</span></div>
+
+
+
+<div class="viewcode-block" id="split_segments">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.split_segments.html#trilobite.models.LFBOTs.sectors.split_segments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_segments</span><span class="p">(</span><span class="n">n_sectors</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Split ``n_sectors`` segments between the polar and equatorial regions.</span>
+
+<span class="sd">    The split does not depend on any model parameter, so that the sampled likelihood is continuous.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_sectors : int</span>
+<span class="sd">        Total number of segments, at least 2.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of int</span>
+<span class="sd">        ``(n_polar, n_equatorial)``, with ``n_polar = n_sectors // 2``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``n_sectors`` is less than 2.</span>
+<span class="sd">    """</span>
+    <span class="n">n_sectors</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_sectors</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_sectors</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`n_sectors` must be at least 2 (one polar and one equatorial segment)."</span><span class="p">)</span>
+    <span class="n">n_polar</span> <span class="o">=</span> <span class="n">n_sectors</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">n_polar</span><span class="p">,</span> <span class="n">n_sectors</span> <span class="o">-</span> <span class="n">n_polar</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_colatitude</span><span class="p">(</span><span class="n">u</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">aspect</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Colatitude at which the density variable :math:`u = |\cot\theta|/b` takes the value ``u``."""</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">aspect</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="compute_segmentation">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.compute_segmentation.html#trilobite.models.LFBOTs.sectors.compute_segmentation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_segmentation</span><span class="p">(</span><span class="n">aspect</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_sectors</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Segmentation</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Segment edges and representative sightlines for a disk of angular thickness ``aspect``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aspect : float</span>
+<span class="sd">        Angular thickness :math:`b` of the CSM disk. Must be positive.</span>
+<span class="sd">    n_sectors : int</span>
+<span class="sd">        Total number of segments, at least 2. ``n_sectors // 2`` are polar and the rest equatorial.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Segmentation</span>
+<span class="sd">        The edges and representative colatitudes. The innermost polar segment is represented by the pole, the</span>
+<span class="sd">        innermost equatorial segment by the equator, and every other segment by its midpoint in the density variable</span>
+<span class="sd">        (:math:`u` in the equatorial region, :math:`s = e^{-u}` in the polar region).</span>
+<span class="sd">    """</span>
+    <span class="n">aspect</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">aspect</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">aspect</span><span class="p">)</span> <span class="ow">and</span> <span class="n">aspect</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`aspect` must be positive and finite."</span><span class="p">)</span>
+    <span class="n">n_polar</span><span class="p">,</span> <span class="n">n_equatorial</span> <span class="o">=</span> <span class="n">split_segments</span><span class="p">(</span><span class="n">n_sectors</span><span class="p">)</span>
+    <span class="n">ln2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="c1"># Equatorial region, from its polar edge (u = ln 2) to the equator (u = 0), evenly spaced in u.</span>
+    <span class="n">u_eq</span> <span class="o">=</span> <span class="n">ln2</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_equatorial</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_equatorial</span><span class="p">)</span>
+    <span class="c1"># Polar region, from the pole (s = 0) to its equatorial edge (s = 1/2), evenly spaced in s = exp(-u).</span>
+    <span class="n">s_pol</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_polar</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_polar</span>
+
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="n">u_pol</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">s_pol</span><span class="p">)</span>  <span class="c1"># inf at the pole</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">_colatitude</span><span class="p">(</span><span class="n">u_pol</span><span class="p">,</span> <span class="n">aspect</span><span class="p">),</span> <span class="n">_colatitude</span><span class="p">(</span><span class="n">u_eq</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">aspect</span><span class="p">)])</span>
+    <span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+    <span class="c1"># Representative sightlines at the midpoints of the density variable.</span>
+    <span class="n">s_mid</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">s_pol</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">s_pol</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">u_mid_eq</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">u_eq</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">u_eq</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="n">colatitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">_colatitude</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">s_mid</span><span class="p">),</span> <span class="n">aspect</span><span class="p">),</span> <span class="n">_colatitude</span><span class="p">(</span><span class="n">u_mid_eq</span><span class="p">,</span> <span class="n">aspect</span><span class="p">)])</span>
+    <span class="n">colatitude</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">colatitude</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+    <span class="k">return</span> <span class="n">Segmentation</span><span class="p">(</span><span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span> <span class="n">colatitude</span><span class="o">=</span><span class="n">colatitude</span><span class="p">,</span> <span class="n">n_polar</span><span class="o">=</span><span class="n">n_polar</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="segment_volume_fractions">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.segment_volume_fractions.html#trilobite.models.LFBOTs.sectors.segment_volume_fractions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segment_volume_fractions</span><span class="p">(</span><span class="n">edges</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">filling_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Fraction of the full-sphere volume held by each segment, :math:`f_{V,k} = f\,(\cos\theta_a - \cos\theta_b)`.</span>
+
+<span class="sd">    This is exact, and sums to the shell's filling factor ``f``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    edges : numpy.ndarray</span>
+<span class="sd">        Colatitudes of the segment edges from the pole to the equator, as in :class:`Segmentation`.</span>
+<span class="sd">    filling_factor : float</span>
+<span class="sd">        Shell volume filling factor :math:`f`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The volume fraction of each segment, shape ``(N,)``.</span>
+<span class="sd">    """</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">filling_factor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span></div>
+
+
+
+<div class="viewcode-block" id="projected_area_fractions">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.projected_area_fractions.html#trilobite.models.LFBOTs.sectors.projected_area_fractions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">projected_area_fractions</span><span class="p">(</span>
+    <span class="n">edges</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">inclination</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">eta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"chord"</span><span class="p">,</span> <span class="n">n_pix</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Sky-projected area fraction :math:`f_A = A_\perp/\pi R^2` of every segment of a unit-radius shell.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    edges : numpy.ndarray</span>
+<span class="sd">        Colatitudes of the segment edges from the pole to the equator, as in :class:`Segmentation`.</span>
+<span class="sd">    inclination : float</span>
+<span class="sd">        Angle between the symmetry axis and the line of sight, in radians.</span>
+<span class="sd">    eta : float</span>
+<span class="sd">        Fractional thickness of the shell, :math:`\eta = 1 - (1 - f)^{1/3}`.</span>
+<span class="sd">    mode : {"chord", "hit"}, optional</span>
+<span class="sd">        ``"hit"`` counts every pixel whose line of sight meets the segment's shell. ``"chord"`` splits each pixel</span>
+<span class="sd">        between the segments in proportion to their path lengths through the shell. See the module description.</span>
+<span class="sd">    n_pix : int, optional</span>
+<span class="sd">        Sky pixels across the diameter. Default 200.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The area fraction of each segment, shape ``(N,)``, ordered from the pole to the equator.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AREA_MODES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"`mode` must be one of </span><span class="si">{</span><span class="n">AREA_MODES</span><span class="si">}</span><span class="s2">, not </span><span class="si">{</span><span class="n">mode</span><span class="si">!r}</span><span class="s2">."</span><span class="p">)</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">n_seg</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="c1"># Pixel centres across [-1, 1]; both the segments and the shell are mirror-symmetric under x -&gt; -x, so only</span>
+    <span class="c1"># x &gt; 0 is kept and the area is doubled at the end.</span>
+    <span class="n">pixel_size</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="n">n_pix</span>
+    <span class="n">centres</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_pix</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">pixel_size</span>
+    <span class="n">x_sky</span><span class="p">,</span> <span class="n">y_sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">centres</span><span class="p">[</span><span class="n">centres</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span> <span class="n">centres</span><span class="p">)</span>
+    <span class="n">rho_sq</span> <span class="o">=</span> <span class="n">x_sky</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y_sky</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">y_sky</span> <span class="o">=</span> <span class="n">y_sky</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">on_disk</span> <span class="o">=</span> <span class="n">rho_sq</span> <span class="o">&lt;</span> <span class="mf">1.0</span>  <span class="c1"># only lines of sight inside the unit disk can meet the shell</span>
+    <span class="n">rho_sq</span><span class="p">,</span> <span class="n">y_sky</span> <span class="o">=</span> <span class="n">rho_sq</span><span class="p">[</span><span class="n">on_disk</span><span class="p">],</span> <span class="n">y_sky</span><span class="p">[</span><span class="n">on_disk</span><span class="p">]</span>
+
+    <span class="c1"># Along a line of sight r^2 = rho^2 + z^2, so the shell occupies z_in &lt; |z| &lt; z_out.</span>
+    <span class="n">z_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">rho_sq</span><span class="p">)</span>
+    <span class="n">z_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">rho_sq</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+    <span class="c1"># A segment boundary at colatitude theta_e is where cos^2(theta) = c_e^2, with cos(theta) = (y sin i + z cos i)/r.</span>
+    <span class="c1"># Multiplying by r^2 avoids square roots: g_e(z) = (y sin i + z cos i)^2 - c_e^2 (rho^2 + z^2) = qa z^2 + qb z + qc,</span>
+    <span class="c1"># positive where |cos(theta)| exceeds c_e (nearer the pole). Its roots are where the line of sight crosses the</span>
+    <span class="c1"># boundary.</span>
+    <span class="n">sin_inc</span><span class="p">,</span> <span class="n">cos_inc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">inclination</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">inclination</span><span class="p">)</span>
+    <span class="n">thresholds_sq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># interior edges, from the pole to the equator</span>
+    <span class="n">qa</span> <span class="o">=</span> <span class="n">cos_inc</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">thresholds_sq</span>  <span class="c1"># (n_edges,)</span>
+    <span class="n">qb</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">y_sky</span> <span class="o">*</span> <span class="n">sin_inc</span> <span class="o">*</span> <span class="n">cos_inc</span>  <span class="c1"># (n_pix,)</span>
+    <span class="n">qc</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_sky</span> <span class="o">*</span> <span class="n">sin_inc</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">thresholds_sq</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">rho_sq</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># (n_pix, n_edges)</span>
+
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="n">regular</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qa</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-14</span>
+        <span class="n">disc</span> <span class="o">=</span> <span class="n">qb</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">qa</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">qc</span>
+        <span class="n">sqrt_disc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">disc</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">disc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>  <span class="c1"># NaN: no crossing</span>
+        <span class="n">safe_qa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">regular</span><span class="p">,</span> <span class="n">qa</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">root_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">regular</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:],</span> <span class="p">(</span><span class="o">-</span><span class="n">qb</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">sqrt_disc</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">safe_qa</span><span class="p">),</span> <span class="o">-</span><span class="n">qc</span> <span class="o">/</span> <span class="n">qb</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="c1"># A line of sight parallel to the boundary has a linear g_e(z): a single crossing and no second root.</span>
+        <span class="n">root_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">regular</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:],</span> <span class="p">(</span><span class="o">-</span><span class="n">qb</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">sqrt_disc</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">safe_qa</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="c1"># Missing roots (NaN) and roots outside the sphere move onto [-z_out, z_out]; a missing root lands on -z_out and</span>
+    <span class="c1"># only creates a zero-length piece, so every line of sight has the same number of breakpoints.</span>
+    <span class="n">cone_roots</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">nan</span><span class="o">=-</span><span class="mf">2.0</span><span class="p">),</span> <span class="o">-</span><span class="n">z_out</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">z_out</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">(</span><span class="n">root_lo</span><span class="p">,</span> <span class="n">root_hi</span><span class="p">)]</span>
+    <span class="n">breakpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="o">-</span><span class="n">z_out</span><span class="p">,</span> <span class="o">-</span><span class="n">z_in</span><span class="p">,</span> <span class="n">z_in</span><span class="p">,</span> <span class="n">z_out</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="o">*</span><span class="n">cone_roots</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">z_lo</span><span class="p">,</span> <span class="n">z_hi</span> <span class="o">=</span> <span class="n">breakpoints</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">breakpoints</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+    <span class="n">z_mid</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">z_lo</span> <span class="o">+</span> <span class="n">z_hi</span><span class="p">)</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">z_hi</span> <span class="o">-</span> <span class="n">z_lo</span>
+
+    <span class="c1"># Between consecutive breakpoints nothing changes sign, so the midpoint decides which segment a piece belongs</span>
+    <span class="c1"># to and whether it lies in the shell.</span>
+    <span class="n">r_mid_sq</span> <span class="o">=</span> <span class="n">rho_sq</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">z_mid</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">in_shell</span> <span class="o">=</span> <span class="p">(</span><span class="n">r_mid_sq</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">r_mid_sq</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">cos_sq_mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_sky</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin_inc</span> <span class="o">+</span> <span class="n">z_mid</span> <span class="o">*</span> <span class="n">cos_inc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">r_mid_sq</span>
+    <span class="c1"># Number of interior boundaries whose cone (|cos| above the boundary's) contains the piece: n_seg - 1 is the</span>
+    <span class="c1"># polar segment and 0 the equatorial-most one.</span>
+    <span class="n">nearer_pole</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">thresholds_sq</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">cos_sq_mid</span><span class="p">)</span>
+    <span class="n">segment</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_seg</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">nearer_pole</span>  <span class="c1"># 0 is the polar segment</span>
+
+    <span class="c1"># Accumulate the path length (or the number of pieces) of every segment along every line of sight.</span>
+    <span class="n">n_los</span> <span class="o">=</span> <span class="n">rho_sq</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">slot</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_los</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_seg</span> <span class="o">+</span> <span class="n">segment</span><span class="p">)[</span><span class="n">in_shell</span><span class="p">]</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">slot</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">length</span><span class="p">[</span><span class="n">in_shell</span><span class="p">],</span> <span class="n">minlength</span><span class="o">=</span><span class="n">n_los</span> <span class="o">*</span> <span class="n">n_seg</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_los</span><span class="p">,</span> <span class="n">n_seg</span><span class="p">)</span>
+
+    <span class="n">area_scale</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">pixel_size</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># pixel area x 2 (mirror half-plane) / pi (unit disk area)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"hit"</span><span class="p">:</span>
+        <span class="c1"># A line of sight meets a segment if some piece of non-zero length lies in the segment's shell.</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">path</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">area_scale</span>
+    <span class="c1"># Each line of sight splits its pixel between the segments in proportion to their path lengths.</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="n">path</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">area_scale</span></div>
+
+
+
+<div class="viewcode-block" id="build_segment_filling_table">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.build_segment_filling_table.html#trilobite.models.LFBOTs.sectors.build_segment_filling_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_segment_filling_table</span><span class="p">(</span>
+    <span class="n">aspect</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="n">filling_factor</span><span class="p">,</span> <span class="n">n_sectors</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"chord"</span><span class="p">,</span> <span class="n">n_pix</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Tabulate the projected area fraction of every segment on a grid of aspect, inclination and filling factor.</span>
+
+<span class="sd">    This is the N-segment counterpart of</span>
+<span class="sd">    :meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table`. The</span>
+<span class="sd">    segment edges depend on the aspect (see :func:`compute_segmentation`), so they are recomputed for every grid</span>
+<span class="sd">    aspect.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aspect : array-like</span>
+<span class="sd">        Grid of disk angular thicknesses. Must be positive.</span>
+<span class="sd">    inclination : array-like</span>
+<span class="sd">        Grid of inclinations in radians. Both hemispheres are symmetric, so :math:`[0, \pi/2]` suffices.</span>
+<span class="sd">    filling_factor : array-like</span>
+<span class="sd">        Grid of shell volume filling factors, within :math:`(0, 1)`.</span>
+<span class="sd">    n_sectors : int</span>
+<span class="sd">        Number of segments.</span>
+<span class="sd">    mode : {"chord", "hit"}, optional</span>
+<span class="sd">        Area definition; see :func:`projected_area_fractions`.</span>
+<span class="sd">    n_pix : int, optional</span>
+<span class="sd">        Sky pixels across the diameter. Default 200.</span>
+<span class="sd">    progress : bool, optional</span>
+<span class="sd">        Show a ``tqdm`` progress bar. Default ``False``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        Array of shape ``(n_sectors, len(aspect), len(inclination), len(filling_factor))``, ordered from the pole to</span>
+<span class="sd">        the equator along the first axis.</span>
+<span class="sd">    """</span>
+    <span class="n">aspect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">aspect</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+    <span class="n">inclination</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">inclination</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+    <span class="n">filling_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">filling_factor</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">aspect</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">aspect</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`aspect` must be positive and finite."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">filling_factor</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">filling_factor</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`filling_factor` must lie in (0, 1)."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">inclination</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`inclination` must be finite."</span><span class="p">)</span>
+
+    <span class="n">eta</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">filling_factor</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_sectors</span><span class="p">,</span> <span class="n">aspect</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">inclination</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">filling_factor</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+            <span class="n">bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">aspect</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="n">inclination</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Building filling-factor table"</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">aspect</span><span class="p">):</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">compute_segmentation</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">n_sectors</span><span class="p">)</span><span class="o">.</span><span class="n">edges</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">inc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inclination</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">et</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eta</span><span class="p">):</span>
+                <span class="n">table</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">projected_area_fractions</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">inc</span><span class="p">,</span> <span class="n">et</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">n_pix</span><span class="o">=</span><span class="n">n_pix</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">table</span></div>
+
+
+
+<div class="viewcode-block" id="interpolate_segment_filling_table">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.interpolate_segment_filling_table.html#trilobite.models.LFBOTs.sectors.interpolate_segment_filling_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interpolate_segment_filling_table</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">filling_factor</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="n">aspect</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Interpolate the area fractions of every segment from a precomputed table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table : tuple</span>
+<span class="sd">        ``(aspect_grid, inclination_grid, filling_factor_grid, f_A_table)`` with ``f_A_table`` from</span>
+<span class="sd">        :func:`build_segment_filling_table`.</span>
+<span class="sd">    filling_factor, inclination, aspect : float</span>
+<span class="sd">        The point to evaluate. The inclination is folded into :math:`[0, \pi/2]`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The area fractions, shape ``(N,)``. The interpolation is trilinear in :math:`(\ln b, i, f)` and points</span>
+<span class="sd">        beyond the grid take the value at its nearest edge.</span>
+<span class="sd">    """</span>
+    <span class="n">aspect_grid</span><span class="p">,</span> <span class="n">inc_grid</span><span class="p">,</span> <span class="n">f_grid</span><span class="p">,</span> <span class="n">f_A_table</span> <span class="o">=</span> <span class="n">table</span>
+    <span class="n">f_A_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">f_A_table</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">AxisymmetricCSMDensityProfile</span><span class="o">.</span><span class="n">_interpolate_filling_table</span><span class="p">(</span>
+        <span class="n">f_A_table</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">aspect_grid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">inc_grid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">f_grid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">aspect</span><span class="p">))),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">_fold_inclination</span><span class="p">(</span><span class="n">inclination</span><span class="p">)),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">filling_factor</span><span class="p">)),</span>
+        <span class="p">),</span>
+    <span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fold_inclination</span><span class="p">(</span><span class="n">inclination</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Fold an inclination into :math:`[0, \pi/2]`, using the symmetry under :math:`i \to \pi - i`."""</span>
+    <span class="n">inc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">inclination</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">inc</span> <span class="k">if</span> <span class="n">inc</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="k">else</span> <span class="n">inc</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

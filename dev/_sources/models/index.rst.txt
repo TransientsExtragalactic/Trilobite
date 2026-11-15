@@ -212,9 +212,13 @@ Circumstellar interaction of luminous fast blue optical transients (LFBOTs). The
 equatorial and a polar sightline through an axisymmetric CSM, each with its own thin-shell shock, synchrotron
 emission and free-free attenuation. It provides both a paired ``(time, frequency)`` path for inference and a
 ``tabulate`` path for analysis and plotting. A relativistic version solves the shock with the relativistic thin-shell
-engine and adds a thermal Maxwell-Juettner electron population.
+engine and adds a thermal Maxwell-Juettner electron population. The N-component versions of both split the sphere
+into ``n_sectors`` segments in colatitude instead of two, each with its own shock, emission and attenuation, so that
+the angular structure of the CSM is resolved smoothly. The disk edge is always a segment edge, so the polar and
+equatorial regions stay distinct at any ``n_sectors``, and two segments in the ``"hit"`` area mode reproduce the
+two-component models exactly.
 
-.. dropdown:: Two-component synchrotron model
+.. dropdown:: Two- and N-component synchrotron models
    :open:
    :class-container: trilobite-dropdown
 

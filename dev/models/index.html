@@ -588,7 +588,7 @@ LFBOTs</div>
 <p class="sd-card-text">Two-component radio emission</p>
 </div>
 <div class="sd-card-footer docutils">
-<p class="sd-card-text">2 models</p>
+<p class="sd-card-text">4 models</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="#lfbot-models"><span class="std std-ref">LFBOT Models</span></a></div>
 </div>
@@ -851,10 +851,14 @@ suited to multi-wavelength fitting and inference.</p>
 equatorial and a polar sightline through an axisymmetric CSM, each with its own thin-shell shock, synchrotron
 emission and free-free attenuation. It provides both a paired <code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">frequency)</span></code> path for inference and a
 <code class="docutils literal notranslate"><span class="pre">tabulate</span></code> path for analysis and plotting. A relativistic version solves the shock with the relativistic thin-shell
-engine and adds a thermal Maxwell-Juettner electron population.</p>
+engine and adds a thermal Maxwell-Juettner electron population. The N-component versions of both split the sphere
+into <code class="docutils literal notranslate"><span class="pre">n_sectors</span></code> segments in colatitude instead of two, each with its own shock, emission and attenuation, so that
+the angular structure of the CSM is resolved smoothly. The disk edge is always a segment edge, so the polar and
+equatorial regions stay distinct at any <code class="docutils literal notranslate"><span class="pre">n_sectors</span></code>, and two segments in the <code class="docutils literal notranslate"><span class="pre">&quot;hit&quot;</span></code> area mode reproduce the
+two-component models exactly.</p>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3 trilobite-dropdown" open="open">
 <summary class="sd-summary-title sd-card-header">
-<span class="sd-summary-text">Two-component synchrotron model</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<span class="sd-summary-text">Two- and N-component synchrotron models</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="pst-scrollable-table-container"><table class="model-table table">
 <colgroup>
 <col style="width: 30.0%" />
@@ -868,6 +872,14 @@ engine and adds a thermal Maxwell-Juettner electron population.</p>
 </tr>
 </thead>
 <tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../_as_gen/trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel.html#trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel" title="trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Diggins26_NComponentModel</span></code></a></p></td>
+<td><p><span class="sd-sphinx-override sd-badge sd-bg-info sd-bg-text-info">Novel</span></p></td>
+<td><p>N-segment (polar to equatorial) thin-shell shock interaction with an axisymmetric CSM, producing free-free attenuated synchrotron emission. <em>The N-segment generalization of the Diggins et al. (2026) model has no published counterpart to verify against. With n_sectors=2 and area_mode=’hit’ it is the two-component model.</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_as_gen/trilobite.models.LFBOTs.diggins26_n_component.Diggins26_RelativisticNComponentModel.html#trilobite.models.LFBOTs.diggins26_n_component.Diggins26_RelativisticNComponentModel" title="trilobite.models.LFBOTs.diggins26_n_component.Diggins26_RelativisticNComponentModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Diggins26_RelativisticNComponentModel</span></code></a></p></td>
+<td><p><span class="sd-sphinx-override sd-badge sd-bg-info sd-bg-text-info">Novel</span></p></td>
+<td><p>N-segment (polar to equatorial) relativistic thin-shell shock interaction with an axisymmetric CSM, producing free-free attenuated synchrotron emission from thermal and non-thermal electrons. <em>The relativistic N-segment extension of the Diggins et al. (2026) model has no published counterpart to verify against. The ejecta normalization and the radiation are not made relativistic.</em></p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../_as_gen/trilobite.models.LFBOTs.diggins26_relativistic.Diggins26_RelativisticTwoComponentModel.html#trilobite.models.LFBOTs.diggins26_relativistic.Diggins26_RelativisticTwoComponentModel" title="trilobite.models.LFBOTs.diggins26_relativistic.Diggins26_RelativisticTwoComponentModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Diggins26_RelativisticTwoComponentModel</span></code></a></p></td>
 <td><p><span class="sd-sphinx-override sd-badge sd-bg-info sd-bg-text-info">Novel</span></p></td>
 <td><p>Two-sector (equatorial and polar) relativistic thin-shell shock interaction with an axisymmetric CSM, producing free-free attenuated synchrotron emission from thermal and non-thermal electrons. <em>The relativistic extension of the Diggins et al. (2026) model has no published counterpart to verify against. The ejecta normalization and the radiation are not made relativistic.</em></p></td>
