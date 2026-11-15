@@ -1528,13 +1528,18 @@ per unit swept rest mass.
         =
         \Gamma_{\rm rel}.
 
-Numerical Implementation: Pre-tabulation and Exact Pressure Closure
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Numerical Implementation: Pre-tabulation and Thin-Shell Pressure Closure
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The engine does not evaluate the ODE pressures directly from
-:math:`\Gamma_{\rm rel,i}`.  Instead it uses the *exact* Rankine--Hugoniot
-result derived by combining baryon conservation, energy conservation, and
-momentum conservation in the shock frame.
+The engine does not evaluate the ODE pressures from the Blandford--McKee
+expression in :math:`\Gamma_{\rm rel,i}`.  Instead it solves the cold-upstream
+Rankine--Hugoniot conditions (baryon, energy and momentum conservation in the
+shock frame) with the thin-shell closure
+:math:`\beta_{is}\equiv\beta_{{\rm rel},i}`: the speed of the upstream fluid in
+the shell frame is used as the shock-frame upstream speed. This is the
+relativistic form of the identification made by the non-relativistic
+:ref:`pressure-driven model <pressure_driven_thin_shell_model>`, and the two
+agree in the limit :math:`\beta\to 0` (see the note below).
 
 **Pre-tabulation.**  At initialisation the engine solves the full cold-upstream
 relativistic implicit equation
@@ -1588,8 +1593,9 @@ shock frame for a cold upstream :math:`P_u=0`):
    \!\left(1 - \frac{\beta_{ds}}{\beta_{is}}\right).
    }
 
-This is the *exact* result from the relativistic jump conditions; no
-additional correction factor is required.  In the non-relativistic limit
+This is the exact jump-condition pressure for a shock whose upstream
+shock-frame speed is :math:`\beta_{is}`; no additional correction factor is
+required.  In the non-relativistic limit
 :math:`\beta_{is}\ll 1` it reduces to the correct strong-shock Hugoniot
 pressure :math:`(1-1/\chi)\,\rho_u v_{\rm rel}^2`.
 
@@ -1660,19 +1666,23 @@ to the reconstructed downstream state):
    =
    1 + \frac{P_i}{(\hat\gamma-1)\,\rho_{d,i}\,c^2}.
 
-When :math:`\beta_{ds}` is the exact solution of the implicit equation,
-:math:`\eta_i` is numerically equal to :math:`\Gamma_{\rm rel,i}` from
-the standard jump-condition result.
-
 .. note::
 
-   The diagnostic pressures stored in
-   :class:`~trilobite.dynamics.shocks.numerical.RelThinShellShockState`
-   are the **simplified** Hugoniot pressures
-   :math:`P_d^{({\rm RH})}=\rho_u\,c^2(\Gamma_{\rm rel}-1)(\hat\gamma\,\Gamma_{\rm rel}+1)`,
-   evaluated with :math:`\Gamma_{\rm rel}` from the lab-frame velocity-addition
-   formula.  The ODE integration uses the exact momentum-flux pressures
-   :math:`P_i` defined above.
+   The pressures :math:`P_i` and loadings :math:`\eta_i` stored in
+   :class:`~trilobite.dynamics.shocks.numerical.RelThinShellShockState` are
+   evaluated with exactly this closure, i.e. they are the values the ODE
+   integration used. They are **not** the Blandford--McKee values
+   :math:`P=\rho_u c^2(\Gamma_{\rm rel}-1)(\hat\gamma\Gamma_{\rm rel}+1)` and
+   :math:`\eta=\Gamma_{\rm rel}`, which describe a shock moving relative to the
+   shell. The two coincide for :math:`\beta\to 0`, where :math:`P_i` reduces to
+   the non-relativistic thin-shell pressure
+   :math:`(1-1/\chi)\rho_u v_{\rm rel}^2` (a factor :math:`4/(\hat\gamma+1)^2`
+   below the Hugoniot value, :math:`0.56` for :math:`\hat\gamma=5/3`). For
+   :math:`\Gamma_{\rm rel}\gg1` the closure gives :math:`P_i\simeq 0.5\,P_{\rm BM}`
+   and :math:`\eta_i\simeq0.71\,\Gamma_{\rm rel}` for :math:`\hat\gamma=4/3`
+   (:math:`0.20` and :math:`0.45` for :math:`\hat\gamma=5/3`), so the shell is
+   not exactly energy conserving. As in the non-relativistic model this is a
+   property of the pressure-driven closure, not of the equations of motion.
 
 Rest-Mass Fluxes
 ^^^^^^^^^^^^^^^^^^
@@ -1725,18 +1735,22 @@ source gives the closed adiabatic system:
        &=
        \Gamma_{\rm sh}\,c^2
        \!\left(
-           \Gamma_{\rm rel,2}\,\dot{M}_2
+           \eta_2\,\dot{M}_2
            +
-           \Gamma_{\rm rel,3}\,\dot{M}_3
-       \right),
+           \eta_3\,\dot{M}_3
+       \right)
+       +
+       \beta_{\rm sh}\,c\,
+       4\pi R_{\rm sh}^2
+       \!\left(P_2-P_3\right),
        \\[6pt]
        \frac{d\Pi_{\rm sh}}{dt}
        &=
        w_{\rm sh}\,c
        \!\left(
-           \Gamma_{\rm rel,2}\,\dot{M}_2
+           \eta_2\,\dot{M}_2
            +
-           \Gamma_{\rm rel,3}\,\dot{M}_3
+           \eta_3\,\dot{M}_3
        \right)
        +
        4\pi R_{\rm sh}^2
@@ -1748,10 +1762,10 @@ source gives the closed adiabatic system:
    \end{aligned}
    }
 
-The :math:`\Gamma_{\rm rel,i}` factors in the energy and momentum equations are
-the energy-loading coefficients :math:`\eta_i=\Gamma_{\rm rel,i}` from the
-Rankine--Hugoniot solution. The pressures :math:`P_2` and :math:`P_3` are the
-exact momentum-flux pressures defined in the pre-tabulation section above.
+The :math:`\eta_i` in the energy and momentum equations are the energy-loading
+coefficients and :math:`P_2`, :math:`P_3` the post-shock pressures of the thin-shell
+closure defined in the pre-tabulation section above. The last term of the energy
+equation is the work done by the net pressure force on the moving shell.
 
 .. dropdown:: Derivation: energy and momentum loading
 
@@ -1768,13 +1782,6 @@ exact momentum-flux pressures defined in the pre-tabulation section above.
             \eta_2\,\dot{M}_2
             +
             \eta_3\,\dot{M}_3
-        \right)
-        =
-        c^2
-        \!\left(
-            \Gamma_{\rm rel,2}\,\dot{M}_2
-            +
-            \Gamma_{\rm rel,3}\,\dot{M}_3
         \right).
 
     Since the newly shocked material is at rest in the shell frame, its
@@ -1792,10 +1799,31 @@ exact momentum-flux pressures defined in the pre-tabulation section above.
         =
         \frac{w_{\rm sh}}{c}\,\dot{E}'_{\rm load},
 
-    which are the source terms appearing in the ODE system above.
+    which are the mass-loading source terms appearing in the ODE system above.
+
+    The pressure force :math:`F=4\pi R_{\rm sh}^2(P_2-P_3)` acts on the shell
+    surface, which moves at :math:`c\beta_{\rm sh}`, so it changes the lab-frame
+    momentum at the rate :math:`F` **and** the lab-frame energy at the rate
+    :math:`\beta_{\rm sh}\,c\,F`. A force does no work in the instantaneous rest
+    frame of the shell, so the two contributions together must leave the
+    shell-frame energy :math:`E'_{\rm sh}=\sqrt{E_{\rm sh}^2-\Pi_{\rm sh}^2c^2}`
+    unchanged:
+
+    .. math::
+
+        E'_{\rm sh}\,\dot{E}'_{\rm sh}
+        =
+        E_{\rm sh}\dot{E}_{\rm sh}-\Pi_{\rm sh}c^2\dot{\Pi}_{\rm sh}
+        =
+        E'_{\rm sh}\,\dot{E}'_{\rm load},
+
+    so :math:`\dot{E}'_{\rm sh}=\dot{E}'_{\rm load}` exactly. Without the work
+    term the force would feed :math:`E'_{\rm sh}` directly; for an ultra-relativistic
+    shell this drains the shell Lorentz factor far faster than energy
+    conservation allows.
 
     In the non-relativistic limit :math:`w_{\rm sh}\,c\to v_{\rm sh}` and
-    :math:`\Gamma_{\rm rel,i}\to 1`, giving
+    :math:`\eta_i\to 1`, giving
     :math:`\dot{\Pi}_{\rm load}\to v_{\rm sh}(\dot{M}_2+\dot{M}_3)` — the
     familiar variable-mass momentum term.
 
@@ -1831,7 +1859,7 @@ time :math:`t_0`. Assuming a cold shell,
       4\pi R_{\rm sh}^2(P_2-P_3),
 
    where :math:`P_i = \rho_{u,i}\,c^2\,\Gamma_{is}^2\,\beta_{is}^2(1-\beta_{ds}/\beta_{is})`
-   is the exact post-shock pressure from the relativistic Rankine--Hugoniot conditions,
-   with :math:`\beta_{is}` and :math:`\beta_{ds}` the upstream and downstream
-   shock-frame speeds obtained by pre-tabulated interpolation of the full implicit
-   cold-upstream equation.
+   is the post-shock pressure of the thin-shell closure (the relativistic
+   Rankine--Hugoniot conditions with :math:`\beta_{is}=\beta_{{\rm rel},i}`), with
+   :math:`\beta_{ds}` the downstream shock-frame speed obtained by pre-tabulated
+   interpolation of the full implicit cold-upstream equation.

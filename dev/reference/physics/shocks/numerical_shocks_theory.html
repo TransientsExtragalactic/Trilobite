@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
@@ -52,7 +52,7 @@
     <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../_static/design-tabs.js?v=fcb327ea"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/shocks/numerical_shocks_theory';</script>
     <script>
@@ -1186,7 +1186,7 @@ applicable in different regimes.</p>
 <li><p><a class="reference internal" href="#id9" id="id29">Assumptions</a></p></li>
 <li><p><a class="reference internal" href="#dynamical-state" id="id30">Dynamical State</a></p></li>
 <li><p><a class="reference internal" href="#shock-closure-and-jump-conditions" id="id31">Shock Closure and Jump Conditions</a></p></li>
-<li><p><a class="reference internal" href="#numerical-implementation-pre-tabulation-and-exact-pressure-closure" id="id32">Numerical Implementation: Pre-tabulation and Exact Pressure Closure</a></p></li>
+<li><p><a class="reference internal" href="#numerical-implementation-pre-tabulation-and-thin-shell-pressure-closure" id="id32">Numerical Implementation: Pre-tabulation and Thin-Shell Pressure Closure</a></p></li>
 <li><p><a class="reference internal" href="#rest-mass-fluxes" id="id33">Rest-Mass Fluxes</a></p></li>
 <li><p><a class="reference internal" href="#id10" id="id34">Equations of Motion</a></p></li>
 <li><p><a class="reference internal" href="#initial-conditions" id="id35">Initial Conditions</a></p></li>
@@ -2081,8 +2081,8 @@ model, <strong>we include 3 such mechanisms</strong>: adabatic expansion, radiat
 <p>More details are provided below:</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-0">
-Adiabatic Expansion</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-0-content" class="sd-tab-label" for="sd-tab-item-0">
+Adiabatic Expansion</label><div class="sd-tab-content docutils" id="sd-tab-item-0-content">
 <p>The adiabatic term follows from <span class="math notranslate nohighlight">\(P\,dV\)</span> work:</p>
 <div class="math notranslate nohighlight">
 \[\dot U_{{\rm ad},i}
@@ -2112,8 +2112,8 @@ Adiabatic Expansion</label><div class="sd-tab-content docutils">
 }\]</div>
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-1">
-Shock Heating</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-1-content" class="sd-tab-label" for="sd-tab-item-1">
+Shock Heating</label><div class="sd-tab-content docutils" id="sd-tab-item-1-content">
 <p>For a cold, strong, non-relativistic shock, the compression ratio is</p>
 <div class="math notranslate nohighlight">
 \[\chi_i
@@ -2152,8 +2152,8 @@ v_{{\rm rel},i}^2
 }\]</div>
 </div>
 <input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-2">
-Radiative Losses</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-2-content" class="sd-tab-label" for="sd-tab-item-2">
+Radiative Losses</label><div class="sd-tab-content docutils" id="sd-tab-item-2-content">
 <p><span class="math notranslate nohighlight">\(\dot U_{{\rm rad},i}\)</span> should be an external function of the state variables which may be
 specified by the user to provide radiative losses from free-free, line emission, synchrotron, etc.</p>
 </div>
@@ -2416,12 +2416,17 @@ using <span class="math notranslate nohighlight">\(e_d = \rho_d c^2 + P_d/(\hat\
 \Gamma_{\rm rel}.\]</div>
 </div>
 </details></section>
-<section id="numerical-implementation-pre-tabulation-and-exact-pressure-closure">
-<h3><a class="toc-backref" href="#id32" role="doc-backlink">Numerical Implementation: Pre-tabulation and Exact Pressure Closure</a><a class="headerlink" href="#numerical-implementation-pre-tabulation-and-exact-pressure-closure" title="Link to this heading">#</a></h3>
-<p>The engine does not evaluate the ODE pressures directly from
-<span class="math notranslate nohighlight">\(\Gamma_{\rm rel,i}\)</span>.  Instead it uses the <em>exact</em> Rankine–Hugoniot
-result derived by combining baryon conservation, energy conservation, and
-momentum conservation in the shock frame.</p>
+<section id="numerical-implementation-pre-tabulation-and-thin-shell-pressure-closure">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Numerical Implementation: Pre-tabulation and Thin-Shell Pressure Closure</a><a class="headerlink" href="#numerical-implementation-pre-tabulation-and-thin-shell-pressure-closure" title="Link to this heading">#</a></h3>
+<p>The engine does not evaluate the ODE pressures from the Blandford–McKee
+expression in <span class="math notranslate nohighlight">\(\Gamma_{\rm rel,i}\)</span>.  Instead it solves the cold-upstream
+Rankine–Hugoniot conditions (baryon, energy and momentum conservation in the
+shock frame) with the thin-shell closure
+<span class="math notranslate nohighlight">\(\beta_{is}\equiv\beta_{{\rm rel},i}\)</span>: the speed of the upstream fluid in
+the shell frame is used as the shock-frame upstream speed. This is the
+relativistic form of the identification made by the non-relativistic
+<a class="reference internal" href="#pressure-driven-thin-shell-model"><span class="std std-ref">pressure-driven model</span></a>, and the two
+agree in the limit <span class="math notranslate nohighlight">\(\beta\to 0\)</span> (see the note below).</p>
 <p><strong>Pre-tabulation.</strong>  At initialisation the engine solves the full cold-upstream
 relativistic implicit equation</p>
 <div class="math notranslate nohighlight">
@@ -2460,8 +2465,9 @@ P_i
 \rho_{u,i}\,c^2\,\Gamma_{is}^2\,\beta_{is}^2
 \!\left(1 - \frac{\beta_{ds}}{\beta_{is}}\right).
 }\]</div>
-<p>This is the <em>exact</em> result from the relativistic jump conditions; no
-additional correction factor is required.  In the non-relativistic limit
+<p>This is the exact jump-condition pressure for a shock whose upstream
+shock-frame speed is <span class="math notranslate nohighlight">\(\beta_{is}\)</span>; no additional correction factor is
+required.  In the non-relativistic limit
 <span class="math notranslate nohighlight">\(\beta_{is}\ll 1\)</span> it reduces to the correct strong-shock Hugoniot
 pressure <span class="math notranslate nohighlight">\((1-1/\chi)\,\rho_u v_{\rm rel}^2\)</span>.</p>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
@@ -2511,18 +2517,23 @@ to the reconstructed downstream state):</p>
 \[\eta_i
 =
 1 + \frac{P_i}{(\hat\gamma-1)\,\rho_{d,i}\,c^2}.\]</div>
-<p>When <span class="math notranslate nohighlight">\(\beta_{ds}\)</span> is the exact solution of the implicit equation,
-<span class="math notranslate nohighlight">\(\eta_i\)</span> is numerically equal to <span class="math notranslate nohighlight">\(\Gamma_{\rm rel,i}\)</span> from
-the standard jump-condition result.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The diagnostic pressures stored in
-<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.RelThinShellShockState.html#trilobite.dynamics.shocks.numerical.RelThinShellShockState" title="trilobite.dynamics.shocks.numerical.RelThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelThinShellShockState</span></code></a>
-are the <strong>simplified</strong> Hugoniot pressures
-<span class="math notranslate nohighlight">\(P_d^{({\rm RH})}=\rho_u\,c^2(\Gamma_{\rm rel}-1)(\hat\gamma\,\Gamma_{\rm rel}+1)\)</span>,
-evaluated with <span class="math notranslate nohighlight">\(\Gamma_{\rm rel}\)</span> from the lab-frame velocity-addition
-formula.  The ODE integration uses the exact momentum-flux pressures
-<span class="math notranslate nohighlight">\(P_i\)</span> defined above.</p>
+<p>The pressures <span class="math notranslate nohighlight">\(P_i\)</span> and loadings <span class="math notranslate nohighlight">\(\eta_i\)</span> stored in
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.RelThinShellShockState.html#trilobite.dynamics.shocks.numerical.RelThinShellShockState" title="trilobite.dynamics.shocks.numerical.RelThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelThinShellShockState</span></code></a> are
+evaluated with exactly this closure, i.e. they are the values the ODE
+integration used. They are <strong>not</strong> the Blandford–McKee values
+<span class="math notranslate nohighlight">\(P=\rho_u c^2(\Gamma_{\rm rel}-1)(\hat\gamma\Gamma_{\rm rel}+1)\)</span> and
+<span class="math notranslate nohighlight">\(\eta=\Gamma_{\rm rel}\)</span>, which describe a shock moving relative to the
+shell. The two coincide for <span class="math notranslate nohighlight">\(\beta\to 0\)</span>, where <span class="math notranslate nohighlight">\(P_i\)</span> reduces to
+the non-relativistic thin-shell pressure
+<span class="math notranslate nohighlight">\((1-1/\chi)\rho_u v_{\rm rel}^2\)</span> (a factor <span class="math notranslate nohighlight">\(4/(\hat\gamma+1)^2\)</span>
+below the Hugoniot value, <span class="math notranslate nohighlight">\(0.56\)</span> for <span class="math notranslate nohighlight">\(\hat\gamma=5/3\)</span>). For
+<span class="math notranslate nohighlight">\(\Gamma_{\rm rel}\gg1\)</span> the closure gives <span class="math notranslate nohighlight">\(P_i\simeq 0.5\,P_{\rm BM}\)</span>
+and <span class="math notranslate nohighlight">\(\eta_i\simeq0.71\,\Gamma_{\rm rel}\)</span> for <span class="math notranslate nohighlight">\(\hat\gamma=4/3\)</span>
+(<span class="math notranslate nohighlight">\(0.20\)</span> and <span class="math notranslate nohighlight">\(0.45\)</span> for <span class="math notranslate nohighlight">\(\hat\gamma=5/3\)</span>), so the shell is
+not exactly energy conserving. As in the non-relativistic model this is a
+property of the pressure-driven closure, not of the equations of motion.</p>
 </div>
 </section>
 <section id="rest-mass-fluxes">
@@ -2564,18 +2575,22 @@ source gives the closed adiabatic system:</p>
     &amp;=
     \Gamma_{\rm sh}\,c^2
     \!\left(
-        \Gamma_{\rm rel,2}\,\dot{M}_2
+        \eta_2\,\dot{M}_2
         +
-        \Gamma_{\rm rel,3}\,\dot{M}_3
-    \right),
+        \eta_3\,\dot{M}_3
+    \right)
+    +
+    \beta_{\rm sh}\,c\,
+    4\pi R_{\rm sh}^2
+    \!\left(P_2-P_3\right),
     \\[6pt]
     \frac{d\Pi_{\rm sh}}{dt}
     &amp;=
     w_{\rm sh}\,c
     \!\left(
-        \Gamma_{\rm rel,2}\,\dot{M}_2
+        \eta_2\,\dot{M}_2
         +
-        \Gamma_{\rm rel,3}\,\dot{M}_3
+        \eta_3\,\dot{M}_3
     \right)
     +
     4\pi R_{\rm sh}^2
@@ -2586,10 +2601,10 @@ source gives the closed adiabatic system:</p>
     \frac{\Pi_{\rm sh}\,c}{E_{\rm sh}}.
 \end{aligned}
 }\end{split}\]</div>
-<p>The <span class="math notranslate nohighlight">\(\Gamma_{\rm rel,i}\)</span> factors in the energy and momentum equations are
-the energy-loading coefficients <span class="math notranslate nohighlight">\(\eta_i=\Gamma_{\rm rel,i}\)</span> from the
-Rankine–Hugoniot solution. The pressures <span class="math notranslate nohighlight">\(P_2\)</span> and <span class="math notranslate nohighlight">\(P_3\)</span> are the
-exact momentum-flux pressures defined in the pre-tabulation section above.</p>
+<p>The <span class="math notranslate nohighlight">\(\eta_i\)</span> in the energy and momentum equations are the energy-loading
+coefficients and <span class="math notranslate nohighlight">\(P_2\)</span>, <span class="math notranslate nohighlight">\(P_3\)</span> the post-shock pressures of the thin-shell
+closure defined in the pre-tabulation section above. The last term of the energy
+equation is the work done by the net pressure force on the moving shell.</p>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
 <span class="sd-summary-text">Derivation: energy and momentum loading</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
@@ -2604,13 +2619,6 @@ c^2
     \eta_2\,\dot{M}_2
     +
     \eta_3\,\dot{M}_3
-\right)
-=
-c^2
-\!\left(
-    \Gamma_{\rm rel,2}\,\dot{M}_2
-    +
-    \Gamma_{\rm rel,3}\,\dot{M}_3
 \right).\]</div>
 <p class="sd-card-text">Since the newly shocked material is at rest in the shell frame, its
 contribution to the lab-frame four-momentum is parallel to the shell
@@ -2624,9 +2632,26 @@ Boosting to the lab frame:</p>
 \dot{\Pi}_{\rm load}
 =
 \frac{w_{\rm sh}}{c}\,\dot{E}'_{\rm load},\]</div>
-<p class="sd-card-text">which are the source terms appearing in the ODE system above.</p>
+<p class="sd-card-text">which are the mass-loading source terms appearing in the ODE system above.</p>
+<p class="sd-card-text">The pressure force <span class="math notranslate nohighlight">\(F=4\pi R_{\rm sh}^2(P_2-P_3)\)</span> acts on the shell
+surface, which moves at <span class="math notranslate nohighlight">\(c\beta_{\rm sh}\)</span>, so it changes the lab-frame
+momentum at the rate <span class="math notranslate nohighlight">\(F\)</span> <strong>and</strong> the lab-frame energy at the rate
+<span class="math notranslate nohighlight">\(\beta_{\rm sh}\,c\,F\)</span>. A force does no work in the instantaneous rest
+frame of the shell, so the two contributions together must leave the
+shell-frame energy <span class="math notranslate nohighlight">\(E'_{\rm sh}=\sqrt{E_{\rm sh}^2-\Pi_{\rm sh}^2c^2}\)</span>
+unchanged:</p>
+<div class="math notranslate nohighlight">
+\[E'_{\rm sh}\,\dot{E}'_{\rm sh}
+=
+E_{\rm sh}\dot{E}_{\rm sh}-\Pi_{\rm sh}c^2\dot{\Pi}_{\rm sh}
+=
+E'_{\rm sh}\,\dot{E}'_{\rm load},\]</div>
+<p class="sd-card-text">so <span class="math notranslate nohighlight">\(\dot{E}'_{\rm sh}=\dot{E}'_{\rm load}\)</span> exactly. Without the work
+term the force would feed <span class="math notranslate nohighlight">\(E'_{\rm sh}\)</span> directly; for an ultra-relativistic
+shell this drains the shell Lorentz factor far faster than energy
+conservation allows.</p>
 <p class="sd-card-text">In the non-relativistic limit <span class="math notranslate nohighlight">\(w_{\rm sh}\,c\to v_{\rm sh}\)</span> and
-<span class="math notranslate nohighlight">\(\Gamma_{\rm rel,i}\to 1\)</span>, giving
+<span class="math notranslate nohighlight">\(\eta_i\to 1\)</span>, giving
 <span class="math notranslate nohighlight">\(\dot{\Pi}_{\rm load}\to v_{\rm sh}(\dot{M}_2+\dot{M}_3)\)</span> — the
 familiar variable-mass momentum term.</p>
 <p class="sd-card-text">The pressure-driven term <span class="math notranslate nohighlight">\(4\pi R_{\rm sh}^2(P_2-P_3)\)</span> is the net
@@ -2655,10 +2680,10 @@ pressure-driven nature of the model enters through the explicit force</p>
 <div class="math notranslate nohighlight">
 \[4\pi R_{\rm sh}^2(P_2-P_3),\]</div>
 <p>where <span class="math notranslate nohighlight">\(P_i = \rho_{u,i}\,c^2\,\Gamma_{is}^2\,\beta_{is}^2(1-\beta_{ds}/\beta_{is})\)</span>
-is the exact post-shock pressure from the relativistic Rankine–Hugoniot conditions,
-with <span class="math notranslate nohighlight">\(\beta_{is}\)</span> and <span class="math notranslate nohighlight">\(\beta_{ds}\)</span> the upstream and downstream
-shock-frame speeds obtained by pre-tabulated interpolation of the full implicit
-cold-upstream equation.</p>
+is the post-shock pressure of the thin-shell closure (the relativistic
+Rankine–Hugoniot conditions with <span class="math notranslate nohighlight">\(\beta_{is}=\beta_{{\rm rel},i}\)</span>), with
+<span class="math notranslate nohighlight">\(\beta_{ds}\)</span> the downstream shock-frame speed obtained by pre-tabulated
+interpolation of the full implicit cold-upstream equation.</p>
 </div>
 </section>
 </section>
@@ -2742,7 +2767,7 @@ cold-upstream equation.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Assumptions</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamical-state">Dynamical State</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shock-closure-and-jump-conditions">Shock Closure and Jump Conditions</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-implementation-pre-tabulation-and-exact-pressure-closure">Numerical Implementation: Pre-tabulation and Exact Pressure Closure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-implementation-pre-tabulation-and-thin-shell-pressure-closure">Numerical Implementation: Pre-tabulation and Thin-Shell Pressure Closure</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rest-mass-fluxes">Rest-Mass Fluxes</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Equations of Motion</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-conditions">Initial Conditions</a></li>

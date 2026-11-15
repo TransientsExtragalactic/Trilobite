@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
@@ -52,7 +52,7 @@
     <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_as_gen/trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine';</script>
     <script>
@@ -3486,8 +3486,9 @@ momentum.  The shell velocity follows algebraically from the four-momentum ratio
 <div class="math notranslate nohighlight">
 \[\beta_{\rm sh} = \frac{\Pi_{\rm sh}\,c}{E_{\rm sh}}.\]</div>
 <p>At each shock face the post-shock pressure and energy-loading coefficient are
-evaluated from the cold-upstream relativistic Rankine–Hugoniot closure using the
-Lorentz factor of the upstream fluid in the shell (downstream) frame,</p>
+evaluated from the cold-upstream relativistic Rankine–Hugoniot conditions with the
+thin-shell closure that the shock-frame upstream speed is the speed of the upstream
+fluid in the shell (downstream) frame, with Lorentz factor</p>
 <div class="math notranslate nohighlight">
 \[\Gamma_{\rm rel,i}
 =
@@ -3497,13 +3498,17 @@ Lorentz factor of the upstream fluid in the shell (downstream) frame,</p>
         \frac{\beta_{u,i} - \beta_{\rm sh}}
         {1 - \beta_{u,i}\,\beta_{\rm sh}}
     \right)^{\!2}
-\right]^{-1/2},\]</div>
-<p>giving</p>
+\right]^{-1/2}.\]</div>
+<p>The post-shock pressure and energy loading are then</p>
 <div class="math notranslate nohighlight">
-\[P_i = \rho_{u,i}\,c^2\,(\Gamma_{\rm rel,i}-1)\,(\hat\gamma\,\Gamma_{\rm rel,i}+1),
+\[P_i = \rho_{u,i}\,c^2\,\Gamma_{\rm rel,i}^2\beta_{\rm rel,i}^2
+      \left(1-\frac{\beta_{d,i}}{\beta_{\rm rel,i}}\right),
 \qquad
-\eta_i = \Gamma_{\rm rel,i}.\]</div>
-<p>The governing equations of motion are</p>
+\eta_i = 1 + \frac{P_i}{(\hat\gamma_i-1)\,\rho_{d,i}\,c^2},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta_{d,i}\)</span> is the downstream shock-frame speed from the exact implicit
+jump condition. They reduce to the non-relativistic thin-shell pressure
+<span class="math notranslate nohighlight">\((1-1/\chi)\rho_u v_{\rm rel}^2\)</span>, with <span class="math notranslate nohighlight">\(\chi=(\hat\gamma+1)/(\hat\gamma-1)\)</span>, and to
+<span class="math notranslate nohighlight">\(\eta_i\to1\)</span> as <span class="math notranslate nohighlight">\(\beta\to0\)</span>. The governing equations of motion are</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{aligned}
     \frac{dR_{\rm sh}}{dt}
@@ -3511,7 +3516,8 @@ Lorentz factor of the upstream fluid in the shell (downstream) frame,</p>
     \frac{dM_{\rm sh}}{dt}
     &amp;= \dot M_2 + \dot M_3,\\[4pt]
     \frac{dE_{\rm sh}}{dt}
-    &amp;= \Gamma_{\rm sh}\,c^2\!\left(\eta_2\dot M_2 + \eta_3\dot M_3\right),\\[4pt]
+    &amp;= \Gamma_{\rm sh}\,c^2\!\left(\eta_2\dot M_2 + \eta_3\dot M_3\right)
+       + \beta_{\rm sh}\,c\,4\pi R_{\rm sh}^2\!\left(P_2 - P_3\right),\\[4pt]
     \frac{d\Pi_{\rm sh}}{dt}
     &amp;= w_{\rm sh}\,c\!\left(\eta_2\dot M_2 + \eta_3\dot M_3\right)
        + 4\pi R_{\rm sh}^2\!\left(P_2 - P_3\right),

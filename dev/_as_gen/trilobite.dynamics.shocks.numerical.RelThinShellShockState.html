@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
@@ -52,7 +52,7 @@
     <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_as_gen/trilobite.dynamics.shocks.numerical.RelThinShellShockState';</script>
     <script>
@@ -3518,10 +3518,10 @@ plain arrays.</p>
 <td><p>Lab-frame total energy <span class="math notranslate nohighlight">\(E_{\rm sh}\)</span> in erg.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.dynamics.shocks.numerical.RelThinShellShockState.eta_2.html#trilobite.dynamics.shocks.numerical.RelThinShellShockState.eta_2" title="trilobite.dynamics.shocks.numerical.RelThinShellShockState.eta_2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eta_2</span></code></a></p></td>
-<td><p>Shell-frame energy per downstream rest-mass at the reverse shock, <span class="math notranslate nohighlight">\(\eta_2 = e_2/(\rho_2 c^2) = \Gamma_{\rm rel,2}\)</span> (dimensionless).</p></td>
+<td><p>Shell-frame energy per downstream rest-mass energy at the reverse shock, <span class="math notranslate nohighlight">\(\eta_2 = e_2/(\rho_2 c^2)\)</span>, from the thin-shell closure used by the ODE (dimensionless).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="trilobite.dynamics.shocks.numerical.RelThinShellShockState.eta_3.html#trilobite.dynamics.shocks.numerical.RelThinShellShockState.eta_3" title="trilobite.dynamics.shocks.numerical.RelThinShellShockState.eta_3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eta_3</span></code></a></p></td>
-<td><p>Shell-frame energy per downstream rest-mass at the forward shock, <span class="math notranslate nohighlight">\(\eta_3 = e_3/(\rho_3 c^2) = \Gamma_{\rm rel,3}\)</span> (dimensionless).</p></td>
+<td><p>Shell-frame energy per downstream rest-mass energy at the forward shock, <span class="math notranslate nohighlight">\(\eta_3 = e_3/(\rho_3 c^2)\)</span>, from the thin-shell closure used by the ODE (dimensionless).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.dynamics.shocks.numerical.RelThinShellShockState.mass.html#trilobite.dynamics.shocks.numerical.RelThinShellShockState.mass" title="trilobite.dynamics.shocks.numerical.RelThinShellShockState.mass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass</span></code></a></p></td>
 <td><p>Swept baryonic rest mass <span class="math notranslate nohighlight">\(M_{\rm sh}\)</span> in g.</p></td>
@@ -3530,10 +3530,10 @@ plain arrays.</p>
 <td><p>Lab-frame radial momentum <span class="math notranslate nohighlight">\(\Pi_{\rm sh}\)</span> in <span class="math notranslate nohighlight">\(\mathrm{g\,cm\,s^{-1}}\)</span>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.dynamics.shocks.numerical.RelThinShellShockState.pressure_2.html#trilobite.dynamics.shocks.numerical.RelThinShellShockState.pressure_2" title="trilobite.dynamics.shocks.numerical.RelThinShellShockState.pressure_2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pressure_2</span></code></a></p></td>
-<td><p>Reverse-shock post-shock pressure <span class="math notranslate nohighlight">\(P_2 = \rho_{1,\rm sh}c^2(\Gamma_{\rm rel,2}-1)(\hat\gamma\Gamma_{\rm rel,2}+1)\)</span> in <span class="math notranslate nohighlight">\(\mathrm{dyn\,cm^{-2}}\)</span>.</p></td>
+<td><p>Reverse-shock post-shock pressure <span class="math notranslate nohighlight">\(P_2\)</span> of the thin-shell closure used by the ODE (zero when the reverse shock is inactive), in <span class="math notranslate nohighlight">\(\mathrm{dyn\,cm^{-2}}\)</span>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="trilobite.dynamics.shocks.numerical.RelThinShellShockState.pressure_3.html#trilobite.dynamics.shocks.numerical.RelThinShellShockState.pressure_3" title="trilobite.dynamics.shocks.numerical.RelThinShellShockState.pressure_3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pressure_3</span></code></a></p></td>
-<td><p>Forward-shock post-shock pressure <span class="math notranslate nohighlight">\(P_3 = \rho_{4,\rm sh}c^2(\Gamma_{\rm rel,3}-1)(\hat\gamma\Gamma_{\rm rel,3}+1)\)</span> in <span class="math notranslate nohighlight">\(\mathrm{dyn\,cm^{-2}}\)</span>.</p></td>
+<td><p>Forward-shock post-shock pressure <span class="math notranslate nohighlight">\(P_3\)</span> of the thin-shell closure used by the ODE (zero when the forward shock is inactive), in <span class="math notranslate nohighlight">\(\mathrm{dyn\,cm^{-2}}\)</span>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.dynamics.shocks.numerical.RelThinShellShockState.radius.html#trilobite.dynamics.shocks.numerical.RelThinShellShockState.radius" title="trilobite.dynamics.shocks.numerical.RelThinShellShockState.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></p></td>
 <td><p>Shell radius <span class="math notranslate nohighlight">\(R_{\rm sh}\)</span> in cm.</p></td>

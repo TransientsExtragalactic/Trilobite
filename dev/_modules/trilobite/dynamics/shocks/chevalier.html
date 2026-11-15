@@ -36,7 +36,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
@@ -51,7 +51,7 @@
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../../_static/design-tabs.js?v=fcb327ea"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/trilobite/dynamics/shocks/chevalier';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
@@ -2135,7 +2135,7 @@
 <span class="sd">    are read from a table of self-similar ODE solutions precomputed on a grid of</span>
 <span class="sd">    ``(n, s)`` values at instantiation and bilinearly interpolated at runtime.</span>
 <span class="sd">    The normalization constant :math:`A` (which determines the absolute contact-radius</span>
-<span class="sd">    scale) is likewise tabulated and is more accurate than the analytic</span>
+<span class="sd">    scale) is likewise tabulated (and interpolated in :math:`\ln A`) and is more accurate than the analytic</span>
 <span class="sd">    :meth:`ChevalierSelfSimilarShockEngine.compute_scale_parameter` approximation.</span>
 
 <span class="sd">    The contact-discontinuity radius follows</span>
@@ -2241,7 +2241,9 @@
         <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegularGridInterpolator</span>
 
         <span class="n">_pts</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_values</span><span class="p">,</span> <span class="n">s_values</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interp_A</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span><span class="n">_pts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># A varies roughly as n^-3 across the grid, so interpolate log(A): linear interpolation of A itself</span>
+        <span class="c1"># overestimates it by up to ~17% between grid nodes (a ~4% error in R_cd).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interp_log_A</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span><span class="n">_pts</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="o">.</span><span class="n">A</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interp_xi_fs</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span>
             <span class="n">_pts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="o">.</span><span class="n">radius_fs_over_radius_cd</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
@@ -2263,7 +2265,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">pt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)]])</span>
             <span class="k">return</span> <span class="p">(</span>
-                <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interp_A</span><span class="p">(</span><span class="n">pt</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interp_log_A</span><span class="p">(</span><span class="n">pt</span><span class="p">)[</span><span class="mi">0</span><span class="p">])),</span>
                 <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interp_xi_fs</span><span class="p">(</span><span class="n">pt</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
                 <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interp_xi_rs</span><span class="p">(</span><span class="n">pt</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
             <span class="p">)</span>

@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
@@ -52,7 +52,7 @@
     <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../_static/design-tabs.js?v=fcb327ea"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/disks/one_zone_disk_theory';</script>
     <script>
@@ -1318,8 +1318,8 @@ this assumption when constructing their models.</p>
 </ol>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-0">
-Gas Pressure Only</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-0-content" class="sd-tab-label" for="sd-tab-item-0">
+Gas Pressure Only</label><div class="sd-tab-content docutils" id="sd-tab-item-0-content">
 <p>The equation of state is</p>
 <div class="math notranslate nohighlight">
 \[P = \frac{\rho k_B T_c}{\mu m_p},\]</div>
@@ -1331,8 +1331,8 @@ Gas Pressure Only</label><div class="sd-tab-content docutils">
 speed follows directly in a manner which does not require any root-finding.</p>
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-1">
-Gas + Radiation Pressure</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-1-content" class="sd-tab-label" for="sd-tab-item-1">
+Gas + Radiation Pressure</label><div class="sd-tab-content docutils" id="sd-tab-item-1-content">
 <p>When the ideal gas is modified to include both the gas pressure contribution and the
 radiation pressure contribution, the equation of state becomes</p>
 <div class="math notranslate nohighlight">
@@ -1374,8 +1374,8 @@ to a single algebraic equation in <span class="math notranslate nohighlight">\(T
 structure of the disk at each timestep. Several heating terms appear in various different disk closures:</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-2">
-Viscous Heating</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-2-content" class="sd-tab-label" for="sd-tab-item-2">
+Viscous Heating</label><div class="sd-tab-content docutils" id="sd-tab-item-2-content">
 <p>The viscous heating rate per unit area is (in the alpha prescription with vertical hydrostatic equilibrium)</p>
 <div class="math notranslate nohighlight" id="equation-eq-q-plus">
 <span class="eqno">(9)<a class="headerlink" href="#equation-eq-q-plus" title="Link to this equation">#</a></span>\[Q^+ = \frac{9}{8}\,\nu\,\Sigma\,\Omega^2
@@ -1387,8 +1387,8 @@ disk models, but other terms can be added to capture additional physics (e.g. ne
 nuclear burning) if desired.</p>
 </div>
 <input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-3">
-Radiative Cooling</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-3-content" class="sd-tab-label" for="sd-tab-item-3">
+Radiative Cooling</label><div class="sd-tab-content docutils" id="sd-tab-item-3-content">
 <p>Radiative cooling can be done in a number of ways with varying levels of sophistication. Tradiationally,
 one takes some prescription for the Rosseland opacity <span class="math notranslate nohighlight">\(\kappa_R(T_c, \rho_c)\)</span> and utilizes radiative
 diffusion to approximate the cooling rate. This, of course, presumes that the disk is optically thick
@@ -1415,8 +1415,8 @@ opacity; however, we will eventually support both Kramer’s opacity and the mor
 which will allow us to capture a wider range of physical regimes.</p>
 </div>
 <input id="sd-tab-item-4" name="sd-tab-set-1" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-4">
-Advection</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-4-content" class="sd-tab-label" for="sd-tab-item-4">
+Advection</label><div class="sd-tab-content docutils" id="sd-tab-item-4-content">
 <p>In some regimes, advection can become an important cooling term. This is particularly relevant in the context of
 radiatively inefficient accretion flows (RIAFs), where the disk is optically thin and the cooling timescale is long
 compared to the accretion timescale. In this case, the advective cooling rate per unit area can be approximated as</p>
@@ -1594,8 +1594,8 @@ to capture the physics of accretion disks in a particular regime while still bei
 <p>In this section, we describe the theoretical elements of our “standard” disk models</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-5">
-gP + ES</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-5-content" class="sd-tab-label" for="sd-tab-item-5">
+gP + ES</label><div class="sd-tab-content docutils" id="sd-tab-item-5-content">
 <p>This model includes gas pressure and electron scattering opacity.  The heating is dominated by viscous
 dissipation and the cooling is dominated by radiative diffusion.  This is a very common model in the literature
 and captures the physics of many accretion disks in a variety of regimes.</p>
@@ -1611,8 +1611,8 @@ T_c^3 = \frac{27}{128}\,\frac{\kappa_{\rm es} k_B}{\sigma_{\rm SB} \mu m_p}\,\al
 }\]</div>
 </div>
 <input id="sd-tab-item-6" name="sd-tab-set-2" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-6">
-igP + ES</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-6-content" class="sd-tab-label" for="sd-tab-item-6">
+igP + ES</label><div class="sd-tab-content docutils" id="sd-tab-item-6-content">
 <p>This model includes gas pressure and radiation pressure in a single equation of state, as well
 as electron scattering opacity.  The heating is dominated by viscous dissipation and the cooling
 is dominated by radiative diffusion.  This model is necessary to capture the physics of disks in

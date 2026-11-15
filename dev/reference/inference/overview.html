@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
@@ -52,7 +52,7 @@
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../_static/design-tabs.js?v=fcb327ea"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/inference/overview';</script>
     <script>
@@ -1374,8 +1374,8 @@ structural work beyond model evaluation and lightweight stacking.</p>
 performance-oriented backend.</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-0">
-High-Level API</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-0-content" class="sd-tab-label" for="sd-tab-item-0">
+High-Level API</label><div class="sd-tab-content docutils" id="sd-tab-item-0-content">
 <p>The high-level interface is <a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html#trilobite.inference.likelihood.base.Likelihood.log_likelihood" title="trilobite.inference.likelihood.base.Likelihood.log_likelihood"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Likelihood.log_likelihood()</span></code></a>. This method is designed
 to be called by user code. It accepts model parameters in any format supported by the model,
 performs coercion into the model’s internal representation, and then evaluates the likelihood.</p>
@@ -1393,8 +1393,8 @@ If you are evaluating the likelihood inside a tight sampling loop,
 you may prefer the low-level API to avoid repeated parameter coercion.</p>
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-1">
-Low-Level API</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-1-content" class="sd-tab-label" for="sd-tab-item-1">
+Low-Level API</label><div class="sd-tab-content docutils" id="sd-tab-item-1-content">
 <p>The low-level backend is <code class="xref py py-meth docutils literal notranslate"><span class="pre">Likelihood._log_likelihood()</span></code>. This method is written
 for performance. It assumes that:</p>
 <ul class="simple">
@@ -1775,8 +1775,8 @@ optimizers.</p></li>
 parameters are represented.</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-2">
-Dictionary-Based API (User-Facing)</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-2-content" class="sd-tab-label" for="sd-tab-item-2">
+Dictionary-Based API (User-Facing)</label><div class="sd-tab-content docutils" id="sd-tab-item-2-content">
 <p>This interface accepts parameter values as <strong>dictionaries</strong>, keyed by
 parameter name. It is the most readable and safest way to evaluate
 probabilities by hand.</p>
@@ -1812,8 +1812,8 @@ will be used automatically.</p>
 </div>
 </div>
 <input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-3">
-Vectorized API (Sampler-Facing)</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-3-content" class="sd-tab-label" for="sd-tab-item-3">
+Vectorized API (Sampler-Facing)</label><div class="sd-tab-content docutils" id="sd-tab-item-3-content">
 <p>Samplers and optimizers operate most efficiently on <strong>NumPy arrays</strong>.
 For this reason, <a class="reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.html#trilobite.inference.problem.InferenceProblem" title="trilobite.inference.problem.InferenceProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code></a> provides a low-level API that
 works directly with parameter vectors.</p>

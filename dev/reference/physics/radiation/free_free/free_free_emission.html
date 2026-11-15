@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2d7cce99" />
   
   <!-- So that users can add custom icons -->
@@ -52,7 +52,7 @@
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../../_static/design-tabs.js?v=fcb327ea"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/free_free/free_free_emission';</script>
     <script>
@@ -1202,8 +1202,8 @@ g_{\rm ff},\]</div>
 <p>Trilobite implements this via <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_emissivity.html#trilobite.radiation.free_free.core.compute_ff_emissivity" title="trilobite.radiation.free_free.core.compute_ff_emissivity"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_emissivity()</span></code></a>:</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-0">
-High-Level API</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-0-content" class="sd-tab-label" for="sd-tab-item-0">
+High-Level API</label><div class="sd-tab-content docutils" id="sd-tab-item-0-content">
 <p>The public API accepts <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.units.Quantity</span></code></a> inputs and returns the
 emissivity as a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> in
 erg s<sup>-1</sup> cm<sup>-3</sup> Hz<sup>-1</sup> sr<sup>-1</sup>:</p>
@@ -1228,8 +1228,8 @@ respectively—the Gaunt factor <code class="docutils literal notranslate"><span
 </div>
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-1">
-Low-Level API</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-1-content" class="sd-tab-label" for="sd-tab-item-1">
+Low-Level API</label><div class="sd-tab-content docutils" id="sd-tab-item-1-content">
 <p>The private backend <code class="xref py py-func docutils literal notranslate"><span class="pre">_log_ff_emissivity()</span></code>
 accepts natural logarithms of all arguments:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -1275,8 +1275,8 @@ g_{\rm ff},\]</div>
 <p>This is implemented via <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_absorption.html#trilobite.radiation.free_free.core.compute_ff_absorption" title="trilobite.radiation.free_free.core.compute_ff_absorption"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_absorption()</span></code></a>:</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-2">
-High-Level API</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-2-content" class="sd-tab-label" for="sd-tab-item-2">
+High-Level API</label><div class="sd-tab-content docutils" id="sd-tab-item-2-content">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_ff_absorption</span>
@@ -1302,8 +1302,8 @@ For a uniform slab of thickness <span class="math notranslate nohighlight">\(L\)
 </div>
 </div>
 <input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-3">
-Low-Level API</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-3-content" class="sd-tab-label" for="sd-tab-item-3">
+Low-Level API</label><div class="sd-tab-content docutils" id="sd-tab-item-3-content">
 <p>The log-space backend <code class="xref py py-func docutils literal notranslate"><span class="pre">_log_ff_absorption()</span></code>
 evaluates <span class="math notranslate nohighlight">\(\log(1 - e^{-h\nu/k_BT})\)</span> via <code class="docutils literal notranslate"><span class="pre">numpy.log1p</span></code> to avoid
 catastrophic cancellation at low frequencies where <span class="math notranslate nohighlight">\(h\nu/k_BT \ll 1\)</span>:</p>
@@ -1396,8 +1396,8 @@ interpolation.</p>
 the Python <code class="docutils literal notranslate"><span class="pre">in</span></code> operator to test whether a point lies within the table boundaries.</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-4">
-Non-Relativistic Interpolator</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-4-content" class="sd-tab-label" for="sd-tab-item-4">
+Non-Relativistic Interpolator</label><div class="sd-tab-content docutils" id="sd-tab-item-4-content">
 <p>The <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator.html#trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator" title="trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">NonRelativisticGauntFactorInterpolator</span></code></a>
 wraps a 2D <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.RegularGridInterpolator()</span></code> over the non-relativistic
 van Hoof (2014) table.  The ionic charge <span class="math notranslate nohighlight">\(Z\)</span> enters only through the coordinate
@@ -1425,8 +1425,8 @@ transform to <span class="math notranslate nohighlight">\(\log_{10}\gamma^2\)</s
 </div>
 </div>
 <input id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-5">
-Relativistic Interpolator</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-5-content" class="sd-tab-label" for="sd-tab-item-5">
+Relativistic Interpolator</label><div class="sd-tab-content docutils" id="sd-tab-item-5-content">
 <p>The <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator.html#trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator" title="trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelativisticGauntFactorInterpolator</span></code></a>
 wraps a 3D <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.RegularGridInterpolator()</span></code>.  Z is a first-class table
 axis, allowing the interpolator to capture the explicit Z-dependence of relativistic
@@ -1538,8 +1538,8 @@ the wind (<span class="math notranslate nohighlight">\(p = 2\)</span>) and unifo
 <h3><a class="toc-backref" href="#id15" role="doc-backlink">Usage Examples</a><a class="headerlink" href="#usage-examples" title="Link to this heading">#</a></h3>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-6" name="sd-tab-set-3" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-6">
-Quadrature</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-6-content" class="sd-tab-label" for="sd-tab-item-6">
+Quadrature</label><div class="sd-tab-content docutils" id="sd-tab-item-6-content">
 <p>Compute the free-free optical depth through a CSM described by arbitrary number
 density and temperature profiles, using adaptive quadrature from <span class="math notranslate nohighlight">\(r\)</span> to
 <span class="math notranslate nohighlight">\(r_{\rm max}\)</span>:</p>
@@ -1574,8 +1574,8 @@ density and temperature profiles, using adaptive quadrature from <span class="ma
 </div>
 </div>
 <input id="sd-tab-item-7" name="sd-tab-set-3" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-7">
-Wind Profile</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-7-content" class="sd-tab-label" for="sd-tab-item-7">
+Wind Profile</label><div class="sd-tab-content docutils" id="sd-tab-item-7-content">
 <p>For a steady stellar wind with mass-loss rate <span class="math notranslate nohighlight">\(\dot{M}\)</span> and wind velocity
 <span class="math notranslate nohighlight">\(v_w\)</span>, use the analytic wind integral:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
@@ -1600,8 +1600,8 @@ Wind Profile</label><div class="sd-tab-content docutils">
 </div>
 </div>
 <input id="sd-tab-item-8" name="sd-tab-set-3" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-8">
-Shell Profile</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-8-content" class="sd-tab-label" for="sd-tab-item-8">
+Shell Profile</label><div class="sd-tab-content docutils" id="sd-tab-item-8-content">
 <p>For a uniform-density shell, the integral reduces to
 <span class="math notranslate nohighlight">\(\tau = \alpha_\nu (r_{\rm max} - r)\)</span>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
@@ -1623,8 +1623,8 @@ Shell Profile</label><div class="sd-tab-content docutils">
 </div>
 </div>
 <input id="sd-tab-item-9" name="sd-tab-set-3" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-9">
-Power-Law Profile</label><div class="sd-tab-content docutils">
+<label aria-controls="sd-tab-item-9-content" class="sd-tab-label" for="sd-tab-item-9">
+Power-Law Profile</label><div class="sd-tab-content docutils" id="sd-tab-item-9-content">
 <p>For a generalized <span class="math notranslate nohighlight">\(\rho \propto r^{-p}\)</span> profile, the integral is computed
 analytically.  The power-law exponent is <span class="math notranslate nohighlight">\(p = 0\)</span> (uniform) or <span class="math notranslate nohighlight">\(p = 2\)</span>
 (wind) as special cases:</p>
