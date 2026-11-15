@@ -6218,6 +6218,50 @@ class SSA_SED_PowerLaw(SynchrotronSED):
         return nu * u.Hz, F_nu * u.erg / (u.s * u.cm**2 * u.Hz)
 
 
+_STEP_OFFSET = 1e-9  # offset in ln(gamma) between the two nodes that resolve a step in the distribution
+
+
+def _log_trapezoid_weights(log_gamma: np.ndarray) -> np.ndarray:
+    r"""Return the log of the trapezoid weights :math:`\gamma_i\,\Delta\!\ln\gamma_i` on a :math:`\ln\gamma` grid."""
+    spacing = np.diff(log_gamma)
+    half_width = np.zeros_like(log_gamma)
+    half_width[:-1] += 0.5 * spacing
+    half_width[1:] += 0.5 * spacing
+    return log_gamma + np.log(half_width)
+
+
+def _support_grid(log_gamma: np.ndarray, log_lower: float, log_upper: float) -> tuple[np.ndarray, np.ndarray]:
+    r"""Return the quadrature grid and log weights for a distribution that is non-zero only on a finite support.
+
+    The nodes are the grid nodes strictly inside the support plus its two end points, so the trapezoid rule integrates
+    the support exactly up to its smooth error, wherever the edges fall between the grid nodes. Rounding an edge to the
+    nearest node instead is first-order accurate and shifts the result by a few percent when the grid is coarse. A
+    support that extends beyond the grid is truncated at the grid, as before.
+    """
+    lower, upper = max(log_lower, log_gamma[0]), min(log_upper, log_gamma[-1])
+    if not lower < upper:
+        raise ValueError("The Lorentz-factor support does not overlap the quadrature grid.")
+    nodes = np.concatenate([[lower], log_gamma[(log_gamma > lower) & (log_gamma < upper)], [upper]])
+    return nodes, _log_trapezoid_weights(nodes)
+
+
+def _step_grid(log_gamma: np.ndarray, log_lower: float, log_upper: float) -> tuple[np.ndarray, np.ndarray]:
+    r"""Return the quadrature grid and log weights for a distribution with steps at ``log_lower`` and ``log_upper``.
+
+    A component that switches on at ``log_lower`` and off at ``log_upper`` while another component continues across
+    them has jumps there. Each jump is resolved by a pair of nodes a distance ``_STEP_OFFSET`` apart, one on each side,
+    so the trapezoid rule assigns no weight across it. Edges outside the grid, or on its end nodes, need no pair.
+    """
+    keep = np.ones_like(log_gamma, dtype=bool)
+    extra = []
+    for edge, offsets in ((log_lower, (-_STEP_OFFSET, 0.0)), (log_upper, (0.0, _STEP_OFFSET))):
+        if log_gamma[0] < edge < log_gamma[-1]:
+            keep &= np.abs(log_gamma - edge) > 2.0 * _STEP_OFFSET
+            extra += [edge + offset for offset in offsets]
+    nodes = np.sort(np.concatenate([log_gamma[keep], extra]))
+    return nodes, _log_trapezoid_weights(nodes)
+
+
 class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
     r"""
     Numerical one-zone power-law synchrotron SED with self-absorption (uncooled).
@@ -6498,10 +6542,10 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         log_A_eff = np.log(float(f_A) * np.pi * float(R) ** 2)
         log_D_A = np.log(float(D_A))
 
-        # Build the distribution function N(gamma) on the quadrature grid.
-        log_N = np.full(N0.shape + (len(self._log_gamma),), -np.inf)
-        mask = (self._log_gamma >= log_gamma_min) & (self._log_gamma <= log_gamma_max)
-        log_N[..., mask] = np.log(N0)[..., np.newaxis] - p * self._log_gamma[mask]
+        # Integrate over the power-law support only, with its edges as nodes, so the result does not depend on where
+        # gamma_min and gamma_max fall between the nodes of the default grid.
+        log_gamma, log_weights = _support_grid(self._log_gamma, log_gamma_min, log_gamma_max)
+        log_N = np.log(N0)[..., np.newaxis] - p * log_gamma
 
         # Pass off to the engine for the computation.
         if sin_alpha is not None:
@@ -6510,8 +6554,8 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
@@ -6525,8 +6569,8 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A_eff=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
@@ -7931,15 +7975,18 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             dtype="f8",
         )
 
+        # The power law switches on at gamma_min and off at gamma_max while the thermal component continues across them.
+        # Resolve both steps with a pair of nodes so the result does not depend on where they fall on the grid.
+        log_gamma, log_weights = _step_grid(self._log_gamma, np.log(gamma_min), np.log(gamma_max))
+
         # Thermal component: Maxwell-Jüttner evaluated over the full grid.
-        log_N_mjd = _opt_mj_log_pdf(np.exp(self._log_gamma), Theta, N_therm[..., np.newaxis])
+        log_N_mjd = _opt_mj_log_pdf(np.exp(log_gamma), Theta, N_therm[..., np.newaxis])
 
         # Non-thermal component: power law gated to [gamma_min, gamma_max].
-        gamma_arr = np.exp(self._log_gamma)
-        mask = (gamma_arr >= gamma_min) & (gamma_arr <= gamma_max)
-        log_N_pl = np.full(N0_pl.shape + (len(self._log_gamma),), -np.inf)
+        mask = (log_gamma >= np.log(gamma_min)) & (log_gamma <= np.log(gamma_max))
+        log_N_pl = np.full(N0_pl.shape + (len(log_gamma),), -np.inf)
         with np.errstate(divide="ignore"):
-            log_N_pl[..., mask] = np.log(N0_pl)[..., np.newaxis] - p * self._log_gamma[mask]
+            log_N_pl[..., mask] = np.log(N0_pl)[..., np.newaxis] - p * log_gamma[mask]
 
         log_N = np.logaddexp(log_N_mjd, log_N_pl)
 
@@ -7955,8 +8002,8 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
@@ -7970,8 +8017,8 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A_eff=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),

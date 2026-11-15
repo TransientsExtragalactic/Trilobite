@@ -130,10 +130,10 @@ class TestSpectra:
 
     @pytest.mark.parametrize("Theta", [0.1, 1.0, 10.0])
     def test_mixed_sed_without_non_thermal_electrons_is_the_thermal_sed(self, Theta):
-        # Same grid, so the two computations are identical.
+        # Both integrate the same thermal distribution; the mixed SED only adds nodes at the edges of its (empty)
+        # power law, so they agree to the accuracy of the quadrature.
         gamma = np.geomspace(1.0 + 1e-6, 1e8, 150)
         thermal = Numerical_Thermal_SSA_SynchrotronSED(gamma=gamma)
         mixed = Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(gamma=gamma)
-        np.testing.assert_allclose(
-            _flux(mixed, Theta, epsilon_E=0.0, p=3.0), _flux(thermal, Theta), rtol=1e-10, atol=0.0
-        )
+        flux_mixed, flux_thermal = _flux(mixed, Theta, epsilon_E=0.0, p=3.0), _flux(thermal, Theta)
+        assert _max_relative_error(flux_mixed, flux_thermal) < 5e-3

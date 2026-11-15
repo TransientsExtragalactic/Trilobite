@@ -282,6 +282,18 @@ where :math:`x_i = \nu / (c_{1\gamma}\,B\sin\alpha\,\gamma_i^2)` and :math:`\Del
 spacing at point :math:`i` (computed via central differences). The product :math:`w_i \equiv \gamma_i\,\Delta\!\ln\gamma_i`
 serves as the **quadrature weight** and is precomputed once for a given grid.
 
+.. rubric:: Sharp edges of the distribution
+
+A truncated power law :math:`N \propto \gamma^{-p}` on :math:`[\gamma_{\min}, \gamma_{\max}]` is discontinuous at its
+edges. A Riemann sum that merely zeroes the nodes outside the support is only first-order accurate there: it counts
+or drops up to half a cell depending on where :math:`\gamma_{\min}` falls between two nodes, which at 200 log-spaced
+nodes changes the optically thin spectrum by several percent, and by up to about 10% at a node. The power-law SEDs
+therefore integrate over the support only. The nodes strictly inside it are kept, :math:`\gamma_{\min}` and
+:math:`\gamma_{\max}` are added as nodes, and the weights are the trapezoid weights of the resulting grid, which is
+second-order accurate and independent of the alignment. When a thermal component continues across the edges, as in the
+mixed thermal plus power-law SED, each edge is resolved by a pair of nodes on either side of the jump instead, so that
+no weight is assigned across it. Edges outside the default grid are truncated at the grid, as before.
+
 .. _sec_absorption:
 
 Absorption
