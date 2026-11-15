@@ -8410,6 +8410,13 @@
 <span class="sd">            Lower bound of the Lorentz factor grid. Default ``1.0``. The default grid is the union of ``n_gamma``</span>
 <span class="sd">            points log-spaced in :math:`\gamma` and ``n_gamma // 2`` points log-spaced in :math:`\gamma - 1`,</span>
 <span class="sd">            which resolve the thermal component for :math:`\Theta \gtrsim 10^{-3}`.</span>
+
+<span class="sd">            .. warning::</span>
+
+<span class="sd">                This bounds the *thermal* electrons as well: a value above ``1`` removes the thermal population</span>
+<span class="sd">                below it. It is not the power law's minimum Lorentz factor, which is the ``gamma_min`` given when the</span>
+<span class="sd">                SED is evaluated and may lie anywhere above the grid's lower bound. Leave this at ``1.0`` unless the</span>
+<span class="sd">                thermal electrons should be truncated.</span>
 <span class="sd">        gamma_max : float, optional</span>
 <span class="sd">            Upper bound of the Lorentz factor grid. Default ``1e8``. Should be</span>
 <span class="sd">            wide enough to capture the Maxwell-Jüttner tail (at least</span>
