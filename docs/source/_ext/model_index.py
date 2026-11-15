@@ -37,7 +37,7 @@ GROUPS = {
     "trilobite.models.SEDs.blackbody_optical": "Blackbody photometry",
     "trilobite.models.supernovae": "Self-similar shocks",
     "trilobite.models.GRBs": "Prompt emission",
-    "trilobite.models.LFBOTs": "Two-component synchrotron",
+    "trilobite.models.LFBOTs": "Two- and N-component synchrotron",
     "trilobite.models.TDEs": "TDE light curves",
 }
 
