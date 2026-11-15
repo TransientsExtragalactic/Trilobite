@@ -4,7 +4,9 @@ import astropy.units as u
 import numpy as np
 import pytest
 
+from trilobite.radiation.synchrotron.electron_distributions import BrokenPowerLaw, PowerLaw
 from trilobite.radiation.synchrotron.SEDs import (
+    Numerical_PowerLaw_Cooling_SSA_SynchrotronSED,
     Numerical_PowerLaw_SSA_SynchrotronSED,
     Numerical_Thermal_PowerLaw_SSA_SynchrotronSED,
 )
@@ -103,3 +105,94 @@ class TestSpectra:
                 sed.sed(NU, **kwargs).to_value(FLUX_UNIT), reference.sed(NU, **kwargs).to_value(FLUX_UNIT)
             )
             assert error < 1e-2
+
+
+B_CGS, R_CGS, D_A_CGS = 1.0, 1e16, 3e26
+EPSILON_B, EPSILON_E, GAMMA_MAX = 0.1, 0.1, 1e6
+# Times that put the cooling Lorentz factor (1.2e6, 1.2e3, 1.2 for B = 1 G) above gamma_max, between gamma_min and
+# gamma_max, and below gamma_min = 10.
+REGIME_TIMES = {"uncooled": 1e3, "slow": 1e6, "fast": 1e9}
+
+
+@pytest.fixture
+def cooling_distribution(monkeypatch):
+    """Return a function giving the grid and electron distribution the cooling SED hands to the engine."""
+    sed = Numerical_PowerLaw_Cooling_SSA_SynchrotronSED()
+    captured = {}
+
+    def spy(**kwargs):
+        captured.update(kwargs)
+        return np.zeros_like(kwargs["log_nu"])
+
+    monkeypatch.setattr(sed._engine, "_compute_log_pa_flux_density", spy)
+
+    def distribution(regime, p, gamma_min=10.0):
+        sed._log_opt_sed(
+            np.array([1e9]),
+            REGIME_TIMES[regime],
+            B_CGS,
+            R_CGS,
+            D_A_CGS,
+            p=p,
+            epsilon_B=EPSILON_B,
+            epsilon_E=EPSILON_E,
+            gamma_min=gamma_min,
+            gamma_max=GAMMA_MAX,
+        )
+        gamma_c = float(sed._cooling_engine.compute_cooling_gamma(B=B_CGS, t=REGIME_TIMES[regime], sin_alpha=None))
+        return (
+            np.exp(captured["log_gamma"]),
+            np.exp(captured["log_weights"]),
+            np.exp(np.atleast_1d(captured["log_N"])),
+            gamma_c,
+        )
+
+    return distribution
+
+
+def _class_distribution(regime, p, gamma_min, gamma_c):
+    """Return the distribution class and parameters of a cooling regime."""
+    if regime == "fast":
+        return BrokenPowerLaw, {"p1": 2.0, "p2": p + 1.0, "gamma_min": gamma_c, "gamma_c": gamma_min}
+    if regime == "slow":
+        return BrokenPowerLaw, {"p1": p, "p2": p + 1.0, "gamma_min": gamma_min, "gamma_c": gamma_c}
+    return PowerLaw, {"p": p, "gamma_min": gamma_min}
+
+
+@pytest.mark.parametrize("p", [2.5, 3.0, 3.5])
+@pytest.mark.parametrize("regime", ["uncooled", "slow", "fast"])
+class TestCoolingDistribution:
+    """The cooling SED integrates the broken power law of its regime, and nothing outside its support."""
+
+    def test_distribution_is_the_class_distribution(self, cooling_distribution, regime, p):
+        gamma, _, N, gamma_c = cooling_distribution(regime, p)
+        distribution, params = _class_distribution(regime, p, 10.0, gamma_c)
+        params["gamma_max"] = GAMMA_MAX
+        N0 = distribution.normalize_from_magnetic_field(B_CGS, EPSILON_B, EPSILON_E, **params).value
+        inner = slice(1, -1)  # the end nodes sit on the support edges, where rounding decides in or out
+        np.testing.assert_allclose(N[inner], distribution.pdf(gamma[inner], N0, **params), rtol=1e-10)
+
+    def test_electrons_are_only_inside_the_support(self, cooling_distribution, regime, p):
+        gamma, _, _, gamma_c = cooling_distribution(regime, p)
+        lower = gamma_c if regime == "fast" else 10.0
+        assert gamma[0] == pytest.approx(lower, rel=1e-12)
+        assert gamma[-1] == pytest.approx(GAMMA_MAX, rel=1e-12)
+
+    def test_energy_budget_is_the_kinetic_energy_budget(self, cooling_distribution, regime, p):
+        from trilobite.radiation.constants import electron_rest_energy_cgs as mc2
+
+        gamma, weights, N, _ = cooling_distribution(regime, p)
+        energy = mc2 * np.sum(N * (gamma - 1.0) * weights)
+        assert energy == pytest.approx(EPSILON_E / EPSILON_B * B_CGS**2 / (8.0 * np.pi), rel=1e-2)
+
+
+def test_cooling_sed_does_not_depend_on_gamma_min_alignment():
+    """The slow-cooling SED agrees with a dense reference wherever gamma_min falls on the grid."""
+    sed = Numerical_PowerLaw_Cooling_SSA_SynchrotronSED()
+    for gamma_min in _offsets(sed, index=60):
+        kwargs = {**COMMON, "t": 1e6 * u.s, "p": P, "epsilon_E": 0.1, "gamma_min": gamma_min, "gamma_max": 1e6}
+        reference = Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(gamma=np.geomspace(gamma_min, 1e6, 20001))
+        error = _max_relative_error(
+            sed.sed(NU, **kwargs).to_value(FLUX_UNIT), reference.sed(NU, **kwargs).to_value(FLUX_UNIT)
+        )
+        assert error < 1e-2

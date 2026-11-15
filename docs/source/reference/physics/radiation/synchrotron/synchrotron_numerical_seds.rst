@@ -290,7 +290,9 @@ or drops up to half a cell depending on where :math:`\gamma_{\min}` falls betwee
 nodes changes the optically thin spectrum by several percent, and by up to about 10% at a node. The power-law SEDs
 therefore integrate over the support only. The nodes strictly inside it are kept, :math:`\gamma_{\min}` and
 :math:`\gamma_{\max}` are added as nodes, and the weights are the trapezoid weights of the resulting grid, which is
-second-order accurate and independent of the alignment. When a thermal component continues across the edges, as in the
+second-order accurate and independent of the alignment. The cooled SED does the same for the broken power law of its
+regime (:math:`\gamma_{\min}` to :math:`\gamma_{\max}` for slow cooling, :math:`\gamma_c` to :math:`\gamma_{\max}` for fast
+cooling) and adds the break as a node. When a thermal component continues across the edges, as in the
 mixed thermal plus power-law SED, each edge is resolved by a pair of nodes on either side of the jump instead, so that
 no weight is assigned across it. Edges outside the default grid are truncated at the grid, as before.
 

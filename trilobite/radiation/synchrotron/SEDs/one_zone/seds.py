@@ -6230,18 +6230,24 @@ def _log_trapezoid_weights(log_gamma: np.ndarray) -> np.ndarray:
     return log_gamma + np.log(half_width)
 
 
-def _support_grid(log_gamma: np.ndarray, log_lower: float, log_upper: float) -> tuple[np.ndarray, np.ndarray]:
+def _support_grid(
+    log_gamma: np.ndarray, log_lower: float, log_upper: float, log_breaks: tuple = ()
+) -> tuple[np.ndarray, np.ndarray]:
     r"""Return the quadrature grid and log weights for a distribution that is non-zero only on a finite support.
 
     The nodes are the grid nodes strictly inside the support plus its two end points, so the trapezoid rule integrates
     the support exactly up to its smooth error, wherever the edges fall between the grid nodes. Rounding an edge to the
     nearest node instead is first-order accurate and shifts the result by a few percent when the grid is coarse. A
-    support that extends beyond the grid is truncated at the grid, as before.
+    support that extends beyond the grid is truncated at the grid, as before. ``log_breaks`` are points inside the
+    support where the distribution is continuous but its slope changes, such as a cooling break; they are added as
+    nodes as well.
     """
     lower, upper = max(log_lower, log_gamma[0]), min(log_upper, log_gamma[-1])
     if not lower < upper:
         raise ValueError("The Lorentz-factor support does not overlap the quadrature grid.")
-    nodes = np.concatenate([[lower], log_gamma[(log_gamma > lower) & (log_gamma < upper)], [upper]])
+    inside = log_gamma[(log_gamma > lower) & (log_gamma < upper)]
+    breaks = [point for point in log_breaks if lower < point < upper]
+    nodes = np.unique(np.concatenate([[lower], inside, breaks, [upper]]))
     return nodes, _log_trapezoid_weights(nodes)
 
 
@@ -7000,61 +7006,47 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
         gamma_c = self._cooling_engine.compute_cooling_gamma(B=B, t=t, sin_alpha=sin_alpha)
         log_gamma_c = np.log(gamma_c)
 
-        # Now perform the branching to normalize dependent on the the
-        # cooling regime.
+        # Integrate over the support of the cooled distribution only, with its edges and its cooling break as nodes,
+        # so the result does not depend on where they fall between the nodes of the default grid. The distribution
+        # is the broken power law of the matching regime.
         if log_gamma_c < log_gamma_min:
-            # Compute masks.
-            mask_1 = self._log_gamma < log_gamma_c
-            mask_2 = (log_gamma_c <= self._log_gamma) & (self._log_gamma < log_gamma_max)
-
-            # Normalize the electron distribution in each segment.
+            # Fast cooling: gamma^-2 from gamma_c to gamma_min, gamma^-(p+1) above.
+            log_break, slope_below, slope_above = log_gamma_min, 2.0, p + 1.0
+            log_gamma, log_weights = _support_grid(self._log_gamma, log_gamma_c, log_gamma_max, (log_break,))
             N0 = np.asarray(
                 BrokenPowerLaw._normalize_from_magnetic_field(
                     B,
                     epsilon_B,
                     epsilon_E,
-                    p1=2,
-                    p2=p - 1,
+                    p1=slope_below,
+                    p2=slope_above,
                     gamma_min=gamma_c,
                     gamma_c=gamma_min,
                     gamma_max=gamma_max,
                 ),
                 dtype="f8",
             )
-            log_N = np.full(N0.shape + (len(self._log_gamma),), -np.inf)
-
-            # Insert the values into each segment.
-            log_N[mask_1] = np.log(N0) - 2 * (self._log_gamma[mask_1] - log_gamma_min)
-            log_N[mask_2] = np.log(N0) - (p - 1) * (self._log_gamma[mask_2] - log_gamma_min)
-        elif log_gamma_min <= log_gamma_c < log_gamma_max:
-            # Compute masks.
-            mask_1 = self._log_gamma < log_gamma_c
-            mask_2 = (log_gamma_c <= self._log_gamma) & (self._log_gamma < log_gamma_max)
-
-            # Normalize the electron distribution in each segment.
+        elif log_gamma_c < log_gamma_max:
+            # Slow cooling: gamma^-p from gamma_min to gamma_c, gamma^-(p+1) above.
+            log_break, slope_below, slope_above = log_gamma_c, p, p + 1.0
+            log_gamma, log_weights = _support_grid(self._log_gamma, log_gamma_min, log_gamma_max, (log_break,))
             N0 = np.asarray(
                 BrokenPowerLaw._normalize_from_magnetic_field(
                     B,
                     epsilon_B,
                     epsilon_E,
-                    p1=p,
-                    p2=p + 1,
+                    p1=slope_below,
+                    p2=slope_above,
                     gamma_min=gamma_min,
                     gamma_c=gamma_c,
                     gamma_max=gamma_max,
                 ),
                 dtype="f8",
             )
-            log_N = np.full(N0.shape + (len(self._log_gamma),), -np.inf)
-
-            # Insert the values into each segment.
-            log_N[mask_1] = np.log(N0) - p * (self._log_gamma[mask_1] - log_gamma_c)
-            log_N[mask_2] = np.log(N0) - (p + 1) * (self._log_gamma[mask_2] - log_gamma_c)
         else:
-            # Compute mask.
-            mask = (log_gamma_min <= self._log_gamma) & (self._log_gamma < log_gamma_max)
-
-            # Normalize the electron distribution.
+            # No cooling inside the distribution: a single power law.
+            log_break, slope_below, slope_above = 0.0, p, p  # N = N0 gamma^-p: the reference point is gamma = 1
+            log_gamma, log_weights = _support_grid(self._log_gamma, log_gamma_min, log_gamma_max)
             N0 = np.asarray(
                 PowerLaw._normalize_from_magnetic_field(
                     B,
@@ -7066,8 +7058,11 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
                 ),
                 dtype="f8",
             )
-            log_N = np.full(N0.shape + (len(self._log_gamma),), -np.inf)
-            log_N[mask] = np.log(N0) - p * (self._log_gamma[mask])
+
+        # The shape is (gamma / gamma_break)^-slope, with the slope changing at the break (the normalization of each
+        # distribution above is for this form).
+        slope = np.where(log_gamma < log_break, slope_below, slope_above)
+        log_N = np.log(N0)[..., np.newaxis] - slope * (log_gamma - log_break)
 
         # Pass off to the engine for the computation.
         if sin_alpha is not None:
@@ -7076,8 +7071,8 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
@@ -7091,8 +7086,8 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A_eff=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
