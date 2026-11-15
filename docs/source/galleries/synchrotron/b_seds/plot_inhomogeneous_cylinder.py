@@ -118,7 +118,8 @@ plt.show()
 #     \qquad \gamma_{\min} \le \gamma \le \gamma_{\max},
 #
 # where :math:`K(r)` is fixed by the equipartition condition
-# :math:`\epsilon_e / \epsilon_B = u_e / u_B` with
+# :math:`\epsilon_e / \epsilon_B = u_e / u_B`, where
+# :math:`u_e = \int N(\gamma-1)\,m_e c^2\,d\gamma` is the electron kinetic energy density and
 # :math:`u_B = B^2 / 8\pi`.  Because :math:`u_B \propto B^2 \propto r^{-2}`,
 # inner rings host a denser electron population.
 

@@ -1178,14 +1178,29 @@ that goes into relativistic electrons and magnetic fields, respectively.
 
 .. important::
 
-    In the case of :math:`\epsilon_e`, we follow the typical convention in the literature
-    (e.g. :footcite:t:`Margutti2019COW`,
-    :footcite:t:`demarchiRadioAnalysisSN2004C2022`, :footcite:t:`wuDelayedRadioEmission2025`, etc.) and
-    define :math:`U_e = \epsilon_e U_{\rm th}` such that :math:`U_e` is the
-    **total energy density in relativistic electrons**. In some cases, authors have instead defined :math:`\epsilon_e` such
-    that :math:`U_e = \epsilon_e U_{\rm th}` is the
-    **kinetic energy density in relativistic electrons**. This latter convention is less common, but it is
-    important to be aware of it when comparing results across the literature.
+    :math:`\epsilon_e` is the fraction of the thermal (internal) energy density that goes into relativistic electrons.
+    Because a thermal energy density excludes rest mass, we define :math:`U_e = \epsilon_e U_{\rm th}` as the
+    **kinetic energy density in relativistic electrons**,
+
+    .. math::
+
+        U_e = N_0\, m_e c^2 \left\langle \gamma - 1 \right\rangle,
+
+    This is Trilobite's internal convention, used by the electron distributions, the analytic SED closures and the
+    spectral inversions. Where Trilobite provides a model or inversion that implements a specific published result, it
+    adopts that paper's convention instead, so that it reproduces the published equations; its documentation states
+    which convention applies.
+
+    Many studies (e.g. :footcite:t:`Margutti2019COW`, :footcite:t:`demarchiRadioAnalysisSN2004C2022`,
+    :footcite:t:`wuDelayedRadioEmission2025`) instead define :math:`U_e` as the **total energy density in
+    relativistic electrons**, including rest mass, which replaces :math:`\langle \gamma - 1 \rangle` by
+    :math:`\langle \gamma \rangle`. The two differ by the factor
+    :math:`\langle \gamma \rangle / \langle \gamma - 1 \rangle`, which is negligible for
+    :math:`\gamma_{\min} \gg 1` but approaches :math:`p - 1` as :math:`\gamma_{\min} \to 1`, so it must be accounted
+    for when comparing with those results. For example,
+    :func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22` and
+    :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw` implement
+    :footcite:t:`demarchiRadioAnalysisSN2004C2022` and therefore use the total-energy convention.
 
 Given a thermal energy density :math:`U_{\rm thermal}`, we can then write the energy densities in relativistic electrons
 and magnetic fields as:
@@ -1274,7 +1289,7 @@ equipartition)
 
     U_e = \epsilon_e U_{\rm thermal}.
 
-The total energy density of the electron population is
+The kinetic energy density of the electron population, which excludes rest mass, is
 
 .. tab-set::
 
@@ -1282,27 +1297,34 @@ The total energy density of the electron population is
 
         .. math::
 
-            U_e = m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma \frac{dN}{d\gamma} d\gamma
-            = N_0 m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{1 - p} d\gamma.
+            U_e = m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1) \frac{dN}{d\gamma} d\gamma
+            = N_0 m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1) \gamma^{-p} d\gamma.
 
     .. tab-item:: In Terms of Energy
 
         .. math::
 
-            U_e = \int_{E_{\min}}^{E_{\max}} E \frac{dN}{dE} dE = N_{E,0} \int_{E_{\min}}^{E_{\max}} E^{1 - p} dE.
+            U_e = \int_{E_{\min}}^{E_{\max}} (E - m_e c^2) \frac{dN}{dE} dE
+            = N_{E,0} \int_{E_{\min}}^{E_{\max}} (E - m_e c^2) E^{-p} dE.
 
 Letting
 
 .. math::
 
-    M^{(\ell)}_{\gamma} = N_0 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{\ell} \gamma^{-p} d\gamma,
+    M^{(\ell)}_{\gamma} = \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{\ell} \gamma^{-p} d\gamma
 
-be the :math:`\ell`-th moment of the Lorentz factor distribution, we can write the energy density as
+be the :math:`\ell`-th moment of the Lorentz factor shape function, and defining the **kinetic moment**
+
+.. math::
+
+    M^{(\rm kin)}_{\gamma} \equiv M^{(1)}_{\gamma} - M^{(0)}_{\gamma} = \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1) \gamma^{-p} d\gamma,
+
+we can write the energy density as
 
 .. math::
 
     \boxed{
-    U_e = m_e c^2 N_0 M^{(1)}_{\gamma}.
+    U_e = m_e c^2 N_0 M^{(\rm kin)}_{\gamma}.
     }
 
 Solving for :math:`N_0`, we find
@@ -1310,14 +1332,16 @@ Solving for :math:`N_0`, we find
 .. math::
 
     \boxed{
-    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2 M^{(1)}_{\gamma}}.
+    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2 M^{(\rm kin)}_{\gamma}}.
     }
 
 In terms of the magnetic field, we also have
 
 .. math::
 
-    B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 = \frac{\epsilon_e B^2}{8 \pi \epsilon_B m_e c^2 M^{(1)}_{\gamma}}.
+    B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 = \frac{\epsilon_e B^2}{8 \pi \epsilon_B m_e c^2 M^{(\rm kin)}_{\gamma}}.
+
+For :math:`\gamma_{\min} \gg 1` the kinetic moment reduces to :math:`M^{(1)}_{\gamma}`.
 
 .. important::
 
@@ -1345,7 +1369,7 @@ From equipartition, we know :math:`N_0` in terms of :math:`U_{\rm thermal}` and 
 
     \boxed{
     P_{\rm total} = \frac{4}{3} \sigma_T c \frac{\epsilon_e \epsilon_B u_{\rm therm}^2}{m_e c^2} \left(
-        \frac{M^{(2)}_{\gamma}}{M^{(1)}_{\gamma}}
+        \frac{M^{(2)}_{\gamma}}{M^{(\rm kin)}_{\gamma}}
     \right).
     }
 
@@ -1380,6 +1404,94 @@ of the second kind, and :math:`N_0` is a normalization constant.
     Trilobite generally works with number densities to facilitate coupling with hydrodynamical quantities. The
     conversion between the two is just a division by the relevant volume.
 
+.. _synch_thermal_budget:
+
+The Thermal-Electron Energy Budget
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The shock jump conditions fix the post-shock thermal energy density :math:`u_{\rm th}`, which excludes rest mass, but not
+how it is shared between ions, electrons and the magnetic field. That split is microphysics. When the electrons include
+a thermal population, Trilobite divides :math:`u_{\rm th}` into disjoint parts,
+
+.. math::
+
+    u_{\rm th} = u_i + u_{e,\rm th} + u_{e,\rm nt} + u_B,
+
+set by three parameters:
+
+- :math:`\epsilon_B`: the magnetic field, :math:`u_B = \epsilon_B u_{\rm th}`.
+- :math:`\epsilon_E`: the kinetic energy of the non-thermal electrons, :math:`u_{e,\rm nt} = \epsilon_E u_{\rm th}`. This
+  is the :math:`\epsilon_e` of the power-law models above, so a pure power-law model is the case without thermal
+  electrons and keeps its meaning.
+- :math:`\epsilon_T`: the ratio of the thermal-electron energy to the ion energy, :math:`u_{e,\rm th} = \epsilon_T u_i`.
+
+Solving for the ions and the thermal electrons,
+
+.. math::
+
+    u_i = \frac{1 - \epsilon_B - \epsilon_E}{1 + \epsilon_T}\, u_{\rm th},
+    \qquad
+    u_{e,\rm th} = f_{\rm th}\, u_{\rm th},
+    \qquad
+    f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}.
+
+The ions carry the remainder, so :math:`\epsilon_B + \epsilon_E < 1`. Note that :math:`\epsilon_T = 1` means equal ion and
+thermal-electron *energy*, not equal temperature.
+
+.. rubric:: Species temperatures
+
+Each thermal species follows a Maxwell-Juttner distribution at its own dimensionless temperature
+:math:`\Theta_s = k_B T_s / (m_s c^2)`, which is fixed by its kinetic energy per particle,
+
+.. math::
+
+    \langle \gamma - 1 \rangle(\Theta_s) = \xi_s = \frac{u_s}{n_s m_s c^2}.
+
+With the proper rest-mass density :math:`\rho = n_i m_i = n_e \mu_e m_p`, where :math:`\mu_e` is the mean molecular weight
+per electron,
+
+.. math::
+
+    \xi_i = \frac{u_i}{\rho c^2},
+    \qquad
+    \xi_e = \frac{u_{e,\rm th}\,\mu_e m_p}{\rho\, m_e c^2}.
+
+:func:`~trilobite.physics_utils.thermal_partition.compute_ion_electron_theta` inverts these relations exactly. Both
+species may be relativistic: the ions in a relativistic shock, the electrons already in a shock at a tenth of the
+speed of light. The mean molecular weight per ion cancels, :math:`\Theta_i = k_B T_i / (\mu_i m_p c^2)`. For a strong
+shock at :math:`0.1c` into hydrogen-dominated gas (:math:`\mu_e = 1.17`) with :math:`\epsilon_T = 1`, the ions have
+:math:`\Theta_i \approx 4 \times 10^{-3}` and the thermal electrons :math:`\Theta_e \approx 4`, although they carry equal
+energy.
+
+.. rubric:: Relation to Margalit and Quataert (2021)
+
+:footcite:t:`margalitThermalElectronsMildlyrelativistic2021` model thermal electrons in mildly relativistic shocks with a
+fraction :math:`\epsilon_T` of the *total* thermal energy in the electrons, :math:`u_e = \epsilon_T u_{\rm th}`, a
+fraction :math:`\delta` of which is non-thermal, :math:`\delta\,\epsilon_T u_{\rm th}`. Trilobite parametrizes the same
+physics differently, for one reason: each parameter should mean the same thing in every model.
+
+- The non-thermal electrons have their own budget :math:`\epsilon_E`, with the standard meaning of the power-law models,
+  instead of a share :math:`\delta` of the electron energy. A power-law fit and a thermal-plus-power-law fit therefore
+  share :math:`\epsilon_E` and :math:`\epsilon_B`.
+- The thermal-electron energy is measured against the ions, :math:`u_{e,\rm th} = \epsilon_T u_i`, so the ions, thermal
+  electrons, non-thermal electrons and magnetic field partition :math:`u_{\rm th}` exactly, with no assumption about the
+  remainder.
+- Without magnetic or non-thermal energy, :math:`u_{e,\rm th} / u_{\rm th} = \epsilon_T / (1 + \epsilon_T)`. The two
+  parametrizations then agree for :math:`\epsilon_T \ll 1`, differ by the factor :math:`1 / (1 + \epsilon_T)` in the
+  electron energy at equal parameter values, and map onto each other through
+  :math:`\epsilon_T^{\rm Trilobite} = \epsilon_T^{\rm MQ21} / (1 - \epsilon_T^{\rm MQ21})`.
+
+.. note::
+
+    Two approximations are not corrected for. The jump conditions are solved with one constant adiabatic index, whereas
+    a mixture of non-relativistic ions and partly relativistic electrons has an effective index that varies with
+    :math:`\epsilon_T` and the shock speed; the effect on :math:`u_{\rm th}` is small. And :math:`\Theta_e` is computed
+    as if all :math:`n_e = \rho / (\mu_e m_p)` electrons were thermal, so a non-thermal population must satisfy
+    :math:`n_{\rm nt} \ll n_e`. For a power law with :math:`p = 3` in a :math:`0.1c` shock, :math:`n_{\rm nt} / n_e`
+    is 0.03 for :math:`\gamma_{\min} = 2` and :math:`\epsilon_E = 0.01`, 0.27 for :math:`\epsilon_E = 0.1`, and 0.04 for
+    :math:`\gamma_{\min} = 10` and :math:`\epsilon_E = 0.1`. A value above one means the parameters are inconsistent: the
+    non-thermal electrons would outnumber the electrons available.
+
 Equipartition for Thermal Electron Distributions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1388,86 +1500,86 @@ Equipartition for Thermal Electron Distributions
     The relevant API in Trilobite is in the :mod:`trilobite.radiation.synchrotron.electron_distributions` module. See
     :ref:`synchrotron_electron_distributions` for details on use.
 
-Given a thermal energy density :math:`U_{\rm thermal}`, the energy density in relativistic electrons is (by
-equipartition)
+Given a thermal energy density :math:`U_{\rm thermal}`, the thermal electrons carry (see :ref:`synch_thermal_budget`)
 
 .. math::
 
-    U_e = \epsilon_e U_{\rm thermal}.
+    U_{e,\rm th} = f_{\rm th} U_{\rm thermal}, \qquad f_{\rm th} = \frac{\epsilon_T (1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}.
 
-The total energy density of the electron population is
+The kinetic energy density of the electron population, which excludes rest mass, is
 
 .. math::
 
-    U_e = m_e c^2 N_0 \int_{0}^{\infty} \frac{\gamma^3 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right), d\gamma
+    U_{e,\rm th} = m_e c^2 N_0 \int_{1}^{\infty} (\gamma - 1) \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)}
+    \exp\!\left(-\frac{\gamma}{\Theta}\right) d\gamma.
 
 This integral is\ :footcite:p:`1998ApJ...498..313G, 2000ApJ...541..234O, chandrasekhar1957introduction`
 
 .. math::
 
-    U_e = N_0 m_e c^2 \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)}\right],
+    U_{e,\rm th} = N_0 m_e c^2 \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1\right],
 
-where :math:`K_1` and :math:`K_3` are the modified Bessel functions of the second kind. *In the literature, this
-result is more commonly presented in terms of the kinetic energy density*.
+where :math:`K_1` and :math:`K_3` are the modified Bessel functions of the second kind. The bracket tends to
+:math:`3\Theta/2` for :math:`\Theta \ll 1` and to :math:`3\Theta` for :math:`\Theta \gg 1`.
 
-which, in turn, is well approximated by\ :footcite:p:`1998ApJ...498..313G`
+It is well approximated by\ :footcite:p:`1998ApJ...498..313G`
 
 .. math::
 
-    U_e \approx N_0 m_e c^2 \frac{15\Theta^2 + 11\Theta + 4}{4 + 5 \Theta}
+    U_{e,\rm th} \approx N_0 m_e c^2 \, \Theta \frac{6 + 15\Theta}{4 + 5 \Theta}.
 
 Solving for :math:`N_0`, we find
 
 .. math::
 
     \boxed{
-    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2} \left(\frac{4+5\Theta}{15\Theta^2 + 11\Theta + 4}\right).
+    N_0 = \frac{f_{\rm th} U_{\rm thermal}}{m_e c^2} \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1\right]^{-1}
+    \approx \frac{f_{\rm th} U_{\rm thermal}}{m_e c^2} \frac{4 + 5\Theta}{\Theta (6 + 15\Theta)}.
     }
 
-In terms of the magnetic field, we also have
+In terms of the magnetic field, :math:`U_{\rm thermal} = B^2 / (8 \pi \epsilon_B)`, so
 
 .. math::
 
-    B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 =\frac{B^2}{8 \pi m_e c^2}\frac{\epsilon_e}{\epsilon_B}
-     \left(\frac{4+5\Theta}{15\Theta^2 + 11\Theta + 4}\right).
+    N_0 =\frac{B^2}{8 \pi m_e c^2}\frac{f_{\rm th}}{\epsilon_B}
+     \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1\right]^{-1}.
+
+The total energy density, which does include rest mass, would instead involve
+:math:`\langle \gamma \rangle = \left[3K_3(1/\Theta) + K_1(1/\Theta)\right] / \left[4K_2(1/\Theta)\right]`. For
+:math:`\Theta \ll 1` that is dominated by rest mass (:math:`\langle \gamma \rangle \to 1`), which would make
+:math:`N_0` too small by roughly :math:`2/(3\Theta)`.
 
 .. hint::
 
-    This form of the equipartition closure relies on the thermal electrons being the only contributors to the energy
-    density. One may also introduce the scenario where :math:`\epsilon_e U_{\rm thermal}` goes to **all electrons**, of
-    which, only :math:`\delta \epsilon_e U_{\rm thermal}` goes to the thermal electrons, and
-    :math:`(1-\delta) \epsilon_e U_{\rm thermal}` goes to a non-thermal population of electrons. In this case,
-    the normalization of the thermal electron distribution is modified by a factor of :math:`\delta`.
+    :math:`\Theta` and the energy budget are independent inputs here: given :math:`\Theta`, the budget fixes
+    :math:`N_0`. In a shock model the electron density :math:`n_e = \rho / (\mu_e m_p)` is known instead, and
+    :math:`\Theta_e` follows from the budget (see above). The two routes agree when :math:`\Theta_e` is computed from
+    :func:`~trilobite.physics_utils.thermal_partition.compute_ion_electron_theta`: :math:`N_0` then equals
+    :math:`n_e`.
 
 Mixed Distributions
 ~~~~~~~~~~~~~~~~~~~
 
-In some scenarios, one encounters both a thermal and non-thermal population of electrons. In this case, equipartition is
-made somewhat more subtle on the basis that the fraction of the electrons which are / are not relativistic is
-a free parameter. We therefore introduce the :math:`\delta` parameter to represent the fraction of the electron
-energy in the **thermal** population. In this case,
-
-.. math::
-
-    U_{\rm e,\;thermal} = \delta \epsilon_e U_{\rm thermal}, \;\; U_{\rm e,\;non-thermal} = (1-\delta) \epsilon_e U_{\rm thermal}.
-
-In this case, the normalization of the thermal and non-thermal electron distributions are given by
+When a non-thermal population accompanies the thermal electrons, each carries its own share of the budget (see
+:ref:`synch_thermal_budget`): :math:`f_{\rm th} U_{\rm thermal}` for the thermal electrons and
+:math:`\epsilon_E U_{\rm thermal}` for the non-thermal ones. The normalizations are
 
 .. math::
 
     \begin{aligned}
-    N_{0,\rm \;thermal} &= \frac{\delta \epsilon_e U_{\rm thermal}}{m_e c^2 } \left(\frac{4+5\Theta}{15\Theta^2 + 11\Theta + 4}\right), \\
-    N_{0,\rm \;non-thermal} &= \frac{(1-\delta) \epsilon_e U_{\rm thermal}}{m_e c^2 M^{(1)}_{\gamma}}.
+    N_{0,\rm \;thermal} &= \frac{f_{\rm th} U_{\rm thermal}}{m_e c^2 K_{\rm th}}, \\
+    N_{0,\rm \;non-thermal} &= \frac{\epsilon_E U_{\rm thermal}}{m_e c^2 M^{(\rm kin)}_{\gamma}},
     \end{aligned}
 
-and, in terms of the :math:`B` field,
+where :math:`K_{\rm th}` is the bracket above, the exact mean kinetic energy of the Maxwell-Juttner distribution, and
+:math:`M^{(\rm kin)}_{\gamma}` is the kinetic moment of the non-thermal distribution. In terms of the :math:`B` field,
+:math:`U_{\rm thermal} = B^2 / (8 \pi \epsilon_B)`.
 
-.. math::
-
-    \begin{aligned}
-    N_{0,\rm \;thermal} &= \frac{B^2}{8 \pi m_e c^2 }\frac{\delta \epsilon_e}{\epsilon_B} \left(\frac{4+5\Theta}{15\Theta^2 + 11\Theta + 4}\right), \\
-    N_{0,\rm \;non-thermal} &= \frac{B^2}{8 \pi m_e c^2}\frac{(1-\delta) \epsilon_e}{\epsilon_B} \left(\frac{1}{M^{(1)}_{\gamma}}\right).
-    \end{aligned}
+The mixed distribution classes
+(:class:`~trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal`) and the mixed numerical SED use
+this budget. Because the magnetic energy is removed first, the *shape* of the mixture depends on :math:`\epsilon_B`
+through :math:`f_{\rm th}`. For :math:`\epsilon_E = 0` the mixture reduces to the thermal distribution, and for
+:math:`\epsilon_T = 0` to the non-thermal one.
 
 ----
 

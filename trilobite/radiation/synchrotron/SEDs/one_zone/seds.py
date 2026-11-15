@@ -68,6 +68,8 @@ from trilobite.physics_utils.cosmology import (
     get_cosmology,
     resolve_cosmological_distances,
 )
+from trilobite.physics_utils.maxwell_juettner import _opt_mj_log_pdf
+from trilobite.physics_utils.thermal_partition import _opt_thermal_electron_energy_fraction, _validate_partition
 from trilobite.radiation.constants import electron_rest_energy_cgs
 from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
 from trilobite.radiation.synchrotron.electron_distributions import BrokenPowerLaw, MaxwellJuettner, PowerLaw
@@ -1111,10 +1113,10 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             Filling factor of the emitting region, encoding geometric effects.
 
         epsilon_E : float, optional
-            Fraction of post-shock energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
         epsilon_B : float, optional
-            Fraction of post-shock energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
         alpha : float, optional
             Electron pitch angle in radians. Ignored if
@@ -1228,10 +1230,10 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             Filling factor of the emitting region.
 
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
@@ -1440,9 +1442,9 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             Power-law index of the non-thermal electron distribution,
             :math:`N(\gamma) \propto \gamma^{-p}`.
         epsilon_E : float, optional
-            Fraction of internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         f_V : float, optional
             Effective volume filling factor of the emitting region.
 
@@ -1606,9 +1608,9 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         p : float, optional
             Power-law index of the electron energy distribution.
         epsilon_E : float, optional
-            Fraction of internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         f_V : float, optional
             Effective volume filling factor of the emitting region.
         gamma_bulk : float, optional
@@ -2354,9 +2356,9 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_A: float, optional
             Area filling factor.
         epsilon_E : float, optional
-            Fraction of post-shock energy in electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock energy in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Pitch angle in radians when ``pitch_average=False``.
         gamma_bulk : float, optional
@@ -2459,9 +2461,9 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_A : float, optional
             Area filling factor.
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
         gamma_bulk : float, optional
@@ -2741,15 +2743,13 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             shock-accelerated electron populations.
 
         epsilon_E : float, optional
-            Fraction of the post-shock internal energy carried by relativistic
-            electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
             This parameter enters the equipartition-style closure relation used
             to normalize the electron distribution.
 
         epsilon_B : float, optional
-            Fraction of the post-shock internal energy stored in magnetic
-            fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
             Together with ``epsilon_E``, this parameter determines the relative
             partition of energy between particles and magnetic fields in the
@@ -3471,9 +3471,9 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_V : float, optional
             Volume filling factor.
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Electron pitch angle in radians.
         gamma_bulk : float, optional
@@ -3568,9 +3568,9 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_V : float, optional
             Volume filling factor.
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
         gamma_bulk : float, optional
@@ -3768,11 +3768,10 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Power-law index of the electron energy distribution.
 
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic
-            electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
         f_V : float, optional
             Volume filling factor of the emitting region.
@@ -3993,15 +3992,13 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             shock-accelerated electron populations.
 
         epsilon_E : float, optional
-            Fraction of the post-shock internal energy carried by relativistic
-            electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
             This parameter enters the equipartition-style closure relation used
             to normalize the electron distribution.
 
         epsilon_B : float, optional
-            Fraction of the post-shock internal energy stored in magnetic
-            fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
             Together with ``epsilon_E``, this parameter determines the relative
             partition of energy between particles and magnetic fields in the
@@ -4804,9 +4801,9 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_A : float, optional
             Area filling factor.
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Electron pitch angle in radians.
         gamma_bulk : float, optional
@@ -4904,9 +4901,9 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         f_A : float, optional
             Area filling factor entering the effective solid angle.
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
         gamma_bulk : float, optional
@@ -5118,11 +5115,10 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Power-law index of the electron energy distribution.
 
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic
-            electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
         f_V : float, optional
             Volume filling factor of the emitting region.
@@ -5339,15 +5335,13 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             shock-accelerated electron populations.
 
         epsilon_E : float, optional
-            Fraction of the post-shock internal energy carried by relativistic
-            electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
             This parameter enters the equipartition-style closure relation used
             to normalize the electron distribution.
 
         epsilon_B : float, optional
-            Fraction of the post-shock internal energy stored in magnetic
-            fields.
+            Fraction of the thermal (internal) energy density in the magnetic field.
 
             Together with ``epsilon_E``, this parameter determines the relative
             partition of energy between particles and magnetic fields in the
@@ -5586,6 +5580,9 @@ class SSA_SED_PowerLaw(SynchrotronSED):
     - The special case :math:`p = 2` is not supported due to logarithmic
       divergences in the electron energy integral and must be handled
       separately.
+    - The closure reproduces the published equations, so ``epsilon_E`` is the fraction of the thermal energy in the
+      **total** electron energy (rest mass included). The other SED classes use the kinetic energy; see
+      :func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22`.
 
     References
     ----------
@@ -5756,9 +5753,10 @@ class SSA_SED_PowerLaw(SynchrotronSED):
             Default is ``pi/2`` (i.e., perpendicular). If provided as a float, the value is used for all SEDs.
             If provided as an array, its shape must be compatible with that of ``nu_brk``.
         epsilon_B: float or array-like
-            The fraction of post-shock energy in magnetic fields, :math:`\epsilon_B`.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         epsilon_E: float or array-like
-            The fraction of post-shock energy in relativistic electrons, :math:`\epsilon_E`.
+            Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the
+            relativistic electrons.
         gamma_min: float or array-like
             The minimum Lorentz factor :math:`\gamma_{\rm min}` of the electron energy.
         gamma_max: float or array-like
@@ -5865,12 +5863,12 @@ class SSA_SED_PowerLaw(SynchrotronSED):
             velocity, in radians. Default is ``\pi/2`` (isotropic average).
 
         epsilon_B : float or array-like, optional
-            Fraction of post-shock internal energy in magnetic fields,
-            :math:`\epsilon_B`. Default is ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default is ``0.1``.
 
         epsilon_E : float or array-like, optional
-            Fraction of post-shock internal energy in relativistic electrons,
-            :math:`\epsilon_E`. Default is ``0.1``.
+            Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the
+            relativistic electrons.
+            Default is ``0.1``.
 
         gamma_min : float or array-like, optional
             Minimum electron Lorentz factor :math:`\gamma_{\rm min}`. Default is ``1``.
@@ -6119,9 +6117,10 @@ class SSA_SED_PowerLaw(SynchrotronSED):
         theta : float or array-like
             Pitch angle in radians.
         epsilon_B : float or array-like
-            Fraction of the post-shock energy density in the magnetic field.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         epsilon_E : float or array-like
-            Fraction of the post-shock energy density in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the
+            relativistic electrons.
         gamma_min : float or array-like
             Minimum electron Lorentz factor.
         gamma_max : float or array-like
@@ -6219,6 +6218,56 @@ class SSA_SED_PowerLaw(SynchrotronSED):
         return nu * u.Hz, F_nu * u.erg / (u.s * u.cm**2 * u.Hz)
 
 
+_STEP_OFFSET = 1e-9  # offset in ln(gamma) between the two nodes that resolve a step in the distribution
+
+
+def _log_trapezoid_weights(log_gamma: np.ndarray) -> np.ndarray:
+    r"""Return the log of the trapezoid weights :math:`\gamma_i\,\Delta\!\ln\gamma_i` on a :math:`\ln\gamma` grid."""
+    spacing = np.diff(log_gamma)
+    half_width = np.zeros_like(log_gamma)
+    half_width[:-1] += 0.5 * spacing
+    half_width[1:] += 0.5 * spacing
+    return log_gamma + np.log(half_width)
+
+
+def _support_grid(
+    log_gamma: np.ndarray, log_lower: float, log_upper: float, log_breaks: tuple = ()
+) -> tuple[np.ndarray, np.ndarray]:
+    r"""Return the quadrature grid and log weights for a distribution that is non-zero only on a finite support.
+
+    The nodes are the grid nodes strictly inside the support plus its two end points, so the trapezoid rule integrates
+    the support exactly up to its smooth error, wherever the edges fall between the grid nodes. Rounding an edge to the
+    nearest node instead is first-order accurate and shifts the result by a few percent when the grid is coarse. A
+    support that extends beyond the grid is truncated at the grid, as before. ``log_breaks`` are points inside the
+    support where the distribution is continuous but its slope changes, such as a cooling break; they are added as
+    nodes as well.
+    """
+    lower, upper = max(log_lower, log_gamma[0]), min(log_upper, log_gamma[-1])
+    if not lower < upper:
+        raise ValueError("The Lorentz-factor support does not overlap the quadrature grid.")
+    inside = log_gamma[(log_gamma > lower) & (log_gamma < upper)]
+    breaks = [point for point in log_breaks if lower < point < upper]
+    nodes = np.unique(np.concatenate([[lower], inside, breaks, [upper]]))
+    return nodes, _log_trapezoid_weights(nodes)
+
+
+def _step_grid(log_gamma: np.ndarray, log_lower: float, log_upper: float) -> tuple[np.ndarray, np.ndarray]:
+    r"""Return the quadrature grid and log weights for a distribution with steps at ``log_lower`` and ``log_upper``.
+
+    A component that switches on at ``log_lower`` and off at ``log_upper`` while another component continues across
+    them has jumps there. Each jump is resolved by a pair of nodes a distance ``_STEP_OFFSET`` apart, one on each side,
+    so the trapezoid rule assigns no weight across it. Edges outside the grid, or on its end nodes, need no pair.
+    """
+    keep = np.ones_like(log_gamma, dtype=bool)
+    extra = []
+    for edge, offsets in ((log_lower, (-_STEP_OFFSET, 0.0)), (log_upper, (0.0, _STEP_OFFSET))):
+        if log_gamma[0] < edge < log_gamma[-1]:
+            keep &= np.abs(log_gamma - edge) > 2.0 * _STEP_OFFSET
+            extra += [edge + offset for offset in offsets]
+    nodes = np.sort(np.concatenate([log_gamma[keep], extra]))
+    return nodes, _log_trapezoid_weights(nodes)
+
+
 class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
     r"""
     Numerical one-zone power-law synchrotron SED with self-absorption (uncooled).
@@ -6247,8 +6296,8 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
 
     .. math::
 
-        \epsilon_E\,\frac{B^2}{8\pi} = \int_{\gamma_{\min}}^{\gamma_{\max}}
-            N(\gamma)\,\gamma\,m_e c^2\,\mathrm{d}\gamma.
+        \frac{\epsilon_E}{\epsilon_B}\,\frac{B^2}{8\pi} = \int_{\gamma_{\min}}^{\gamma_{\max}}
+            N(\gamma)\,(\gamma - 1)\,m_e c^2\,\mathrm{d}\gamma.
 
     .. rubric:: Radiative Transfer
 
@@ -6301,10 +6350,10 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             grid. Must lie within the grid range set at instantiation.
         * - Magnetic equipartition fraction
           - :math:`\epsilon_B`
-          - Fraction of the post-shock energy density in magnetic fields.
+          - Fraction of the thermal (internal) energy density in the magnetic field.
         * - Electron equipartition fraction
           - :math:`\epsilon_E`
-          - Fraction of the post-shock energy density in relativistic electrons.
+          - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         * - Volume filling factor
           - :math:`f_V`
           - Fraction of the sphere occupied by emitting material. Controls the
@@ -6445,7 +6494,7 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Electron power-law index. Default ``3.0``.
         f_V : float, optional
             Volume filling factor. The effective LOS path length passed to
-            the radiative transfer is :math:`f_V R`. Default ``1.0``.
+            the radiative transfer is :math:`f_V^{1/3} R`. Default ``1.0``.
         f_A : float, optional
             Area filling factor. The effective projected area is
             :math:`f_A \pi R^2`. Default ``1.0``.
@@ -6460,9 +6509,10 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         z : float, optional
             Source redshift. Default ``0.0``.
         epsilon_B : float, optional
-            Magnetic equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Electron equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
+            Default ``0.1``.
         gamma_min : float, optional
             Minimum electron Lorentz factor active in the power law.
             Default ``1.0``.
@@ -6498,10 +6548,10 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         log_A_eff = np.log(float(f_A) * np.pi * float(R) ** 2)
         log_D_A = np.log(float(D_A))
 
-        # Build the distribution function N(gamma) on the quadrature grid.
-        log_N = np.full(N0.shape + (len(self._log_gamma),), -np.inf)
-        mask = (self._log_gamma >= log_gamma_min) & (self._log_gamma <= log_gamma_max)
-        log_N[..., mask] = np.log(N0)[..., np.newaxis] - p * self._log_gamma[mask]
+        # Integrate over the power-law support only, with its edges as nodes, so the result does not depend on where
+        # gamma_min and gamma_max fall between the nodes of the default grid.
+        log_gamma, log_weights = _support_grid(self._log_gamma, log_gamma_min, log_gamma_max)
+        log_N = np.log(N0)[..., np.newaxis] - p * log_gamma
 
         # Pass off to the engine for the computation.
         if sin_alpha is not None:
@@ -6510,8 +6560,8 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
@@ -6525,8 +6575,8 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A_eff=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
@@ -6571,7 +6621,7 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Electron power-law index. Default ``3.0``.
         f_V : float, optional
             Volume filling factor; the effective LOS path length is
-            :math:`f_V R`. Default ``1.0``.
+            :math:`f_V^{1/3} R`. Default ``1.0``.
         f_A : float, optional
             Area filling factor; the effective projected area is
             :math:`f_A \pi R^2`. Default ``1.0``.
@@ -6584,9 +6634,9 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Electron pitch angle. Bare values are treated as radians.
             ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
         epsilon_B : float, optional
-            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Fraction of post-shock energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
             Default ``0.1``.
         gamma_min : float, optional
             Minimum electron Lorentz factor active in the power law.
@@ -6926,9 +6976,10 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
         z : float, optional
             Source redshift. Default ``0.0``.
         epsilon_B : float, optional
-            Magnetic equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Electron equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
+            Default ``0.1``.
         gamma_min : float, optional
             Minimum electron Lorentz factor active in the power law.
             Default ``1.0``.
@@ -6955,61 +7006,47 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
         gamma_c = self._cooling_engine.compute_cooling_gamma(B=B, t=t, sin_alpha=sin_alpha)
         log_gamma_c = np.log(gamma_c)
 
-        # Now perform the branching to normalize dependent on the the
-        # cooling regime.
+        # Integrate over the support of the cooled distribution only, with its edges and its cooling break as nodes,
+        # so the result does not depend on where they fall between the nodes of the default grid. The distribution
+        # is the broken power law of the matching regime.
         if log_gamma_c < log_gamma_min:
-            # Compute masks.
-            mask_1 = self._log_gamma < log_gamma_c
-            mask_2 = (log_gamma_c <= self._log_gamma) & (self._log_gamma < log_gamma_max)
-
-            # Normalize the electron distribution in each segment.
+            # Fast cooling: gamma^-2 from gamma_c to gamma_min, gamma^-(p+1) above.
+            log_break, slope_below, slope_above = log_gamma_min, 2.0, p + 1.0
+            log_gamma, log_weights = _support_grid(self._log_gamma, log_gamma_c, log_gamma_max, (log_break,))
             N0 = np.asarray(
                 BrokenPowerLaw._normalize_from_magnetic_field(
                     B,
                     epsilon_B,
                     epsilon_E,
-                    p1=2,
-                    p2=p - 1,
+                    p1=slope_below,
+                    p2=slope_above,
                     gamma_min=gamma_c,
                     gamma_c=gamma_min,
                     gamma_max=gamma_max,
                 ),
                 dtype="f8",
             )
-            log_N = np.full(N0.shape + (len(self._log_gamma),), -np.inf)
-
-            # Insert the values into each segment.
-            log_N[mask_1] = np.log(N0) - 2 * (self._log_gamma[mask_1] - log_gamma_min)
-            log_N[mask_2] = np.log(N0) - (p - 1) * (self._log_gamma[mask_2] - log_gamma_min)
-        elif log_gamma_min <= log_gamma_c < log_gamma_max:
-            # Compute masks.
-            mask_1 = self._log_gamma < log_gamma_c
-            mask_2 = (log_gamma_c <= self._log_gamma) & (self._log_gamma < log_gamma_max)
-
-            # Normalize the electron distribution in each segment.
+        elif log_gamma_c < log_gamma_max:
+            # Slow cooling: gamma^-p from gamma_min to gamma_c, gamma^-(p+1) above.
+            log_break, slope_below, slope_above = log_gamma_c, p, p + 1.0
+            log_gamma, log_weights = _support_grid(self._log_gamma, log_gamma_min, log_gamma_max, (log_break,))
             N0 = np.asarray(
                 BrokenPowerLaw._normalize_from_magnetic_field(
                     B,
                     epsilon_B,
                     epsilon_E,
-                    p1=p,
-                    p2=p + 1,
+                    p1=slope_below,
+                    p2=slope_above,
                     gamma_min=gamma_min,
                     gamma_c=gamma_c,
                     gamma_max=gamma_max,
                 ),
                 dtype="f8",
             )
-            log_N = np.full(N0.shape + (len(self._log_gamma),), -np.inf)
-
-            # Insert the values into each segment.
-            log_N[mask_1] = np.log(N0) - p * (self._log_gamma[mask_1] - log_gamma_c)
-            log_N[mask_2] = np.log(N0) - (p + 1) * (self._log_gamma[mask_2] - log_gamma_c)
         else:
-            # Compute mask.
-            mask = (log_gamma_min <= self._log_gamma) & (self._log_gamma < log_gamma_max)
-
-            # Normalize the electron distribution.
+            # No cooling inside the distribution: a single power law.
+            log_break, slope_below, slope_above = 0.0, p, p  # N = N0 gamma^-p: the reference point is gamma = 1
+            log_gamma, log_weights = _support_grid(self._log_gamma, log_gamma_min, log_gamma_max)
             N0 = np.asarray(
                 PowerLaw._normalize_from_magnetic_field(
                     B,
@@ -7021,8 +7058,11 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
                 ),
                 dtype="f8",
             )
-            log_N = np.full(N0.shape + (len(self._log_gamma),), -np.inf)
-            log_N[mask] = np.log(N0) - p * (self._log_gamma[mask])
+
+        # The shape is (gamma / gamma_break)^-slope, with the slope changing at the break (the normalization of each
+        # distribution above is for this form).
+        slope = np.where(log_gamma < log_break, slope_below, slope_above)
+        log_N = np.log(N0)[..., np.newaxis] - slope * (log_gamma - log_break)
 
         # Pass off to the engine for the computation.
         if sin_alpha is not None:
@@ -7031,8 +7071,8 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
@@ -7046,8 +7086,8 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A_eff=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
@@ -7110,9 +7150,9 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
             Electron pitch angle. Bare values are treated as radians.
             ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
         epsilon_B : float, optional
-            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
         epsilon_E : float, optional
-            Fraction of post-shock energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
             Default ``0.1``.
         gamma_min : float, optional
             Minimum electron Lorentz factor active in the power law.
@@ -7229,6 +7269,29 @@ class Numerical_PowerLaw_Cooling_SSA_SynchrotronSED(SynchrotronSED):
         return np.exp(log_flux) * u.erg / (u.cm**2 * u.s * u.Hz)
 
 
+# =========================================================================== #
+# Thermal electron distributions                                              #
+# =========================================================================== #
+_THERMAL_X_MIN = 1e-6  # smallest gamma - 1 on the default thermal grids
+_MIXED_X_MAX = 1e2  # largest gamma - 1 of the extra thermal points on the default mixed grid
+
+
+def _thermal_gamma_grid(gamma_min: float, gamma_max: float, n_gamma: int, mixed: bool = False) -> np.ndarray:
+    r"""Return the default Lorentz-factor grid for the thermal SEDs.
+
+    A thermal population sits at :math:`\gamma - 1 \sim \Theta`, so a grid log-spaced in :math:`\gamma` puts only a few
+    points across it for :math:`\Theta \lesssim 0.3`. Pure thermal SEDs therefore use ``n_gamma`` points log-spaced in
+    :math:`\gamma - 1`, which resolves the distribution for :math:`\Theta \gtrsim 10^{-3}`. Mixed SEDs also need the
+    log-spaced :math:`\gamma` grid for their power-law component, so they use its union with ``n_gamma // 2`` points
+    log-spaced in :math:`\gamma - 1` up to :math:`\gamma - 1 = 100`.
+    """
+    x = np.geomspace(max(gamma_min - 1.0, _THERMAL_X_MIN), gamma_max - 1.0, n_gamma)
+    if not mixed:
+        return 1.0 + x
+    x_thermal = np.geomspace(x[0], min(_MIXED_X_MAX, gamma_max - 1.0), n_gamma // 2)
+    return np.unique(np.concatenate([np.geomspace(gamma_min, gamma_max, n_gamma), 1.0 + x_thermal]))
+
+
 class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
     r"""
     Numerical one-zone thermal (Maxwell-Jüttner) synchrotron SED with self-absorption.
@@ -7248,27 +7311,33 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
 
     .. math::
 
-        N(\gamma) = \frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta},
+        N(\gamma) = N_{\rm therm}\,\frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)}\,e^{-\gamma/\Theta},
+        \qquad \beta = \sqrt{1 - \gamma^{-2}},
 
     where :math:`\Theta = kT/(m_e c^2)` is the dimensionless electron
-    temperature and :math:`N_{\rm therm}` is fixed by the equipartition
-    prescription (see
+    temperature, :math:`K_2` is the modified Bessel function of the second kind, and :math:`N_{\rm therm}`, the total
+    number density, is fixed by the equipartition prescription (see
     :meth:`~trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner._normalize_from_magnetic_field`):
 
     .. math::
 
-        \epsilon_E\,\frac{B^2}{8\pi} = \int_1^\infty
-            N(\gamma)\,\gamma\,m_e c^2\,\mathrm{d}\gamma.
+        \frac{f_{\rm th}}{\epsilon_B}\,\frac{B^2}{8\pi} = \int_1^\infty
+            N(\gamma)\,(\gamma - 1)\,m_e c^2\,\mathrm{d}\gamma,
+        \qquad f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B)}{1 + \epsilon_T},
+
+    where :math:`\epsilon_T` is the ratio of the thermal-electron to the ion energy (see
+    :mod:`trilobite.physics_utils.thermal_partition`).
 
     The thermal peak of the distribution is at :math:`\gamma_{\rm peak} \approx 3\Theta`
     for :math:`\Theta \gg 1`, so the quadrature grid should be wide enough to
-    capture energies up to several multiples of :math:`\Theta`.
+    capture energies up to several multiples of :math:`\Theta`. By default the grid is log-spaced in
+    :math:`\gamma - 1`, which resolves the distribution for :math:`\Theta \gtrsim 10^{-3}`.
 
     .. rubric:: Radiative Transfer
 
     The emergent flux is computed identically to
     :class:`Numerical_PowerLaw_SSA_SynchrotronSED`: a plane-parallel slab of
-    depth :math:`\ell = f_V\,R` (no cube-root factor for the thermal geometry) is
+    depth :math:`\ell = f_V^{1/3}\,R` is
     solved for the full transition from optically thin to optically thick.
 
     .. rubric:: Physical Parameters
@@ -7286,21 +7355,21 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         * - Outer radius
           - :math:`R`
           - Characteristic size of the emitting region. The effective
-            line-of-sight depth is :math:`\ell = f_V\,R`.
+            line-of-sight depth is :math:`\ell = f_V^{1/3}\,R`.
         * - Dimensionless temperature
           - :math:`\Theta`
           - :math:`\Theta = kT/(m_e c^2)`; controls the peak of the
             Maxwell-Jüttner distribution.
         * - Magnetic equipartition fraction
           - :math:`\epsilon_B`
-          - Fraction of the post-shock energy density in magnetic fields.
-        * - Electron equipartition fraction
-          - :math:`\epsilon_E`
-          - Fraction of the post-shock energy density in thermal electrons.
+          - Fraction of the thermal (internal) energy density in the magnetic field.
+        * - Thermal-electron to ion energy ratio
+          - :math:`\epsilon_T`
+          - Ratio of the thermal-electron energy to the ion energy.
         * - Volume filling factor
           - :math:`f_V`
           - Fraction of the sphere occupied by emitting material; controls
-            the effective slab depth :math:`\ell = f_V\,R`.
+            the effective slab depth :math:`\ell = f_V^{1/3}\,R`.
         * - Area filling factor
           - :math:`f_A`
           - Fraction of the projected area that is emitting.
@@ -7360,7 +7429,8 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
             Explicit Lorentz factor grid. If ``None``, a log-uniform grid is
             built from ``gamma_min``, ``gamma_max``, and ``n_gamma``.
         gamma_min : float, optional
-            Lower bound of the Lorentz factor grid. Default ``1.0``.
+            Lower bound of the Lorentz factor grid. Default ``1.0``. The default grid is log-spaced in
+            :math:`\gamma - 1`, starting at :math:`\max(\gamma_{\min} - 1, 10^{-6})`.
         gamma_max : float, optional
             Upper bound of the Lorentz factor grid. Default ``1e8``.
             Should extend to several times :math:`\Theta` to capture the
@@ -7385,12 +7455,9 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         super().__init__()
         self._engine = NumericalSynchrotronEngine()
 
-        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(
-            gamma=gamma,
-            gamma_min=gamma_min,
-            gamma_max=gamma_max,
-            n_gamma=n_gamma,
-        )
+        if gamma is None:
+            gamma = _thermal_gamma_grid(gamma_min, gamma_max, n_gamma)
+        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(gamma=gamma)
 
         kernel_kwargs = {"x_min": x_min, "x_max": x_max, "num_points": num_points, "spacing": spacing, "method": method}
         self._engine.load_avg_first_kernel(**kernel_kwargs)
@@ -7411,7 +7478,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         sin_alpha: Union[float, None] = None,
         z: float = 0.0,
         epsilon_B: float = 0.1,
-        epsilon_E: float = 0.1,
+        epsilon_T: float = 0.1,
     ) -> "_ArrayLike":
         r"""
         Low-level numerical thermal synchrotron SED evaluation.
@@ -7431,7 +7498,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         Theta : float
             Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.
         f_V : float, optional
-            Volume filling factor. Effective LOS path length is :math:`f_V R`.
+            Volume filling factor. Effective LOS path length is :math:`f_V^{1/3} R`.
             Default ``1.0``.
         f_A : float, optional
             Area filling factor. Effective projected area is
@@ -7447,9 +7514,9 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         z : float, optional
             Source redshift. Default ``0.0``.
         epsilon_B : float, optional
-            Magnetic equipartition fraction. Default ``0.1``.
-        epsilon_E : float, optional
-            Electron equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
+        epsilon_T : float, optional
+            Ratio of the thermal-electron energy to the ion energy. Default ``0.1``.
 
         Returns
         -------
@@ -7461,24 +7528,17 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
             MaxwellJuettner._normalize_from_magnetic_field(
                 B,
                 epsilon_B,
-                epsilon_E,
+                _opt_thermal_electron_energy_fraction(epsilon_T, epsilon_B, 0.0),
                 Theta=Theta,
             ),
             dtype="f8",
         )
 
-        # Maxwell-Jüttner: N(gamma) = N_therm/(2 Theta^3) * gamma^2 * exp(-gamma/Theta)
-        log_N = (
-            np.log(N_therm)[..., np.newaxis]
-            - np.log(2.0)
-            - 3.0 * np.log(float(Theta))
-            + 2.0 * self._log_gamma
-            - np.exp(self._log_gamma) / float(Theta)
-        )
+        log_N = _opt_mj_log_pdf(np.exp(self._log_gamma), Theta, N_therm[..., np.newaxis])
 
         log_nu = np.log(np.asarray(nu, dtype="f8"))
         log_B = np.log(float(B))
-        log_R_eff = np.log(float(f_V) * float(R))
+        log_R_eff = np.log(float(f_V) ** (1 / 3) * float(R))
         log_A_eff = np.log(float(f_A) * np.pi * float(R) ** 2)
         log_D_A = np.log(float(D_A))
 
@@ -7525,7 +7585,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         cos_theta: float = 1.0,
         alpha: "_UnitBearingScalarLike" = None,
         epsilon_B: float = 0.1,
-        epsilon_E: float = 0.1,
+        epsilon_T: float = 0.1,
         redshift: float = None,
         luminosity_distance: "_UnitBearingScalarLike" = None,
         angular_diameter_distance: "_UnitBearingScalarLike" = None,
@@ -7547,7 +7607,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
             Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.
         f_V : float, optional
             Volume filling factor; the effective LOS path length is
-            :math:`f_V R`. Default ``1.0``.
+            :math:`f_V^{1/3} R`. Default ``1.0``.
         f_A : float, optional
             Area filling factor; the effective projected area is
             :math:`f_A \pi R^2`. Default ``1.0``.
@@ -7560,10 +7620,9 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
             Electron pitch angle. Bare values are treated as radians.
             ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
         epsilon_B : float, optional
-            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
-        epsilon_E : float, optional
-            Fraction of post-shock energy in relativistic electrons.
-            Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
+        epsilon_T : float, optional
+            Ratio of the thermal-electron energy to the ion energy. Default ``0.1``.
         redshift : float, optional
             Source redshift.
         luminosity_distance : float or ~astropy.units.Quantity, optional
@@ -7618,7 +7677,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
                 R=1e17 * u.cm,
                 Theta=10.0,
                 epsilon_B=0.1,
-                epsilon_E=0.1,
+                epsilon_T=0.1,
                 angular_diameter_distance=100 * u.Mpc,
             )
         """
@@ -7633,6 +7692,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         D_A = ensure_in_units(distances["angular_diameter_distance"], "cm")
         z = float(distances["redshift"])
 
+        _validate_partition(epsilon_T, epsilon_B, 0.0, True)
         nu_cgs = ensure_in_units(nu, "Hz")
         B_cgs = float(ensure_in_units(B, "G"))
         R_cgs = float(ensure_in_units(R, "cm"))
@@ -7653,7 +7713,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
             sin_alpha=sin_alpha,
             z=z,
             epsilon_B=epsilon_B,
-            epsilon_E=epsilon_E,
+            epsilon_T=epsilon_T,
         )
 
         return np.exp(log_flux) * u.erg / (u.cm**2 * u.s * u.Hz)
@@ -7670,8 +7730,8 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
     This class is appropriate for systems where both thermal and non-thermal
     electrons contribute to the synchrotron emission, such as mildly relativistic
     shocks or environments where the acceleration efficiency is uncertain. The
-    relative contribution of each component is controlled by the energy fraction
-    parameter :math:`\delta`.
+    relative contribution of each component is controlled by the energy budget
+    :math:`(\epsilon_T, \epsilon_B, \epsilon_E)`.
 
     .. rubric:: Composite Electron Distribution
 
@@ -7680,16 +7740,20 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
     .. math::
 
         N(\gamma) =
-            \underbrace{\frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta}}_{\text{thermal}}
+            \underbrace{N_{\rm therm}\,\frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)}\,e^{-\gamma/\Theta}}_{\text{thermal}}
             +
             \underbrace{N_0\,\gamma^{-p}\,\mathbf{1}_{[\gamma_{\min},\gamma_{\max}]}(\gamma)}_{\text{non-thermal}},
 
-    where the energy budget is split via the thermal fraction :math:`\delta`:
+    where the energy budget is split as in
+    :class:`~trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal`. The thermal electrons
+    and the non-thermal electrons carry the fractions
 
     .. math::
 
-        \epsilon_{E,\rm therm} = \delta\,\epsilon_E, \qquad
-        \epsilon_{E,\rm PL}    = (1-\delta)\,\epsilon_E.
+        f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}, \qquad
+        f_{\rm PL} = \epsilon_E
+
+    of the thermal energy density, where :math:`\epsilon_T` is the ratio of the thermal-electron to the ion energy.
 
     Each component is normalized independently by equipartition against its
     own energy budget (see
@@ -7701,11 +7765,11 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
 
     .. rubric:: Spectral Properties
 
-    - In the limit :math:`\delta \to 1`, the SED reduces to the pure thermal
+    - For :math:`\epsilon_E = 0`, the SED reduces to the pure thermal
       case (:class:`Numerical_Thermal_SSA_SynchrotronSED`).
-    - In the limit :math:`\delta \to 0`, the SED reduces to the pure power-law
+    - For :math:`\epsilon_T = 0`, the SED reduces to the pure power-law
       case (:class:`Numerical_PowerLaw_SSA_SynchrotronSED`).
-    - For intermediate :math:`\delta`, the spectrum may exhibit features from
+    - Otherwise the spectrum may exhibit features from
       both components, with the low-frequency self-absorbed regime shaped
       primarily by the thermal component and the high-frequency optically thin
       tail dominated by the power law.
@@ -7773,7 +7837,9 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Explicit Lorentz factor grid. If ``None``, a log-uniform grid is
             built from ``gamma_min``, ``gamma_max``, and ``n_gamma``.
         gamma_min : float, optional
-            Lower bound of the Lorentz factor grid. Default ``1.0``.
+            Lower bound of the Lorentz factor grid. Default ``1.0``. The default grid is the union of ``n_gamma``
+            points log-spaced in :math:`\gamma` and ``n_gamma // 2`` points log-spaced in :math:`\gamma - 1`,
+            which resolve the thermal component for :math:`\Theta \gtrsim 10^{-3}`.
         gamma_max : float, optional
             Upper bound of the Lorentz factor grid. Default ``1e8``. Should be
             wide enough to capture the Maxwell-Jüttner tail (at least
@@ -7799,12 +7865,9 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         super().__init__()
         self._engine = NumericalSynchrotronEngine()
 
-        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(
-            gamma=gamma,
-            gamma_min=gamma_min,
-            gamma_max=gamma_max,
-            n_gamma=n_gamma,
-        )
+        if gamma is None:
+            gamma = _thermal_gamma_grid(gamma_min, gamma_max, n_gamma, mixed=True)
+        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(gamma=gamma)
 
         kernel_kwargs = {"x_min": x_min, "x_max": x_max, "num_points": num_points, "spacing": spacing, "method": method}
         self._engine.load_avg_first_kernel(**kernel_kwargs)
@@ -7819,7 +7882,6 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         Theta: float,
         *,
         p: float = 3.0,
-        delta: float = 0.5,
         f_V: float = 1.0,
         f_A: float = 1.0,
         beta: float = 0.0,
@@ -7827,6 +7889,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         sin_alpha: Union[float, None] = None,
         z: float = 0.0,
         epsilon_B: float = 0.1,
+        epsilon_T: float = 0.1,
         epsilon_E: float = 0.1,
         gamma_min: float = 1.0,
         gamma_max: float = 1e6,
@@ -7850,11 +7913,8 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.
         p : float, optional
             Power-law index of the non-thermal component. Default ``3.0``.
-        delta : float, optional
-            Fraction of total electron energy in the thermal component.
-            Must satisfy :math:`0 \le \delta \le 1`. Default ``0.5``.
         f_V : float, optional
-            Volume filling factor. Effective LOS path length is :math:`f_V R`.
+            Volume filling factor. Effective LOS path length is :math:`f_V^{1/3} R`.
             Default ``1.0``.
         f_A : float, optional
             Area filling factor. Effective projected area is
@@ -7870,9 +7930,12 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         z : float, optional
             Source redshift. Default ``0.0``.
         epsilon_B : float, optional
-            Magnetic equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
+        epsilon_T : float, optional
+            Ratio of the thermal-electron energy to the ion energy. Default ``0.1``.
         epsilon_E : float, optional
-            Total electron equipartition fraction. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the kinetic energy of the non-thermal electrons.
+            Default ``0.1``.
         gamma_min : float, optional
             Minimum Lorentz factor of the non-thermal power-law component.
             Default ``1.0``.
@@ -7886,12 +7949,11 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             :math:`\ln F_\nu` in CGS
             (:math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`).
         """
-        delta_arr = np.asarray(delta, dtype="f8")
         N_therm = np.asarray(
             MaxwellJuettner._normalize_from_magnetic_field(
                 B,
                 epsilon_B,
-                delta_arr * epsilon_E,
+                _opt_thermal_electron_energy_fraction(epsilon_T, epsilon_B, epsilon_E),
                 Theta=Theta,
             ),
             dtype="f8",
@@ -7900,7 +7962,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             PowerLaw._normalize_from_magnetic_field(
                 B,
                 epsilon_B,
-                (1.0 - delta_arr) * epsilon_E,
+                epsilon_E,
                 p=p,
                 gamma_min=gamma_min,
                 gamma_max=gamma_max,
@@ -7908,26 +7970,24 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             dtype="f8",
         )
 
+        # The power law switches on at gamma_min and off at gamma_max while the thermal component continues across them.
+        # Resolve both steps with a pair of nodes so the result does not depend on where they fall on the grid.
+        log_gamma, log_weights = _step_grid(self._log_gamma, np.log(gamma_min), np.log(gamma_max))
+
         # Thermal component: Maxwell-Jüttner evaluated over the full grid.
-        log_N_mjd = (
-            np.log(N_therm)[..., np.newaxis]
-            - np.log(2.0)
-            - 3.0 * np.log(float(Theta))
-            + 2.0 * self._log_gamma
-            - np.exp(self._log_gamma) / float(Theta)
-        )
+        log_N_mjd = _opt_mj_log_pdf(np.exp(log_gamma), Theta, N_therm[..., np.newaxis])
 
         # Non-thermal component: power law gated to [gamma_min, gamma_max].
-        gamma_arr = np.exp(self._log_gamma)
-        mask = (gamma_arr >= gamma_min) & (gamma_arr <= gamma_max)
-        log_N_pl = np.full(N0_pl.shape + (len(self._log_gamma),), -np.inf)
-        log_N_pl[..., mask] = np.log(N0_pl)[..., np.newaxis] - p * self._log_gamma[mask]
+        mask = (log_gamma >= np.log(gamma_min)) & (log_gamma <= np.log(gamma_max))
+        log_N_pl = np.full(N0_pl.shape + (len(log_gamma),), -np.inf)
+        with np.errstate(divide="ignore"):
+            log_N_pl[..., mask] = np.log(N0_pl)[..., np.newaxis] - p * log_gamma[mask]
 
         log_N = np.logaddexp(log_N_mjd, log_N_pl)
 
         log_nu = np.log(np.asarray(nu, dtype="f8"))
         log_B = np.log(float(B))
-        log_R_eff = np.log(float(f_V) * float(R))
+        log_R_eff = np.log(float(f_V) ** (1 / 3) * float(R))
         log_A_eff = np.log(float(f_A) * np.pi * float(R) ** 2)
         log_D_A = np.log(float(D_A))
 
@@ -7937,8 +7997,8 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
@@ -7952,8 +8012,8 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
                 log_slab_depth=log_R_eff,
                 log_B=log_B,
                 log_N=log_N,
-                log_gamma=self._log_gamma,
-                log_weights=self._log_weights,
+                log_gamma=log_gamma,
+                log_weights=log_weights,
                 log_A_eff=log_A_eff,
                 log_D_A=log_D_A,
                 z=float(z),
@@ -7969,13 +8029,13 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         Theta: float,
         *,
         p: float = 3.0,
-        delta: float = 0.5,
         f_V: float = 1.0,
         f_A: float = 1.0,
         beta: float = 0.0,
         cos_theta: float = 1.0,
         alpha: "_UnitBearingScalarLike" = None,
         epsilon_B: float = 0.1,
+        epsilon_T: float = 0.1,
         epsilon_E: float = 0.1,
         gamma_min: float = 1.0,
         gamma_max: float = 1e6,
@@ -8000,12 +8060,9 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.
         p : float, optional
             Power-law index of the non-thermal electron component. Default ``3.0``.
-        delta : float, optional
-            Fraction of total electron energy in the thermal component
-            (:math:`0 \le \delta \le 1`). Default ``0.5``.
         f_V : float, optional
             Volume filling factor; the effective LOS path length is
-            :math:`f_V R`. Default ``1.0``.
+            :math:`f_V^{1/3} R`. Default ``1.0``.
         f_A : float, optional
             Area filling factor; the effective projected area is
             :math:`f_A \pi R^2`. Default ``1.0``.
@@ -8018,9 +8075,11 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Electron pitch angle. Bare values are treated as radians.
             ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
         epsilon_B : float, optional
-            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
+            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.
+        epsilon_T : float, optional
+            Ratio of the thermal-electron energy to the ion energy. Default ``0.1``.
         epsilon_E : float, optional
-            Total fraction of post-shock energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of the non-thermal electrons.
             Default ``0.1``.
         gamma_min : float, optional
             Minimum Lorentz factor of the non-thermal power-law component.
@@ -8049,9 +8108,9 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         -----
         - The thermal and power-law normalization constants are computed
           independently from their respective energy fractions
-          :math:`\delta\,\epsilon_E` and :math:`(1-\delta)\,\epsilon_E`, then
+          :math:`f_{\rm th}` and :math:`\epsilon_E`, then
           combined in log-space before the radiative transfer integral. Setting
-          :math:`\delta = 1` recovers the pure thermal limit; :math:`\delta = 0`
+          :math:`\epsilon_E = 0` recovers the pure thermal limit; :math:`\epsilon_T = 0`
           recovers the pure power-law limit.
         - The quadrature grid constructed at instantiation must span both the
           Maxwell-Jüttner peak (:math:`\gamma \sim 3\Theta`) and the power-law
@@ -8087,8 +8146,8 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
                 R=1e17 * u.cm,
                 Theta=10.0,
                 p=2.4,
-                delta=0.5,
                 epsilon_B=0.1,
+                epsilon_T=0.1,
                 epsilon_E=0.1,
                 gamma_min=100.0,
                 gamma_max=1e5,
@@ -8106,6 +8165,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         D_A = ensure_in_units(distances["angular_diameter_distance"], "cm")
         z = float(distances["redshift"])
 
+        _validate_partition(epsilon_T, epsilon_B, epsilon_E, True)
         nu_cgs = ensure_in_units(nu, "Hz")
         B_cgs = float(ensure_in_units(B, "G"))
         R_cgs = float(ensure_in_units(R, "cm"))
@@ -8120,7 +8180,6 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             D_A=D_A_cgs,
             Theta=float(Theta),
             p=p,
-            delta=delta,
             f_V=f_V,
             f_A=f_A,
             beta=beta,
@@ -8128,6 +8187,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             sin_alpha=sin_alpha,
             z=z,
             epsilon_B=epsilon_B,
+            epsilon_T=epsilon_T,
             epsilon_E=epsilon_E,
             gamma_min=gamma_min,
             gamma_max=gamma_max,

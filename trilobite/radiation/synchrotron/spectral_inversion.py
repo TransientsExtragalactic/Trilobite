@@ -80,6 +80,7 @@ from trilobite.radiation.constants import (
     electron_rest_mass_cgs,
     sigma_T_cgs,
 )
+from trilobite.radiation.synchrotron.electron_distributions import PowerLaw
 from trilobite.radiation.synchrotron.utils import (
     c_1_cgs,
     c_1_gamma_cgs,
@@ -140,19 +141,16 @@ class _SSAMicrophysics:
             self.sin = np.sin(np.pi / 2 if alpha is None else np.asarray(alpha, dtype=float))
             self.A_s = 6.0 * np.pi * electron_rest_mass_cgs * c_cgs / (sigma_T_cgs * self.sin**2)
 
-        # First moment of the Lorentz-factor distribution, M = int gamma^(1-p) dgamma, evaluated for array inputs.
+        # First kinetic moment of the distribution, M = int (gamma - 1) gamma^-p dgamma, for array inputs.
         if np.any(self.gamma_max <= self.gamma_min):
             raise ValueError("`gamma_max` must be greater than `gamma_min`.")
-        e = 2.0 - self.p
         with np.errstate(divide="ignore", invalid="ignore", over="ignore"):
-            M1 = np.where(
-                e == 0.0,
-                np.log(self.gamma_max / self.gamma_min),
-                (self.gamma_max**e - self.gamma_min**e) / e,
-            )
+            M1 = PowerLaw._integral_power_law(
+                2.0 - self.p, self.gamma_min, self.gamma_max
+            ) - PowerLaw._integral_power_law(1.0 - self.p, self.gamma_min, self.gamma_max)
         if not np.all(np.isfinite(M1)):
             raise ValueError(
-                "The first moment of the electron distribution is not finite. Use p > 2 or a finite gamma_max."
+                "The mean kinetic energy of the electron distribution is not finite. Use p > 2 or a finite gamma_max."
             )
         self.A_N = (np.asarray(epsilon_E, dtype=float) / np.asarray(epsilon_B, dtype=float)) / (
             8.0 * np.pi * electron_rest_energy_cgs * M1
@@ -299,10 +297,13 @@ def _cooling_summary(mp: _SSAMicrophysics, B, R, gamma_c, nu_brk, caller: str, L
             stacklevel=3,
         )
     with np.errstate(divide="ignore", invalid="ignore"):
-        # Fractional energy error (gamma_c / gamma_min)^(2-p) / (p-1) of the uncooled normalization (gamma_max -> inf).
+        # Fractional error of the uncooled normalization (gamma_max -> inf): the kinetic energy int N (gamma - 1)
+        # lost to cooling above gamma_c, divided by the uncooled kinetic energy.
+        p, g_m = mp.p, mp.gamma_min
+        lost = gamma_c ** (2.0 - p) / ((p - 1.0) * (p - 2.0)) - gamma_c ** (1.0 - p) / (p * (p - 1.0))
         delta_c = np.where(
-            np.isinf(mp.gamma_max) & (mp.p > 2.0),
-            (gamma_c / mp.gamma_min) ** (2.0 - mp.p) / (mp.p - 1.0),
+            np.isinf(mp.gamma_max) & (p > 2.0),
+            lost / (g_m ** (2.0 - p) / (p - 2.0) - g_m ** (1.0 - p) / (p - 1.0)),
             np.nan,
         )
     out = {
@@ -385,7 +386,8 @@ def invert_ssa_Diggins26(
     p : float or array-like, optional
         Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
     epsilon_E, epsilon_B : float or array-like, optional
-        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the
+        magnetic field.
     f_A, f_V : float or array-like, optional
         Area and volume filling factors.
     alpha : float or array-like, optional
@@ -465,7 +467,8 @@ def invert_ssa_synchrotron_cooled_Diggins26(
     p : float or array-like, optional
         Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
     epsilon_E, epsilon_B : float or array-like, optional
-        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the
+        magnetic field.
     f_A, f_V : float or array-like, optional
         Area and volume filling factors.
     alpha : float or array-like, optional
@@ -483,7 +486,7 @@ def invert_ssa_synchrotron_cooled_Diggins26(
         - ``"gamma_c"``: cooling Lorentz factor.
         - ``"nu_c"``: synchrotron frequency of the cooling electrons (Hz).
         - ``"nu_c_over_nu_a"``: regime diagnostic; the assumed branch requires :math:`\ll 1`.
-        - ``"delta_c"``: fractional energy error of the uncooled normalization (NaN unless :math:`p>2` and
+        - ``"delta_c"``: fractional kinetic-energy error of the uncooled normalization (NaN unless :math:`p>2` and
           ``gamma_max`` is infinite).
         - ``"consistent"``: ``nu_c < nu_a``.
         - ``"accurate"``: ``nu_c < 0.1 nu_a`` (cooled asymptotic forms good to better than 0.1%).
@@ -557,7 +560,8 @@ def invert_ssa_ic_cooled_Diggins26(
     p : float or array-like, optional
         Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
     epsilon_E, epsilon_B : float or array-like, optional
-        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the
+        magnetic field.
     f_A, f_V : float or array-like, optional
         Area and volume filling factors.
     alpha : float or array-like, optional
@@ -640,7 +644,8 @@ def invert_ssa_combined_cooled_Diggins26(
     p : float or array-like, optional
         Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
     epsilon_E, epsilon_B : float or array-like, optional
-        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the
+        magnetic field.
     f_A, f_V : float or array-like, optional
         Area and volume filling factors.
     alpha : float or array-like, optional
@@ -724,7 +729,8 @@ def invert_ssa_with_cooling_Diggins26(
     p : float or array-like, optional
         Electron power-law index. Requires :math:`p > 2` when ``gamma_max`` is infinite.
     epsilon_E, epsilon_B : float or array-like, optional
-        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.
+        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the
+        magnetic field.
     f_A, f_V : float or array-like, optional
         Area and volume filling factors.
     alpha : float or array-like, optional
@@ -859,9 +865,10 @@ def _invert_ssa_DeMarchi22(
     theta : float or array-like, optional
         Pitch angle in radians.
     epsilon_B : float or array-like, optional
-        Fraction of internal energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     epsilon_E : float or array-like, optional
-        Fraction of internal energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the relativistic
+        electrons.
     gamma_min : float or array-like, optional
         Minimum electron Lorentz factor.
     gamma_max : float or array-like, optional
@@ -1008,7 +1015,8 @@ def invert_ssa_DeMarchi22(
     theta : float or array-like, optional
         Pitch angle in radians.
     epsilon_B, epsilon_E : float or array-like, optional
-        Fractions of the internal energy in magnetic fields and in relativistic electrons.
+        Fractions of the thermal (internal) energy density in the magnetic field and in the **total** energy (rest mass
+        included) of the relativistic electrons; see the Notes.
     gamma_min, gamma_max : float or array-like, optional
         Bounds of the electron Lorentz-factor distribution. ``gamma_max`` matters only for :math:`p < 2`.
 
@@ -1027,6 +1035,14 @@ def invert_ssa_DeMarchi22(
 
         This inversion does **not** pitch-angle average. It uses the fixed pitch angle ``theta`` throughout. To
         use the isotropic pitch-angle coefficients, use :func:`invert_ssa_Diggins26`.
+
+    .. important::
+
+        This inversion reproduces the published equations, so ``epsilon_E`` is the fraction of the internal energy in
+        the **total** electron energy :math:`\int N\gamma\,m_e c^2\,d\gamma`. The other inversions in this module
+        use the kinetic energy :math:`\int N(\gamma-1)\,m_e c^2\,d\gamma`. The two differ by
+        :math:`\langle\gamma\rangle/\langle\gamma-1\rangle`, which is negligible for :math:`\gamma_{\min}\gg1`
+        and approaches :math:`p-1` as :math:`\gamma_{\min}\to1`.
 
     The source is treated as local and non-relativistic, as for the other inversions in this module.
 

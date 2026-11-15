@@ -10,6 +10,7 @@ import numpy as np
 import pytest
 from astropy import constants as const
 from astropy import units as u
+from scipy.integrate import quad
 
 from trilobite.radiation.synchrotron import PowerLaw
 from trilobite.radiation.synchrotron.spectral_inversion import (
@@ -152,12 +153,27 @@ def test_round_trip_finite_gamma_bounds(p, gamma_min, gamma_max):
     np.testing.assert_allclose(out["gamma_c"], gc, rtol=1e-9)
 
 
-def test_delta_c_matches_closed_form():
-    p, gamma_min = 3.0, 4.0
+def _kinetic_energy_lost_to_cooling(p, gamma_min, gamma_c):
+    """1 - E_cooled / E_uncooled for E = int N (gamma - 1) d gamma, by quadrature in ln(gamma)."""
+
+    def energy(shape, lower, upper):
+        def integrand(x):
+            return (np.exp(x) - 1.0) * shape(np.exp(x)) * np.exp(x)
+
+        return quad(integrand, np.log(lower), np.log(upper), epsrel=1e-12)[0]
+
+    top = 1e12 * gamma_c  # the tail beyond is < 1e-11 of the energy for p >= 3
+    uncooled = energy(lambda g: g**-p, gamma_min, top)
+    cooled = energy(lambda g: g**-p, gamma_min, gamma_c) + energy(lambda g: gamma_c * g ** -(p + 1), gamma_c, top)
+    return 1.0 - cooled / uncooled
+
+
+@pytest.mark.parametrize(("p", "gamma_min"), [(3.0, 4.0), (3.0, 1.0), (3.5, 1.0)])
+def test_delta_c_is_the_kinetic_energy_lost_to_cooling(p, gamma_min):
     nu, F, gc = forward(0.5, 1e16, 1e7, 0.0, mode="cooled", p=p, gamma_min=gamma_min)
     out = invert_ssa_synchrotron_cooled_Diggins26(nu, F, D_TEST, 1e7, **_micro_kwargs(p=p, gamma_min=gamma_min))
-    np.testing.assert_allclose(out["delta_c"], (gc / gamma_min) ** (2 - p) / (p - 1), rtol=1e-9)
     assert out["slow_cooling"] == (gc > gamma_min)
+    np.testing.assert_allclose(out["delta_c"], _kinetic_energy_lost_to_cooling(p, gamma_min, gc), rtol=1e-8)
     # Undefined (NaN) for a finite gamma_max.
     out = invert_ssa_synchrotron_cooled_Diggins26(nu, F, D_TEST, 1e7, **_micro_kwargs(gamma_max=1e6))
     assert np.isnan(out["delta_c"])

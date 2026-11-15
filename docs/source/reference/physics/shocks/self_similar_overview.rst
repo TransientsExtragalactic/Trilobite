@@ -694,8 +694,6 @@ physical dimensions carry :class:`~astropy.units.Quantity` units.
 **Post-shock proper (comoving-frame) quantities:**
 
 - ``post_shock_pressure`` — proper pressure :math:`p_2 = \tfrac{2}{3}\rho_{\rm ext}c^2\Gamma^2`.
-- ``post_shock_temperature`` — proper temperature :math:`T_2` from the
-  Maxwell--Jüttner internal-energy inversion.
 - ``post_shock_comoving_density`` — proper rest-mass density :math:`\rho_2`.
 
 **Lab-frame quantities:**

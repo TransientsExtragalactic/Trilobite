@@ -188,19 +188,19 @@ sorts of calculations.
 
         B = 0.5 * u.G
         epsilon_B = 0.1
-        epsilon_E = 0.1
+        epsilon_E = 0.1    # non-thermal electrons
+        epsilon_T = 0.4    # ratio of the thermal-electron to the ion energy
 
         Theta = 200.0      # dimensionless temperature (kT / m_e c^2)
         gamma_min = 100.0
         p = 3.0
-        delta = 0.5        # fraction of energy in thermal component
 
         N0 = MaxwellJuettnerPowerLaw.normalize_from_magnetic_field(
             B=B,
             Theta=Theta,
             p=p,
-            delta=delta,
             epsilon_B=epsilon_B,
+            epsilon_T=epsilon_T,
             epsilon_E=epsilon_E,
             gamma_min=gamma_min,
         )
@@ -472,9 +472,9 @@ See :ref:`synchrotron_seds` for more details on the API and the physical assumpt
         B = 1.0 * u.G
         R = 1e17 * u.cm
 
-        epsilon_e = 0.1
         epsilon_B = 0.01
-        delta = 0.99999   # fraction of energy in thermal component
+        epsilon_T = 0.1   # ratio of the thermal-electron to the ion energy
+        epsilon_E = 1e-6  # non-thermal electrons: a small share of the energy
 
         # Thermal population
         T = 1e10 * u.K
@@ -489,10 +489,10 @@ See :ref:`synchrotron_seds` for more details on the API and the physical assumpt
         # Normalize electron distributions (equipartition closure)
         # ---------------------------------------------------------------------
         N_therm = MaxwellJuettner.normalize_from_magnetic_field(
-            B=B, epsilon_B=epsilon_B, epsilon_E=epsilon_e * delta, Theta=Theta
+            B=B, epsilon_B=epsilon_B, epsilon_T=epsilon_T, epsilon_E=epsilon_E, Theta=Theta
         )
         N_pl = PowerLaw.normalize_from_magnetic_field(
-            B=B, epsilon_B=epsilon_B, epsilon_E=epsilon_e * (1 - delta),
+            B=B, epsilon_B=epsilon_B, epsilon_E=epsilon_E,
             p=p, gamma_min=gamma_min, gamma_max=gamma_max,
         )
 

@@ -19,10 +19,22 @@ from typing import TYPE_CHECKING, ClassVar, Optional, Union
 import numpy as np
 from astropy import units as u
 from scipy.integrate import quad
-from scipy.special import kve
 
+from trilobite.physics_utils.maxwell_juettner import (
+    _opt_mj_approx_mean_kinetic_energy,
+    _opt_mj_approx_mean_lorentz_factor,
+    _opt_mj_cdf,
+    _opt_mj_exact_mean_kinetic_energy,
+    _opt_mj_moment,
+    _opt_mj_pdf,
+)
+from trilobite.physics_utils.thermal_partition import _opt_thermal_electron_energy_fraction, _validate_partition
 from trilobite.radiation.constants import c_cgs, electron_rest_energy_cgs, sigma_T_cgs
 from trilobite.utils.misc_utils import ensure_in_units
+
+# Energy-budget normalizations divide by <gamma - 1> = M1 - M0, which loses ~log10(1e16 K) digits to cancellation. Below
+# this mean kinetic energy (in m_e c^2) the normalization is ill-conditioned and is refused.
+_MIN_KINETIC_MOMENT = 1e-8
 
 if TYPE_CHECKING:
     from trilobite._typing import _ArrayLike, _UnitBearingArrayLike
@@ -76,10 +88,8 @@ def equipartition_magnetic_field(u_therm: "_UnitBearingArrayLike", epsilon_B: "_
         If no units are attached, values are interpreted as
         :math:`\mathrm{erg\,cm^{-3}}`.
     epsilon_B : float or ~numpy.ndarray
-        Fraction of the thermal energy density placed in magnetic fields.
-        Physically, this should usually satisfy
-        :math:`0 \leq \epsilon_B \leq 1`, though this function does not
-        enforce that bound.
+        Fraction of the thermal (internal) energy density in the magnetic field. Physically, this should usually satisfy
+        :math:`0 \leq \epsilon_B \leq 1`, though this function does not enforce that bound.
 
     Returns
     -------
@@ -119,7 +129,7 @@ def equipartition_electron_energy(u_therm: "_UnitBearingArrayLike", epsilon_e: "
     Compute the electron energy density implied by a thermal energy density.
 
     This function assumes that a fixed fraction of the thermal/internal energy
-    density is placed into non-thermal electrons,
+    density is placed into the kinetic energy of relativistic electrons,
 
     .. math::
 
@@ -138,10 +148,8 @@ def equipartition_electron_energy(u_therm: "_UnitBearingArrayLike", epsilon_e: "
         If no units are attached, values are interpreted as
         :math:`\mathrm{erg\,cm^{-3}}`.
     epsilon_e : float or ~numpy.ndarray
-        Fraction of the thermal energy density placed in electrons.
-        Physically, this should usually satisfy
-        :math:`0 \leq \epsilon_e \leq 1`, though this function does not
-        enforce that bound.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons. Physically,
+        this should usually satisfy :math:`0 \leq \epsilon_e \leq 1`, though this function does not enforce that bound.
 
     Returns
     -------
@@ -152,7 +160,7 @@ def equipartition_electron_energy(u_therm: "_UnitBearingArrayLike", epsilon_e: "
     -----
     This is a simple equipartition-style closure for the electron energy
     reservoir. It does not specify the shape, normalization, or cutoffs of the
-    electron distribution function; it only computes the n_total electron energy
+    electron distribution function; it only computes the electron (kinetic) energy
     density available to that distribution.
 
     Examples
@@ -963,9 +971,9 @@ class ElectronDistribution(ABC):
         where :math:`M_k` is the :math:`k`-th raw moment of the electron
         Lorentz-factor shape function.
 
-        This includes the electron rest-mass energy and follows the standard
-        ultra-relativistic synchrotron convention in which electron energies
-        are written as :math:`E = \gamma m_e c^2`.
+        This includes the electron rest-mass energy, :math:`E = \gamma m_e c^2`.
+        Energy budgets (:math:`\epsilon_e`) use the kinetic energy instead; see
+        :meth:`mean_kinetic_energy`.
 
         Parameters
         ----------
@@ -1033,13 +1041,27 @@ class ElectronDistribution(ABC):
         return n_eff / cls._opt_moment(2.0, **params)
 
     @classmethod
+    def _opt_first_kinetic_moment(cls, **params):
+        r"""Mean kinetic energy per particle in units of :math:`m_e c^2`, :math:`M^{(1)} - M^{(0)}`."""
+        return cls._opt_moment(1.0, **params) - cls._opt_moment(0.0, **params)
+
+    @classmethod
+    def _check_kinetic_moment(cls, **params) -> None:
+        r"""Refuse energy-budget normalizations of distributions with (almost) no kinetic energy."""
+        if np.any(cls._opt_first_kinetic_moment(**params) < _MIN_KINETIC_MOMENT):
+            raise ValueError(
+                f"The distribution carries almost no kinetic energy (mean kinetic energy < {_MIN_KINETIC_MOMENT:g} "
+                "m_e c^2), so an energy-based normalization is ill-conditioned."
+            )
+
+    @classmethod
     def _normalize_from_magnetic_field(cls, B: float, epsilon_B: float, epsilon_E: float, **params) -> float:
         u_B = B**2 / (8.0 * np.pi)
-        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * cls._opt_moment(1.0, **params))
+        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * cls._opt_first_kinetic_moment(**params))
 
     @classmethod
     def _normalize_from_energy_density(cls, u_therm: float, epsilon_E: float, **params) -> float:
-        return epsilon_E * u_therm / (electron_rest_energy_cgs * cls._opt_moment(1.0, **params))
+        return epsilon_E * u_therm / (electron_rest_energy_cgs * cls._opt_first_kinetic_moment(**params))
 
     # ------------------------------------------------------------------ #
     # Normalization (Public)                                             #
@@ -1095,30 +1117,38 @@ class ElectronDistribution(ABC):
 
         .. math::
 
-            N_0\, m_e c^2\, M^{(1)} = \\frac{\\varepsilon_E}{\\varepsilon_B}
-            \\frac{B^2}{8\pi}
+            N_0\, m_e c^2\, \langle \gamma - 1 \rangle
+            = \frac{\varepsilon_E}{\varepsilon_B} \frac{B^2}{8\pi}
 
-        for :math:`N_0`, where :math:`M^{(1)}` is the first moment of
-        :meth:`pdf`.
+        for :math:`N_0`, where :math:`\langle \gamma - 1 \rangle = M^{(1)} - M^{(0)}` is the mean kinetic energy per
+        particle of :meth:`pdf`, in units of :math:`m_e c^2`. Rest-mass energy is excluded because
+        :math:`\varepsilon_E` and :math:`\varepsilon_B` are fractions of the thermal (internal) energy density.
 
         Parameters
         ----------
         B : float, array-like, or ~astropy.units.Quantity
             Magnetic field strength.  Bare values are interpreted as Gauss.
         epsilon_B : float or array-like
-            Fraction of thermal energy in the magnetic field.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         epsilon_E : float or array-like
-            Fraction of thermal energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         **params
             Distribution-specific parameters.
 
         Returns
         -------
         ~astropy.units.Quantity
-            Power-law normalization :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.
+            Distribution amplitude :math:`N_0` in :math:`\mathrm{cm^{-3}}`.
+
+        Raises
+        ------
+        ValueError
+            If the distribution carries almost no kinetic energy (:math:`\langle \gamma - 1 \rangle < 10^{-8}`), which
+            makes the normalization ill-conditioned.
         """
         B_cgs = ensure_in_units(B, u.G)
         params = cls._validate_and_process_parameters(**params)
+        cls._check_kinetic_moment(**params)
         return cls._normalize_from_magnetic_field(B_cgs, epsilon_B, epsilon_E, **params) * u.cm**-3
 
     @classmethod
@@ -1130,27 +1160,36 @@ class ElectronDistribution(ABC):
 
         .. math::
 
-            N_0\, m_e c^2\, M^{(1)} = \\varepsilon_E\, u_{\\rm int}
+            N_0\, m_e c^2\, \langle \gamma - 1 \rangle = \varepsilon_E\, u_{\rm int}
 
-        for :math:`N_0`.
+        for :math:`N_0`, where :math:`\langle \gamma - 1 \rangle = M^{(1)} - M^{(0)}` is the mean kinetic energy per
+        particle of :meth:`pdf`, in units of :math:`m_e c^2`, and :math:`u_{\rm int}` is the internal (thermal) energy
+        density, which excludes rest mass.
 
         Parameters
         ----------
         u_therm : float, array-like, or ~astropy.units.Quantity
-            Thermal energy density.  Bare values are interpreted as
-            :math:`\\mathrm{erg\,cm^{-3}}`.
+            Internal (thermal) energy density, excluding rest mass.  Bare values are interpreted as
+            :math:`\mathrm{erg\,cm^{-3}}`.
         epsilon_E : float or array-like
-            Fraction of thermal energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         **params
             Distribution-specific parameters.
 
         Returns
         -------
         ~astropy.units.Quantity
-            Distribution amplitude :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.
+            Distribution amplitude :math:`N_0` in :math:`\mathrm{cm^{-3}}`.
+
+        Raises
+        ------
+        ValueError
+            If the distribution carries almost no kinetic energy (:math:`\langle \gamma - 1 \rangle < 10^{-8}`), which
+            makes the normalization ill-conditioned.
         """
         u_cgs = ensure_in_units(u_therm, u.erg / u.cm**3)
         params = cls._validate_and_process_parameters(**params)
+        cls._check_kinetic_moment(**params)
         return cls._normalize_from_energy_density(u_cgs, epsilon_E, **params) * u.cm**-3
 
     # ------------------------------------------------------------------ #
@@ -1247,9 +1286,9 @@ class ElectronDistribution(ABC):
         B : float, array-like, or ~astropy.units.Quantity
             Magnetic field strength.  Bare values are interpreted as Gauss.
         epsilon_B : float or array-like
-            Fraction of thermal energy in the magnetic field.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         epsilon_E : float or array-like
-            Fraction of thermal energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         **params
             Distribution-specific parameters.
 
@@ -1278,9 +1317,9 @@ class ElectronDistribution(ABC):
             Thermal energy density.  Bare values are interpreted as
             :math:`\mathrm{erg\,cm^{-3}}`.
         epsilon_B : float or array-like
-            Fraction of thermal energy in the magnetic field.
+            Fraction of the thermal (internal) energy density in the magnetic field.
         epsilon_E : float or array-like
-            Fraction of thermal energy in relativistic electrons.
+            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         **params
             Distribution-specific parameters.
 
@@ -2277,7 +2316,155 @@ class BrokenPowerLaw(ElectronDistribution):
         return cls._opt_cdf(gamma, norm, **params)
 
 
-class MaxwellJuettner(ElectronDistribution):
+# =========================================================================== #
+# Energy budget of thermal electrons                                          #
+# =========================================================================== #
+class _ThermalElectronBudget:
+    r"""
+    Energy-budget normalizations for distributions with thermal electrons.
+
+    The thermal-electron energy is set by ``epsilon_T``, the ratio of the thermal-electron to the ion energy. The
+    magnetic and non-thermal electron energies are removed first (see :mod:`trilobite.physics_utils.thermal_partition`),
+    so that the thermal electrons carry
+
+    .. math::
+
+        u_{e,\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}\, u_{\rm th}.
+
+    The methods below take ``epsilon_T``, ``epsilon_B`` and ``epsilon_E`` as keyword arguments, convert them to the
+    single electron energy fraction of the base class, and forward to its methods.
+    """
+
+    @classmethod
+    def _split_energy_budget(cls, epsilon_T, epsilon_B, epsilon_E, params) -> tuple:
+        r"""Return the fraction of :math:`u_{\rm th}` in this distribution's electrons and the processed parameters."""
+        raise NotImplementedError
+
+    @classmethod
+    def normalize_from_magnetic_field(cls, B, epsilon_B: float, *, epsilon_T: float, epsilon_E=None, **params):
+        r"""
+        Compute N₀ via equipartition with a magnetic field.
+
+        As :meth:`ElectronDistribution.normalize_from_magnetic_field`, with the electron energy fraction set by
+        ``epsilon_T``, ``epsilon_B`` and ``epsilon_E``.
+
+        Parameters
+        ----------
+        B : float, array-like, or ~astropy.units.Quantity
+            Magnetic field strength.  Bare values are interpreted as Gauss.
+        epsilon_B : float or array-like
+            Fraction of the thermal (internal) energy density in the magnetic field.
+        epsilon_T : float or array-like
+            Ratio of the thermal-electron energy to the ion energy.
+        epsilon_E : float or array-like, optional
+            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.
+        **params
+            Distribution-specific parameters.
+
+        Returns
+        -------
+        ~astropy.units.Quantity
+            Distribution amplitude :math:`N_0` in :math:`\mathrm{cm^{-3}}`.
+        """
+        fraction, params = cls._split_energy_budget(epsilon_T, epsilon_B, epsilon_E, params)
+        return super().normalize_from_magnetic_field(B, epsilon_B, fraction, **params)
+
+    @classmethod
+    def normalize_from_energy_density(
+        cls, u_therm, *, epsilon_T: float, epsilon_B: float, epsilon_E=None, **params
+    ) -> u.Quantity:
+        r"""
+        Compute N₀ from the thermal energy density.
+
+        As :meth:`ElectronDistribution.normalize_from_energy_density`, with the electron energy fraction set by
+        ``epsilon_T``, ``epsilon_B`` and ``epsilon_E``.
+
+        Parameters
+        ----------
+        u_therm : float, array-like, or ~astropy.units.Quantity
+            Internal (thermal) energy density, excluding rest mass.  Bare values are interpreted as
+            :math:`\mathrm{erg\,cm^{-3}}`.
+        epsilon_T : float or array-like
+            Ratio of the thermal-electron energy to the ion energy.
+        epsilon_B : float or array-like
+            Fraction of the thermal (internal) energy density in the magnetic field.
+        epsilon_E : float or array-like, optional
+            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.
+        **params
+            Distribution-specific parameters.
+
+        Returns
+        -------
+        ~astropy.units.Quantity
+            Distribution amplitude :math:`N_0` in :math:`\mathrm{cm^{-3}}`.
+        """
+        fraction, params = cls._split_energy_budget(epsilon_T, epsilon_B, epsilon_E, params)
+        return super().normalize_from_energy_density(u_therm, fraction, **params)
+
+    @classmethod
+    def bol_emiss_from_magnetic_field(
+        cls, B, epsilon_B: float, *, epsilon_T: float, epsilon_E=None, **params
+    ) -> u.Quantity:
+        r"""
+        Bolometric synchrotron emissivity from a magnetic field via equipartition.
+
+        As :meth:`ElectronDistribution.bol_emiss_from_magnetic_field`, with the electron energy fraction set by
+        ``epsilon_T``, ``epsilon_B`` and ``epsilon_E``.
+
+        Parameters
+        ----------
+        B : float, array-like, or ~astropy.units.Quantity
+            Magnetic field strength.  Bare values are interpreted as Gauss.
+        epsilon_B : float or array-like
+            Fraction of the thermal (internal) energy density in the magnetic field.
+        epsilon_T : float or array-like
+            Ratio of the thermal-electron energy to the ion energy.
+        epsilon_E : float or array-like, optional
+            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.
+        **params
+            Distribution-specific parameters.
+
+        Returns
+        -------
+        ~astropy.units.Quantity
+            Bolometric synchrotron emissivity in :math:`\mathrm{erg\,s^{-1}\,cm^{-3}}`.
+        """
+        fraction, params = cls._split_energy_budget(epsilon_T, epsilon_B, epsilon_E, params)
+        return super().bol_emiss_from_magnetic_field(B, epsilon_B, fraction, **params)
+
+    @classmethod
+    def bol_emiss_from_energy_density(
+        cls, u_therm, epsilon_B: float, *, epsilon_T: float, epsilon_E=None, **params
+    ) -> u.Quantity:
+        r"""
+        Bolometric synchrotron emissivity from the thermal energy density via equipartition.
+
+        As :meth:`ElectronDistribution.bol_emiss_from_energy_density`, with the electron energy fraction set by
+        ``epsilon_T``, ``epsilon_B`` and ``epsilon_E``.
+
+        Parameters
+        ----------
+        u_therm : float, array-like, or ~astropy.units.Quantity
+            Thermal energy density.  Bare values are interpreted as :math:`\mathrm{erg\,cm^{-3}}`.
+        epsilon_B : float or array-like
+            Fraction of the thermal (internal) energy density in the magnetic field.
+        epsilon_T : float or array-like
+            Ratio of the thermal-electron energy to the ion energy.
+        epsilon_E : float or array-like, optional
+            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.
+        **params
+            Distribution-specific parameters.
+
+        Returns
+        -------
+        ~astropy.units.Quantity
+            Bolometric synchrotron emissivity in :math:`\mathrm{erg\,s^{-1}\,cm^{-3}}`.
+        """
+        fraction, params = cls._split_energy_budget(epsilon_T, epsilon_B, epsilon_E, params)
+        return super().bol_emiss_from_energy_density(u_therm, epsilon_B, fraction, **params)
+
+
+class MaxwellJuettner(_ThermalElectronBudget, ElectronDistribution):
     r"""
     Relativistic thermal electron distribution (Maxwell-Jüttner).
 
@@ -2359,11 +2546,16 @@ class MaxwellJuettner(ElectronDistribution):
         \approx
         \frac{15\Theta^2 + 11\Theta + 4}{4 + 5\Theta},
 
-    accurate to :math:`\lesssim 1\%` for all :math:`\Theta > 0`; see
+    accurate to :math:`\lesssim 1.3\%` for all :math:`\Theta > 0`; see
     :meth:`approx_first_moment`.
 
     **Normalization.** The amplitude :math:`N_0` is equal to the total
     number density :math:`n_e` because :math:`M_0 = 1`.
+
+    When :math:`N_0` is instead fixed by an energy budget
+    (:meth:`normalize_from_energy_density`, :meth:`normalize_from_magnetic_field`), the kinetic energy per particle
+    :math:`\langle\gamma - 1\rangle = M_1 - 1` sets the amplitude, as for every distribution in this module. It is
+    exact, and is about :math:`3\Theta/2` for :math:`\Theta \ll 1`.
 
     Examples
     --------
@@ -2429,57 +2621,37 @@ class MaxwellJuettner(ElectronDistribution):
         cls._validate_parameters(Theta)
         return {"Theta": _f8(Theta)[0]}
 
+    @classmethod
+    def _split_energy_budget(cls, epsilon_T, epsilon_B, epsilon_E, params) -> tuple:
+        epsilon_T, epsilon_B, epsilon_E = _validate_partition(
+            epsilon_T, epsilon_B, 0.0 if epsilon_E is None else epsilon_E, True
+        )
+        return _opt_thermal_electron_energy_fraction(epsilon_T, epsilon_B, epsilon_E), params
+
     # ------------------------------------------------------------------ #
     # Unvalidated backends                                               #
     # ------------------------------------------------------------------ #
     # No validation or coercion; floats or float64 arrays, broadcast with standard NumPy rules.
+    # The math lives in :mod:`trilobite.physics_utils.maxwell_juettner`; these are thin delegates.
     @classmethod
     def _opt_pdf(cls, gamma, norm, Theta, **_):
-        inside_support = gamma >= 1.0
-
-        # Clamp to 1.0 so sqrt(1 - gamma^{-2}) is defined for out-of-support elements;
-        # np.where selects 0.0 for those positions anyway.
-        gamma_safe = np.maximum(gamma, 1.0)
-        beta = np.sqrt(1.0 - gamma_safe**-2)
-
-        # Use exponentially scaled K_2 for numerical stability:
-        #
-        #   exp(-gamma/Theta) / K_2(1/Theta) = exp((1 - gamma)/Theta) / kve(2, 1/Theta).
-        normalization = Theta * kve(2, 1.0 / Theta)
-
-        return np.where(
-            inside_support,
-            norm * gamma_safe**2 * beta * np.exp((1.0 - gamma_safe) / Theta) / normalization,
-            0.0,
-        )[()]
+        return _opt_mj_pdf(gamma, Theta, norm)
 
     @classmethod
     def _opt_moment(cls, order, Theta, **_):
-        # Closed forms for orders 0-2; higher orders use quadrature, looped over any array of temperatures.
-        if order == 0:
-            return np.ones_like(Theta)[()]
+        return _opt_mj_moment(order, Theta)
 
-        z = 1.0 / Theta
-        k1_over_k2 = kve(1, z) / kve(2, z)
-
-        if order == 1:
-            return k1_over_k2 + 3.0 * Theta
-
-        if order == 2:
-            return 1.0 + 12.0 * Theta**2 + 3.0 * Theta * k1_over_k2
-
-        def _quad(theta):
-            return quad(lambda g: g**order * cls._opt_pdf(g, 1.0, theta), 1.0, np.inf)[0]
-
-        return np.vectorize(_quad, otypes=["f8"])(Theta)[()]
+    @classmethod
+    def _opt_first_kinetic_moment(cls, Theta, **_):
+        return _opt_mj_exact_mean_kinetic_energy(Theta)  # not M1 - M0, which cancels at small Theta
 
     @classmethod
     def _opt_approx_first_moment(cls, Theta, **_):
-        return (15.0 * Theta**2 + 11.0 * Theta + 4.0) / (5.0 * Theta + 4.0)
+        return _opt_mj_approx_mean_lorentz_factor(Theta)
 
     @classmethod
     def _opt_approx_first_kinetic_moment(cls, Theta, **_):
-        return Theta * (6.0 + 15.0 * Theta) / (4.0 + 5.0 * Theta)
+        return _opt_mj_approx_mean_kinetic_energy(Theta)
 
     # ---------------------------------------------- #
     # Statistical Methods                            #
@@ -2651,9 +2823,8 @@ class MaxwellJuettner(ElectronDistribution):
 
         .. note::
 
-            Relative to the literature, we here maintain the standard convention and consider
-            the total (not just kinetic) energy of the electrons, i.e., we include the rest mass
-            energy in the definition of the Lorentz factor.
+            This is the mean of :math:`\gamma`, so it includes the rest mass. Energy budgets use the
+            kinetic energy :math:`\langle \gamma - 1 \rangle`; see :meth:`approx_first_kinetic_moment`.
 
         Parameters
         ----------
@@ -2795,34 +2966,7 @@ class MaxwellJuettner(ElectronDistribution):
         if Theta.ndim != 0:
             raise ValueError("`MaxwellJuettner.cdf` shares one integration grid and requires a scalar `Theta`.")
 
-        gamma_array = np.asarray(gamma, dtype="f8")
-        scalar_input = gamma_array.ndim == 0
-        gamma_flat = np.atleast_1d(gamma_array).ravel()
-
-        Theta = float(Theta)
-        norm = float(norm)
-
-        # Practical upper limit: MJ PDF decays exponentially above ~20 Theta
-        g_upper = max(float(gamma_flat.max()), 1.0) * 1.01
-        g_upper = max(g_upper, 1.0 + 20.0 * Theta)
-
-        # Log-spaced grid is dense near gamma=1 (where the PDF rises steeply)
-        # and sparser at high gamma (where the PDF is negligible)
-        g_grid = np.exp(np.linspace(0.0, np.log(g_upper), 10_000))
-        pdf_grid = cls._opt_pdf(g_grid, 1.0, Theta)
-
-        # Vectorized cumulative trapezoidal rule; no additional imports needed
-        dg = np.diff(g_grid)
-        cdf_increments = 0.5 * (pdf_grid[:-1] + pdf_grid[1:]) * dg
-        cdf_grid = np.concatenate([[0.0], np.cumsum(cdf_increments)])
-
-        # Interpolate to requested values; clamp below gamma_min=1 to 0
-        result = np.interp(gamma_flat, g_grid, cdf_grid, left=0.0, right=cdf_grid[-1])
-        result = norm * np.where(gamma_flat <= 1.0, 0.0, result)
-
-        if scalar_input:
-            return float(result[0])
-        return result.reshape(gamma_array.shape)
+        return _opt_mj_cdf(gamma, Theta, norm)
 
     # ------------------------------------------------------------------ #
     # Normalization (Private)                                            #
@@ -2837,39 +2981,43 @@ class MaxwellJuettner(ElectronDistribution):
     def _normalize_from_n_total(cls, n_total: float, **params) -> float:
         return n_total
 
-    @classmethod
-    def _normalize_from_magnetic_field(cls, B: float, epsilon_B: float, epsilon_E: float, Theta=1.0, **_) -> float:
-        u_B = B**2 / (8.0 * np.pi)
-        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * cls._opt_approx_first_moment(Theta))
-
-    @classmethod
-    def _normalize_from_energy_density(cls, u_therm: float, epsilon_E: float, Theta=1.0, **_) -> float:
-        return epsilon_E * u_therm / (electron_rest_energy_cgs * cls._opt_approx_first_moment(Theta))
-
 
 # =========================================================================== #
 # Mixed Distributions                                                         #
 # =========================================================================== #
-class MixedThermalNonThermal(ElectronDistribution):
+class MixedThermalNonThermal(_ThermalElectronBudget, ElectronDistribution):
     r"""
     Base class for mixed thermal and non-thermal electron distributions.
 
-    This class represents a mixture of a thermal Maxwell-Jüttner component and
-    a non-thermal component,
+    This class represents a mixture of a thermal Maxwell-Jüttner component and a non-thermal component supplied by
+    subclasses through ``NON_THERMAL_DISTRIBUTION``. The mixture is set by the energy budget
+    (see :mod:`trilobite.physics_utils.thermal_partition`), through three fractions of the thermal energy density
+    :math:`u_{\rm th}`:
+
+    * ``epsilon_B``: the magnetic field,
+    * ``epsilon_E``: the kinetic energy of the non-thermal electrons,
+    * ``epsilon_T``: the ratio of the thermal-electron to the ion energy, so that the thermal electrons carry
+      :math:`\epsilon_T (1 - \epsilon_B - \epsilon_E) / (1 + \epsilon_T)\, u_{\rm th}`.
+
+    The electron fraction in the thermal component is then proportional to :math:`f_{\rm th} / K_{\rm th}`, and in
+    the non-thermal component to :math:`\epsilon_E / K_{\rm nth}`:
 
     .. math::
 
         f_{\rm mix}(\gamma)
         =
-        \delta f_{\rm th}(\gamma)
-        +
-        (1-\delta) f_{\rm nth}(\gamma),
+        \frac{
+            (f_{\rm th} / K_{\rm th})\, f_{\rm MJ}(\gamma)
+            + (\epsilon_E / K_{\rm nth})\, f_{\rm nth}(\gamma)
+        }{
+            f_{\rm th} / K_{\rm th} + \epsilon_E / K_{\rm nth}
+        },
+        \qquad
+        f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T},
 
-    where :math:`0 \leq \delta \leq 1`.
-
-    The thermal component is taken to be the Maxwell-Jüttner distribution, and
-    the non-thermal component is supplied by subclasses through
-    ``NON_THERMAL_DISTRIBUTION``.
+    where :math:`f_{\rm MJ}` and :math:`f_{\rm nth}` are unit-normalized components and
+    :math:`K = \langle \gamma - 1 \rangle` is the mean kinetic energy per electron of each component (in units of
+    :math:`m_e c^2`).
 
     See Also
     --------
@@ -2879,32 +3027,21 @@ class MixedThermalNonThermal(ElectronDistribution):
 
     Notes
     -----
-    The non-thermal classes in this module generally define shape functions
-    rather than probability-normalized distributions. Therefore, this class
-    internally normalizes the non-thermal shape by its zeroth moment,
+    The non-thermal classes in this module define shape functions rather than probability-normalized distributions,
+    so the non-thermal shape is divided by its zeroth moment first. Then :math:`\int f_{\rm mix}\,d\gamma = 1`, and
+    ``norm`` is the total electron number density.
+
+    Writing :math:`\delta = f_{\rm th} / (f_{\rm th} + \epsilon_E)` for the thermal share of the electron kinetic
+    energy, the mixture's mean kinetic energy is
 
     .. math::
 
-        f_{\rm nth}(\gamma)
-        =
-        \frac{
-            f_{\rm shape,nth}(\gamma)
-        }{
-            M_{\rm nth}^{(0)}
-        }.
+        \langle \gamma - 1 \rangle_{\rm mix}
+        = \left[\frac{\delta}{K_{\rm th}} + \frac{1-\delta}{K_{\rm nth}}\right]^{-1},
 
-    With this convention,
-
-    .. math::
-
-        \int f_{\rm mix}(\gamma)\,d\gamma = 1,
-
-    and ``delta`` is a true number-fraction mixture weight.
-
-    This is distinct from an energy-fraction parameter. If ``delta`` is instead
-    intended to represent the fraction of electron energy in the thermal
-    population, the component normalizations should be computed separately from
-    their energy budgets rather than treated as a direct PDF mixture weight.
+    so the electron energy :math:`(f_{\rm th} + \epsilon_E)\, u_{\rm th}` fixes
+    :math:`N_0 = (f_{\rm th} + \epsilon_E)\, u_{\rm th} / (m_e c^2 \langle \gamma - 1 \rangle_{\rm mix})`.
+    The shape therefore depends on ``epsilon_B``, because the magnetic energy is removed from the budget first.
     """
 
     THERMAL_DISTRIBUTION: ClassVar[type[ElectronDistribution]] = MaxwellJuettner
@@ -2921,7 +3058,7 @@ class MixedThermalNonThermal(ElectronDistribution):
         Parameters
         ----------
         delta : float
-            Fractional weight of the thermal Maxwell-Jüttner component.
+            Fraction of the electron kinetic energy in the thermal component.
 
         Raises
         ------
@@ -2955,12 +3092,35 @@ class MixedThermalNonThermal(ElectronDistribution):
         return cls.NON_THERMAL_DISTRIBUTION._opt_moment(0.0, **params)
 
     @classmethod
-    def _validate_and_process_parameters(cls, *, delta, **params) -> dict:
+    def _thermal_energy_share(cls, epsilon_T, epsilon_B, epsilon_E) -> tuple:
+        r"""Return the fraction of :math:`u_{\rm th}` in all electrons and the thermal share :math:`\delta` of it."""
+        if epsilon_T is None or epsilon_B is None or epsilon_E is None:
+            raise ValueError("`epsilon_T`, `epsilon_B` and `epsilon_E` are required for a mixed distribution.")
+        epsilon_T, epsilon_B, epsilon_E = _validate_partition(epsilon_T, epsilon_B, epsilon_E, True)
+        thermal = _opt_thermal_electron_energy_fraction(epsilon_T, epsilon_B, epsilon_E)
+        electrons = thermal + epsilon_E
+        if not np.all(electrons > 0.0):
+            raise ValueError("The electrons carry no energy: `epsilon_T` and `epsilon_E` cannot both be zero.")
+        return electrons, thermal / electrons
+
+    @classmethod
+    def _split_energy_budget(cls, epsilon_T, epsilon_B, epsilon_E, params) -> tuple:
+        electrons, delta = cls._thermal_energy_share(epsilon_T, epsilon_B, epsilon_E)
+        return electrons, {**params, "delta": delta}
+
+    @classmethod
+    def _validate_and_process_parameters(
+        cls, *, delta=None, epsilon_T=None, epsilon_B=None, epsilon_E=None, **params
+    ) -> dict:
         r"""
         Validate the mixture and component parameters and return them, merged, as ``float64`` arrays.
 
-        Also checks that the non-thermal component is normalizable.
+        The thermal share ``delta`` of the electron kinetic energy is either given directly (the energy-budget methods
+        resolve it first) or computed from ``epsilon_T``, ``epsilon_B`` and ``epsilon_E``. Also checks that the
+        non-thermal component is normalizable.
         """
+        if delta is None:
+            _, delta = cls._thermal_energy_share(epsilon_T, epsilon_B, epsilon_E)
         cls._validate_mixture_parameter(delta)
         cls._validate_non_thermal_distribution()
 
@@ -2976,6 +3136,8 @@ class MixedThermalNonThermal(ElectronDistribution):
             )
         if np.any(m0 <= 0.0):
             raise ValueError("The zeroth moment of the non-thermal component must be positive.")
+        if np.any(cls._opt_kinetic_energies(**{**thermal, **non_thermal})[1] <= 0.0):
+            raise ValueError("The non-thermal component must carry kinetic energy, <gamma - 1> > 0.")
 
         return {**thermal, **non_thermal, "delta": _f8(delta)[0]}
 
@@ -2984,26 +3146,48 @@ class MixedThermalNonThermal(ElectronDistribution):
     # ------------------------------------------------------------------ #
     # No validation or coercion; ``params`` is the merged dictionary from `_validate_and_process_parameters`.
     @classmethod
+    def _opt_kinetic_energies(cls, **params):
+        r"""Mean kinetic energy :math:`\langle \gamma - 1 \rangle` of the thermal and the non-thermal component."""
+        K_th = cls.THERMAL_DISTRIBUTION._opt_first_kinetic_moment(**params)
+        K_nth = cls.NON_THERMAL_DISTRIBUTION._opt_first_kinetic_moment(**params) / cls._non_thermal_m0(**params)
+        return K_th, K_nth
+
+    @classmethod
+    def _opt_number_fractions(cls, delta, **params):
+        r"""Fractions of the electrons in the thermal and non-thermal components for the energy fraction ``delta``."""
+        K_th, K_nth = cls._opt_kinetic_energies(**params)
+        thermal, non_thermal = delta / K_th, (1.0 - delta) / K_nth
+        return thermal / (thermal + non_thermal), non_thermal / (thermal + non_thermal)
+
+    @classmethod
+    def _opt_first_kinetic_moment(cls, delta, **params):
+        K_th, K_nth = cls._opt_kinetic_energies(**params)
+        return 1.0 / (delta / K_th + (1.0 - delta) / K_nth)
+
+    @classmethod
     def _opt_pdf(cls, gamma, norm, delta, **params):
+        thermal, non_thermal = cls._opt_number_fractions(delta, **params)
         thermal_pdf = cls.THERMAL_DISTRIBUTION._opt_pdf(gamma, 1.0, **params)
         non_thermal_pdf = cls.NON_THERMAL_DISTRIBUTION._opt_pdf(gamma, 1.0, **params) / cls._non_thermal_m0(**params)
-        return norm * (delta * thermal_pdf + (1.0 - delta) * non_thermal_pdf)
+        return norm * (thermal * thermal_pdf + non_thermal * non_thermal_pdf)
 
     @classmethod
     def _opt_moment(cls, order, delta, **params):
         if order == 0:
             return 1.0
 
+        thermal, non_thermal = cls._opt_number_fractions(delta, **params)
         thermal_moment = cls.THERMAL_DISTRIBUTION._opt_moment(order, **params)
         non_thermal_moment = cls.NON_THERMAL_DISTRIBUTION._opt_moment(order, **params) / cls._non_thermal_m0(**params)
-        return delta * thermal_moment + (1.0 - delta) * non_thermal_moment
+        return thermal * thermal_moment + non_thermal * non_thermal_moment
 
     @classmethod
     def _opt_moment_between(cls, order, a, b, delta, **params):
         # The Maxwell-Juttner truncated moment is a scalar numerical integral (base-class quadrature).
+        thermal, non_thermal = cls._opt_number_fractions(delta, **params)
         thermal_moment = cls.THERMAL_DISTRIBUTION.moment_between(order, a, b, **params)
         non_thermal_moment = cls.NON_THERMAL_DISTRIBUTION._opt_moment_between(order, a, b, **params)
-        return delta * thermal_moment + (1.0 - delta) * non_thermal_moment / cls._non_thermal_m0(**params)
+        return thermal * thermal_moment + non_thermal * non_thermal_moment / cls._non_thermal_m0(**params)
 
     # ------------------------------------------------------------------ #
     # Distribution Interface                                             #
@@ -3014,7 +3198,9 @@ class MixedThermalNonThermal(ElectronDistribution):
         gamma: "_ArrayLike",
         norm: float = 1.0,
         *,
-        delta: float,
+        epsilon_T: float,
+        epsilon_B: float,
+        epsilon_E: float,
         **params,
     ) -> np.ndarray:
         r"""
@@ -3024,18 +3210,11 @@ class MixedThermalNonThermal(ElectronDistribution):
 
         .. math::
 
-            N(\gamma)
-            =
-            N_0
-            \left[
-            \delta f_{\rm MJ}(\gamma)
-            +
-            (1-\delta) f_{\rm nth}(\gamma)
-            \right],
+            N(\gamma) = N_0\,f_{\rm mix}(\gamma),
 
-        where :math:`f_{\rm MJ}` is the normalized Maxwell-Jüttner
-        distribution and :math:`f_{\rm nth}` is the normalized non-thermal
-        component.
+        where :math:`f_{\rm mix}` is the mixture of the unit-normalized
+        Maxwell-Jüttner and non-thermal components defined in the class
+        docstring.
 
         Parameters
         ----------
@@ -3044,9 +3223,12 @@ class MixedThermalNonThermal(ElectronDistribution):
             distribution.
         norm : float, optional
             Distribution amplitude :math:`N_0`. Default is ``1.0``.
-        delta : float
-            Mixture weight of the thermal Maxwell-Jüttner component. Must
-            satisfy ``0 <= delta <= 1``.
+        epsilon_T : float
+            Ratio of the thermal-electron energy to the ion energy.
+        epsilon_B : float
+            Fraction of the thermal (internal) energy density in the magnetic field.
+        epsilon_E : float
+            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.
         **params
             Parameters forwarded to the thermal and non-thermal component
             distributions. For example, ``Theta`` is used by the
@@ -3058,7 +3240,9 @@ class MixedThermalNonThermal(ElectronDistribution):
         float or ~numpy.ndarray
             Mixed electron distribution evaluated at ``gamma``.
         """
-        params = cls._validate_and_process_parameters(delta=delta, **params)
+        params = cls._validate_and_process_parameters(
+            epsilon_T=epsilon_T, epsilon_B=epsilon_B, epsilon_E=epsilon_E, **params
+        )
         gamma, norm = _f8(gamma, norm)
         return cls._opt_pdf(gamma, norm, **params)
 
@@ -3098,7 +3282,9 @@ class MixedThermalNonThermal(ElectronDistribution):
         cls,
         order: float,
         *,
-        delta: float,
+        epsilon_T: float,
+        epsilon_B: float,
+        epsilon_E: float,
         **params,
     ) -> float:
         r"""
@@ -3110,11 +3296,11 @@ class MixedThermalNonThermal(ElectronDistribution):
 
             M_k^{\rm mix}
             =
-            \delta M_k^{\rm MJ}
+            w_{\rm th} M_k^{\rm MJ}
             +
-            (1-\delta) M_k^{\rm nth,norm},
+            (1-w_{\rm th}) M_k^{\rm nth,norm},
 
-        where
+        where :math:`w_{\rm th}` is the thermal electron fraction set by the energy budget (see the class docstring) and
 
         .. math::
 
@@ -3130,8 +3316,12 @@ class MixedThermalNonThermal(ElectronDistribution):
         ----------
         order : float
             Moment order :math:`k`.
-        delta : float
-            Mixture weight of the thermal Maxwell-Jüttner component.
+        epsilon_T : float
+            Ratio of the thermal-electron energy to the ion energy.
+        epsilon_B : float
+            Fraction of the thermal (internal) energy density in the magnetic field.
+        epsilon_E : float
+            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.
         **params
             Parameters forwarded to the component distributions.
 
@@ -3140,7 +3330,9 @@ class MixedThermalNonThermal(ElectronDistribution):
         float
             Raw moment of the normalized mixture shape.
         """
-        params = cls._validate_and_process_parameters(delta=delta, **params)
+        params = cls._validate_and_process_parameters(
+            epsilon_T=epsilon_T, epsilon_B=epsilon_B, epsilon_E=epsilon_E, **params
+        )
         return cls._opt_moment(float(order), **params)
 
     @classmethod
@@ -3150,7 +3342,9 @@ class MixedThermalNonThermal(ElectronDistribution):
         a: float,
         b: float,
         *,
-        delta: float,
+        epsilon_T: float,
+        epsilon_B: float,
+        epsilon_E: float,
         **params,
     ) -> float:
         r"""
@@ -3162,12 +3356,13 @@ class MixedThermalNonThermal(ElectronDistribution):
 
             M_k^{\rm mix}(a,b)
             =
-            \delta M_k^{\rm MJ}(a,b)
+            w_{\rm th} M_k^{\rm MJ}(a,b)
             +
-            (1-\delta) M_k^{\rm nth,norm}(a,b),
+            (1-w_{\rm th}) M_k^{\rm nth,norm}(a,b),
 
-        where the non-thermal component is normalized by its full zeroth
-        moment.
+        where :math:`w_{\rm th}` is the thermal electron fraction set by
+        the energy budget and the non-thermal component is normalized by its
+        full zeroth moment.
 
         Parameters
         ----------
@@ -3177,8 +3372,12 @@ class MixedThermalNonThermal(ElectronDistribution):
             Requested lower Lorentz-factor bound.
         b : float
             Requested upper Lorentz-factor bound.
-        delta : float
-            Mixture weight of the thermal Maxwell-Jüttner component.
+        epsilon_T : float
+            Ratio of the thermal-electron energy to the ion energy.
+        epsilon_B : float
+            Fraction of the thermal (internal) energy density in the magnetic field.
+        epsilon_E : float
+            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.
         **params
             Parameters forwarded to the component distributions.
 
@@ -3187,7 +3386,9 @@ class MixedThermalNonThermal(ElectronDistribution):
         float
             Truncated raw moment over the requested interval.
         """
-        params = cls._validate_and_process_parameters(delta=delta, **params)
+        params = cls._validate_and_process_parameters(
+            epsilon_T=epsilon_T, epsilon_B=epsilon_B, epsilon_E=epsilon_E, **params
+        )
         a, b = _f8(a, b)
         return cls._opt_moment_between(float(order), a, b, **params)
 
@@ -3196,31 +3397,26 @@ class MaxwellJuettnerPowerLaw(MixedThermalNonThermal):
     r"""
     Mixed Maxwell-Jüttner plus power-law electron distribution.
 
-    The normalized mixture shape is
+    The thermal Maxwell-Jüttner component :math:`f_{\rm MJ}(\gamma;\Theta)` and the power-law component
+    :math:`f_{\rm PL}(\gamma;p,\gamma_{\min},\gamma_{\max}) / M_{\rm PL}^{(0)}`, normalized to unit integral by the
+    zeroth moment of the power-law shape, are mixed according to the energy budget set by ``epsilon_T``,
+    ``epsilon_B`` and ``epsilon_E`` (see :class:`MixedThermalNonThermal`):
 
     .. math::
 
         f_{\rm mix}(\gamma)
         =
-        \delta f_{\rm MJ}(\gamma;\Theta)
-        +
-        (1-\delta)
         \frac{
-            f_{\rm PL}(\gamma;p,\gamma_{\min},\gamma_{\max})
+            (\delta / K_{\rm th})\, f_{\rm MJ}(\gamma)
+            + [(1-\delta) / K_{\rm nth}]\, f_{\rm PL}(\gamma) / M_{\rm PL}^{(0)}
         }{
-            M_{\rm PL}^{(0)}
+            \delta / K_{\rm th} + (1-\delta) / K_{\rm nth}
         },
+        \qquad \int f_{\rm mix}(\gamma)\,d\gamma = 1,
 
-    where :math:`f_{\rm MJ}` is the Maxwell-Jüttner shape (already
-    probability-normalised, :math:`\int f_{\rm MJ}\,d\gamma = 1`) and
-    :math:`M_{\rm PL}^{(0)} = \int f_{\rm PL}\,d\gamma` is the zeroth moment
-    of the power-law shape that re-normalises the non-thermal component to
-    unit integral.  With this convention :math:`\delta` is a true
-    number-fraction weight:
-
-    .. math::
-
-        \int f_{\rm mix}(\gamma)\,d\gamma = 1.
+    where :math:`K = \langle \gamma - 1 \rangle` for each component and :math:`\delta` is the thermal share of the
+    electron kinetic energy, :math:`\delta = f_{\rm th} / (f_{\rm th} + \epsilon_E)` with
+    :math:`f_{\rm th} = \epsilon_T (1 - \epsilon_B - \epsilon_E) / (1 + \epsilon_T)`.
 
     The full distribution is
 
@@ -3237,12 +3433,19 @@ class MaxwellJuettnerPowerLaw(MixedThermalNonThermal):
         * - Parameter
           - Type
           - Description
-        * - ``delta``
+        * - ``epsilon_T``
           - float
-          - Fractional weight of the thermal Maxwell-Jüttner component.
-            Must satisfy :math:`0 \leq \delta \leq 1`.  Setting
-            ``delta=1`` gives a pure Maxwell-Jüttner distribution;
-            ``delta=0`` gives a pure (re-normalised) power-law.
+          - Ratio of the thermal-electron energy to the ion energy.  Setting
+            ``epsilon_T=0`` gives a pure (re-normalised) power law.
+        * - ``epsilon_B``
+          - float
+          - Fraction of the thermal (internal) energy density in the magnetic
+            field.
+        * - ``epsilon_E``
+          - float
+          - Fraction of the thermal (internal) energy density in the kinetic
+            energy of the non-thermal electrons.  Setting ``epsilon_E=0``
+            gives a pure Maxwell-Jüttner distribution.
         * - ``Theta``
           - float, optional
           - Dimensionless temperature of the thermal component,
@@ -3268,24 +3471,34 @@ class MaxwellJuettnerPowerLaw(MixedThermalNonThermal):
 
     Examples
     --------
-    Evaluate the mixed distribution at :math:`\gamma = 2` with equal
-    thermal and non-thermal weights (:math:`\delta = 0.5`):
+    Evaluate the mixed distribution at :math:`\gamma = 2` with
+    equal thermal-electron and non-thermal-electron energies (:math:`f_{\rm th} = \epsilon_E = 0.2`):
 
     >>> float(
     ...     MaxwellJuettnerPowerLaw.pdf(
-    ...         2.0, delta=0.5, Theta=1.0, p=3.0
+    ...         2.0,
+    ...         epsilon_T=0.4,
+    ...         epsilon_B=0.1,
+    ...         epsilon_E=0.2,
+    ...         Theta=1.0,
+    ...         p=3.0,
     ...     )
     ... )  # doctest: +ELLIPSIS
     0.2...
 
-    A pure thermal distribution (``delta=1``) agrees exactly with
+    A distribution without non-thermal electrons (``epsilon_E=0``) agrees exactly with
     :class:`MaxwellJuettner`:
 
     >>> import numpy as np
     >>> gamma = np.array([1.5, 2.0, 5.0])
     >>> np.allclose(
     ...     MaxwellJuettnerPowerLaw.pdf(
-    ...         gamma, delta=1.0, Theta=1.0, p=3.0
+    ...         gamma,
+    ...         epsilon_T=1.0,
+    ...         epsilon_B=0.1,
+    ...         epsilon_E=0.0,
+    ...         Theta=1.0,
+    ...         p=3.0,
     ...     ),
     ...     MaxwellJuettner.pdf(gamma, Theta=1.0),
     ... )
@@ -3296,7 +3509,12 @@ class MaxwellJuettnerPowerLaw(MixedThermalNonThermal):
 
     >>> import astropy.units as u
     >>> MaxwellJuettnerPowerLaw.normalize_from_n_total(
-    ...     1e-3 * u.cm**-3, delta=0.5, Theta=1.0, p=3.0
+    ...     1e-3 * u.cm**-3,
+    ...     epsilon_T=0.4,
+    ...     epsilon_B=0.1,
+    ...     epsilon_E=0.2,
+    ...     Theta=1.0,
+    ...     p=3.0,
     ... )
     <Quantity 0.001 1 / cm3>
     """
@@ -3308,31 +3526,26 @@ class MaxwellJuettnerBrokenPowerLaw(MixedThermalNonThermal):
     r"""
     Mixed Maxwell-Jüttner plus broken-power-law electron distribution.
 
-    The normalized mixture shape is
+    The thermal Maxwell-Jüttner component :math:`f_{\rm MJ}(\gamma;\Theta)` and the broken-power-law component
+    :math:`f_{\rm BPL}(\gamma;p_1,p_2,\gamma_c,\gamma_{\min},\gamma_{\max}) / M_{\rm BPL}^{(0)}`, normalized to unit
+    integral by the zeroth moment of the broken-power-law shape, are mixed according to the energy budget set by
+    ``epsilon_T``, ``epsilon_B`` and ``epsilon_E`` (see :class:`MixedThermalNonThermal`):
 
     .. math::
 
         f_{\rm mix}(\gamma)
         =
-        \delta f_{\rm MJ}(\gamma;\Theta)
-        +
-        (1-\delta)
         \frac{
-            f_{\rm BPL}(\gamma;p_1,p_2,\gamma_c,\gamma_{\min},\gamma_{\max})
+            (\delta / K_{\rm th})\, f_{\rm MJ}(\gamma)
+            + [(1-\delta) / K_{\rm nth}]\, f_{\rm BPL}(\gamma) / M_{\rm BPL}^{(0)}
         }{
-            M_{\rm BPL}^{(0)}
+            \delta / K_{\rm th} + (1-\delta) / K_{\rm nth}
         },
+        \qquad \int f_{\rm mix}(\gamma)\,d\gamma = 1,
 
-    where :math:`f_{\rm MJ}` is the Maxwell-Jüttner shape (already
-    probability-normalised, :math:`\int f_{\rm MJ}\,d\gamma = 1`) and
-    :math:`M_{\rm BPL}^{(0)} = \int f_{\rm BPL}\,d\gamma` is the zeroth
-    moment of the broken-power-law shape that re-normalises the non-thermal
-    component to unit integral.  With this convention :math:`\delta` is a
-    true number-fraction weight:
-
-    .. math::
-
-        \int f_{\rm mix}(\gamma)\,d\gamma = 1.
+    where :math:`K = \langle \gamma - 1 \rangle` for each component and :math:`\delta` is the thermal share of the
+    electron kinetic energy, :math:`\delta = f_{\rm th} / (f_{\rm th} + \epsilon_E)` with
+    :math:`f_{\rm th} = \epsilon_T (1 - \epsilon_B - \epsilon_E) / (1 + \epsilon_T)`.
 
     The full distribution is
 
@@ -3349,12 +3562,19 @@ class MaxwellJuettnerBrokenPowerLaw(MixedThermalNonThermal):
         * - Parameter
           - Type
           - Description
-        * - ``delta``
+        * - ``epsilon_T``
           - float
-          - Fractional weight of the thermal Maxwell-Jüttner component.
-            Must satisfy :math:`0 \leq \delta \leq 1`.  Setting
-            ``delta=1`` gives a pure Maxwell-Jüttner distribution;
-            ``delta=0`` gives a pure (re-normalised) broken-power-law.
+          - Ratio of the thermal-electron energy to the ion energy.  Setting
+            ``epsilon_T=0`` gives a pure (re-normalised) broken power law.
+        * - ``epsilon_B``
+          - float
+          - Fraction of the thermal (internal) energy density in the magnetic
+            field.
+        * - ``epsilon_E``
+          - float
+          - Fraction of the thermal (internal) energy density in the kinetic
+            energy of the non-thermal electrons.  Setting ``epsilon_E=0``
+            gives a pure Maxwell-Jüttner distribution.
         * - ``Theta``
           - float, optional
           - Dimensionless temperature of the thermal component,
@@ -3389,22 +3609,24 @@ class MaxwellJuettnerBrokenPowerLaw(MixedThermalNonThermal):
 
     Examples
     --------
-    Evaluate the mixed distribution at :math:`\gamma = 5` with equal
-    thermal and non-thermal weights (:math:`\delta = 0.5`):
+    Evaluate the mixed distribution at :math:`\gamma = 5` with
+    equal thermal-electron and non-thermal-electron energies (:math:`f_{\rm th} = \epsilon_E = 0.2`):
 
     >>> float(
     ...     MaxwellJuettnerBrokenPowerLaw.pdf(
     ...         5.0,
-    ...         delta=0.5,
+    ...         epsilon_T=0.4,
+    ...         epsilon_B=0.1,
+    ...         epsilon_E=0.2,
     ...         Theta=1.0,
     ...         p1=2.0,
     ...         p2=4.0,
     ...         gamma_c=10.0,
     ...     )
     ... )  # doctest: +ELLIPSIS
-    0.07...
+    0.069...
 
-    A pure thermal distribution (``delta=1``) agrees exactly with
+    A distribution without non-thermal electrons (``epsilon_E=0``) agrees exactly with
     :class:`MaxwellJuettner`:
 
     >>> import numpy as np
@@ -3412,7 +3634,9 @@ class MaxwellJuettnerBrokenPowerLaw(MixedThermalNonThermal):
     >>> np.allclose(
     ...     MaxwellJuettnerBrokenPowerLaw.pdf(
     ...         gamma,
-    ...         delta=1.0,
+    ...         epsilon_T=1.0,
+    ...         epsilon_B=0.1,
+    ...         epsilon_E=0.0,
     ...         Theta=1.0,
     ...         p1=2.0,
     ...         p2=4.0,
@@ -3428,7 +3652,9 @@ class MaxwellJuettnerBrokenPowerLaw(MixedThermalNonThermal):
     >>> import astropy.units as u
     >>> MaxwellJuettnerBrokenPowerLaw.normalize_from_n_total(
     ...     1e-3 * u.cm**-3,
-    ...     delta=0.5,
+    ...     epsilon_T=0.4,
+    ...     epsilon_B=0.1,
+    ...     epsilon_E=0.2,
     ...     Theta=1.0,
     ...     p1=2.0,
     ...     p2=4.0,

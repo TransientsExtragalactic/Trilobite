@@ -19,6 +19,7 @@ from trilobite.radiation.synchrotron.electron_distributions import (
     MaxwellJuettner,
     MaxwellJuettnerBrokenPowerLaw,
     MaxwellJuettnerPowerLaw,
+    MixedThermalNonThermal,
     PowerLaw,
 )
 
@@ -311,17 +312,42 @@ class TestMaxwellJuettner(BaseTestElectronDistribution):
             )
 
 
+def _kinetic_energy_by_quadrature(dist, lower, upper, points=None, **params):
+    """Mean kinetic energy <gamma - 1> of a distribution shape, by direct quadrature."""
+    kwargs = {"epsabs": 1.0e-10, "epsrel": 1.0e-8, "limit": 500, "points": points}
+    m0 = quad(lambda g: dist.pdf(g, norm=1.0, **params), lower, upper, **kwargs)[0]
+    m1 = quad(lambda g: g * dist.pdf(g, norm=1.0, **params), lower, upper, **kwargs)[0]
+    return m1 / m0 - 1.0
+
+
+def _budget_for_delta(delta, epsilon_B=0.1, epsilon_E=0.05):
+    """Energy-budget fractions for which the thermal share of the electron kinetic energy is ``delta``."""
+    delta = np.asarray(delta, dtype=float)
+    if np.all(delta == 1.0):
+        return {"epsilon_T": 1.0, "epsilon_B": epsilon_B, "epsilon_E": 0.0}
+    thermal = epsilon_E * delta / (1.0 - delta)  # u_e,th / u_th
+    epsilon_T = thermal / (1.0 - epsilon_B - epsilon_E - thermal)
+    return {"epsilon_T": epsilon_T, "epsilon_B": epsilon_B, "epsilon_E": epsilon_E}
+
+
+def _thermal_share(params):
+    """Thermal share of the electron kinetic energy implied by the budget fractions in ``params``."""
+    epsilon_T, epsilon_B, epsilon_E = params["epsilon_T"], params["epsilon_B"], params["epsilon_E"]
+    thermal = epsilon_T * (1.0 - epsilon_B - epsilon_E) / (1.0 + epsilon_T)
+    return thermal / (thermal + epsilon_E)
+
+
 class TestMaxwellJuettnerPowerLaw(BaseTestElectronDistribution):
     DISTRIBUTION_CLASS = MaxwellJuettnerPowerLaw
     GAMMA_ARRAY = np.linspace(1, 1e6, 1000)
 
     PARAMETER_SETS = [
-        {"Theta": 0.1, "p": 2.5, "gamma_min": 1, "gamma_max": 1e6, "delta": 1.0},
-        {"Theta": 1.0, "p": 3.0, "gamma_min": 10, "gamma_max": 1e5, "delta": 1.0},
-        {"Theta": 10.0, "p": 2.0, "gamma_min": 1, "gamma_max": 1e4, "delta": 1.0},
-        {"Theta": 0.1, "p": 2.5, "gamma_min": 1, "gamma_max": 1e6, "delta": 0.5},
-        {"Theta": 1.0, "p": 3.0, "gamma_min": 10, "gamma_max": 1e5, "delta": 0.5},
-        {"Theta": 10.0, "p": 2.0, "gamma_min": 1, "gamma_max": 1e4, "delta": 0.5},
+        {"Theta": 0.1, "p": 2.5, "gamma_min": 1, "gamma_max": 1e6, **_budget_for_delta(1.0)},
+        {"Theta": 1.0, "p": 3.0, "gamma_min": 10, "gamma_max": 1e5, **_budget_for_delta(1.0)},
+        {"Theta": 10.0, "p": 2.0, "gamma_min": 1, "gamma_max": 1e4, **_budget_for_delta(1.0)},
+        {"Theta": 0.1, "p": 2.5, "gamma_min": 1, "gamma_max": 1e6, **_budget_for_delta(0.5)},
+        {"Theta": 1.0, "p": 3.0, "gamma_min": 10, "gamma_max": 1e5, **_budget_for_delta(0.5)},
+        {"Theta": 10.0, "p": 2.0, "gamma_min": 1, "gamma_max": 1e4, **_budget_for_delta(0.5)},
     ]
     EXPECTED_SUPPORTS = [
         (1, np.inf),
@@ -341,7 +367,7 @@ class TestMaxwellJuettnerPowerLaw(BaseTestElectronDistribution):
     def test_composition_quadrature(self, order):
         """Test mixed moments by quadraturing each component separately."""
         for params in self.PARAMETER_SETS:
-            delta = params["delta"]
+            delta = _thermal_share(params)
 
             mj_params = {
                 "Theta": params["Theta"],
@@ -397,7 +423,11 @@ class TestMaxwellJuettnerPowerLaw(BaseTestElectronDistribution):
                 limit=500,
             )
 
-            expected_moment = delta * mj_moment_quad + (1.0 - delta) * pl_moment_quad / pl_m0_quad
+            # delta is the thermal share of the electron kinetic energy, so the electron fractions are ~ delta / K.
+            K_th = _kinetic_energy_by_quadrature(MaxwellJuettner, 1.0, np.inf, **mj_params)
+            K_nth = _kinetic_energy_by_quadrature(PowerLaw, pl_params["gamma_min"], pl_params["gamma_max"], **pl_params)
+            w_th = (delta / K_th) / (delta / K_th + (1.0 - delta) / K_nth)
+            expected_moment = w_th * mj_moment_quad + (1.0 - w_th) * pl_moment_quad / pl_m0_quad
 
             computed_moment = self.DISTRIBUTION_CLASS.moment(
                 order,
@@ -420,9 +450,33 @@ class TestMaxwellJuettnerBrokenPowerLaw(BaseTestElectronDistribution):
     GAMMA_ARRAY = np.linspace(1, 1e6, 1000)
 
     PARAMETER_SETS = [
-        {"Theta": 0.1, "p1": 2.0, "p2": 3.0, "gamma_c": 100, "delta": 0.5, "gamma_min": 1, "gamma_max": 1e6},
-        {"Theta": 1.0, "p1": 2.5, "p2": 3.5, "gamma_c": 500, "delta": 0.5, "gamma_min": 10, "gamma_max": 1e5},
-        {"Theta": 10.0, "p1": 1.5, "p2": 2.5, "gamma_c": 50, "delta": 0.5, "gamma_min": 1, "gamma_max": 1e4},
+        {
+            "Theta": 0.1,
+            "p1": 2.0,
+            "p2": 3.0,
+            "gamma_c": 100,
+            **_budget_for_delta(0.5),
+            "gamma_min": 1,
+            "gamma_max": 1e6,
+        },
+        {
+            "Theta": 1.0,
+            "p1": 2.5,
+            "p2": 3.5,
+            "gamma_c": 500,
+            **_budget_for_delta(0.5),
+            "gamma_min": 10,
+            "gamma_max": 1e5,
+        },
+        {
+            "Theta": 10.0,
+            "p1": 1.5,
+            "p2": 2.5,
+            "gamma_c": 50,
+            **_budget_for_delta(0.5),
+            "gamma_min": 1,
+            "gamma_max": 1e4,
+        },
     ]
     EXPECTED_SUPPORTS = [
         (1, np.inf),
@@ -439,7 +493,7 @@ class TestMaxwellJuettnerBrokenPowerLaw(BaseTestElectronDistribution):
     def test_composition_quadrature(self, order):
         """Test mixed moments by quadraturing each component separately."""
         for params in self.PARAMETER_SETS:
-            delta = params["delta"]
+            delta = _thermal_share(params)
 
             mj_params = {
                 "Theta": params["Theta"],
@@ -495,7 +549,16 @@ class TestMaxwellJuettnerBrokenPowerLaw(BaseTestElectronDistribution):
                 points=[params["gamma_c"]],
             )
 
-            expected_moment = delta * mj_moment_quad + (1.0 - delta) * pl_moment_quad / pl_m0_quad
+            K_th = _kinetic_energy_by_quadrature(MaxwellJuettner, 1.0, np.inf, **mj_params)
+            K_nth = _kinetic_energy_by_quadrature(
+                BrokenPowerLaw,
+                bpl_params["gamma_min"],
+                bpl_params["gamma_max"],
+                points=[params["gamma_c"]],
+                **bpl_params,
+            )
+            w_th = (delta / K_th) / (delta / K_th + (1.0 - delta) / K_nth)
+            expected_moment = w_th * mj_moment_quad + (1.0 - w_th) * pl_moment_quad / pl_m0_quad
 
             computed_moment = self.DISTRIBUTION_CLASS.moment(
                 order,
@@ -527,7 +590,8 @@ class TestMaxwellJuettnerBrokenPowerLaw(BaseTestElectronDistribution):
 def test_pl_normalization_energy_budget(pl_params):
     """PowerLaw.normalize_from_magnetic_field satisfies the equipartition energy constraint.
 
-    Verifies N0 * m_e c^2 * M1 == (epsilon_E / epsilon_B) * B^2 / (8 pi).
+    Verifies N0 * m_e c^2 * (M1 - M0) == (epsilon_E / epsilon_B) * B^2 / (8 pi), i.e. the budget is the kinetic
+    energy, <gamma - 1>, because epsilon_E is a fraction of the thermal (internal) energy.
     """
     B_cgs = 1.0
     epsilon_B = 0.1
@@ -535,7 +599,7 @@ def test_pl_normalization_energy_budget(pl_params):
     expected = (epsilon_E / epsilon_B) * B_cgs**2 / (8.0 * np.pi)
 
     N0 = PowerLaw._normalize_from_magnetic_field(B_cgs, epsilon_B, epsilon_E, **pl_params)
-    energy_density = N0 * _m_e_c2_cgs * PowerLaw.moment(1, **pl_params)
+    energy_density = N0 * _m_e_c2_cgs * (PowerLaw.moment(1, **pl_params) - PowerLaw.moment(0, **pl_params))
 
     assert energy_density == pytest.approx(expected, rel=1.0e-10)
 
@@ -551,7 +615,8 @@ def test_pl_normalization_energy_budget(pl_params):
 def test_bpl_normalization_energy_budget(bpl_params):
     """BrokenPowerLaw.normalize_from_magnetic_field satisfies the equipartition energy constraint.
 
-    Verifies N0 * m_e c^2 * M1 == (epsilon_E / epsilon_B) * B^2 / (8 pi).
+    Verifies N0 * m_e c^2 * (M1 - M0) == (epsilon_E / epsilon_B) * B^2 / (8 pi), i.e. the budget is the kinetic
+    energy, <gamma - 1>, because epsilon_E is a fraction of the thermal (internal) energy.
     """
     B_cgs = 1.0
     epsilon_B = 0.1
@@ -559,7 +624,9 @@ def test_bpl_normalization_energy_budget(bpl_params):
     expected = (epsilon_E / epsilon_B) * B_cgs**2 / (8.0 * np.pi)
 
     N0 = BrokenPowerLaw._normalize_from_magnetic_field(B_cgs, epsilon_B, epsilon_E, **bpl_params)
-    energy_density = N0 * _m_e_c2_cgs * BrokenPowerLaw.moment(1, **bpl_params)
+    energy_density = (
+        N0 * _m_e_c2_cgs * (BrokenPowerLaw.moment(1, **bpl_params) - BrokenPowerLaw.moment(0, **bpl_params))
+    )
 
     assert energy_density == pytest.approx(expected, rel=1.0e-10)
 
@@ -567,7 +634,7 @@ def test_bpl_normalization_energy_budget(bpl_params):
 def test_pl_bpl_energy_budget_consistency():
     """PL and BPL normalizations both satisfy the equipartition energy constraint independently.
 
-    For any distribution, N0 * m_e c^2 * M1 must equal (epsilon_E / epsilon_B) * B^2 / (8 pi).
+    For any distribution, N0 * m_e c^2 * (M1 - M0) must equal (epsilon_E / epsilon_B) * B^2 / (8 pi).
     """
     B_cgs = 0.5
     epsilon_B = 0.05
@@ -576,11 +643,11 @@ def test_pl_bpl_energy_budget_consistency():
 
     pl_params = {"p": 2.5, "gamma_min": 10.0, "gamma_max": 1e5}
     N0_pl = PowerLaw._normalize_from_magnetic_field(B_cgs, epsilon_B, epsilon_E, **pl_params)
-    e_pl = N0_pl * _m_e_c2_cgs * PowerLaw.moment(1, **pl_params)
+    e_pl = N0_pl * _m_e_c2_cgs * (PowerLaw.moment(1, **pl_params) - PowerLaw.moment(0, **pl_params))
 
     bpl_params = {"p1": 2.5, "p2": 3.5, "gamma_c": 1e3, "gamma_min": 10.0, "gamma_max": 1e5}
     N0_bpl = BrokenPowerLaw._normalize_from_magnetic_field(B_cgs, epsilon_B, epsilon_E, **bpl_params)
-    e_bpl = N0_bpl * _m_e_c2_cgs * BrokenPowerLaw.moment(1, **bpl_params)
+    e_bpl = N0_bpl * _m_e_c2_cgs * (BrokenPowerLaw.moment(1, **bpl_params) - BrokenPowerLaw.moment(0, **bpl_params))
 
     assert e_pl == pytest.approx(expected, rel=1.0e-10)
     assert e_bpl == pytest.approx(expected, rel=1.0e-10)
@@ -670,12 +737,12 @@ ARRAY_CASES = {
     "MaxwellJuettner": (MaxwellJuettner, {"Theta": _THETA}),
     "MaxwellJuettnerPowerLaw": (
         MaxwellJuettnerPowerLaw,
-        {"delta": np.array([0.2, 0.5, 0.8]), "Theta": _THETA, "p": 2.5, "gamma_min": 1.0, "gamma_max": 1e4},
+        {**_budget_for_delta(np.array([0.2, 0.5, 0.8])), "Theta": _THETA, "p": 2.5, "gamma_min": 1.0, "gamma_max": 1e4},
     ),
     "MaxwellJuettnerBrokenPowerLaw": (
         MaxwellJuettnerBrokenPowerLaw,
         {
-            "delta": 0.3,
+            **_budget_for_delta(0.3),
             "Theta": _THETA,
             "p1": 2.0,
             "p2": 3.0,
@@ -686,6 +753,16 @@ ARRAY_CASES = {
     ),
 }
 ARRAY_GAMMA = np.array([1.5, 30.0, 700.0])
+
+
+def _normalize_from_B(dist, B, params):
+    """Call ``normalize_from_magnetic_field`` with the budget arguments the distribution family takes."""
+    params = dict(params)
+    if dist is MaxwellJuettner:
+        return dist.normalize_from_magnetic_field(B, 0.01, epsilon_T=0.3, **params)
+    if issubclass(dist, MixedThermalNonThermal):
+        return dist.normalize_from_magnetic_field(B, params.pop("epsilon_B"), **params)
+    return dist.normalize_from_magnetic_field(B, 0.01, 0.1, **params)
 
 
 @pytest.mark.parametrize("case", ARRAY_CASES)
@@ -720,8 +797,8 @@ class TestArrayParameters:
     def test_normalize_from_magnetic_field(self, case):
         dist, params = ARRAY_CASES[case]
         B = np.array([0.1, 1.0, 5.0])
-        vec = dist.normalize_from_magnetic_field(B, 0.01, 0.1, **params)
-        ref = [dist.normalize_from_magnetic_field(b, 0.01, 0.1, **_element(params, i)).value for i, b in enumerate(B)]
+        vec = _normalize_from_B(dist, B, params)
+        ref = [_normalize_from_B(dist, b, _element(params, i)).value for i, b in enumerate(B)]
         assert vec.unit == u.cm**-3
         assert np.allclose(vec.value, ref, rtol=1e-10, atol=0.0)
 
@@ -734,7 +811,7 @@ class TestArrayParameters:
         with pytest.raises(ValueError):
             dist.pdf(ARRAY_GAMMA, **bad)
         with pytest.raises(ValueError):
-            dist.normalize_from_magnetic_field(1.0, 0.01, 0.1, **bad)
+            _normalize_from_B(dist, 1.0, bad)
 
 
 @pytest.mark.parametrize("case", ["PowerLaw", "BrokenPowerLaw"])

@@ -86,7 +86,7 @@ plt.show()
 # The post-shock thermal energy density sets :math:`B`. The numerical engine integrates the emission and
 # self-absorption of a cooled electron distribution in the shocked shell. For the first year :math:`\gamma_c < 1`,
 # so every electron is cooled and the emission is strongly suppressed. We assume that electrons carry
-# :math:`\epsilon_e = 5\times10^{-4}` of the post-shock energy.
+# :math:`\epsilon_e = 5\times10^{-4}` of the post-shock thermal energy density.
 
 epsilon_e, epsilon_B, p = 5.0e-4, 0.1, 3.0
 D, f_V, gamma_min, gamma_max = 49.0 * u.Mpc, 0.5, 1.0, 1.0e6

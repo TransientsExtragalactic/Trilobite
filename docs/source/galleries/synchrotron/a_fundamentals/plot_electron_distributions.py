@@ -57,9 +57,12 @@ gamma = np.logspace(0, 6, 2000)
 params_pl = {"p": 2.5, "gamma_min": 10.0, "gamma_max": 1e5}
 params_bpl = {"p1": 2.0, "p2": 3.5, "gamma_c": 1e3, "gamma_min": 10.0, "gamma_max": 1e5}
 params_mj = {"Theta": 2.0}
-params_mjpl = {"delta": 0.5, "Theta": 2.0, "p": 2.5, "gamma_min": 10.0, "gamma_max": 1e5}
+# The mixed distributions take the energy budget: thermal electrons carry eps_T (1 - eps_B - eps_E) / (1 + eps_T) of
+# the thermal energy density, non-thermal electrons eps_E. These values give both populations 20% of it.
+budget = {"epsilon_T": 0.4, "epsilon_B": 0.1, "epsilon_E": 0.2}
+params_mjpl = {**budget, "Theta": 2.0, "p": 2.5, "gamma_min": 10.0, "gamma_max": 1e5}
 params_mjbpl = {
-    "delta": 0.5,
+    **budget,
     "Theta": 2.0,
     "p1": 2.0,
     "p2": 3.5,
@@ -85,14 +88,14 @@ ax.loglog(gamma, MaxwellJuettner.pdf(gamma, norms["mj"], **params_mj), label=r"M
 ax.loglog(
     gamma,
     MaxwellJuettnerPowerLaw.pdf(gamma, norms["mjpl"], **params_mjpl),
-    label=r"MJ + power law ($\delta=0.5$)",
+    label="MJ + power law (equal energies)",
     lw=2,
     ls=":",
 )
 ax.loglog(
     gamma,
     MaxwellJuettnerBrokenPowerLaw.pdf(gamma, norms["mjbpl"], **params_mjbpl),
-    label=r"MJ + broken power law ($\delta=0.5$)",
+    label="MJ + broken power law (equal energies)",
     lw=2,
     ls="-.",
 )
@@ -139,16 +142,18 @@ print(
 #
 # Four normalization routes are available.  The most common in the synchrotron
 # literature derives :math:`N_0` from a magnetic field strength via the
-# equipartition fractions :math:`\varepsilon_e` and :math:`\varepsilon_B`.
+# equipartition fractions :math:`\varepsilon_e` and :math:`\varepsilon_B`. Thermal electrons take
+# :math:`\varepsilon_T`, the ratio of the thermal-electron to the ion energy, in place of :math:`\varepsilon_e`.
 
 B = 0.5 * u.G
 eps_B = 0.1
 eps_E = 0.1
+eps_T = 0.1
 
 N0_pl = PowerLaw.normalize_from_magnetic_field(B, eps_B, eps_E, **params_pl)
-N0_mj = MaxwellJuettner.normalize_from_magnetic_field(B, eps_B, eps_E, **params_mj)
+N0_mj = MaxwellJuettner.normalize_from_magnetic_field(B, eps_B, epsilon_T=eps_T, **params_mj)
 
-print(f"\n=== Normalization from B = {B}, eps_B = {eps_B}, eps_E = {eps_E} ===")
+print(f"\n=== Normalization from B = {B}, eps_B = {eps_B}, eps_E = {eps_E}, eps_T = {eps_T} ===")
 print(f"PowerLaw         N0 = {N0_pl:.3e}")
 print(f"MaxwellJuettner  N0 = {N0_mj:.3e}")
 
@@ -176,7 +181,9 @@ j_pl = np.array(
 )
 
 Theta_vals = np.logspace(-1, 1.5, 40)
-j_mj = np.array([MaxwellJuettner.bol_emiss_from_magnetic_field(B, eps_B, eps_E, Theta=T).value for T in Theta_vals])
+j_mj = np.array(
+    [MaxwellJuettner.bol_emiss_from_magnetic_field(B, eps_B, epsilon_T=eps_T, Theta=T).value for T in Theta_vals]
+)
 
 fig, axes = plt.subplots(1, 2, figsize=(10, 4))
 
@@ -191,7 +198,9 @@ axes[1].set_xlabel(r"Dimensionless temperature $\Theta = k_BT / m_e c^2$")
 axes[1].set_title(r"Maxwell-Jüttner electron distribution")
 axes[1].grid(True, which="both", ls="--", alpha=0.4)
 
-fig.suptitle(r"Bolometric synchrotron emissivity ($B=0.5\,\mathrm{G}$, $\varepsilon_e=\varepsilon_B=0.1$)")
+fig.suptitle(
+    r"Bolometric synchrotron emissivity ($B=0.5\,\mathrm{G}$, $\varepsilon_e=\varepsilon_T=\varepsilon_B=0.1$)"
+)
 plt.tight_layout()
 plt.show()
 

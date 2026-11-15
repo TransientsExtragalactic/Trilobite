@@ -598,10 +598,10 @@ def _log_normalize_powerlaw_sbpl_sed(
         Power-law index of the electron energy distribution.
 
     epsilon_E : float, optional
-        Fraction of post-shock energy carried by electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
     epsilon_B : float, optional
-        Fraction of post-shock energy stored in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
 
     f_V : float, optional
         Filling factor of the emitting region.
@@ -767,9 +767,9 @@ def _log_normalize_powerlaw_sbpl_sed_ssa_cool(
     f_A: float, optional
         Area filling factor for SSA calculations.
     epsilon_E : float, optional
-        Fraction of post-shock energy in electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
     epsilon_B : float, optional
-        Fraction of post-shock energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
     alpha : float, optional
         Pitch angle in radians when ``pitch_average=False``.
     gamma_bulk : float, optional
@@ -1039,11 +1039,10 @@ def _log_normalize_powerlaw_sbpl_sed_cool(
         Volume filling factor of the emitting region.
 
     epsilon_E : float, optional
-        Fraction of post-shock internal energy carried by relativistic
-        electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
     epsilon_B : float, optional
-        Fraction of post-shock internal energy stored in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
 
     alpha : float, optional
         Electron pitch angle in radians. Ignored if
@@ -1314,10 +1313,10 @@ def _log_normalize_powerlaw_sbpl_sed_ssa(
         Angular filling factor.
 
     epsilon_E : float, optional
-        Fraction of post-shock energy in relativistic electrons.
+        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
 
     epsilon_B : float, optional
-        Fraction of post-shock energy in magnetic fields.
+        Fraction of the thermal (internal) energy density in the magnetic field.
 
     alpha : float, optional
         Electron pitch angle in radians.
