@@ -73,7 +73,7 @@ across a representative range of Lorentz factors:
         {'p': 2.5, 'gamma_min': 10.0, 'gamma_max': 1e5},
         {'p1': 2.0, 'p2': 3.5, 'gamma_c': 1e3, 'gamma_min': 10.0, 'gamma_max': 1e5},
         {'Theta': 2.0},
-        {'delta': 0.5, 'Theta': 2.0, 'p': 2.5, 'gamma_min': 10.0, 'gamma_max': 1e5},
+        {'epsilon_T': 0.4, 'epsilon_B': 0.1, 'epsilon_E': 0.2, 'Theta': 2.0, 'p': 2.5, 'gamma_min': 10.0, 'gamma_max': 1e5},
     ]
 
     # Compute the norms for each distribution.
@@ -480,9 +480,23 @@ parameters — via :meth:`~ElectronDistribution.bol_emiss_from_magnetic_field` o
                 p=2.5, gamma_min=10.0, gamma_max=1e5,
             )
 
-These methods work identically for every distribution class — including the mixed
-thermal/non-thermal populations — since they delegate through the shared
-:class:`ElectronDistribution` interface.
+These methods exist for every distribution class, since they delegate through the shared
+:class:`ElectronDistribution` interface. The thermal and mixed thermal/non-thermal classes take the full energy budget
+instead of a single electron fraction, as keyword-only arguments: ``epsilon_T``, the ratio of the thermal-electron to
+the ion energy, ``epsilon_B``, and for the mixed classes ``epsilon_E``, the non-thermal electrons' share. See
+:ref:`synch_thermal_budget` for the definitions.
+
+.. code-block:: python
+
+    N0 = MaxwellJuettner.normalize_from_magnetic_field(
+        B=0.5 * u.G, epsilon_B=0.1, epsilon_T=0.1, Theta=2.0,
+    )
+
+    N0 = MaxwellJuettnerPowerLaw.normalize_from_energy_density(
+        u_therm=1e5 * u.erg / u.cm**3,
+        epsilon_T=0.4, epsilon_B=0.1, epsilon_E=0.2,
+        Theta=2.0, p=2.5, gamma_min=10.0, gamma_max=1e5,
+    )
 
 .. dropdown:: Example: comparing bolometric emissivity across distributions
 
