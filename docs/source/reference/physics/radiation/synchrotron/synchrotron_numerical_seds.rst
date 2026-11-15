@@ -529,6 +529,9 @@ the volume of the sphere). The depth is then given by
 
     \ell = f_V^{1/3} R.
 
+This is the depth used by every non-relativistic one-zone SED: the power-law, cooled, thermal and mixed thermal plus
+power-law SEDs, and the spectral inversions.
+
 From this, the specific intensity at the surface of the source may be computed and used to determine
 the flux density as described above. In the non-relativistic limit, we ignore bulk motion of the source.
 

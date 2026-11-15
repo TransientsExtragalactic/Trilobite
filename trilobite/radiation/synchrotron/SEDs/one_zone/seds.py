@@ -6494,7 +6494,7 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Electron power-law index. Default ``3.0``.
         f_V : float, optional
             Volume filling factor. The effective LOS path length passed to
-            the radiative transfer is :math:`f_V R`. Default ``1.0``.
+            the radiative transfer is :math:`f_V^{1/3} R`. Default ``1.0``.
         f_A : float, optional
             Area filling factor. The effective projected area is
             :math:`f_A \pi R^2`. Default ``1.0``.
@@ -6621,7 +6621,7 @@ class Numerical_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Electron power-law index. Default ``3.0``.
         f_V : float, optional
             Volume filling factor; the effective LOS path length is
-            :math:`f_V R`. Default ``1.0``.
+            :math:`f_V^{1/3} R`. Default ``1.0``.
         f_A : float, optional
             Area filling factor; the effective projected area is
             :math:`f_A \pi R^2`. Default ``1.0``.
@@ -7337,7 +7337,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
 
     The emergent flux is computed identically to
     :class:`Numerical_PowerLaw_SSA_SynchrotronSED`: a plane-parallel slab of
-    depth :math:`\ell = f_V\,R` (no cube-root factor for the thermal geometry) is
+    depth :math:`\ell = f_V^{1/3}\,R` is
     solved for the full transition from optically thin to optically thick.
 
     .. rubric:: Physical Parameters
@@ -7355,7 +7355,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         * - Outer radius
           - :math:`R`
           - Characteristic size of the emitting region. The effective
-            line-of-sight depth is :math:`\ell = f_V\,R`.
+            line-of-sight depth is :math:`\ell = f_V^{1/3}\,R`.
         * - Dimensionless temperature
           - :math:`\Theta`
           - :math:`\Theta = kT/(m_e c^2)`; controls the peak of the
@@ -7369,7 +7369,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         * - Volume filling factor
           - :math:`f_V`
           - Fraction of the sphere occupied by emitting material; controls
-            the effective slab depth :math:`\ell = f_V\,R`.
+            the effective slab depth :math:`\ell = f_V^{1/3}\,R`.
         * - Area filling factor
           - :math:`f_A`
           - Fraction of the projected area that is emitting.
@@ -7498,7 +7498,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
         Theta : float
             Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.
         f_V : float, optional
-            Volume filling factor. Effective LOS path length is :math:`f_V R`.
+            Volume filling factor. Effective LOS path length is :math:`f_V^{1/3} R`.
             Default ``1.0``.
         f_A : float, optional
             Area filling factor. Effective projected area is
@@ -7538,7 +7538,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
 
         log_nu = np.log(np.asarray(nu, dtype="f8"))
         log_B = np.log(float(B))
-        log_R_eff = np.log(float(f_V) * float(R))
+        log_R_eff = np.log(float(f_V) ** (1 / 3) * float(R))
         log_A_eff = np.log(float(f_A) * np.pi * float(R) ** 2)
         log_D_A = np.log(float(D_A))
 
@@ -7607,7 +7607,7 @@ class Numerical_Thermal_SSA_SynchrotronSED(SynchrotronSED):
             Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.
         f_V : float, optional
             Volume filling factor; the effective LOS path length is
-            :math:`f_V R`. Default ``1.0``.
+            :math:`f_V^{1/3} R`. Default ``1.0``.
         f_A : float, optional
             Area filling factor; the effective projected area is
             :math:`f_A \pi R^2`. Default ``1.0``.
@@ -7914,7 +7914,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
         p : float, optional
             Power-law index of the non-thermal component. Default ``3.0``.
         f_V : float, optional
-            Volume filling factor. Effective LOS path length is :math:`f_V R`.
+            Volume filling factor. Effective LOS path length is :math:`f_V^{1/3} R`.
             Default ``1.0``.
         f_A : float, optional
             Area filling factor. Effective projected area is
@@ -7987,7 +7987,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
 
         log_nu = np.log(np.asarray(nu, dtype="f8"))
         log_B = np.log(float(B))
-        log_R_eff = np.log(float(f_V) * float(R))
+        log_R_eff = np.log(float(f_V) ** (1 / 3) * float(R))
         log_A_eff = np.log(float(f_A) * np.pi * float(R) ** 2)
         log_D_A = np.log(float(D_A))
 
@@ -8062,7 +8062,7 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Power-law index of the non-thermal electron component. Default ``3.0``.
         f_V : float, optional
             Volume filling factor; the effective LOS path length is
-            :math:`f_V R`. Default ``1.0``.
+            :math:`f_V^{1/3} R`. Default ``1.0``.
         f_A : float, optional
             Area filling factor; the effective projected area is
             :math:`f_A \pi R^2`. Default ``1.0``.
