@@ -7840,6 +7840,13 @@ class Numerical_Thermal_PowerLaw_SSA_SynchrotronSED(SynchrotronSED):
             Lower bound of the Lorentz factor grid. Default ``1.0``. The default grid is the union of ``n_gamma``
             points log-spaced in :math:`\gamma` and ``n_gamma // 2`` points log-spaced in :math:`\gamma - 1`,
             which resolve the thermal component for :math:`\Theta \gtrsim 10^{-3}`.
+
+            .. warning::
+
+                This bounds the *thermal* electrons as well: a value above ``1`` removes the thermal population
+                below it. It is not the power law's minimum Lorentz factor, which is the ``gamma_min`` given when the
+                SED is evaluated and may lie anywhere above the grid's lower bound. Leave this at ``1.0`` unless the
+                thermal electrons should be truncated.
         gamma_max : float, optional
             Upper bound of the Lorentz factor grid. Default ``1e8``. Should be
             wide enough to capture the Maxwell-Jüttner tail (at least

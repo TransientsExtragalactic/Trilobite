@@ -107,6 +107,15 @@ class TestGrids:
         assert grid[-1] == pytest.approx(50.0)
         assert np.all(np.diff(grid) > 0.0)
 
+    def test_power_law_gamma_min_above_one_leaves_the_thermal_grid_intact(self, mixed, mixed_dense):
+        """The power law's ``gamma_min`` (given at evaluation) does not cut the thermal electrons below it."""
+        assert np.exp(mixed._log_gamma).min() == pytest.approx(1.0)
+        nu = np.geomspace(1e8, 1e12, 5)
+        kwargs = {"p": 3.0, "epsilon_B": 0.1, "epsilon_T": 1.0, "epsilon_E": 0.1, "gamma_min": 3.0, "gamma_max": 1e6}
+        a = np.exp(mixed._log_opt_sed(nu, 1.0, 1e16, 1e27, 0.3, **kwargs))
+        b = np.exp(mixed_dense._log_opt_sed(nu, 1.0, 1e16, 1e27, 0.3, **kwargs))
+        np.testing.assert_allclose(a, b, rtol=5e-3)
+
     def test_explicit_grid_is_used_unchanged(self):
         gamma = np.geomspace(1.0 + 1e-3, 1e3, 77)
         sed = Numerical_Thermal_SSA_SynchrotronSED(gamma=gamma)
