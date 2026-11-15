@@ -3570,6 +3570,42 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
             bar.close()
         return table
 
+    @staticmethod
+    def _interpolate_filling_table(table: np.ndarray, axes: tuple, points: tuple) -> np.ndarray:
+        """
+        Clamped trilinear interpolation of a table over three axes.
+
+        Parameters
+        ----------
+        table : numpy.ndarray
+            Values of shape ``(S, n_0, n_1, n_2)``, where ``S`` indexes the quantities interpolated together.
+        axes : tuple of numpy.ndarray
+            The three strictly increasing grids.
+        points : tuple of numpy.ndarray
+            Flat coordinate arrays of the ``M`` points, one per axis.
+
+        Returns
+        -------
+        numpy.ndarray
+            Interpolated values of shape ``(S, M)``. Each point's cell is located and its fractional position is
+            clipped to :math:`[0, 1]`, so points beyond a grid edge take the edge value.
+        """
+        index, frac = [], []
+        for grid, x in zip(axes, points):
+            n = np.clip(np.searchsorted(grid, x) - 1, 0, grid.size - 2)
+            index.append(n)
+            frac.append(np.clip((x - grid[n]) / (grid[n + 1] - grid[n]), 0.0, 1.0))
+
+        out = np.zeros((table.shape[0], np.size(points[0])))
+        for da in (0, 1):
+            wa = frac[0] if da else 1.0 - frac[0]
+            for di in (0, 1):
+                wi = frac[1] if di else 1.0 - frac[1]
+                for df in (0, 1):
+                    wf = frac[2] if df else 1.0 - frac[2]
+                    out += wa * wi * wf * table[:, index[0] + da, index[1] + di, index[2] + df]
+        return out
+
     @classmethod
     def compute_filling_parameters(
         cls, filling_factor, inclination, aspect, *, table=None, n_pix: int = 200
@@ -3676,24 +3712,7 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
                     f"(2, {', '.join(str(ax.size) for ax in axes)}) to match the grids."
                 )
             points = (np.log(b).ravel(), inc.ravel(), f.ravel())
-
-            # Clamped trilinear interpolation: locate each point's cell and clip its fractional
-            # position to [0, 1], so points beyond a grid edge take the edge value.
-            index, frac = [], []
-            for grid, x in zip(axes, points):
-                n = np.clip(np.searchsorted(grid, x) - 1, 0, grid.size - 2)
-                index.append(n)
-                frac.append(np.clip((x - grid[n]) / (grid[n + 1] - grid[n]), 0.0, 1.0))
-
-            f_A_flat = np.zeros((2, f.size))
-            for da in (0, 1):
-                wa = frac[0] if da else 1.0 - frac[0]
-                for di in (0, 1):
-                    wi = frac[1] if di else 1.0 - frac[1]
-                    for df in (0, 1):
-                        wf = frac[2] if df else 1.0 - frac[2]
-                        corner = f_A_table[:, index[0] + da, index[1] + di, index[2] + df]
-                        f_A_flat += wa * wi * wf * corner
+            f_A_flat = cls._interpolate_filling_table(f_A_table, axes, points)
             f_A = {"polar": f_A_flat[0].reshape(f.shape), "equatorial": f_A_flat[1].reshape(f.shape)}
 
         else:

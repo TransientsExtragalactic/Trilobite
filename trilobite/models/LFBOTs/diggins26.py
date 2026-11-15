@@ -223,6 +223,30 @@ class _SectorState(NamedTuple):
     lorentz_factor: Optional[np.ndarray] = None  # shell Lorentz factor (relativistic solver only)
 
 
+def _sector_dynamics_from_state(s: _SectorState) -> Diggins26SectorDynamics:
+    """Wrap one sightline's CGS arrays in the public, unit-aware container."""
+    return Diggins26SectorDynamics(
+        radius=s.radius * u.cm,
+        velocity=s.velocity * (u.cm / u.s),
+        mass=s.mass * u.g,
+        thermal_energy_density=s.eth * (u.erg / u.cm**3),
+        density=None if s.density is None else s.density * (u.g / u.cm**3),
+        lorentz_factor=s.lorentz_factor,
+    )
+
+
+def _state_from_sector_dynamics(d: Diggins26SectorDynamics) -> _SectorState:
+    """Unwrap one sightline's public container into CGS arrays."""
+    return _SectorState(
+        radius=d.radius.to_value(u.cm),
+        velocity=d.velocity.to_value(u.cm / u.s),
+        mass=d.mass.to_value(u.g),
+        eth=d.thermal_energy_density.to_value(u.erg / u.cm**3),
+        density=None if d.density is None else d.density.to_value(u.g / u.cm**3),
+        lorentz_factor=d.lorentz_factor,
+    )
+
+
 class _Microphysics(NamedTuple):
     """Electron microphysics at every epoch of one sector (internal)."""
 
@@ -1117,19 +1141,27 @@ class Diggins26_TwoComponentModel(Model):
             eth=np.asarray(shock.thermal_energy_density),
         )
 
+    def _sector_thetas(self, p: dict) -> tuple:
+        """Polar angles of the sightlines along which the shock is solved, in the order of the sectors."""
+        return (_THETA_EQUATOR, _THETA_POLE)
+
+    def _sector_sightlines(self, p: dict) -> tuple:
+        """Free-free sightlines of every sector, in the order of the sectors (see :meth:`_sightlines`)."""
+        return self._sightlines(p["inclination"])
+
     def _solve_dynamics(self, p: dict, prep: dict, t_rest: np.ndarray):
         """
-        Solve the shock along both sightlines at the unique source-frame epochs.
+        Solve the shock along every sector's sightline at the unique source-frame epochs.
 
         Returns
         -------
         states : tuple of _SectorState or None
-            ``(equatorial, polar)``, or ``None`` if infeasible.
+            One state per sector (``(equatorial, polar)`` for this model), or ``None`` if infeasible.
         reason : str or None
             Why the shock could not be solved.
         """
         states = []
-        for theta in (_THETA_EQUATOR, _THETA_POLE):
+        for theta in self._sector_thetas(p):
             rho_csm = self._sector_density(p, theta)
 
             # The starting shell holds the CSM swept up inside R_0 along this sightline.
@@ -1482,7 +1514,7 @@ class Diggins26_TwoComponentModel(Model):
         csm = self._csm_profile_parameters(p)
         total = [np.zeros_like(nu) for nu in nu_groups]
 
-        for state, sightlines, geometry in zip(states, self._sightlines(p["inclination"]), self._sector_geometry(p)):
+        for state, sightlines, geometry in zip(states, self._sector_sightlines(p), self._sector_geometry(p)):
             _, _, flux, transmission = self._sector_radiation(
                 p, state, sightlines, geometry, csm, t_rest, gamma, nu_groups, tau_per_EM
             )
@@ -1590,23 +1622,21 @@ class Diggins26_TwoComponentModel(Model):
         if states is None:
             raise ValueError(f"The parameters are infeasible: {reason}")
 
-        def _wrap(s: _SectorState) -> Diggins26SectorDynamics:
-            return Diggins26SectorDynamics(
-                radius=s.radius * u.cm,
-                velocity=s.velocity * (u.cm / u.s),
-                mass=s.mass * u.g,
-                thermal_energy_density=s.eth * (u.erg / u.cm**3),
-                density=None if s.density is None else s.density * (u.g / u.cm**3),
-                lorentz_factor=s.lorentz_factor,
-            )
+        return self._build_dynamics(p, t_unique, t_rest, states)
 
+    def _build_dynamics(self, p: dict, t_unique: np.ndarray, t_rest: np.ndarray, states: tuple) -> Diggins26Dynamics:
+        """Wrap the sectors' states in the public container returned by :meth:`compute_dynamics`."""
         return Diggins26Dynamics(
             time=t_unique * u.s,
             time_rest=t_rest * u.s,
-            equatorial=_wrap(states[0]),
-            polar=_wrap(states[1]),
+            equatorial=_sector_dynamics_from_state(states[0]),
+            polar=_sector_dynamics_from_state(states[1]),
             parameters={k: p[k] for k in _DYNAMICS_PARAMETERS},
         )
+
+    def _dynamics_states(self, dynamics) -> tuple:
+        """Return the sectors' CGS states held by a result of :meth:`compute_dynamics`, in the order of the sectors."""
+        return tuple(_state_from_sector_dynamics(d) for d in (dynamics.equatorial, dynamics.polar))
 
     def tabulate(self, time, frequency, parameters=None, *, dynamics: Optional[Diggins26Dynamics] = None):
         """
@@ -1652,24 +1682,14 @@ class Diggins26_TwoComponentModel(Model):
                 if not np.isclose(dynamics.parameters[key], p[key], rtol=1e-12, atol=0.0):
                     raise ValueError(f"`dynamics` was computed with a different `{key}`.")
 
-        states = tuple(
-            _SectorState(
-                radius=d.radius.to_value(u.cm),
-                velocity=d.velocity.to_value(u.cm / u.s),
-                mass=d.mass.to_value(u.g),
-                eth=d.thermal_energy_density.to_value(u.erg / u.cm**3),
-                density=None if d.density is None else d.density.to_value(u.g / u.cm**3),
-                lorentz_factor=d.lorentz_factor,
-            )
-            for d in (dynamics.equatorial, dynamics.polar)
-        )
+        states = self._dynamics_states(dynamics)
 
         gamma = self._gamma_grid(p, self._gamma_points_per_decade)
         nu_groups = [nu_obs] * t_obs.size
         tau_per_EM = self._free_free_opacity(p, nu_groups)  # shared by both sectors
         csm = self._csm_profile_parameters(p)
         results, total = [], 0.0
-        for state, sightlines, geometry in zip(states, self._sightlines(p["inclination"]), self._sector_geometry(p)):
+        for state, sightlines, geometry in zip(states, self._sector_sightlines(p), self._sector_geometry(p)):
             micro, EM, flux, transmission = self._sector_radiation(
                 p, state, sightlines, geometry, csm, t_rest, gamma, nu_groups, tau_per_EM
             )
@@ -1697,6 +1717,10 @@ class Diggins26_TwoComponentModel(Model):
                 )
             )
 
+        return self._build_tabulation(t_obs, nu_obs, total, results, dynamics)
+
+    def _build_tabulation(self, t_obs, nu_obs, total, results: list, dynamics):
+        """Wrap the sectors' radiation in the public container returned by :meth:`tabulate`."""
         return Diggins26Tabulation(
             time=t_obs * u.s,
             frequency=nu_obs * u.Hz,
