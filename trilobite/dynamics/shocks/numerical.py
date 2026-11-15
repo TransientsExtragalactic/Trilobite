@@ -585,16 +585,14 @@ class RelThinShellShockState(NamedTuple):
     # ------------------------------------------------------------------ #
     pressure_2: Union[np.ndarray, u.Quantity]
     r"""
-    Reverse-shock post-shock pressure
-    :math:`P_2 = \rho_{1,\rm sh}c^2(\Gamma_{\rm rel,2}-1)(\hat\gamma\Gamma_{\rm rel,2}+1)`
-    in :math:`\mathrm{dyn\,cm^{-2}}`.
+    Reverse-shock post-shock pressure :math:`P_2` of the thin-shell closure used by the ODE
+    (zero when the reverse shock is inactive), in :math:`\mathrm{dyn\,cm^{-2}}`.
     """
 
     pressure_3: Union[np.ndarray, u.Quantity]
     r"""
-    Forward-shock post-shock pressure
-    :math:`P_3 = \rho_{4,\rm sh}c^2(\Gamma_{\rm rel,3}-1)(\hat\gamma\Gamma_{\rm rel,3}+1)`
-    in :math:`\mathrm{dyn\,cm^{-2}}`.
+    Forward-shock post-shock pressure :math:`P_3` of the thin-shell closure used by the ODE
+    (zero when the forward shock is inactive), in :math:`\mathrm{dyn\,cm^{-2}}`.
     """
 
     # ------------------------------------------------------------------ #
@@ -602,14 +600,16 @@ class RelThinShellShockState(NamedTuple):
     # ------------------------------------------------------------------ #
     eta_2: np.ndarray
     r"""
-    Shell-frame energy per downstream rest-mass at the reverse shock,
-    :math:`\eta_2 = e_2/(\rho_2 c^2) = \Gamma_{\rm rel,2}` (dimensionless).
+    Shell-frame energy per downstream rest-mass energy at the reverse shock,
+    :math:`\eta_2 = e_2/(\rho_2 c^2)`, from the thin-shell closure used by the ODE (dimensionless).
+    It tends to 1 for slow shocks and stays below :math:`\Gamma_{\rm rel,2}` otherwise.
     """
 
     eta_3: np.ndarray
     r"""
-    Shell-frame energy per downstream rest-mass at the forward shock,
-    :math:`\eta_3 = e_3/(\rho_3 c^2) = \Gamma_{\rm rel,3}` (dimensionless).
+    Shell-frame energy per downstream rest-mass energy at the forward shock,
+    :math:`\eta_3 = e_3/(\rho_3 c^2)`, from the thin-shell closure used by the ODE (dimensionless).
+    It tends to 1 for slow shocks and stays below :math:`\Gamma_{\rm rel,3}` otherwise.
     """
 
 
@@ -940,6 +940,59 @@ class PressureDrivenThinShellShockEngine(ShockEngine):
         )
 
 
+def _rel_shock_face_closure(
+    rho_u: float,
+    beta_rel: float,
+    gamma_hat: float,
+    beta_grid: np.ndarray,
+    beta_d_grid: "np.ndarray | list",
+) -> "tuple[float, float, float]":
+    r"""
+    Thin-shell post-shock closure for one face of the relativistic shell.
+
+    Following the non-relativistic pressure-driven thin shell, the speed of the upstream fluid relative to the
+    shell, ``beta_rel``, is used as the shock-frame upstream speed in the cold-upstream relativistic jump
+    conditions. The downstream shock-frame speed is interpolated from the pre-tabulated solution of the
+    implicit Rankine--Hugoniot equation. This closure drives the equations of motion *and* defines the
+    reported diagnostics, so the two can never disagree.
+
+    Parameters
+    ----------
+    rho_u : float
+        Upstream comoving rest-mass density (:math:`\mathrm{g\,cm^{-3}}`).
+    beta_rel : float
+        Speed of the upstream fluid in the shell frame, in units of :math:`c`. Must be positive.
+    gamma_hat : float
+        Adiabatic index of the shocked gas.
+    beta_grid, beta_d_grid : array-like
+        Tabulated upstream shock-frame speeds and the matching downstream shock-frame speeds.
+
+    Returns
+    -------
+    pressure : float
+        Post-shock pressure :math:`P = \rho_u c^2 \Gamma_u^2 \beta_u^2 (1 - \beta_d/\beta_u)`.
+    eta : float
+        Shell-frame energy per unit post-shock rest-mass energy, :math:`1 + P / [(\hat\gamma - 1)\rho_d c^2]`.
+    compression : float
+        Post-shock to upstream density ratio.
+    """
+    gamma_u = 1.0 / np.sqrt(1.0 - beta_rel**2)
+
+    # Interpolate the downstream shock-frame speed and protect the physical branch 0 < beta_d < beta_u.
+    beta_d = np.interp(beta_rel, beta_grid, beta_d_grid)
+    beta_d = np.clip(beta_d, beta_grid[0], np.nextafter(beta_rel, 0.0))
+    gamma_d = 1.0 / np.sqrt(1.0 - beta_d**2)
+
+    # Baryon conservation: rho_d / rho_u = (Gamma_u beta_u) / (Gamma_d beta_d).
+    compression = (gamma_u * beta_rel) / (gamma_d * beta_d)
+
+    # Combined energy and momentum conservation for a cold upstream.
+    pressure = rho_u * c_cgs**2 * gamma_u**2 * beta_rel**2 * (1.0 - beta_d / beta_rel)
+    eta = 1.0 + pressure / ((gamma_hat - 1.0) * compression * rho_u * c_cgs**2)
+
+    return pressure, eta, compression
+
+
 class RelPressureDrivenThinShellShockEngine(ShockEngine):
     r"""
     Relativistic pressure-driven thin-shell shock engine for arbitrary ejecta and CSM profiles.
@@ -959,8 +1012,9 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
         \beta_{\rm sh} = \frac{\Pi_{\rm sh}\,c}{E_{\rm sh}}.
 
     At each shock face the post-shock pressure and energy-loading coefficient are
-    evaluated from the cold-upstream relativistic Rankine--Hugoniot closure using the
-    Lorentz factor of the upstream fluid in the shell (downstream) frame,
+    evaluated from the cold-upstream relativistic Rankine--Hugoniot conditions with the
+    thin-shell closure that the shock-frame upstream speed is the speed of the upstream
+    fluid in the shell (downstream) frame, with Lorentz factor
 
     .. math::
 
@@ -972,17 +1026,21 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
                 \frac{\beta_{u,i} - \beta_{\rm sh}}
                 {1 - \beta_{u,i}\,\beta_{\rm sh}}
             \right)^{\!2}
-        \right]^{-1/2},
+        \right]^{-1/2}.
 
-    giving
+    The post-shock pressure and energy loading are then
 
     .. math::
 
-        P_i = \rho_{u,i}\,c^2\,(\Gamma_{\rm rel,i}-1)\,(\hat\gamma\,\Gamma_{\rm rel,i}+1),
+        P_i = \rho_{u,i}\,c^2\,\Gamma_{\rm rel,i}^2\beta_{\rm rel,i}^2
+              \left(1-\frac{\beta_{d,i}}{\beta_{\rm rel,i}}\right),
         \qquad
-        \eta_i = \Gamma_{\rm rel,i}.
+        \eta_i = 1 + \frac{P_i}{(\hat\gamma_i-1)\,\rho_{d,i}\,c^2},
 
-    The governing equations of motion are
+    where :math:`\beta_{d,i}` is the downstream shock-frame speed from the exact implicit
+    jump condition. They reduce to the non-relativistic thin-shell pressure
+    :math:`(1-1/\chi)\rho_u v_{\rm rel}^2`, with :math:`\chi=(\hat\gamma+1)/(\hat\gamma-1)`, and to
+    :math:`\eta_i\to1` as :math:`\beta\to0`. The governing equations of motion are
 
     .. math::
 
@@ -992,7 +1050,8 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
             \frac{dM_{\rm sh}}{dt}
             &= \dot M_2 + \dot M_3,\\[4pt]
             \frac{dE_{\rm sh}}{dt}
-            &= \Gamma_{\rm sh}\,c^2\!\left(\eta_2\dot M_2 + \eta_3\dot M_3\right),\\[4pt]
+            &= \Gamma_{\rm sh}\,c^2\!\left(\eta_2\dot M_2 + \eta_3\dot M_3\right)
+               + \beta_{\rm sh}\,c\,4\pi R_{\rm sh}^2\!\left(P_2 - P_3\right),\\[4pt]
             \frac{d\Pi_{\rm sh}}{dt}
             &= w_{\rm sh}\,c\!\left(\eta_2\dot M_2 + \eta_3\dot M_3\right)
                + 4\pi R_{\rm sh}^2\!\left(P_2 - P_3\right),
@@ -1106,7 +1165,8 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
         if not np.all(np.diff(self._beta_grid) > 0):
             raise ValueError("The beta grid must be sorted in ascending order.")
 
-        # Pre-compute the grids.
+        # Pre-compute the grids. They depend on the adiabatic indices, which is why these are fixed at
+        # instantiation rather than passed per call.
         self._beta_2_grid = [_solve_strong_cold_shock_beta(_beta, self._gamma_ad_1) for _beta in self._beta_grid]
         self._beta_3_grid = [_solve_strong_cold_shock_beta(_beta, self._gamma_ad_4) for _beta in self._beta_grid]
 
@@ -1182,9 +1242,6 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
             beta_1_shock_frame = np.abs((beta_1_lab - SHOCK_BETA) / (1.0 - beta_1_lab * SHOCK_BETA))
             beta_4_shock_frame = np.abs((SHOCK_BETA - beta_4_lab) / (1.0 - SHOCK_BETA * beta_4_lab))
 
-            gamma_1_shock_frame = 1.0 / np.sqrt(1.0 - beta_1_shock_frame**2)
-            gamma_4_shock_frame = 1.0 / np.sqrt(1.0 - beta_4_shock_frame**2)
-
             # Determine whether the reverse and forward shocks are active.
             # If a side is inactive, we do not reconstruct its downstream state;
             # this avoids singular compression ratios and eta * dM = inf * 0
@@ -1204,44 +1261,10 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
             dM2_dt = 0.0
 
             if reverse_shock_active:
-                # Using the interpolator, compute the beta_2 value for the reverse shock.
-                beta_2_shock_frame = np.interp(
-                    beta_1_shock_frame,
-                    _beta_grid,
-                    _beta_2_grid,
+                # Post-shock pressure and energy loading from the shared thin-shell closure.
+                P2, eta_2, _ = _rel_shock_face_closure(
+                    rho_1_proper, beta_1_shock_frame, _gamma_ad_1, _beta_grid, _beta_2_grid
                 )
-
-                # Protect the physical branch. The downstream shock-frame speed must
-                # satisfy 0 < beta_2 < beta_1 for a compressive shock.
-                beta_2_shock_frame = np.clip(
-                    beta_2_shock_frame,
-                    _beta_grid[0],
-                    np.nextafter(beta_1_shock_frame, 0.0),
-                )
-
-                gamma_2_shock_frame = 1.0 / np.sqrt(1.0 - beta_2_shock_frame**2)
-
-                # Apply the shock-frame conditions to determine the compression ratio:
-                # rho_2 / rho_1 = (Gamma_1s * beta_1s) / (Gamma_2s * beta_2s)
-                compression_ratio_2 = (gamma_1_shock_frame * beta_1_shock_frame) / (
-                    gamma_2_shock_frame * beta_2_shock_frame
-                )
-
-                rho_2_proper = compression_ratio_2 * rho_1_proper
-
-                # Compute the pressure in the post-shock ejecta region from the
-                # shock-frame momentum jump.
-                P2 = (
-                    rho_1_proper
-                    * c_cgs**2
-                    * gamma_1_shock_frame**2
-                    * beta_1_shock_frame**2
-                    * (1.0 - beta_2_shock_frame / beta_1_shock_frame)
-                )
-
-                # Compute the shell-frame energy loading coefficient. This is the
-                # downstream total energy per unit downstream rest-mass energy.
-                eta_2 = 1.0 + P2 / ((_gamma_ad_1 - 1.0) * rho_2_proper * c_cgs**2)
 
                 # Compute the baryonic rest-mass flux through the reverse shock.
                 dM2_dt = 4.0 * np.pi * R_sh**2 * rho_1_proper * gamma_1_lab * c_cgs * (beta_1_lab - SHOCK_BETA)
@@ -1253,44 +1276,10 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
             dM3_dt = 0.0
 
             if forward_shock_active:
-                # Using the interpolator, compute the beta_3 value for the forward shock.
-                beta_3_shock_frame = np.interp(
-                    beta_4_shock_frame,
-                    _beta_grid,
-                    _beta_3_grid,
+                # Post-shock pressure and energy loading from the shared thin-shell closure.
+                P3, eta_3, _ = _rel_shock_face_closure(
+                    rho_4_proper, beta_4_shock_frame, _gamma_ad_4, _beta_grid, _beta_3_grid
                 )
-
-                # Protect the physical branch. The downstream shock-frame speed must
-                # satisfy 0 < beta_3 < beta_4 for a compressive shock.
-                beta_3_shock_frame = np.clip(
-                    beta_3_shock_frame,
-                    _beta_grid[0],
-                    np.nextafter(beta_4_shock_frame, 0.0),
-                )
-
-                gamma_3_shock_frame = 1.0 / np.sqrt(1.0 - beta_3_shock_frame**2)
-
-                # Apply the shock-frame conditions to determine the compression ratio:
-                # rho_3 / rho_4 = (Gamma_4s * beta_4s) / (Gamma_3s * beta_3s)
-                compression_ratio_3 = (gamma_4_shock_frame * beta_4_shock_frame) / (
-                    gamma_3_shock_frame * beta_3_shock_frame
-                )
-
-                rho_3_proper = compression_ratio_3 * rho_4_proper
-
-                # Compute the pressure in the post-shock CSM region from the
-                # shock-frame momentum jump.
-                P3 = (
-                    rho_4_proper
-                    * c_cgs**2
-                    * gamma_4_shock_frame**2
-                    * beta_4_shock_frame**2
-                    * (1.0 - beta_3_shock_frame / beta_4_shock_frame)
-                )
-
-                # Compute the shell-frame energy loading coefficient. This is the
-                # downstream total energy per unit downstream rest-mass energy.
-                eta_3 = 1.0 + P3 / ((_gamma_ad_4 - 1.0) * rho_3_proper * c_cgs**2)
 
                 # Compute the baryonic rest-mass flux through the forward shock.
                 dM3_dt = 4.0 * np.pi * R_sh**2 * rho_4_proper * gamma_4_lab * c_cgs * (SHOCK_BETA - beta_4_lab)
@@ -1306,10 +1295,15 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
             # Equations of motion.
             dR_dt = c_cgs * SHOCK_BETA
             dM_dt = dM2_dt + dM3_dt
-            dE_dt = SHOCK_GAMMA * E_prime_dot
-            dPi_dt = SHOCK_PROPER_VELOCITY * c_cgs * (eta_2 * dM2_dt + eta_3 * dM3_dt) + 4.0 * np.pi * R_sh**2 * (
-                P2 - P3
-            )
+            # Net pressure force on the shell. It changes the lab-frame momentum and, because the shell moves,
+            # also does work at the rate beta c F on the lab-frame energy. Together the two terms leave the
+            # shell-frame energy E' = sqrt(E^2 - Pi^2 c^2) untouched (dE'/dt = c^2 (eta_2 dM2 + eta_3 dM3)): a pure
+            # force cannot change the rest-frame energy. Omitting the work term lets the force feed E' and
+            # collapses Gamma for ultra-relativistic shells.
+            pressure_force = 4.0 * np.pi * R_sh**2 * (P2 - P3)
+
+            dE_dt = SHOCK_GAMMA * E_prime_dot + SHOCK_BETA * c_cgs * pressure_force
+            dPi_dt = SHOCK_PROPER_VELOCITY * c_cgs * (eta_2 * dM2_dt + eta_3 * dM3_dt) + pressure_force
 
             return np.array([dR_dt, dM_dt, dE_dt, dPi_dt])
 
@@ -1326,7 +1320,6 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
         beta_0: float = 0.1,
         M_0: "_UnitBearingScalarLike" = 1e28 * u.g,
         t_0: "_UnitBearingScalarLike" = 1.0 * u.s,
-        gamma: float = 4.0 / 3.0,
         **kwargs,
     ) -> RelThinShellShockState:
         r"""
@@ -1354,8 +1347,6 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
             Initial swept baryonic rest mass. Default ``1e28 g``.
         t_0 : ~astropy.units.Quantity or float
             Initial time. Default ``1.0 s``.
-        gamma : float, optional
-            Adiabatic index :math:`\hat\gamma`. Default ``4/3``.
         **kwargs
             Forwarded to :func:`scipy.integrate.solve_ivp`.
             ``method`` defaults to ``'Radau'``; ``rtol`` defaults to ``1e-10``.
@@ -1364,6 +1355,11 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
         -------
         ~trilobite.dynamics.shocks.numerical.RelThinShellShockState
             Named tuple with unit-bearing fields.
+
+        Notes
+        -----
+        The adiabatic indices of the shocked ejecta and CSM are fixed at instantiation (``gamma_1`` and
+        ``gamma_4``) because the shock-jump tables are pre-tabulated for them.
         """
         if isinstance(time, u.Quantity):
             time = time.to(u.s).value
@@ -1437,8 +1433,6 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
             Initial swept baryonic rest mass in g.
         t_0 : float
             Initial time in seconds.
-        gamma : float
-            Adiabatic index :math:`\hat\gamma`.
         **kwargs
             Forwarded to :func:`scipy.integrate.solve_ivp`.
 
@@ -1447,6 +1441,12 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
         ~trilobite.dynamics.shocks.numerical.RelThinShellShockState
             CGS-valued named tuple.
         """
+        if "gamma" in kwargs:
+            raise TypeError(
+                "RelPressureDrivenThinShellShockEngine takes no per-call `gamma`: the shock tables are pre-tabulated "
+                "for the adiabatic indices fixed at instantiation. Pass `gamma_1` and `gamma_4` to the constructor."
+            )
+
         time = np.atleast_1d(np.asarray(time, dtype=float))
 
         # Cold-shell initial four-momentum: E = M c^2 Gamma_0, Pi = M c w_0.
@@ -1497,8 +1497,21 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
         Gamma_rel_rs = 1.0 / np.sqrt(1.0 - beta_rel_rs**2)
         Gamma_rel_fs = 1.0 / np.sqrt(1.0 - beta_rel_fs**2)
 
-        pressure_2 = rho1_arr * c_cgs**2 * (Gamma_rel_rs - 1.0) * (self._gamma_ad_1 * Gamma_rel_rs + 1.0)
-        pressure_3 = rho4_arr * c_cgs**2 * (Gamma_rel_fs - 1.0) * (self._gamma_ad_4 * Gamma_rel_fs + 1.0)
+        # The pressures and energy loadings are evaluated with the same closure the ODE used, on the faces that are
+        # active at each output time (an inactive face has no post-shock gas: P = 0 and eta = 1).
+        pressure_2 = np.zeros(n_steps)
+        pressure_3 = np.zeros(n_steps)
+        eta_2 = np.ones(n_steps)
+        eta_3 = np.ones(n_steps)
+        for i in range(n_steps):
+            if rho1_arr[i] > 0.0 and b1_arr[i] > beta_sh[i] and beta_rel_rs[i] > self._beta_grid[0]:
+                pressure_2[i], eta_2[i], _ = _rel_shock_face_closure(
+                    rho1_arr[i], beta_rel_rs[i], self._gamma_ad_1, self._beta_grid, self._beta_2_grid
+                )
+            if rho4_arr[i] > 0.0 and beta_sh[i] > b4_arr[i] and beta_rel_fs[i] > self._beta_grid[0]:
+                pressure_3[i], eta_3[i], _ = _rel_shock_face_closure(
+                    rho4_arr[i], beta_rel_fs[i], self._gamma_ad_4, self._beta_grid, self._beta_3_grid
+                )
 
         return RelThinShellShockState(
             radius=R_sh,
@@ -1514,8 +1527,8 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine):
             Gamma_rel_fs=Gamma_rel_fs,
             pressure_2=pressure_2,
             pressure_3=pressure_3,
-            eta_2=Gamma_rel_rs,
-            eta_3=Gamma_rel_fs,
+            eta_2=eta_2,
+            eta_3=eta_3,
         )
 
 

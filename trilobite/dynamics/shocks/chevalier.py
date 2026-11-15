@@ -1631,7 +1631,7 @@ class ChevalierTwoShockSelfSimilarEngine(ShockEngine):
     are read from a table of self-similar ODE solutions precomputed on a grid of
     ``(n, s)`` values at instantiation and bilinearly interpolated at runtime.
     The normalization constant :math:`A` (which determines the absolute contact-radius
-    scale) is likewise tabulated and is more accurate than the analytic
+    scale) is likewise tabulated (and interpolated in :math:`\ln A`) and is more accurate than the analytic
     :meth:`ChevalierSelfSimilarShockEngine.compute_scale_parameter` approximation.
 
     The contact-discontinuity radius follows
@@ -1737,7 +1737,9 @@ class ChevalierTwoShockSelfSimilarEngine(ShockEngine):
         from scipy.interpolate import RegularGridInterpolator
 
         _pts = (n_values, s_values)
-        self._interp_A = RegularGridInterpolator(_pts, self._table.A, method="linear", bounds_error=True)
+        # A varies roughly as n^-3 across the grid, so interpolate log(A): linear interpolation of A itself
+        # overestimates it by up to ~17% between grid nodes (a ~4% error in R_cd).
+        self._interp_log_A = RegularGridInterpolator(_pts, np.log(self._table.A), method="linear", bounds_error=True)
         self._interp_xi_fs = RegularGridInterpolator(
             _pts, self._table.radius_fs_over_radius_cd, method="linear", bounds_error=True
         )
@@ -1759,7 +1761,7 @@ class ChevalierTwoShockSelfSimilarEngine(ShockEngine):
         try:
             pt = np.array([[float(n), float(s)]])
             return (
-                float(self._interp_A(pt)[0]),
+                float(np.exp(self._interp_log_A(pt)[0])),
                 float(self._interp_xi_fs(pt)[0]),
                 float(self._interp_xi_rs(pt)[0]),
             )
