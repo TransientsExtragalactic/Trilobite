@@ -179,7 +179,7 @@ at higher characteristic frequencies :math:`\nu_c \propto B\gamma^2`.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 109-124
+.. GENERATED FROM PYTHON SOURCE LINES 109-125
 
 Electron Distribution
 ---------------------
@@ -193,11 +193,12 @@ returns the normalisation :math:`K(r)` such that
     \qquad \gamma_{\min} \le \gamma \le \gamma_{\max},
 
 where :math:`K(r)` is fixed by the equipartition condition
-:math:`\epsilon_e / \epsilon_B = u_e / u_B` with
+:math:`\epsilon_e / \epsilon_B = u_e / u_B`, where
+:math:`u_e = \int N(\gamma-1)\,m_e c^2\,d\gamma` is the electron kinetic energy density and
 :math:`u_B = B^2 / 8\pi`.  Because :math:`u_B \propto B^2 \propto r^{-2}`,
 inner rings host a denser electron population.
 
-.. GENERATED FROM PYTHON SOURCE LINES 124-142
+.. GENERATED FROM PYTHON SOURCE LINES 125-143
 
 .. code-block:: Python
 
@@ -226,7 +227,7 @@ inner rings host a denser electron population.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 143-150
+.. GENERATED FROM PYTHON SOURCE LINES 144-151
 
 Per-Ring Flux Contributions
 ----------------------------
@@ -236,7 +237,7 @@ with shape ``(n_freq, n_radii)``.  Summing over the last axis recovers the
 total :math:`F_\nu`.  We hold the line-of-sight slab depth fixed at
 :math:`\ell = 10^{16}\ \mathrm{cm}` for all rings.
 
-.. GENERATED FROM PYTHON SOURCE LINES 150-167
+.. GENERATED FROM PYTHON SOURCE LINES 151-168
 
 .. code-block:: Python
 
@@ -264,7 +265,7 @@ total :math:`F_\nu`.  We hold the line-of-sight slab depth fixed at
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 168-179
+.. GENERATED FROM PYTHON SOURCE LINES 169-180
 
 Spectral Decomposition
 ----------------------
@@ -278,7 +279,7 @@ at higher frequencies while outer rings (yellow) peak at lower frequencies.
 Their superposition produces a broader, flatter composite spectrum than
 any single homogeneous zone could reproduce.
 
-.. GENERATED FROM PYTHON SOURCE LINES 179-214
+.. GENERATED FROM PYTHON SOURCE LINES 180-215
 
 .. code-block:: Python
 
@@ -329,7 +330,7 @@ any single homogeneous zone could reproduce.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 215-220
+.. GENERATED FROM PYTHON SOURCE LINES 216-221
 
 The composite SED is noticeably broader and flatter than a single-zone
 prediction.  Each ring contributes a spectral hump shifted to the
@@ -340,7 +341,7 @@ simple broken power-law spectrum.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.504 seconds)
+   **Total running time of the script:** (0 minutes 0.383 seconds)
 
 
 .. _sphx_glr_download_auto_examples_synchrotron_b_seds_plot_inhomogeneous_cylinder.py:

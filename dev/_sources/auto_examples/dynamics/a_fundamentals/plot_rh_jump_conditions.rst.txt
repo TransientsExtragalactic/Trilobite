@@ -50,7 +50,7 @@ number of different physical regimes and assumptions. In this example, we compar
 In this example, we'll show how these different solvers behave across a few different shock parameters.
 We apply all three to a cold, stationary CSM across
 :math:`\beta = 10^{-3}` to :math:`\beta = 0.99` and compare the predicted
-compression ratio, post-shock temperature, and post-shock pressure.
+compression ratio, post-shock thermal energy per unit rest mass, and post-shock pressure.
 
 .. seealso::
 
@@ -151,7 +151,7 @@ The ultra-relativistic solution requires:
 Below this threshold, the analytic solution becomes unphysical, so we mask
 those values.
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-146
+.. GENERATED FROM PYTHON SOURCE LINES 122-154
 
 .. code-block:: Python
 
@@ -171,9 +171,17 @@ those values.
     rel_R = np.array([r.compression_ratio for r in rel_results])
     ur_R = np.array([r.compression_ratio for r in ur_results])
 
-    nr_T = np.array([r.post_shock_temperature.to_value(u.K) for r in nr_results])
-    rel_T = np.array([r.post_shock_temperature.to_value(u.K) for r in rel_results])
-    ur_T = np.array([r.post_shock_temperature.to_value(u.K) for r in ur_results])
+
+    def thermal_energy_per_rest_mass(results):
+        """Return the post-shock thermal energy density in units of the rest-mass energy density."""
+        return np.array(
+            [(r.post_shock_thermal_energy_density / (r.post_shock_density * const.c**2)).decompose().value for r in results]
+        )
+
+
+    nr_xi = thermal_energy_per_rest_mass(nr_results)
+    rel_xi = thermal_energy_per_rest_mass(rel_results)
+    ur_xi = thermal_energy_per_rest_mass(ur_results)
 
     nr_P = np.array([r.post_shock_pressure.to_value(u.dyn / u.cm**2) for r in nr_results])
     rel_P = np.array([r.post_shock_pressure.to_value(u.dyn / u.cm**2) for r in rel_results])
@@ -186,7 +194,7 @@ those values.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 147-163
+.. GENERATED FROM PYTHON SOURCE LINES 155-171
 
 Compression Ratio
 -----------------
@@ -205,7 +213,7 @@ The relativistic solution, however, predicts a *velocity-dependent* compression,
 reflecting how energy is redistributed between bulk motion and internal degrees
 of freedom at high Lorentz factors.
 
-.. GENERATED FROM PYTHON SOURCE LINES 163-180
+.. GENERATED FROM PYTHON SOURCE LINES 171-188
 
 .. code-block:: Python
 
@@ -238,37 +246,38 @@ of freedom at high Lorentz factors.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 181-195
+.. GENERATED FROM PYTHON SOURCE LINES 189-204
 
-Post-shock Temperature
-----------------------
+Post-shock Thermal Energy
+-------------------------
 
-In the Newtonian regime, the post-shock temperature scales simply as:
+The jump conditions fix the post-shock thermal energy density :math:`u_{\rm th}`, not the temperatures of the
+individual species. A convenient dimensionless measure is the thermal energy per unit rest-mass energy,
+:math:`\xi = u_{\rm th} / (\rho_2 c^2)`. For a cold upstream medium, energy conservation gives
+:math:`\xi = \Gamma_{\rm rel} - 1`, where :math:`\Gamma_{\rm rel}` is the Lorentz factor of the downstream
+fluid relative to the upstream.
 
-.. math::
-    T_2 \propto v_{\rm sh}^2
+In the Newtonian regime :math:`\xi \propto v_{\rm sh}^2`. As the shock becomes relativistic, this scaling breaks
+down and :math:`\xi` grows with the Lorentz factor instead. The ultra-relativistic solution again converges only
+in the :math:`\Gamma \gg 1` limit.
 
-This produces a clean power-law relation. As the shock becomes relativistic,
-this scaling breaks down, and the temperature grows more slowly as energy is
-redistributed into relativistic degrees of freedom.
+How :math:`u_{\rm th}` is shared between ions and electrons sets their temperatures; see
+:func:`~trilobite.physics_utils.thermal_partition.compute_ion_electron_theta`.
 
-The ultra-relativistic solution again converges only in the
-:math:`\Gamma \gg 1` limit.
-
-.. GENERATED FROM PYTHON SOURCE LINES 195-211
+.. GENERATED FROM PYTHON SOURCE LINES 204-220
 
 .. code-block:: Python
 
 
     fig, ax = plt.subplots(figsize=(5, 4))
 
-    ax.loglog(betas, nr_T, ls="--", color="#4C72B0", label="Newtonian")
-    ax.loglog(betas, rel_T, lw=2.2, color="#DD8452", label="Relativistic")
-    ax.loglog(betas[ur_mask], ur_T, ls=":", lw=2.2, color="#55A868", label=r"Ultra-relativistic")
+    ax.loglog(betas, nr_xi, ls="--", color="#4C72B0", label="Newtonian")
+    ax.loglog(betas, rel_xi, lw=2.2, color="#DD8452", label="Relativistic")
+    ax.loglog(betas[ur_mask], ur_xi, ls=":", lw=2.2, color="#55A868", label=r"Ultra-relativistic")
 
     ax.set_xlabel(r"$\beta = v_{\rm sh}/c$")
-    ax.set_ylabel(r"$T_2\ (\mathrm{K})$")
-    ax.set_title("Post-shock Temperature")
+    ax.set_ylabel(r"$u_{\rm th} / (\rho_2 c^2)$")
+    ax.set_title("Post-shock Thermal Energy")
 
     ax.legend(frameon=False)
     ax.grid(alpha=0.25, which="both")
@@ -279,7 +288,7 @@ The ultra-relativistic solution again converges only in the
 
 
 .. image-sg:: /auto_examples/dynamics/a_fundamentals/images/sphx_glr_plot_rh_jump_conditions_002.png
-   :alt: Post-shock Temperature
+   :alt: Post-shock Thermal Energy
    :srcset: /auto_examples/dynamics/a_fundamentals/images/sphx_glr_plot_rh_jump_conditions_002.png
    :class: sphx-glr-single-img
 
@@ -287,12 +296,12 @@ The ultra-relativistic solution again converges only in the
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 212-222
+.. GENERATED FROM PYTHON SOURCE LINES 221-231
 
 Post-shock Pressure
 -------------------
 
-The post-shock pressure follows a similar trend to the temperature:
+The post-shock pressure follows a similar trend to the thermal energy:
 
 - Newtonian: :math:`P_2 \propto \rho_1 v_{\rm sh}^2`
 - Relativistic: modified by Lorentz transformations of energy and momentum
@@ -300,7 +309,7 @@ The post-shock pressure follows a similar trend to the temperature:
 This quantity provides a clear diagnostic of when relativistic corrections
 become dynamically important (:math:`\beta \gtrsim 0.3`).
 
-.. GENERATED FROM PYTHON SOURCE LINES 222-238
+.. GENERATED FROM PYTHON SOURCE LINES 231-247
 
 .. code-block:: Python
 
@@ -335,7 +344,7 @@ become dynamically important (:math:`\beta \gtrsim 0.3`).
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.613 seconds)
+   **Total running time of the script:** (0 minutes 0.455 seconds)
 
 
 .. _sphx_glr_download_auto_examples_dynamics_a_fundamentals_plot_rh_jump_conditions.py:

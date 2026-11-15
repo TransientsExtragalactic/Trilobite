@@ -482,10 +482,22 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">quad</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">kve</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.physics_utils.maxwell_juettner</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_opt_mj_approx_mean_kinetic_energy</span><span class="p">,</span>
+    <span class="n">_opt_mj_approx_mean_lorentz_factor</span><span class="p">,</span>
+    <span class="n">_opt_mj_cdf</span><span class="p">,</span>
+    <span class="n">_opt_mj_exact_mean_kinetic_energy</span><span class="p">,</span>
+    <span class="n">_opt_mj_moment</span><span class="p">,</span>
+    <span class="n">_opt_mj_pdf</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.physics_utils.thermal_partition</span><span class="w"> </span><span class="kn">import</span> <span class="n">_opt_thermal_electron_energy_fraction</span><span class="p">,</span> <span class="n">_validate_partition</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">c_cgs</span><span class="p">,</span> <span class="n">electron_rest_energy_cgs</span><span class="p">,</span> <span class="n">sigma_T_cgs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="c1"># Energy-budget normalizations divide by &lt;gamma - 1&gt; = M1 - M0, which loses ~log10(1e16 K) digits to cancellation. Below</span>
+<span class="c1"># this mean kinetic energy (in m_e c^2) the normalization is ill-conditioned and is refused.</span>
+<span class="n">_MIN_KINETIC_MOMENT</span> <span class="o">=</span> <span class="mf">1e-8</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_UnitBearingArrayLike</span>
@@ -541,10 +553,8 @@
 <span class="sd">        If no units are attached, values are interpreted as</span>
 <span class="sd">        :math:`\mathrm{erg\,cm^{-3}}`.</span>
 <span class="sd">    epsilon_B : float or ~numpy.ndarray</span>
-<span class="sd">        Fraction of the thermal energy density placed in magnetic fields.</span>
-<span class="sd">        Physically, this should usually satisfy</span>
-<span class="sd">        :math:`0 \leq \epsilon_B \leq 1`, though this function does not</span>
-<span class="sd">        enforce that bound.</span>
+<span class="sd">        Fraction of the thermal (internal) energy density in the magnetic field. Physically, this should usually satisfy</span>
+<span class="sd">        :math:`0 \leq \epsilon_B \leq 1`, though this function does not enforce that bound.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -587,7 +597,7 @@
 <span class="sd">    Compute the electron energy density implied by a thermal energy density.</span>
 
 <span class="sd">    This function assumes that a fixed fraction of the thermal/internal energy</span>
-<span class="sd">    density is placed into non-thermal electrons,</span>
+<span class="sd">    density is placed into the kinetic energy of relativistic electrons,</span>
 
 <span class="sd">    .. math::</span>
 
@@ -606,10 +616,8 @@
 <span class="sd">        If no units are attached, values are interpreted as</span>
 <span class="sd">        :math:`\mathrm{erg\,cm^{-3}}`.</span>
 <span class="sd">    epsilon_e : float or ~numpy.ndarray</span>
-<span class="sd">        Fraction of the thermal energy density placed in electrons.</span>
-<span class="sd">        Physically, this should usually satisfy</span>
-<span class="sd">        :math:`0 \leq \epsilon_e \leq 1`, though this function does not</span>
-<span class="sd">        enforce that bound.</span>
+<span class="sd">        Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons. Physically,</span>
+<span class="sd">        this should usually satisfy :math:`0 \leq \epsilon_e \leq 1`, though this function does not enforce that bound.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -620,7 +628,7 @@
 <span class="sd">    -----</span>
 <span class="sd">    This is a simple equipartition-style closure for the electron energy</span>
 <span class="sd">    reservoir. It does not specify the shape, normalization, or cutoffs of the</span>
-<span class="sd">    electron distribution function; it only computes the n_total electron energy</span>
+<span class="sd">    electron distribution function; it only computes the electron (kinetic) energy</span>
 <span class="sd">    density available to that distribution.</span>
 
 <span class="sd">    Examples</span>
@@ -1487,9 +1495,9 @@
 <span class="sd">        where :math:`M_k` is the :math:`k`-th raw moment of the electron</span>
 <span class="sd">        Lorentz-factor shape function.</span>
 
-<span class="sd">        This includes the electron rest-mass energy and follows the standard</span>
-<span class="sd">        ultra-relativistic synchrotron convention in which electron energies</span>
-<span class="sd">        are written as :math:`E = \gamma m_e c^2`.</span>
+<span class="sd">        This includes the electron rest-mass energy, :math:`E = \gamma m_e c^2`.</span>
+<span class="sd">        Energy budgets (:math:`\epsilon_e`) use the kinetic energy instead; see</span>
+<span class="sd">        :meth:`mean_kinetic_energy`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1561,13 +1569,27 @@
         <span class="k">return</span> <span class="n">n_eff</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_first_kinetic_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Mean kinetic energy per particle in units of :math:`m_e c^2`, :math:`M^{(1)} - M^{(0)}`."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_kinetic_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Refuse energy-budget normalizations of distributions with (almost) no kinetic energy."""</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_opt_first_kinetic_moment</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">_MIN_KINETIC_MOMENT</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"The distribution carries almost no kinetic energy (mean kinetic energy &lt; </span><span class="si">{</span><span class="n">_MIN_KINETIC_MOMENT</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> "</span>
+                <span class="s2">"m_e c^2), so an energy-based normalization is ill-conditioned."</span>
+            <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_magnetic_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">u_B</span> <span class="o">=</span> <span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_first_kinetic_moment</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">))</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_energy_density</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">u_therm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">epsilon_E</span> <span class="o">*</span> <span class="n">u_therm</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">epsilon_E</span> <span class="o">*</span> <span class="n">u_therm</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_first_kinetic_moment</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">))</span>
 
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="c1"># Normalization (Public)                                             #</span>
@@ -1631,30 +1653,38 @@
 
 <span class="sd">        .. math::</span>
 
-<span class="sd">            N_0\, m_e c^2\, M^{(1)} = \\frac{\\varepsilon_E}{\\varepsilon_B}</span>
-<span class="sd">            \\frac{B^2}{8\pi}</span>
+<span class="sd">            N_0\, m_e c^2\, \langle \gamma - 1 \rangle</span>
+<span class="sd">            = \frac{\varepsilon_E}{\varepsilon_B} \frac{B^2}{8\pi}</span>
 
-<span class="sd">        for :math:`N_0`, where :math:`M^{(1)}` is the first moment of</span>
-<span class="sd">        :meth:`pdf`.</span>
+<span class="sd">        for :math:`N_0`, where :math:`\langle \gamma - 1 \rangle = M^{(1)} - M^{(0)}` is the mean kinetic energy per</span>
+<span class="sd">        particle of :meth:`pdf`, in units of :math:`m_e c^2`. Rest-mass energy is excluded because</span>
+<span class="sd">        :math:`\varepsilon_E` and :math:`\varepsilon_B` are fractions of the thermal (internal) energy density.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        B : float, array-like, or ~astropy.units.Quantity</span>
 <span class="sd">            Magnetic field strength.  Bare values are interpreted as Gauss.</span>
 <span class="sd">        epsilon_B : float or array-like</span>
-<span class="sd">            Fraction of thermal energy in the magnetic field.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        epsilon_E : float or array-like</span>
-<span class="sd">            Fraction of thermal energy in relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        **params</span>
 <span class="sd">            Distribution-specific parameters.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ~astropy.units.Quantity</span>
-<span class="sd">            Power-law normalization :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.</span>
+<span class="sd">            Distribution amplitude :math:`N_0` in :math:`\mathrm{cm^{-3}}`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the distribution carries almost no kinetic energy (:math:`\langle \gamma - 1 \rangle &lt; 10^{-8}`), which</span>
+<span class="sd">            makes the normalization ill-conditioned.</span>
 <span class="sd">        """</span>
         <span class="n">B_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_check_kinetic_moment</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_normalize_from_magnetic_field</span><span class="p">(</span><span class="n">B_cgs</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span></div>
 
 
@@ -1669,27 +1699,36 @@
 
 <span class="sd">        .. math::</span>
 
-<span class="sd">            N_0\, m_e c^2\, M^{(1)} = \\varepsilon_E\, u_{\\rm int}</span>
+<span class="sd">            N_0\, m_e c^2\, \langle \gamma - 1 \rangle = \varepsilon_E\, u_{\rm int}</span>
 
-<span class="sd">        for :math:`N_0`.</span>
+<span class="sd">        for :math:`N_0`, where :math:`\langle \gamma - 1 \rangle = M^{(1)} - M^{(0)}` is the mean kinetic energy per</span>
+<span class="sd">        particle of :meth:`pdf`, in units of :math:`m_e c^2`, and :math:`u_{\rm int}` is the internal (thermal) energy</span>
+<span class="sd">        density, which excludes rest mass.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        u_therm : float, array-like, or ~astropy.units.Quantity</span>
-<span class="sd">            Thermal energy density.  Bare values are interpreted as</span>
-<span class="sd">            :math:`\\mathrm{erg\,cm^{-3}}`.</span>
+<span class="sd">            Internal (thermal) energy density, excluding rest mass.  Bare values are interpreted as</span>
+<span class="sd">            :math:`\mathrm{erg\,cm^{-3}}`.</span>
 <span class="sd">        epsilon_E : float or array-like</span>
-<span class="sd">            Fraction of thermal energy in relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        **params</span>
 <span class="sd">            Distribution-specific parameters.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ~astropy.units.Quantity</span>
-<span class="sd">            Distribution amplitude :math:`N_0` in :math:`\\mathrm{cm^{-3}}`.</span>
+<span class="sd">            Distribution amplitude :math:`N_0` in :math:`\mathrm{cm^{-3}}`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the distribution carries almost no kinetic energy (:math:`\langle \gamma - 1 \rangle &lt; 10^{-8}`), which</span>
+<span class="sd">            makes the normalization ill-conditioned.</span>
 <span class="sd">        """</span>
         <span class="n">u_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">u_therm</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_check_kinetic_moment</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_normalize_from_energy_density</span><span class="p">(</span><span class="n">u_cgs</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span></div>
 
 
@@ -1789,9 +1828,9 @@
 <span class="sd">        B : float, array-like, or ~astropy.units.Quantity</span>
 <span class="sd">            Magnetic field strength.  Bare values are interpreted as Gauss.</span>
 <span class="sd">        epsilon_B : float or array-like</span>
-<span class="sd">            Fraction of thermal energy in the magnetic field.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        epsilon_E : float or array-like</span>
-<span class="sd">            Fraction of thermal energy in relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        **params</span>
 <span class="sd">            Distribution-specific parameters.</span>
 
@@ -1823,9 +1862,9 @@
 <span class="sd">            Thermal energy density.  Bare values are interpreted as</span>
 <span class="sd">            :math:`\mathrm{erg\,cm^{-3}}`.</span>
 <span class="sd">        epsilon_B : float or array-like</span>
-<span class="sd">            Fraction of thermal energy in the magnetic field.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        epsilon_E : float or array-like</span>
-<span class="sd">            Fraction of thermal energy in relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        **params</span>
 <span class="sd">            Distribution-specific parameters.</span>
 
@@ -2860,9 +2899,157 @@
 
 
 
+<span class="c1"># =========================================================================== #</span>
+<span class="c1"># Energy budget of thermal electrons                                          #</span>
+<span class="c1"># =========================================================================== #</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ThermalElectronBudget</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Energy-budget normalizations for distributions with thermal electrons.</span>
+
+<span class="sd">    The thermal-electron energy is set by ``epsilon_T``, the ratio of the thermal-electron to the ion energy. The</span>
+<span class="sd">    magnetic and non-thermal electron energies are removed first (see :mod:`trilobite.physics_utils.thermal_partition`),</span>
+<span class="sd">    so that the thermal electrons carry</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        u_{e,\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}\, u_{\rm th}.</span>
+
+<span class="sd">    The methods below take ``epsilon_T``, ``epsilon_B`` and ``epsilon_E`` as keyword arguments, convert them to the</span>
+<span class="sd">    single electron energy fraction of the base class, and forward to its methods.</span>
+<span class="sd">    """</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_energy_budget</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Return the fraction of :math:`u_{\rm th}` in this distribution's electrons and the processed parameters."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_from_magnetic_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Compute N₀ via equipartition with a magnetic field.</span>
+
+<span class="sd">        As :meth:`ElectronDistribution.normalize_from_magnetic_field`, with the electron energy fraction set by</span>
+<span class="sd">        ``epsilon_T``, ``epsilon_B`` and ``epsilon_E``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        B : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">            Magnetic field strength.  Bare values are interpreted as Gauss.</span>
+<span class="sd">        epsilon_B : float or array-like</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
+<span class="sd">        epsilon_T : float or array-like</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy.</span>
+<span class="sd">        epsilon_E : float or array-like, optional</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.</span>
+<span class="sd">        **params</span>
+<span class="sd">            Distribution-specific parameters.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~astropy.units.Quantity</span>
+<span class="sd">            Distribution amplitude :math:`N_0` in :math:`\mathrm{cm^{-3}}`.</span>
+<span class="sd">        """</span>
+        <span class="n">fraction</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_split_energy_budget</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">normalize_from_magnetic_field</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">fraction</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_from_energy_density</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">u_therm</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Compute N₀ from the thermal energy density.</span>
+
+<span class="sd">        As :meth:`ElectronDistribution.normalize_from_energy_density`, with the electron energy fraction set by</span>
+<span class="sd">        ``epsilon_T``, ``epsilon_B`` and ``epsilon_E``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        u_therm : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">            Internal (thermal) energy density, excluding rest mass.  Bare values are interpreted as</span>
+<span class="sd">            :math:`\mathrm{erg\,cm^{-3}}`.</span>
+<span class="sd">        epsilon_T : float or array-like</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy.</span>
+<span class="sd">        epsilon_B : float or array-like</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
+<span class="sd">        epsilon_E : float or array-like, optional</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.</span>
+<span class="sd">        **params</span>
+<span class="sd">            Distribution-specific parameters.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~astropy.units.Quantity</span>
+<span class="sd">            Distribution amplitude :math:`N_0` in :math:`\mathrm{cm^{-3}}`.</span>
+<span class="sd">        """</span>
+        <span class="n">fraction</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_split_energy_budget</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">normalize_from_energy_density</span><span class="p">(</span><span class="n">u_therm</span><span class="p">,</span> <span class="n">fraction</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bol_emiss_from_magnetic_field</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Bolometric synchrotron emissivity from a magnetic field via equipartition.</span>
+
+<span class="sd">        As :meth:`ElectronDistribution.bol_emiss_from_magnetic_field`, with the electron energy fraction set by</span>
+<span class="sd">        ``epsilon_T``, ``epsilon_B`` and ``epsilon_E``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        B : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">            Magnetic field strength.  Bare values are interpreted as Gauss.</span>
+<span class="sd">        epsilon_B : float or array-like</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
+<span class="sd">        epsilon_T : float or array-like</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy.</span>
+<span class="sd">        epsilon_E : float or array-like, optional</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.</span>
+<span class="sd">        **params</span>
+<span class="sd">            Distribution-specific parameters.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~astropy.units.Quantity</span>
+<span class="sd">            Bolometric synchrotron emissivity in :math:`\mathrm{erg\,s^{-1}\,cm^{-3}}`.</span>
+<span class="sd">        """</span>
+        <span class="n">fraction</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_split_energy_budget</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">bol_emiss_from_magnetic_field</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">fraction</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bol_emiss_from_energy_density</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">u_therm</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Bolometric synchrotron emissivity from the thermal energy density via equipartition.</span>
+
+<span class="sd">        As :meth:`ElectronDistribution.bol_emiss_from_energy_density`, with the electron energy fraction set by</span>
+<span class="sd">        ``epsilon_T``, ``epsilon_B`` and ``epsilon_E``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        u_therm : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">            Thermal energy density.  Bare values are interpreted as :math:`\mathrm{erg\,cm^{-3}}`.</span>
+<span class="sd">        epsilon_B : float or array-like</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
+<span class="sd">        epsilon_T : float or array-like</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy.</span>
+<span class="sd">        epsilon_E : float or array-like, optional</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.</span>
+<span class="sd">        **params</span>
+<span class="sd">            Distribution-specific parameters.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~astropy.units.Quantity</span>
+<span class="sd">            Bolometric synchrotron emissivity in :math:`\mathrm{erg\,s^{-1}\,cm^{-3}}`.</span>
+<span class="sd">        """</span>
+        <span class="n">fraction</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_split_energy_budget</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">bol_emiss_from_energy_density</span><span class="p">(</span><span class="n">u_therm</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">fraction</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="MaxwellJuettner">
 <a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.html#trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">MaxwellJuettner</span><span class="p">(</span><span class="n">ElectronDistribution</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaxwellJuettner</span><span class="p">(</span><span class="n">_ThermalElectronBudget</span><span class="p">,</span> <span class="n">ElectronDistribution</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Relativistic thermal electron distribution (Maxwell-Jüttner).</span>
 
@@ -2944,11 +3131,16 @@
 <span class="sd">        \approx</span>
 <span class="sd">        \frac{15\Theta^2 + 11\Theta + 4}{4 + 5\Theta},</span>
 
-<span class="sd">    accurate to :math:`\lesssim 1\%` for all :math:`\Theta &gt; 0`; see</span>
+<span class="sd">    accurate to :math:`\lesssim 1.3\%` for all :math:`\Theta &gt; 0`; see</span>
 <span class="sd">    :meth:`approx_first_moment`.</span>
 
 <span class="sd">    **Normalization.** The amplitude :math:`N_0` is equal to the total</span>
 <span class="sd">    number density :math:`n_e` because :math:`M_0 = 1`.</span>
+
+<span class="sd">    When :math:`N_0` is instead fixed by an energy budget</span>
+<span class="sd">    (:meth:`normalize_from_energy_density`, :meth:`normalize_from_magnetic_field`), the kinetic energy per particle</span>
+<span class="sd">    :math:`\langle\gamma - 1\rangle = M_1 - 1` sets the amplitude, as for every distribution in this module. It is</span>
+<span class="sd">    exact, and is about :math:`3\Theta/2` for :math:`\Theta \ll 1`.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -3014,57 +3206,37 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_parameters</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">"Theta"</span><span class="p">:</span> <span class="n">_f8</span><span class="p">(</span><span class="n">Theta</span><span class="p">)[</span><span class="mi">0</span><span class="p">]}</span>
 
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_energy_budget</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span> <span class="o">=</span> <span class="n">_validate_partition</span><span class="p">(</span>
+            <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">epsilon_E</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">_opt_thermal_electron_energy_fraction</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">),</span> <span class="n">params</span>
+
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="c1"># Unvalidated backends                                               #</span>
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="c1"># No validation or coercion; floats or float64 arrays, broadcast with standard NumPy rules.</span>
+    <span class="c1"># The math lives in :mod:`trilobite.physics_utils.maxwell_juettner`; these are thin delegates.</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_opt_pdf</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
-        <span class="n">inside_support</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">&gt;=</span> <span class="mf">1.0</span>
-
-        <span class="c1"># Clamp to 1.0 so sqrt(1 - gamma^{-2}) is defined for out-of-support elements;</span>
-        <span class="c1"># np.where selects 0.0 for those positions anyway.</span>
-        <span class="n">gamma_safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-        <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">gamma_safe</span><span class="o">**-</span><span class="mi">2</span><span class="p">)</span>
-
-        <span class="c1"># Use exponentially scaled K_2 for numerical stability:</span>
-        <span class="c1">#</span>
-        <span class="c1">#   exp(-gamma/Theta) / K_2(1/Theta) = exp((1 - gamma)/Theta) / kve(2, 1/Theta).</span>
-        <span class="n">normalization</span> <span class="o">=</span> <span class="n">Theta</span> <span class="o">*</span> <span class="n">kve</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">Theta</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="n">inside_support</span><span class="p">,</span>
-            <span class="n">norm</span> <span class="o">*</span> <span class="n">gamma_safe</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">gamma_safe</span><span class="p">)</span> <span class="o">/</span> <span class="n">Theta</span><span class="p">)</span> <span class="o">/</span> <span class="n">normalization</span><span class="p">,</span>
-            <span class="mf">0.0</span><span class="p">,</span>
-        <span class="p">)[()]</span>
+        <span class="k">return</span> <span class="n">_opt_mj_pdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
-        <span class="c1"># Closed forms for orders 0-2; higher orders use quadrature, looped over any array of temperatures.</span>
-        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">Theta</span><span class="p">)[()]</span>
+        <span class="k">return</span> <span class="n">_opt_mj_moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">Theta</span><span class="p">)</span>
 
-        <span class="n">z</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">Theta</span>
-        <span class="n">k1_over_k2</span> <span class="o">=</span> <span class="n">kve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="n">kve</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">k1_over_k2</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">Theta</span>
-
-        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">Theta</span> <span class="o">*</span> <span class="n">k1_over_k2</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">_quad</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">g</span><span class="o">**</span><span class="n">order</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">theta</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">_quad</span><span class="p">,</span> <span class="n">otypes</span><span class="o">=</span><span class="p">[</span><span class="s2">"f8"</span><span class="p">])(</span><span class="n">Theta</span><span class="p">)[()]</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_first_kinetic_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_opt_mj_exact_mean_kinetic_energy</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>  <span class="c1"># not M1 - M0, which cancels at small Theta</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_opt_approx_first_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="mf">15.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">11.0</span> <span class="o">*</span> <span class="n">Theta</span> <span class="o">+</span> <span class="mf">4.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">Theta</span> <span class="o">+</span> <span class="mf">4.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_opt_mj_approx_mean_lorentz_factor</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_opt_approx_first_kinetic_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">Theta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">+</span> <span class="mf">15.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">+</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_opt_mj_approx_mean_kinetic_energy</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
 
     <span class="c1"># ---------------------------------------------- #</span>
     <span class="c1"># Statistical Methods                            #</span>
@@ -3247,9 +3419,8 @@
 
 <span class="sd">        .. note::</span>
 
-<span class="sd">            Relative to the literature, we here maintain the standard convention and consider</span>
-<span class="sd">            the total (not just kinetic) energy of the electrons, i.e., we include the rest mass</span>
-<span class="sd">            energy in the definition of the Lorentz factor.</span>
+<span class="sd">            This is the mean of :math:`\gamma`, so it includes the rest mass. Energy budgets use the</span>
+<span class="sd">            kinetic energy :math:`\langle \gamma - 1 \rangle`; see :meth:`approx_first_kinetic_moment`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3397,34 +3568,7 @@
         <span class="k">if</span> <span class="n">Theta</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`MaxwellJuettner.cdf` shares one integration grid and requires a scalar `Theta`."</span><span class="p">)</span>
 
-        <span class="n">gamma_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
-        <span class="n">scalar_input</span> <span class="o">=</span> <span class="n">gamma_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="n">gamma_flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">gamma_array</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-
-        <span class="n">Theta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-        <span class="n">norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span>
-
-        <span class="c1"># Practical upper limit: MJ PDF decays exponentially above ~20 Theta</span>
-        <span class="n">g_upper</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">gamma_flat</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.01</span>
-        <span class="n">g_upper</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">g_upper</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="n">Theta</span><span class="p">)</span>
-
-        <span class="c1"># Log-spaced grid is dense near gamma=1 (where the PDF rises steeply)</span>
-        <span class="c1"># and sparser at high gamma (where the PDF is negligible)</span>
-        <span class="n">g_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">g_upper</span><span class="p">),</span> <span class="mi">10_000</span><span class="p">))</span>
-        <span class="n">pdf_grid</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">g_grid</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Theta</span><span class="p">)</span>
-
-        <span class="c1"># Vectorized cumulative trapezoidal rule; no additional imports needed</span>
-        <span class="n">dg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">g_grid</span><span class="p">)</span>
-        <span class="n">cdf_increments</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">pdf_grid</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">pdf_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">*</span> <span class="n">dg</span>
-        <span class="n">cdf_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">cdf_increments</span><span class="p">)])</span>
-
-        <span class="c1"># Interpolate to requested values; clamp below gamma_min=1 to 0</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">gamma_flat</span><span class="p">,</span> <span class="n">g_grid</span><span class="p">,</span> <span class="n">cdf_grid</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">cdf_grid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">gamma_flat</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">scalar_input</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">gamma_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">_opt_mj_cdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">Theta</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span></div>
 
 
     <span class="c1"># ------------------------------------------------------------------ #</span>
@@ -3438,16 +3582,7 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_n_total</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">n_total</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">n_total</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_magnetic_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Theta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="n">u_B</span> <span class="o">=</span> <span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_approx_first_moment</span><span class="p">(</span><span class="n">Theta</span><span class="p">))</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_from_energy_density</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">u_therm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Theta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">epsilon_E</span> <span class="o">*</span> <span class="n">u_therm</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_approx_first_moment</span><span class="p">(</span><span class="n">Theta</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">n_total</span></div>
 
 
 
@@ -3456,26 +3591,39 @@
 <span class="c1"># =========================================================================== #</span>
 <div class="viewcode-block" id="MixedThermalNonThermal">
 <a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">MixedThermalNonThermal</span><span class="p">(</span><span class="n">ElectronDistribution</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MixedThermalNonThermal</span><span class="p">(</span><span class="n">_ThermalElectronBudget</span><span class="p">,</span> <span class="n">ElectronDistribution</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Base class for mixed thermal and non-thermal electron distributions.</span>
 
-<span class="sd">    This class represents a mixture of a thermal Maxwell-Jüttner component and</span>
-<span class="sd">    a non-thermal component,</span>
+<span class="sd">    This class represents a mixture of a thermal Maxwell-Jüttner component and a non-thermal component supplied by</span>
+<span class="sd">    subclasses through ``NON_THERMAL_DISTRIBUTION``. The mixture is set by the energy budget</span>
+<span class="sd">    (see :mod:`trilobite.physics_utils.thermal_partition`), through three fractions of the thermal energy density</span>
+<span class="sd">    :math:`u_{\rm th}`:</span>
+
+<span class="sd">    * ``epsilon_B``: the magnetic field,</span>
+<span class="sd">    * ``epsilon_E``: the kinetic energy of the non-thermal electrons,</span>
+<span class="sd">    * ``epsilon_T``: the ratio of the thermal-electron to the ion energy, so that the thermal electrons carry</span>
+<span class="sd">      :math:`\epsilon_T (1 - \epsilon_B - \epsilon_E) / (1 + \epsilon_T)\, u_{\rm th}`.</span>
+
+<span class="sd">    The electron fraction in the thermal component is then proportional to :math:`f_{\rm th} / K_{\rm th}`, and in</span>
+<span class="sd">    the non-thermal component to :math:`\epsilon_E / K_{\rm nth}`:</span>
 
 <span class="sd">    .. math::</span>
 
 <span class="sd">        f_{\rm mix}(\gamma)</span>
 <span class="sd">        =</span>
-<span class="sd">        \delta f_{\rm th}(\gamma)</span>
-<span class="sd">        +</span>
-<span class="sd">        (1-\delta) f_{\rm nth}(\gamma),</span>
+<span class="sd">        \frac{</span>
+<span class="sd">            (f_{\rm th} / K_{\rm th})\, f_{\rm MJ}(\gamma)</span>
+<span class="sd">            + (\epsilon_E / K_{\rm nth})\, f_{\rm nth}(\gamma)</span>
+<span class="sd">        }{</span>
+<span class="sd">            f_{\rm th} / K_{\rm th} + \epsilon_E / K_{\rm nth}</span>
+<span class="sd">        },</span>
+<span class="sd">        \qquad</span>
+<span class="sd">        f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T},</span>
 
-<span class="sd">    where :math:`0 \leq \delta \leq 1`.</span>
-
-<span class="sd">    The thermal component is taken to be the Maxwell-Jüttner distribution, and</span>
-<span class="sd">    the non-thermal component is supplied by subclasses through</span>
-<span class="sd">    ``NON_THERMAL_DISTRIBUTION``.</span>
+<span class="sd">    where :math:`f_{\rm MJ}` and :math:`f_{\rm nth}` are unit-normalized components and</span>
+<span class="sd">    :math:`K = \langle \gamma - 1 \rangle` is the mean kinetic energy per electron of each component (in units of</span>
+<span class="sd">    :math:`m_e c^2`).</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -3485,32 +3633,21 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The non-thermal classes in this module generally define shape functions</span>
-<span class="sd">    rather than probability-normalized distributions. Therefore, this class</span>
-<span class="sd">    internally normalizes the non-thermal shape by its zeroth moment,</span>
+<span class="sd">    The non-thermal classes in this module define shape functions rather than probability-normalized distributions,</span>
+<span class="sd">    so the non-thermal shape is divided by its zeroth moment first. Then :math:`\int f_{\rm mix}\,d\gamma = 1`, and</span>
+<span class="sd">    ``norm`` is the total electron number density.</span>
+
+<span class="sd">    Writing :math:`\delta = f_{\rm th} / (f_{\rm th} + \epsilon_E)` for the thermal share of the electron kinetic</span>
+<span class="sd">    energy, the mixture's mean kinetic energy is</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        f_{\rm nth}(\gamma)</span>
-<span class="sd">        =</span>
-<span class="sd">        \frac{</span>
-<span class="sd">            f_{\rm shape,nth}(\gamma)</span>
-<span class="sd">        }{</span>
-<span class="sd">            M_{\rm nth}^{(0)}</span>
-<span class="sd">        }.</span>
+<span class="sd">        \langle \gamma - 1 \rangle_{\rm mix}</span>
+<span class="sd">        = \left[\frac{\delta}{K_{\rm th}} + \frac{1-\delta}{K_{\rm nth}}\right]^{-1},</span>
 
-<span class="sd">    With this convention,</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \int f_{\rm mix}(\gamma)\,d\gamma = 1,</span>
-
-<span class="sd">    and ``delta`` is a true number-fraction mixture weight.</span>
-
-<span class="sd">    This is distinct from an energy-fraction parameter. If ``delta`` is instead</span>
-<span class="sd">    intended to represent the fraction of electron energy in the thermal</span>
-<span class="sd">    population, the component normalizations should be computed separately from</span>
-<span class="sd">    their energy budgets rather than treated as a direct PDF mixture weight.</span>
+<span class="sd">    so the electron energy :math:`(f_{\rm th} + \epsilon_E)\, u_{\rm th}` fixes</span>
+<span class="sd">    :math:`N_0 = (f_{\rm th} + \epsilon_E)\, u_{\rm th} / (m_e c^2 \langle \gamma - 1 \rangle_{\rm mix})`.</span>
+<span class="sd">    The shape therefore depends on ``epsilon_B``, because the magnetic energy is removed from the budget first.</span>
 <span class="sd">    """</span>
 
     <span class="n">THERMAL_DISTRIBUTION</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">ElectronDistribution</span><span class="p">]]</span> <span class="o">=</span> <span class="n">MaxwellJuettner</span>
@@ -3527,7 +3664,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        delta : float</span>
-<span class="sd">            Fractional weight of the thermal Maxwell-Jüttner component.</span>
+<span class="sd">            Fraction of the electron kinetic energy in the thermal component.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -3561,12 +3698,35 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_and_process_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_thermal_energy_share</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Return the fraction of :math:`u_{\rm th}` in all electrons and the thermal share :math:`\delta` of it."""</span>
+        <span class="k">if</span> <span class="n">epsilon_T</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">epsilon_B</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">epsilon_E</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`epsilon_T`, `epsilon_B` and `epsilon_E` are required for a mixed distribution."</span><span class="p">)</span>
+        <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span> <span class="o">=</span> <span class="n">_validate_partition</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">thermal</span> <span class="o">=</span> <span class="n">_opt_thermal_electron_energy_fraction</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">)</span>
+        <span class="n">electrons</span> <span class="o">=</span> <span class="n">thermal</span> <span class="o">+</span> <span class="n">epsilon_E</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">electrons</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The electrons carry no energy: `epsilon_T` and `epsilon_E` cannot both be zero."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">electrons</span><span class="p">,</span> <span class="n">thermal</span> <span class="o">/</span> <span class="n">electrons</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_energy_budget</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="n">electrons</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_thermal_energy_share</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">electrons</span><span class="p">,</span> <span class="p">{</span><span class="o">**</span><span class="n">params</span><span class="p">,</span> <span class="s2">"delta"</span><span class="p">:</span> <span class="n">delta</span><span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_and_process_parameters</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Validate the mixture and component parameters and return them, merged, as ``float64`` arrays.</span>
 
-<span class="sd">        Also checks that the non-thermal component is normalizable.</span>
+<span class="sd">        The thermal share ``delta`` of the electron kinetic energy is either given directly (the energy-budget methods</span>
+<span class="sd">        resolve it first) or computed from ``epsilon_T``, ``epsilon_B`` and ``epsilon_E``. Also checks that the</span>
+<span class="sd">        non-thermal component is normalizable.</span>
 <span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">delta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_thermal_energy_share</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">)</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_mixture_parameter</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_non_thermal_distribution</span><span class="p">()</span>
 
@@ -3582,6 +3742,8 @@
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">m0</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The zeroth moment of the non-thermal component must be positive."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_opt_kinetic_energies</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">thermal</span><span class="p">,</span> <span class="o">**</span><span class="n">non_thermal</span><span class="p">})[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The non-thermal component must carry kinetic energy, &lt;gamma - 1&gt; &gt; 0."</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">thermal</span><span class="p">,</span> <span class="o">**</span><span class="n">non_thermal</span><span class="p">,</span> <span class="s2">"delta"</span><span class="p">:</span> <span class="n">_f8</span><span class="p">(</span><span class="n">delta</span><span class="p">)[</span><span class="mi">0</span><span class="p">]}</span>
 
@@ -3590,26 +3752,48 @@
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="c1"># No validation or coercion; ``params`` is the merged dictionary from `_validate_and_process_parameters`.</span>
     <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_kinetic_energies</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Mean kinetic energy :math:`\langle \gamma - 1 \rangle` of the thermal and the non-thermal component."""</span>
+        <span class="n">K_th</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_first_kinetic_moment</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">K_nth</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_first_kinetic_moment</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">K_th</span><span class="p">,</span> <span class="n">K_nth</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_number_fractions</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Fractions of the electrons in the thermal and non-thermal components for the energy fraction ``delta``."""</span>
+        <span class="n">K_th</span><span class="p">,</span> <span class="n">K_nth</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_kinetic_energies</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">thermal</span><span class="p">,</span> <span class="n">non_thermal</span> <span class="o">=</span> <span class="n">delta</span> <span class="o">/</span> <span class="n">K_th</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">/</span> <span class="n">K_nth</span>
+        <span class="k">return</span> <span class="n">thermal</span> <span class="o">/</span> <span class="p">(</span><span class="n">thermal</span> <span class="o">+</span> <span class="n">non_thermal</span><span class="p">),</span> <span class="n">non_thermal</span> <span class="o">/</span> <span class="p">(</span><span class="n">thermal</span> <span class="o">+</span> <span class="n">non_thermal</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_first_kinetic_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="n">K_th</span><span class="p">,</span> <span class="n">K_nth</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_kinetic_energies</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">delta</span> <span class="o">/</span> <span class="n">K_th</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">/</span> <span class="n">K_nth</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_opt_pdf</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="n">thermal</span><span class="p">,</span> <span class="n">non_thermal</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_number_fractions</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="n">thermal_pdf</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="n">non_thermal_pdf</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta</span> <span class="o">*</span> <span class="n">thermal_pdf</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">non_thermal_pdf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">thermal</span> <span class="o">*</span> <span class="n">thermal_pdf</span> <span class="o">+</span> <span class="n">non_thermal</span> <span class="o">*</span> <span class="n">non_thermal_pdf</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">1.0</span>
 
+        <span class="n">thermal</span><span class="p">,</span> <span class="n">non_thermal</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_number_fractions</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="n">thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="n">non_thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">thermal_moment</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">non_thermal_moment</span>
+        <span class="k">return</span> <span class="n">thermal</span> <span class="o">*</span> <span class="n">thermal_moment</span> <span class="o">+</span> <span class="n">non_thermal</span> <span class="o">*</span> <span class="n">non_thermal_moment</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_opt_moment_between</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="c1"># The Maxwell-Juttner truncated moment is a scalar numerical integral (base-class quadrature).</span>
+        <span class="n">thermal</span><span class="p">,</span> <span class="n">non_thermal</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_number_fractions</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="n">thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">moment_between</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="n">non_thermal_moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NON_THERMAL_DISTRIBUTION</span><span class="o">.</span><span class="n">_opt_moment_between</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">thermal_moment</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">non_thermal_moment</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">thermal</span> <span class="o">*</span> <span class="n">thermal_moment</span> <span class="o">+</span> <span class="n">non_thermal</span> <span class="o">*</span> <span class="n">non_thermal_moment</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_thermal_m0</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------------------------ #</span>
     <span class="c1"># Distribution Interface                                             #</span>
@@ -3622,7 +3806,9 @@
         <span class="n">gamma</span><span class="p">:</span> <span class="s2">"_ArrayLike"</span><span class="p">,</span>
         <span class="n">norm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="o">**</span><span class="n">params</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
@@ -3632,18 +3818,11 @@
 
 <span class="sd">        .. math::</span>
 
-<span class="sd">            N(\gamma)</span>
-<span class="sd">            =</span>
-<span class="sd">            N_0</span>
-<span class="sd">            \left[</span>
-<span class="sd">            \delta f_{\rm MJ}(\gamma)</span>
-<span class="sd">            +</span>
-<span class="sd">            (1-\delta) f_{\rm nth}(\gamma)</span>
-<span class="sd">            \right],</span>
+<span class="sd">            N(\gamma) = N_0\,f_{\rm mix}(\gamma),</span>
 
-<span class="sd">        where :math:`f_{\rm MJ}` is the normalized Maxwell-Jüttner</span>
-<span class="sd">        distribution and :math:`f_{\rm nth}` is the normalized non-thermal</span>
-<span class="sd">        component.</span>
+<span class="sd">        where :math:`f_{\rm mix}` is the mixture of the unit-normalized</span>
+<span class="sd">        Maxwell-Jüttner and non-thermal components defined in the class</span>
+<span class="sd">        docstring.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3652,9 +3831,12 @@
 <span class="sd">            distribution.</span>
 <span class="sd">        norm : float, optional</span>
 <span class="sd">            Distribution amplitude :math:`N_0`. Default is ``1.0``.</span>
-<span class="sd">        delta : float</span>
-<span class="sd">            Mixture weight of the thermal Maxwell-Jüttner component. Must</span>
-<span class="sd">            satisfy ``0 &lt;= delta &lt;= 1``.</span>
+<span class="sd">        epsilon_T : float</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy.</span>
+<span class="sd">        epsilon_B : float</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
+<span class="sd">        epsilon_E : float</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.</span>
 <span class="sd">        **params</span>
 <span class="sd">            Parameters forwarded to the thermal and non-thermal component</span>
 <span class="sd">            distributions. For example, ``Theta`` is used by the</span>
@@ -3666,7 +3848,9 @@
 <span class="sd">        float or ~numpy.ndarray</span>
 <span class="sd">            Mixed electron distribution evaluated at ``gamma``.</span>
 <span class="sd">        """</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span>
+            <span class="n">epsilon_T</span><span class="o">=</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span>
+        <span class="p">)</span>
         <span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_pdf</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
@@ -3712,7 +3896,9 @@
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">order</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="o">**</span><span class="n">params</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
@@ -3724,11 +3910,11 @@
 
 <span class="sd">            M_k^{\rm mix}</span>
 <span class="sd">            =</span>
-<span class="sd">            \delta M_k^{\rm MJ}</span>
+<span class="sd">            w_{\rm th} M_k^{\rm MJ}</span>
 <span class="sd">            +</span>
-<span class="sd">            (1-\delta) M_k^{\rm nth,norm},</span>
+<span class="sd">            (1-w_{\rm th}) M_k^{\rm nth,norm},</span>
 
-<span class="sd">        where</span>
+<span class="sd">        where :math:`w_{\rm th}` is the thermal electron fraction set by the energy budget (see the class docstring) and</span>
 
 <span class="sd">        .. math::</span>
 
@@ -3744,8 +3930,12 @@
 <span class="sd">        ----------</span>
 <span class="sd">        order : float</span>
 <span class="sd">            Moment order :math:`k`.</span>
-<span class="sd">        delta : float</span>
-<span class="sd">            Mixture weight of the thermal Maxwell-Jüttner component.</span>
+<span class="sd">        epsilon_T : float</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy.</span>
+<span class="sd">        epsilon_B : float</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
+<span class="sd">        epsilon_E : float</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.</span>
 <span class="sd">        **params</span>
 <span class="sd">            Parameters forwarded to the component distributions.</span>
 
@@ -3754,7 +3944,9 @@
 <span class="sd">        float</span>
 <span class="sd">            Raw moment of the normalized mixture shape.</span>
 <span class="sd">        """</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span>
+            <span class="n">epsilon_T</span><span class="o">=</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">),</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 
@@ -3767,7 +3959,9 @@
         <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="o">**</span><span class="n">params</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
@@ -3779,12 +3973,13 @@
 
 <span class="sd">            M_k^{\rm mix}(a,b)</span>
 <span class="sd">            =</span>
-<span class="sd">            \delta M_k^{\rm MJ}(a,b)</span>
+<span class="sd">            w_{\rm th} M_k^{\rm MJ}(a,b)</span>
 <span class="sd">            +</span>
-<span class="sd">            (1-\delta) M_k^{\rm nth,norm}(a,b),</span>
+<span class="sd">            (1-w_{\rm th}) M_k^{\rm nth,norm}(a,b),</span>
 
-<span class="sd">        where the non-thermal component is normalized by its full zeroth</span>
-<span class="sd">        moment.</span>
+<span class="sd">        where :math:`w_{\rm th}` is the thermal electron fraction set by</span>
+<span class="sd">        the energy budget and the non-thermal component is normalized by its</span>
+<span class="sd">        full zeroth moment.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3794,8 +3989,12 @@
 <span class="sd">            Requested lower Lorentz-factor bound.</span>
 <span class="sd">        b : float</span>
 <span class="sd">            Requested upper Lorentz-factor bound.</span>
-<span class="sd">        delta : float</span>
-<span class="sd">            Mixture weight of the thermal Maxwell-Jüttner component.</span>
+<span class="sd">        epsilon_T : float</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy.</span>
+<span class="sd">        epsilon_B : float</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
+<span class="sd">        epsilon_E : float</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of non-thermal electrons.</span>
 <span class="sd">        **params</span>
 <span class="sd">            Parameters forwarded to the component distributions.</span>
 
@@ -3804,7 +4003,9 @@
 <span class="sd">        float</span>
 <span class="sd">            Truncated raw moment over the requested interval.</span>
 <span class="sd">        """</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_and_process_parameters</span><span class="p">(</span>
+            <span class="n">epsilon_T</span><span class="o">=</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span>
+        <span class="p">)</span>
         <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">_f8</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_moment_between</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">order</span><span class="p">),</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 </div>
@@ -3817,31 +4018,26 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Mixed Maxwell-Jüttner plus power-law electron distribution.</span>
 
-<span class="sd">    The normalized mixture shape is</span>
+<span class="sd">    The thermal Maxwell-Jüttner component :math:`f_{\rm MJ}(\gamma;\Theta)` and the power-law component</span>
+<span class="sd">    :math:`f_{\rm PL}(\gamma;p,\gamma_{\min},\gamma_{\max}) / M_{\rm PL}^{(0)}`, normalized to unit integral by the</span>
+<span class="sd">    zeroth moment of the power-law shape, are mixed according to the energy budget set by ``epsilon_T``,</span>
+<span class="sd">    ``epsilon_B`` and ``epsilon_E`` (see :class:`MixedThermalNonThermal`):</span>
 
 <span class="sd">    .. math::</span>
 
 <span class="sd">        f_{\rm mix}(\gamma)</span>
 <span class="sd">        =</span>
-<span class="sd">        \delta f_{\rm MJ}(\gamma;\Theta)</span>
-<span class="sd">        +</span>
-<span class="sd">        (1-\delta)</span>
 <span class="sd">        \frac{</span>
-<span class="sd">            f_{\rm PL}(\gamma;p,\gamma_{\min},\gamma_{\max})</span>
+<span class="sd">            (\delta / K_{\rm th})\, f_{\rm MJ}(\gamma)</span>
+<span class="sd">            + [(1-\delta) / K_{\rm nth}]\, f_{\rm PL}(\gamma) / M_{\rm PL}^{(0)}</span>
 <span class="sd">        }{</span>
-<span class="sd">            M_{\rm PL}^{(0)}</span>
+<span class="sd">            \delta / K_{\rm th} + (1-\delta) / K_{\rm nth}</span>
 <span class="sd">        },</span>
+<span class="sd">        \qquad \int f_{\rm mix}(\gamma)\,d\gamma = 1,</span>
 
-<span class="sd">    where :math:`f_{\rm MJ}` is the Maxwell-Jüttner shape (already</span>
-<span class="sd">    probability-normalised, :math:`\int f_{\rm MJ}\,d\gamma = 1`) and</span>
-<span class="sd">    :math:`M_{\rm PL}^{(0)} = \int f_{\rm PL}\,d\gamma` is the zeroth moment</span>
-<span class="sd">    of the power-law shape that re-normalises the non-thermal component to</span>
-<span class="sd">    unit integral.  With this convention :math:`\delta` is a true</span>
-<span class="sd">    number-fraction weight:</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \int f_{\rm mix}(\gamma)\,d\gamma = 1.</span>
+<span class="sd">    where :math:`K = \langle \gamma - 1 \rangle` for each component and :math:`\delta` is the thermal share of the</span>
+<span class="sd">    electron kinetic energy, :math:`\delta = f_{\rm th} / (f_{\rm th} + \epsilon_E)` with</span>
+<span class="sd">    :math:`f_{\rm th} = \epsilon_T (1 - \epsilon_B - \epsilon_E) / (1 + \epsilon_T)`.</span>
 
 <span class="sd">    The full distribution is</span>
 
@@ -3858,12 +4054,19 @@
 <span class="sd">        * - Parameter</span>
 <span class="sd">          - Type</span>
 <span class="sd">          - Description</span>
-<span class="sd">        * - ``delta``</span>
+<span class="sd">        * - ``epsilon_T``</span>
 <span class="sd">          - float</span>
-<span class="sd">          - Fractional weight of the thermal Maxwell-Jüttner component.</span>
-<span class="sd">            Must satisfy :math:`0 \leq \delta \leq 1`.  Setting</span>
-<span class="sd">            ``delta=1`` gives a pure Maxwell-Jüttner distribution;</span>
-<span class="sd">            ``delta=0`` gives a pure (re-normalised) power-law.</span>
+<span class="sd">          - Ratio of the thermal-electron energy to the ion energy.  Setting</span>
+<span class="sd">            ``epsilon_T=0`` gives a pure (re-normalised) power law.</span>
+<span class="sd">        * - ``epsilon_B``</span>
+<span class="sd">          - float</span>
+<span class="sd">          - Fraction of the thermal (internal) energy density in the magnetic</span>
+<span class="sd">            field.</span>
+<span class="sd">        * - ``epsilon_E``</span>
+<span class="sd">          - float</span>
+<span class="sd">          - Fraction of the thermal (internal) energy density in the kinetic</span>
+<span class="sd">            energy of the non-thermal electrons.  Setting ``epsilon_E=0``</span>
+<span class="sd">            gives a pure Maxwell-Jüttner distribution.</span>
 <span class="sd">        * - ``Theta``</span>
 <span class="sd">          - float, optional</span>
 <span class="sd">          - Dimensionless temperature of the thermal component,</span>
@@ -3889,24 +4092,34 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    Evaluate the mixed distribution at :math:`\gamma = 2` with equal</span>
-<span class="sd">    thermal and non-thermal weights (:math:`\delta = 0.5`):</span>
+<span class="sd">    Evaluate the mixed distribution at :math:`\gamma = 2` with</span>
+<span class="sd">    equal thermal-electron and non-thermal-electron energies (:math:`f_{\rm th} = \epsilon_E = 0.2`):</span>
 
 <span class="sd">    &gt;&gt;&gt; float(</span>
 <span class="sd">    ...     MaxwellJuettnerPowerLaw.pdf(</span>
-<span class="sd">    ...         2.0, delta=0.5, Theta=1.0, p=3.0</span>
+<span class="sd">    ...         2.0,</span>
+<span class="sd">    ...         epsilon_T=0.4,</span>
+<span class="sd">    ...         epsilon_B=0.1,</span>
+<span class="sd">    ...         epsilon_E=0.2,</span>
+<span class="sd">    ...         Theta=1.0,</span>
+<span class="sd">    ...         p=3.0,</span>
 <span class="sd">    ...     )</span>
 <span class="sd">    ... )  # doctest: +ELLIPSIS</span>
 <span class="sd">    0.2...</span>
 
-<span class="sd">    A pure thermal distribution (``delta=1``) agrees exactly with</span>
+<span class="sd">    A distribution without non-thermal electrons (``epsilon_E=0``) agrees exactly with</span>
 <span class="sd">    :class:`MaxwellJuettner`:</span>
 
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">    &gt;&gt;&gt; gamma = np.array([1.5, 2.0, 5.0])</span>
 <span class="sd">    &gt;&gt;&gt; np.allclose(</span>
 <span class="sd">    ...     MaxwellJuettnerPowerLaw.pdf(</span>
-<span class="sd">    ...         gamma, delta=1.0, Theta=1.0, p=3.0</span>
+<span class="sd">    ...         gamma,</span>
+<span class="sd">    ...         epsilon_T=1.0,</span>
+<span class="sd">    ...         epsilon_B=0.1,</span>
+<span class="sd">    ...         epsilon_E=0.0,</span>
+<span class="sd">    ...         Theta=1.0,</span>
+<span class="sd">    ...         p=3.0,</span>
 <span class="sd">    ...     ),</span>
 <span class="sd">    ...     MaxwellJuettner.pdf(gamma, Theta=1.0),</span>
 <span class="sd">    ... )</span>
@@ -3917,7 +4130,12 @@
 
 <span class="sd">    &gt;&gt;&gt; import astropy.units as u</span>
 <span class="sd">    &gt;&gt;&gt; MaxwellJuettnerPowerLaw.normalize_from_n_total(</span>
-<span class="sd">    ...     1e-3 * u.cm**-3, delta=0.5, Theta=1.0, p=3.0</span>
+<span class="sd">    ...     1e-3 * u.cm**-3,</span>
+<span class="sd">    ...     epsilon_T=0.4,</span>
+<span class="sd">    ...     epsilon_B=0.1,</span>
+<span class="sd">    ...     epsilon_E=0.2,</span>
+<span class="sd">    ...     Theta=1.0,</span>
+<span class="sd">    ...     p=3.0,</span>
 <span class="sd">    ... )</span>
 <span class="sd">    &lt;Quantity 0.001 1 / cm3&gt;</span>
 <span class="sd">    """</span>
@@ -3932,31 +4150,26 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Mixed Maxwell-Jüttner plus broken-power-law electron distribution.</span>
 
-<span class="sd">    The normalized mixture shape is</span>
+<span class="sd">    The thermal Maxwell-Jüttner component :math:`f_{\rm MJ}(\gamma;\Theta)` and the broken-power-law component</span>
+<span class="sd">    :math:`f_{\rm BPL}(\gamma;p_1,p_2,\gamma_c,\gamma_{\min},\gamma_{\max}) / M_{\rm BPL}^{(0)}`, normalized to unit</span>
+<span class="sd">    integral by the zeroth moment of the broken-power-law shape, are mixed according to the energy budget set by</span>
+<span class="sd">    ``epsilon_T``, ``epsilon_B`` and ``epsilon_E`` (see :class:`MixedThermalNonThermal`):</span>
 
 <span class="sd">    .. math::</span>
 
 <span class="sd">        f_{\rm mix}(\gamma)</span>
 <span class="sd">        =</span>
-<span class="sd">        \delta f_{\rm MJ}(\gamma;\Theta)</span>
-<span class="sd">        +</span>
-<span class="sd">        (1-\delta)</span>
 <span class="sd">        \frac{</span>
-<span class="sd">            f_{\rm BPL}(\gamma;p_1,p_2,\gamma_c,\gamma_{\min},\gamma_{\max})</span>
+<span class="sd">            (\delta / K_{\rm th})\, f_{\rm MJ}(\gamma)</span>
+<span class="sd">            + [(1-\delta) / K_{\rm nth}]\, f_{\rm BPL}(\gamma) / M_{\rm BPL}^{(0)}</span>
 <span class="sd">        }{</span>
-<span class="sd">            M_{\rm BPL}^{(0)}</span>
+<span class="sd">            \delta / K_{\rm th} + (1-\delta) / K_{\rm nth}</span>
 <span class="sd">        },</span>
+<span class="sd">        \qquad \int f_{\rm mix}(\gamma)\,d\gamma = 1,</span>
 
-<span class="sd">    where :math:`f_{\rm MJ}` is the Maxwell-Jüttner shape (already</span>
-<span class="sd">    probability-normalised, :math:`\int f_{\rm MJ}\,d\gamma = 1`) and</span>
-<span class="sd">    :math:`M_{\rm BPL}^{(0)} = \int f_{\rm BPL}\,d\gamma` is the zeroth</span>
-<span class="sd">    moment of the broken-power-law shape that re-normalises the non-thermal</span>
-<span class="sd">    component to unit integral.  With this convention :math:`\delta` is a</span>
-<span class="sd">    true number-fraction weight:</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \int f_{\rm mix}(\gamma)\,d\gamma = 1.</span>
+<span class="sd">    where :math:`K = \langle \gamma - 1 \rangle` for each component and :math:`\delta` is the thermal share of the</span>
+<span class="sd">    electron kinetic energy, :math:`\delta = f_{\rm th} / (f_{\rm th} + \epsilon_E)` with</span>
+<span class="sd">    :math:`f_{\rm th} = \epsilon_T (1 - \epsilon_B - \epsilon_E) / (1 + \epsilon_T)`.</span>
 
 <span class="sd">    The full distribution is</span>
 
@@ -3973,12 +4186,19 @@
 <span class="sd">        * - Parameter</span>
 <span class="sd">          - Type</span>
 <span class="sd">          - Description</span>
-<span class="sd">        * - ``delta``</span>
+<span class="sd">        * - ``epsilon_T``</span>
 <span class="sd">          - float</span>
-<span class="sd">          - Fractional weight of the thermal Maxwell-Jüttner component.</span>
-<span class="sd">            Must satisfy :math:`0 \leq \delta \leq 1`.  Setting</span>
-<span class="sd">            ``delta=1`` gives a pure Maxwell-Jüttner distribution;</span>
-<span class="sd">            ``delta=0`` gives a pure (re-normalised) broken-power-law.</span>
+<span class="sd">          - Ratio of the thermal-electron energy to the ion energy.  Setting</span>
+<span class="sd">            ``epsilon_T=0`` gives a pure (re-normalised) broken power law.</span>
+<span class="sd">        * - ``epsilon_B``</span>
+<span class="sd">          - float</span>
+<span class="sd">          - Fraction of the thermal (internal) energy density in the magnetic</span>
+<span class="sd">            field.</span>
+<span class="sd">        * - ``epsilon_E``</span>
+<span class="sd">          - float</span>
+<span class="sd">          - Fraction of the thermal (internal) energy density in the kinetic</span>
+<span class="sd">            energy of the non-thermal electrons.  Setting ``epsilon_E=0``</span>
+<span class="sd">            gives a pure Maxwell-Jüttner distribution.</span>
 <span class="sd">        * - ``Theta``</span>
 <span class="sd">          - float, optional</span>
 <span class="sd">          - Dimensionless temperature of the thermal component,</span>
@@ -4013,22 +4233,24 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    Evaluate the mixed distribution at :math:`\gamma = 5` with equal</span>
-<span class="sd">    thermal and non-thermal weights (:math:`\delta = 0.5`):</span>
+<span class="sd">    Evaluate the mixed distribution at :math:`\gamma = 5` with</span>
+<span class="sd">    equal thermal-electron and non-thermal-electron energies (:math:`f_{\rm th} = \epsilon_E = 0.2`):</span>
 
 <span class="sd">    &gt;&gt;&gt; float(</span>
 <span class="sd">    ...     MaxwellJuettnerBrokenPowerLaw.pdf(</span>
 <span class="sd">    ...         5.0,</span>
-<span class="sd">    ...         delta=0.5,</span>
+<span class="sd">    ...         epsilon_T=0.4,</span>
+<span class="sd">    ...         epsilon_B=0.1,</span>
+<span class="sd">    ...         epsilon_E=0.2,</span>
 <span class="sd">    ...         Theta=1.0,</span>
 <span class="sd">    ...         p1=2.0,</span>
 <span class="sd">    ...         p2=4.0,</span>
 <span class="sd">    ...         gamma_c=10.0,</span>
 <span class="sd">    ...     )</span>
 <span class="sd">    ... )  # doctest: +ELLIPSIS</span>
-<span class="sd">    0.07...</span>
+<span class="sd">    0.069...</span>
 
-<span class="sd">    A pure thermal distribution (``delta=1``) agrees exactly with</span>
+<span class="sd">    A distribution without non-thermal electrons (``epsilon_E=0``) agrees exactly with</span>
 <span class="sd">    :class:`MaxwellJuettner`:</span>
 
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
@@ -4036,7 +4258,9 @@
 <span class="sd">    &gt;&gt;&gt; np.allclose(</span>
 <span class="sd">    ...     MaxwellJuettnerBrokenPowerLaw.pdf(</span>
 <span class="sd">    ...         gamma,</span>
-<span class="sd">    ...         delta=1.0,</span>
+<span class="sd">    ...         epsilon_T=1.0,</span>
+<span class="sd">    ...         epsilon_B=0.1,</span>
+<span class="sd">    ...         epsilon_E=0.0,</span>
 <span class="sd">    ...         Theta=1.0,</span>
 <span class="sd">    ...         p1=2.0,</span>
 <span class="sd">    ...         p2=4.0,</span>
@@ -4052,7 +4276,9 @@
 <span class="sd">    &gt;&gt;&gt; import astropy.units as u</span>
 <span class="sd">    &gt;&gt;&gt; MaxwellJuettnerBrokenPowerLaw.normalize_from_n_total(</span>
 <span class="sd">    ...     1e-3 * u.cm**-3,</span>
-<span class="sd">    ...     delta=0.5,</span>
+<span class="sd">    ...     epsilon_T=0.4,</span>
+<span class="sd">    ...     epsilon_B=0.1,</span>
+<span class="sd">    ...     epsilon_E=0.2,</span>
 <span class="sd">    ...     Theta=1.0,</span>
 <span class="sd">    ...     p1=2.0,</span>
 <span class="sd">    ...     p2=4.0,</span>

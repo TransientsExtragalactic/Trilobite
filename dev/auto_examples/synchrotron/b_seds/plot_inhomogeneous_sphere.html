@@ -69,7 +69,7 @@
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Synchrotron Spectra With Cooling and SSA" href="plot_SSA_cooling_SED.html" />
+    <link rel="next" title="Multi-Component Synchrotron SEDs with the Numerical Engine" href="plot_multi_component_numerical_SED.html" />
     <link rel="prev" title="Comparing Synchrotron SED Models" href="plot_sed_model_comparison.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
@@ -449,10 +449,10 @@
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Spectral Energy Distributions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="plot_inhomogeneous_cylinder.html">Synchrotron SEDs from an Inhomogeneous Cylinder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_multi_component_numerical_SED.html">Multi-Component Synchrotron SEDs with the Numerical Engine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_on_axis_numerical.html">On-Axis Asymmetric Synchrotron SEDs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_sed_model_comparison.html">Comparing Synchrotron SED Models</a></li>
 <li class="toctree-l3 current active"><a aria-current="page" class="current reference internal" href="#">Synchrotron SEDs from an Inhomogeneous Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_multi_component_numerical_SED.html">Multi-Component Synchrotron SEDs with the Numerical Engine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_off_axis_numerical.html">Off-Axis Synchrotron SEDs from Axisymmetric Outflows</a></li>
 </ul>
@@ -754,8 +754,9 @@ index <span class="math notranslate nohighlight">\(p = 3\)</span> and the Lorent
 held fixed across all shells.  Only the amplitude <span class="math notranslate nohighlight">\(K(r)\)</span> varies,
 determined by the equipartition condition</p>
 <div class="math notranslate nohighlight">
-\[u_e = \varepsilon_e\,u_B = \varepsilon_e\,\frac{B(r)^2}{8\pi},\]</div>
-<p>so that <span class="math notranslate nohighlight">\(K(r) \propto B(r)^2\)</span> and inner shells (stronger field) host
+\[u_e = \frac{\epsilon_e}{\epsilon_B}\,u_B = \frac{\epsilon_e}{\epsilon_B}\,\frac{B(r)^2}{8\pi},\]</div>
+<p>where <span class="math notranslate nohighlight">\(u_e = \int N(\gamma-1)\,m_e c^2\,d\gamma\)</span> is the electron kinetic energy density, so that
+<span class="math notranslate nohighlight">\(K(r) \propto B(r)^2\)</span> and inner shells (stronger field) host
 a proportionally denser electron population.
 <a class="reference internal" href="../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.ElectronDistribution.normalize_from_magnetic_field.html#trilobite.radiation.synchrotron.electron_distributions.ElectronDistribution.normalize_from_magnetic_field" title="trilobite.radiation.synchrotron.electron_distributions.ElectronDistribution.normalize_from_magnetic_field"><code class="xref py py-meth docutils literal notranslate"><span class="pre">normalize_from_magnetic_field()</span></code></a>
 handles this calculation for an array of <span class="math notranslate nohighlight">\(B\)</span> values directly.</p>
@@ -912,7 +913,7 @@ closely resembles a uniform single-zone model.</p>
 observations of an expanding blast wave can, in principle, constrain the
 radial structure of the post-shock magnetic field independently of the total
 field energy — a diagnostic inaccessible to homogeneous one-zone models.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.738 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.302 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-synchrotron-b-seds-plot-inhomogeneous-sphere-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../../_downloads/9821be9bca4e9efe3e3c2d5a16b2c801/plot_inhomogeneous_sphere.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_inhomogeneous_sphere.ipynb</span></code></a></p>
@@ -948,11 +949,11 @@ field energy — a diagnostic inaccessible to homogeneous one-zone models.</p>
       </div>
     </a>
     <a class="right-next"
-       href="plot_SSA_cooling_SED.html"
+       href="plot_multi_component_numerical_SED.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Synchrotron Spectra With Cooling and SSA</p>
+        <p class="prev-next-title">Multi-Component Synchrotron SEDs with the Numerical Engine</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

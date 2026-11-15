@@ -207,7 +207,7 @@ outward:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-159
+.. GENERATED FROM PYTHON SOURCE LINES 137-160
 
 Consistent Electron Distributions
 ----------------------------------
@@ -225,14 +225,15 @@ determined by the equipartition condition
 
 .. math::
 
-    u_e = \varepsilon_e\,u_B = \varepsilon_e\,\frac{B(r)^2}{8\pi},
+    u_e = \frac{\epsilon_e}{\epsilon_B}\,u_B = \frac{\epsilon_e}{\epsilon_B}\,\frac{B(r)^2}{8\pi},
 
-so that :math:`K(r) \propto B(r)^2` and inner shells (stronger field) host
+where :math:`u_e = \int N(\gamma-1)\,m_e c^2\,d\gamma` is the electron kinetic energy density, so that
+:math:`K(r) \propto B(r)^2` and inner shells (stronger field) host
 a proportionally denser electron population.
 :meth:`~trilobite.radiation.synchrotron.electron_distributions.ElectronDistribution.normalize_from_magnetic_field`
 handles this calculation for an array of :math:`B` values directly.
 
-.. GENERATED FROM PYTHON SOURCE LINES 159-179
+.. GENERATED FROM PYTHON SOURCE LINES 160-180
 
 .. code-block:: Python
 
@@ -263,7 +264,7 @@ handles this calculation for an array of :math:`B` values directly.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 180-191
+.. GENERATED FROM PYTHON SOURCE LINES 181-192
 
 Per-Ray Decomposition
 ----------------------
@@ -277,7 +278,7 @@ Unlike the cylinder engine, the sphere needs no explicit slab depth: the
 radiative-transfer path through each shell is determined entirely from the
 radial grid geometry.
 
-.. GENERATED FROM PYTHON SOURCE LINES 191-239
+.. GENERATED FROM PYTHON SOURCE LINES 192-240
 
 .. code-block:: Python
 
@@ -341,7 +342,7 @@ radial grid geometry.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 240-246
+.. GENERATED FROM PYTHON SOURCE LINES 241-247
 
 Rays at small impact parameters (purple) probe only the bright inner shells
 and peak at higher frequencies because :math:`\nu_c \propto B\gamma^2` with
@@ -350,7 +351,7 @@ pass through the weaker outer shells and peak at lower frequencies.
 The superposition broadens and flattens the total spectrum relative to any
 single-shell prediction.
 
-.. GENERATED FROM PYTHON SOURCE LINES 248-254
+.. GENERATED FROM PYTHON SOURCE LINES 249-255
 
 SED Comparison: Varying :math:`\alpha_B`
 -----------------------------------------
@@ -359,7 +360,7 @@ same central field :math:`B_0` and equipartition fractions are used, so the
 normalizations are comparable.  The only difference is how rapidly the field
 (and with it the electron density) falls off with radius.
 
-.. GENERATED FROM PYTHON SOURCE LINES 254-307
+.. GENERATED FROM PYTHON SOURCE LINES 255-308
 
 .. code-block:: Python
 
@@ -428,7 +429,7 @@ normalizations are comparable.  The only difference is how rapidly the field
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 308-320
+.. GENERATED FROM PYTHON SOURCE LINES 309-321
 
 Steeper field gradients (larger :math:`\alpha_B`) concentrate both the
 magnetic energy and the electron density near the inner boundary.  The
@@ -446,7 +447,7 @@ field energy — a diagnostic inaccessible to homogeneous one-zone models.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.738 seconds)
+   **Total running time of the script:** (0 minutes 1.302 seconds)
 
 
 .. _sphx_glr_download_auto_examples_synchrotron_b_seds_plot_inhomogeneous_sphere.py:

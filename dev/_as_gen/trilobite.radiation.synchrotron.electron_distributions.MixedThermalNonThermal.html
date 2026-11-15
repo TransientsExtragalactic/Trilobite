@@ -1127,18 +1127,32 @@
 <dt class="sig sig-object py" id="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">trilobite.radiation.synchrotron.electron_distributions.</span></span><span class="sig-name descname"><span class="pre">MixedThermalNonThermal</span></span><a class="reference internal" href="../_modules/trilobite/radiation/synchrotron/electron_distributions.html#MixedThermalNonThermal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal" title="Link to this definition">#</a></dt>
 <dd><p>Base class for mixed thermal and non-thermal electron distributions.</p>
-<p>This class represents a mixture of a thermal Maxwell-Jüttner component and
-a non-thermal component,</p>
+<p>This class represents a mixture of a thermal Maxwell-Jüttner component and a non-thermal component supplied by
+subclasses through <code class="docutils literal notranslate"><span class="pre">NON_THERMAL_DISTRIBUTION</span></code>. The mixture is set by the energy budget
+(see <a class="reference internal" href="trilobite.physics_utils.thermal_partition.html#module-trilobite.physics_utils.thermal_partition" title="trilobite.physics_utils.thermal_partition"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.physics_utils.thermal_partition</span></code></a>), through three fractions of the thermal energy density
+<span class="math notranslate nohighlight">\(u_{\rm th}\)</span>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">epsilon_B</span></code>: the magnetic field,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">epsilon_E</span></code>: the kinetic energy of the non-thermal electrons,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">epsilon_T</span></code>: the ratio of the thermal-electron to the ion energy, so that the thermal electrons carry
+<span class="math notranslate nohighlight">\(\epsilon_T (1 - \epsilon_B - \epsilon_E) / (1 + \epsilon_T)\, u_{\rm th}\)</span>.</p></li>
+</ul>
+<p>The electron fraction in the thermal component is then proportional to <span class="math notranslate nohighlight">\(f_{\rm th} / K_{\rm th}\)</span>, and in
+the non-thermal component to <span class="math notranslate nohighlight">\(\epsilon_E / K_{\rm nth}\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[f_{\rm mix}(\gamma)
 =
-\delta f_{\rm th}(\gamma)
-+
-(1-\delta) f_{\rm nth}(\gamma),\]</div>
-<p>where <span class="math notranslate nohighlight">\(0 \leq \delta \leq 1\)</span>.</p>
-<p>The thermal component is taken to be the Maxwell-Jüttner distribution, and
-the non-thermal component is supplied by subclasses through
-<code class="docutils literal notranslate"><span class="pre">NON_THERMAL_DISTRIBUTION</span></code>.</p>
+\frac{
+    (f_{\rm th} / K_{\rm th})\, f_{\rm MJ}(\gamma)
+    + (\epsilon_E / K_{\rm nth})\, f_{\rm nth}(\gamma)
+}{
+    f_{\rm th} / K_{\rm th} + \epsilon_E / K_{\rm nth}
+},
+\qquad
+f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T},\]</div>
+<p>where <span class="math notranslate nohighlight">\(f_{\rm MJ}\)</span> and <span class="math notranslate nohighlight">\(f_{\rm nth}\)</span> are unit-normalized components and
+<span class="math notranslate nohighlight">\(K = \langle \gamma - 1 \rangle\)</span> is the mean kinetic energy per electron of each component (in units of
+<span class="math notranslate nohighlight">\(m_e c^2\)</span>).</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
@@ -1151,25 +1165,17 @@ the non-thermal component is supplied by subclasses through
 </dl>
 </div>
 <p class="rubric">Notes</p>
-<p>The non-thermal classes in this module generally define shape functions
-rather than probability-normalized distributions. Therefore, this class
-internally normalizes the non-thermal shape by its zeroth moment,</p>
+<p>The non-thermal classes in this module define shape functions rather than probability-normalized distributions,
+so the non-thermal shape is divided by its zeroth moment first. Then <span class="math notranslate nohighlight">\(\int f_{\rm mix}\,d\gamma = 1\)</span>, and
+<code class="docutils literal notranslate"><span class="pre">norm</span></code> is the total electron number density.</p>
+<p>Writing <span class="math notranslate nohighlight">\(\delta = f_{\rm th} / (f_{\rm th} + \epsilon_E)\)</span> for the thermal share of the electron kinetic
+energy, the mixture’s mean kinetic energy is</p>
 <div class="math notranslate nohighlight">
-\[f_{\rm nth}(\gamma)
-=
-\frac{
-    f_{\rm shape,nth}(\gamma)
-}{
-    M_{\rm nth}^{(0)}
-}.\]</div>
-<p>With this convention,</p>
-<div class="math notranslate nohighlight">
-\[\int f_{\rm mix}(\gamma)\,d\gamma = 1,\]</div>
-<p>and <code class="docutils literal notranslate"><span class="pre">delta</span></code> is a true number-fraction mixture weight.</p>
-<p>This is distinct from an energy-fraction parameter. If <code class="docutils literal notranslate"><span class="pre">delta</span></code> is instead
-intended to represent the fraction of electron energy in the thermal
-population, the component normalizations should be computed separately from
-their energy budgets rather than treated as a direct PDF mixture weight.</p>
+\[\langle \gamma - 1 \rangle_{\rm mix}
+= \left[\frac{\delta}{K_{\rm th}} + \frac{1-\delta}{K_{\rm nth}}\right]^{-1},\]</div>
+<p>so the electron energy <span class="math notranslate nohighlight">\((f_{\rm th} + \epsilon_E)\, u_{\rm th}\)</span> fixes
+<span class="math notranslate nohighlight">\(N_0 = (f_{\rm th} + \epsilon_E)\, u_{\rm th} / (m_e c^2 \langle \gamma - 1 \rangle_{\rm mix})\)</span>.
+The shape therefore depends on <code class="docutils literal notranslate"><span class="pre">epsilon_B</span></code>, because the magnetic energy is removed from the budget first.</p>
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -1177,7 +1183,7 @@ their energy budgets rather than treated as a direct PDF mixture weight.</p>
 <td><p>Return a callable representation of the distribution.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.bol_emiss_from_energy_density.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.bol_emiss_from_energy_density" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.bol_emiss_from_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bol_emiss_from_energy_density</span></code></a>(u_therm, ...)</p></td>
-<td><p>Bolometric synchrotron emissivity from thermal energy density via equipartition.</p></td>
+<td><p>Bolometric synchrotron emissivity from the thermal energy density via equipartition.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.bol_emiss_from_magnetic_field.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.bol_emiss_from_magnetic_field" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.bol_emiss_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bol_emiss_from_magnetic_field</span></code></a>(B, epsilon_B, ...)</p></td>
 <td><p>Bolometric synchrotron emissivity from a magnetic field via equipartition.</p></td>
@@ -1203,10 +1209,10 @@ their energy budgets rather than treated as a direct PDF mixture weight.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.mean_kinetic_energy.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.mean_kinetic_energy" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.mean_kinetic_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_kinetic_energy</span></code></a>(**params)</p></td>
 <td><p>Compute the mean kinetic electron energy.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code></a>(order, *, delta, **params)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code></a>(order, *, epsilon_T, epsilon_B, ...)</p></td>
 <td><p>Compute a raw moment of the mixed distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment_between.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment_between" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment_between"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment_between</span></code></a>(order, a, b, *, delta, **params)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment_between.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment_between" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment_between"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment_between</span></code></a>(order, a, b, *, epsilon_T, ...)</p></td>
 <td><p>Compute a truncated raw moment of the mixed distribution.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_between.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_between" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_between"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_between</span></code></a>(a, b[, norm])</p></td>
@@ -1221,8 +1227,8 @@ their energy budgets rather than treated as a direct PDF mixture weight.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_total.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_total" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_total"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_total</span></code></a>([norm])</p></td>
 <td><p>Compute the total number of electrons in the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_energy_density.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_energy_density" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_from_energy_density</span></code></a>(u_therm, ...)</p></td>
-<td><p>Compute N₀ from a fraction ε_E of the thermal energy density.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_energy_density.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_energy_density" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_from_energy_density</span></code></a>(u_therm, *, ...)</p></td>
+<td><p>Compute N₀ from the thermal energy density.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_magnetic_field.html#trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_magnetic_field" title="trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_from_magnetic_field</span></code></a>(B, epsilon_B, ...)</p></td>
 <td><p>Compute N₀ via equipartition with a magnetic field.</p></td>

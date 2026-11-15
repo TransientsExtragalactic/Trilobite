@@ -1363,6 +1363,18 @@ Riemann sum in <span class="math notranslate nohighlight">\(\ln\gamma\)</span>. 
 <p>where <span class="math notranslate nohighlight">\(x_i = \nu / (c_{1\gamma}\,B\sin\alpha\,\gamma_i^2)\)</span> and <span class="math notranslate nohighlight">\(\Delta\!\ln\gamma_i\)</span> is the grid
 spacing at point <span class="math notranslate nohighlight">\(i\)</span> (computed via central differences). The product <span class="math notranslate nohighlight">\(w_i \equiv \gamma_i\,\Delta\!\ln\gamma_i\)</span>
 serves as the <strong>quadrature weight</strong> and is precomputed once for a given grid.</p>
+<p class="rubric">Sharp edges of the distribution</p>
+<p>A truncated power law <span class="math notranslate nohighlight">\(N \propto \gamma^{-p}\)</span> on <span class="math notranslate nohighlight">\([\gamma_{\min}, \gamma_{\max}]\)</span> is discontinuous at its
+edges. A Riemann sum that merely zeroes the nodes outside the support is only first-order accurate there: it counts
+or drops up to half a cell depending on where <span class="math notranslate nohighlight">\(\gamma_{\min}\)</span> falls between two nodes, which at 200 log-spaced
+nodes changes the optically thin spectrum by several percent, and by up to about 10% at a node. The power-law SEDs
+therefore integrate over the support only. The nodes strictly inside it are kept, <span class="math notranslate nohighlight">\(\gamma_{\min}\)</span> and
+<span class="math notranslate nohighlight">\(\gamma_{\max}\)</span> are added as nodes, and the weights are the trapezoid weights of the resulting grid, which is
+second-order accurate and independent of the alignment. The cooled SED does the same for the broken power law of its
+regime (<span class="math notranslate nohighlight">\(\gamma_{\min}\)</span> to <span class="math notranslate nohighlight">\(\gamma_{\max}\)</span> for slow cooling, <span class="math notranslate nohighlight">\(\gamma_c\)</span> to <span class="math notranslate nohighlight">\(\gamma_{\max}\)</span> for fast
+cooling) and adds the break as a node. When a thermal component continues across the edges, as in the
+mixed thermal plus power-law SED, each edge is resolved by a pair of nodes on either side of the jump instead, so that
+no weight is assigned across it. Edges outside the default grid are truncated at the grid, as before.</p>
 </section>
 <section id="absorption">
 <span id="sec-absorption"></span><h3><a class="toc-backref" href="#id23" role="doc-backlink">Absorption</a><a class="headerlink" href="#absorption" title="Link to this heading">#</a></h3>
@@ -1528,6 +1540,8 @@ radius <span class="math notranslate nohighlight">\(R\)</span> with a volume fil
 the volume of the sphere). The depth is then given by</p>
 <div class="math notranslate nohighlight">
 \[\ell = f_V^{1/3} R.\]</div>
+<p>This is the depth used by every non-relativistic one-zone SED: the power-law, cooled, thermal and mixed thermal plus
+power-law SEDs, and the spectral inversions.</p>
 <p>From this, the specific intensity at the surface of the source may be computed and used to determine
 the flux density as described above. In the non-relativistic limit, we ignore bulk motion of the source.</p>
 </section>

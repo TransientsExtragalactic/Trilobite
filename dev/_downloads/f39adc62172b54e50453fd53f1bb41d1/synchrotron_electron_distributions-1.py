@@ -15,7 +15,7 @@ params = [
     {'p': 2.5, 'gamma_min': 10.0, 'gamma_max': 1e5},
     {'p1': 2.0, 'p2': 3.5, 'gamma_c': 1e3, 'gamma_min': 10.0, 'gamma_max': 1e5},
     {'Theta': 2.0},
-    {'delta': 0.5, 'Theta': 2.0, 'p': 2.5, 'gamma_min': 10.0, 'gamma_max': 1e5},
+    {'epsilon_T': 0.4, 'epsilon_B': 0.1, 'epsilon_E': 0.2, 'Theta': 2.0, 'p': 2.5, 'gamma_min': 10.0, 'gamma_max': 1e5},
 ]
 
 # Compute the norms for each distribution.

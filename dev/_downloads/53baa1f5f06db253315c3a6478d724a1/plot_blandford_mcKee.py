@@ -37,6 +37,7 @@ from astropy import constants as const
 from astropy import units as u
 
 from trilobite.dynamics.shocks import BlandfordMcKeeShockEngine
+from trilobite.physics_utils import compute_ion_electron_theta, compute_mean_molecular_weight_per_electron
 
 
 # %%
@@ -73,7 +74,6 @@ E_iso = 1.0e49 * u.erg
 # --------------
 # The shocked gas is modeled with an ultra-relativistic equation of state.
 
-mu = 0.6
 gamma_hat = 4.0 / 3.0
 
 
@@ -84,7 +84,6 @@ gamma_hat = 4.0 / 3.0
 # threshold. We set the threshold to :math:`\Gamma = 2`.
 
 engine = BlandfordMcKeeShockEngine(
-    mu=mu,
     gamma_hat=gamma_hat,
     lorentz_warn_threshold=2.0,
 )
@@ -211,25 +210,28 @@ plt.show()
 
 
 # %%
-# Post-Shock Thermal Energy Scale
-# -------------------------------
-# Rather than plotting the post-shock temperature in Kelvin, it is often more
-# meaningful in relativistic flows to plot the corresponding thermal energy
-# scale, :math:`k_B T`, in MeV.
+# Post-Shock Temperatures
+# -----------------------
+# The jump conditions fix the total thermal energy density :math:`u_{\rm th}`, not how it is shared between ions
+# and electrons. We assign the thermal electrons an energy :math:`\epsilon_T u_i` relative to the ions with
+# :func:`~trilobite.physics_utils.thermal_partition.compute_ion_electron_theta`, which returns the dimensionless
+# temperature :math:`\Theta = k_B T / (m c^2)` of each species. The mean molecular weight per electron comes from
+# :func:`~trilobite.physics_utils.composition.compute_mean_molecular_weight_per_electron`.
 
-kT = (const.k_B * shock.post_shock_temperature).to(u.MeV)
+mu_e = compute_mean_molecular_weight_per_electron(X=0.70, Y=0.28, Z=0.02)
 
 fig, ax = plt.subplots(figsize=(6, 4))
 
-ax.loglog(
-    time.to_value(u.s),
-    kT.to_value(u.MeV),
-    label=r"$k_B T$",
-)
+for epsilon_T, color in zip([0.01, 0.1, 1.0], ["C0", "C1", "C2"]):
+    Theta_i, Theta_e = compute_ion_electron_theta(
+        shock.thermal_energy_density_comoving, shock.post_shock_comoving_density, mu_e, epsilon_T
+    )
+    ax.loglog(time.to_value(u.s), Theta_e, color=color, label=rf"$\Theta_e$, $\epsilon_T = {epsilon_T:g}$")
+    ax.loglog(time.to_value(u.s), Theta_i, color=color, ls="--", label=rf"$\Theta_i$, $\epsilon_T = {epsilon_T:g}$")
 
 ax.set_xlabel("Time [s]")
-ax.set_ylabel(r"$k_B T$ [MeV]")
-ax.set_title("Post-shock thermal energy scale")
-ax.legend()
+ax.set_ylabel(r"$\Theta = k_B T / m c^2$")
+ax.set_title("Post-shock temperatures")
+ax.legend(fontsize=8)
 
 plt.show()

@@ -1366,28 +1366,39 @@ from the remaining jump conditions. One immediately obtains the Lorentz factor <
 <p>and the (proper) total energy density is</p>
 <div class="math notranslate nohighlight">
 \[e_2 = \rho_2 c^2 + U_{\rm int, 2}.\]</div>
-<section id="assigning-post-shock-temperatures">
-<h4>Assigning Post-Shock Temperatures<a class="headerlink" href="#assigning-post-shock-temperatures" title="Link to this heading">#</a></h4>
-<p>In order to assign a temperature to the fluid, one must invoke an equation of state for the fluid. A standard
-Maxwellian distribution is no longer a sufficient choice for the relativistic fluid as the post-shock temperatures
-will likely be relativistic. We therefore adopt a Maxwell-Juttner distribution
+<section id="post-shock-temperatures">
+<h4>Post-Shock Temperatures<a class="headerlink" href="#post-shock-temperatures" title="Link to this heading">#</a></h4>
+<p>The jump conditions fix the proper thermal energy density <span class="math notranslate nohighlight">\(U_{\rm int,2}\)</span> and rest-mass density <span class="math notranslate nohighlight">\(\rho_2\)</span> of the
+shocked gas, but not a temperature. In a collisionless shock the ions and electrons need not share one, so the solvers
+report the thermal energy density and no single gas temperature. How <span class="math notranslate nohighlight">\(U_{\rm int,2}\)</span> is shared between species sets
+their temperatures; see <a class="reference internal" href="../radiation/synchrotron/synchrotron_theory.html#synch-thermal-budget"><span class="std std-ref">The Thermal-Electron Energy Budget</span></a>.</p>
+<p>The post-shock temperatures can be relativistic, so each species is described by a Maxwell-Juttner distribution
 (see <a class="footnote-reference brackets" href="#footcite-1996apj-465-327m" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-margalitthermalelectronsmildlyrelativistic2021" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> for a discussion; the original
 paper <a class="footnote-reference brackets" href="#footcite-juttner1911maxwellsche" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> is in German):</p>
 <div class="math notranslate nohighlight">
 \[f(\gamma) = n \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right),\]</div>
-<p>where <span class="math notranslate nohighlight">\(\Theta = k_B T / (m c^2)\)</span> is the dimensionless temperature, <span class="math notranslate nohighlight">\(K_2\)</span> is the modified Bessel function
-of the second kind, and <span class="math notranslate nohighlight">\(N_0\)</span> is a normalization constant.</p>
-<p>The internal energy density of a relativistic Maxwell-Juttner
-distribution is given by<a class="footnote-reference brackets" href="#footcite-1998apj-498-313g" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-2000apj-541-234o" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-chandrasekhar1957introduction" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a></p>
+<p>where <span class="math notranslate nohighlight">\(\Theta = k_B T / (m c^2)\)</span> is the dimensionless temperature of the species of mass <span class="math notranslate nohighlight">\(m\)</span>, and
+<span class="math notranslate nohighlight">\(K_2\)</span> is the modified Bessel function of the second kind. The internal energy per particle, in units of
+<span class="math notranslate nohighlight">\(m c^2\)</span>, is<a class="footnote-reference brackets" href="#footcite-1998apj-498-313g" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-2000apj-541-234o" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-chandrasekhar1957introduction" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a></p>
 <div class="math notranslate nohighlight">
-\[U_{\rm int} = \rho c^2 \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} -1 \right],\]</div>
-<p>which, in turn, is well approximated by<a class="footnote-reference brackets" href="#footcite-1998apj-498-313g" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a></p>
+\[\xi = \langle \gamma - 1 \rangle = \frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1,\]</div>
+<p>which is well approximated by<a class="footnote-reference brackets" href="#footcite-1998apj-498-313g" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a></p>
 <div class="math notranslate nohighlight">
-\[U_{\rm int}  \approx \rho c^2 \Theta \left(\frac{6+15\Theta}{4+5\Theta}\right)\]</div>
-<p>To determine the temperature to assign to the post-shock fluid, we may invert this expression. Letting
-<span class="math notranslate nohighlight">\(\xi = U_{\rm int} / (\rho c^2)\)</span>, we have</p>
+\[\xi \approx \Theta \left(\frac{6+15\Theta}{4+5\Theta}\right).\]</div>
+<p>A species with energy density <span class="math notranslate nohighlight">\(u_s\)</span> and number density <span class="math notranslate nohighlight">\(n_s\)</span> has <span class="math notranslate nohighlight">\(\xi_s = u_s / (n_s m_s c^2)\)</span>, and
+<span class="math notranslate nohighlight">\(\Theta_s\)</span> is the inverse of the relation above. Inverting the approximation gives the closed form</p>
 <div class="math notranslate nohighlight">
-\[\Theta = \frac{5\xi - 6 + \sqrt{(6-5\xi)^2 + 120\xi}}{30}.\]</div>
+\[\Theta = \frac{5\xi - 6 + \sqrt{(6-5\xi)^2 + 240\xi}}{30},\]</div>
+<p>while the exact inversion is a short Newton iteration. Both are in
+<a class="reference internal" href="../../../_as_gen/trilobite.physics_utils.maxwell_juettner.compute_mj_theta_from_kinetic_energy.html#trilobite.physics_utils.maxwell_juettner.compute_mj_theta_from_kinetic_energy" title="trilobite.physics_utils.maxwell_juettner.compute_mj_theta_from_kinetic_energy"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_mj_theta_from_kinetic_energy()</span></code></a>. For the ions and thermal electrons
+of a shock, <a class="reference internal" href="../../../_as_gen/trilobite.physics_utils.thermal_partition.compute_ion_electron_theta.html#trilobite.physics_utils.thermal_partition.compute_ion_electron_theta" title="trilobite.physics_utils.thermal_partition.compute_ion_electron_theta"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ion_electron_theta()</span></code></a> does this from
+<span class="math notranslate nohighlight">\(U_{\rm int,2}\)</span>, <span class="math notranslate nohighlight">\(\rho_2\)</span> and the energy budget.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The jump conditions above use a single constant adiabatic index <span class="math notranslate nohighlight">\(\hat{\gamma}\)</span> for the whole fluid. A mixture
+of non-relativistic ions and partly relativistic electrons has an effective index that varies with the energy
+partition and the shock speed. This changes <span class="math notranslate nohighlight">\(U_{\rm int,2}\)</span> by a small factor and is not corrected for.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Some sources in the literature (e.g. Margalit and Quataert<a class="footnote-reference brackets" href="#footcite-margalitthermalelectronsmildlyrelativistic2021" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>) instead
@@ -1495,7 +1506,7 @@ in the general case.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analytic-scenarios">Analytic Scenarios</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-scenarios">Numerical Scenarios</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#state-reconstruction">State Reconstruction</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#assigning-post-shock-temperatures">Assigning Post-Shock Temperatures</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#post-shock-temperatures">Post-Shock Temperatures</a></li>
 </ul>
 </li>
 </ul>

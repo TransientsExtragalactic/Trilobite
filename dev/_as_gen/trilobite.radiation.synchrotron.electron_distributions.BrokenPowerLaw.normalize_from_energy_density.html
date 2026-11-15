@@ -1132,22 +1132,28 @@
 <dd><p>Compute N₀ from a fraction ε_E of the thermal energy density.</p>
 <p>Solves</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}N_0\, m_e c^2\, M^{(1)} = \\varepsilon_E\, u_{\\rm int}\end{split}\]</div>
-<p>for <span class="math notranslate nohighlight">\(N_0\)</span>.</p>
+\[N_0\, m_e c^2\, \langle \gamma - 1 \rangle = \varepsilon_E\, u_{\rm int}\]</div>
+<p>for <span class="math notranslate nohighlight">\(N_0\)</span>, where <span class="math notranslate nohighlight">\(\langle \gamma - 1 \rangle = M^{(1)} - M^{(0)}\)</span> is the mean kinetic energy per
+particle of <a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.pdf.html#trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.pdf" title="trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.pdf"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pdf()</span></code></a>, in units of <span class="math notranslate nohighlight">\(m_e c^2\)</span>, and <span class="math notranslate nohighlight">\(u_{\rm int}\)</span> is the internal (thermal) energy
+density, which excludes rest mass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u_therm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>, or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Thermal energy density.  Bare values are interpreted as
-<span class="math notranslate nohighlight">\(\\mathrm{erg\,cm^{-3}}\)</span>.</p></li>
-<li><p><strong>epsilon_E</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>) – Fraction of thermal energy in relativistic electrons.</p></li>
+<li><p><strong>u_therm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>, or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Internal (thermal) energy density, excluding rest mass.  Bare values are interpreted as
+<span class="math notranslate nohighlight">\(\mathrm{erg\,cm^{-3}}\)</span>.</p></li>
+<li><p><strong>epsilon_E</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>) – Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></li>
 <li><p><strong>**params</strong> – Distribution-specific parameters.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Distribution amplitude <span class="math notranslate nohighlight">\(N_0\)</span> in <span class="math notranslate nohighlight">\(\\mathrm{cm^{-3}}\)</span>.</p>
+<dd class="field-even"><p>Distribution amplitude <span class="math notranslate nohighlight">\(N_0\)</span> in <span class="math notranslate nohighlight">\(\mathrm{cm^{-3}}\)</span>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the distribution carries almost no kinetic energy (<span class="math notranslate nohighlight">\(\langle \gamma - 1 \rangle &lt; 10^{-8}\)</span>), which
+    makes the normalization ill-conditioned.</p>
 </dd>
 </dl>
 </dd></dl>

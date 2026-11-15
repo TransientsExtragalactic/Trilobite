@@ -1201,9 +1201,10 @@ gamma-ray bursts, this is perfectly serviceable. For relativistic sources these 
 coefficients <span class="math notranslate nohighlight">\(c_5\)</span> and <span class="math notranslate nohighlight">\(c_6\)</span>, and, in the cooled inversions, the angle-averaged synchrotron loss rate.</p>
 <p><strong>Units.</strong> Inputs may be <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> objects or bare floats. Bare floats are interpreted in CGS
 (Hz, <span class="math notranslate nohighlight">\(\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}\)</span>, cm, s and <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}}\)</span>), with the exception of
-<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22.html#trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22" title="trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22"><code class="xref py py-func docutils literal notranslate"><span class="pre">invert_ssa_DeMarchi22()</span></code></a>, which keeps the units of its original implementation (GHz, Jy and Mpc). Because the
-electron normalization uses the first moment of the distribution, <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;</span> <span class="pre">2</span></code> is required unless <code class="docutils literal notranslate"><span class="pre">gamma_max</span></code> is
-finite.</p>
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22.html#trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22" title="trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22"><code class="xref py py-func docutils literal notranslate"><span class="pre">invert_ssa_DeMarchi22()</span></code></a>, which keeps the units of its original implementation (GHz, Jy and Mpc) and its
+total-energy convention for <code class="docutils literal notranslate"><span class="pre">epsilon_E</span></code> (see its section below). Because the
+electron normalization uses the first kinetic moment of the distribution, <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;</span> <span class="pre">2</span></code> is required unless <code class="docutils literal notranslate"><span class="pre">gamma_max</span></code>
+is finite.</p>
 <p><strong>Broadcasting.</strong> Every observable (<code class="docutils literal notranslate"><span class="pre">nu_brk</span></code>, <code class="docutils literal notranslate"><span class="pre">F_brk</span></code>, <code class="docutils literal notranslate"><span class="pre">distance</span></code>, <code class="docutils literal notranslate"><span class="pre">t</span></code>, <code class="docutils literal notranslate"><span class="pre">L</span></code>) and every microphysical
 parameter (<code class="docutils literal notranslate"><span class="pre">p</span></code>, <code class="docutils literal notranslate"><span class="pre">epsilon_E</span></code>, <code class="docutils literal notranslate"><span class="pre">epsilon_B</span></code>, <code class="docutils literal notranslate"><span class="pre">f_A</span></code>, <code class="docutils literal notranslate"><span class="pre">f_V</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma_min</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma_max</span></code>) may be a
 scalar or an array, including a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> array. They are broadcast against one another
@@ -1293,7 +1294,9 @@ of a homogeneous sphere of radius <span class="math notranslate nohighlight">\(R
 <div class="math notranslate nohighlight">
 \[N_0 = A_N B^2, \qquad
 A_N = \frac{1}{8\pi m_ec^2}\,\frac{\epsilon_E}{\epsilon_B}\,\frac{1}{M_\gamma^{(1)}},\]</div>
-<p class="sd-card-text">where <span class="math notranslate nohighlight">\(M_\gamma^{(1)}\)</span> is the first moment of the Lorentz-factor distribution for the index <span class="math notranslate nohighlight">\(p\)</span>.
+<p class="sd-card-text">where <span class="math notranslate nohighlight">\(M_\gamma^{(1)} = \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1)\,\gamma^{-p}\,d\gamma\)</span> is the first
+kinetic moment of the Lorentz-factor distribution for the index <span class="math notranslate nohighlight">\(p\)</span> (rest mass excluded; see
+<a class="reference internal" href="synchrotron_theory.html#synch-equipartition-theory"><span class="std std-ref">Microphysical Closures and Equipartition</span></a>).
 Collecting the dependence on <span class="math notranslate nohighlight">\(B\)</span> and <span class="math notranslate nohighlight">\(R\)</span>,</p>
 <div class="math notranslate nohighlight">
 \[\nu_a = A_\nu\,A_N^{\frac{2}{q+4}}\,R^{\frac{2}{q+4}}B^{\frac{q+6}{q+4}},
@@ -1372,8 +1375,14 @@ cooled segment, so the forward model above applies with</p>
 \[p \to p+1, \qquad N_0 \to N_0\gamma_c .\]</div>
 <p class="sd-card-text">The normalization <span class="math notranslate nohighlight">\(N_0 = A_NB^2\)</span> is still set by the uncooled energy budget, which overestimates the
 electron energy by a factor <span class="math notranslate nohighlight">\(1/(1-\delta_c)\)</span>, with
-<span class="math notranslate nohighlight">\(\delta_c = (\gamma_c/\gamma_m)^{2-p}/(p-1)\)</span> for <span class="math notranslate nohighlight">\(\gamma_{\rm max}\to\infty\)</span> and <span class="math notranslate nohighlight">\(p&gt;2\)</span>. This is
-returned as <code class="docutils literal notranslate"><span class="pre">delta_c</span></code>. We write <span class="math notranslate nohighlight">\(A_\nu^{(c)} = A_\nu(p+1)\)</span> and <span class="math notranslate nohighlight">\(A_F^{(c)} = A_F(p+1)\)</span> below.</p>
+<span class="math notranslate nohighlight">\(\delta_c\)</span> the kinetic energy <span class="math notranslate nohighlight">\(\int N(\gamma-1)\,d\gamma\)</span> lost to cooling over the uncooled kinetic
+energy,</p>
+<div class="math notranslate nohighlight">
+\[\delta_c = \frac{\gamma_c^{2-p}/[(p-1)(p-2)] - \gamma_c^{1-p}/[p(p-1)]}
+{\gamma_m^{2-p}/(p-2) - \gamma_m^{1-p}/(p-1)}
+\approx \frac{(\gamma_c/\gamma_m)^{2-p}}{p-1} \quad (\gamma_m \gg 1),\]</div>
+<p class="sd-card-text">for <span class="math notranslate nohighlight">\(\gamma_{\rm max}\to\infty\)</span> and <span class="math notranslate nohighlight">\(p&gt;2\)</span>. This is returned as <code class="docutils literal notranslate"><span class="pre">delta_c</span></code>.
+We write <span class="math notranslate nohighlight">\(A_\nu^{(c)} = A_\nu(p+1)\)</span> and <span class="math notranslate nohighlight">\(A_F^{(c)} = A_F(p+1)\)</span> below.</p>
 </div>
 </details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -1446,7 +1455,7 @@ assumed rather than detected, each cooled inversion returns diagnostics for chec
 <li><p><code class="docutils literal notranslate"><span class="pre">accurate</span></code>: whether <span class="math notranslate nohighlight">\(\nu_c &lt; 0.1\,\nu_a\)</span>, for which the cooled asymptotic forms are good to better than
 0.1%,</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">slow_cooling</span></code>: whether <span class="math notranslate nohighlight">\(\gamma_c &gt; \gamma_{\min}\)</span>,</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delta_c</span></code>: the fractional energy error of the uncooled normalization (NaN unless <span class="math notranslate nohighlight">\(p&gt;2\)</span> and
+<li><p><code class="docutils literal notranslate"><span class="pre">delta_c</span></code>: the fractional kinetic-energy error of the uncooled normalization (NaN unless <span class="math notranslate nohighlight">\(p&gt;2\)</span> and
 <code class="docutils literal notranslate"><span class="pre">gamma_max</span></code> is infinite), and</p></li>
 <li><p>for the IC-cooled and combined inversions, the Compton parameter <code class="docutils literal notranslate"><span class="pre">Y</span></code> and <code class="docutils literal notranslate"><span class="pre">ic_dominated</span></code> (<span class="math notranslate nohighlight">\(Y&gt;1\)</span>).</p></li>
 </ul>
@@ -1493,6 +1502,14 @@ directly with results in the literature.</p>
 <p class="admonition-title">Warning</p>
 <p>The De Marchi inversion does <strong>not</strong> pitch-angle average. It uses the fixed pitch angle <code class="docutils literal notranslate"><span class="pre">theta</span></code> throughout. To
 use the isotropic pitch-angle coefficients, use <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_Diggins26.html#trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_Diggins26" title="trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_Diggins26"><code class="xref py py-func docutils literal notranslate"><span class="pre">invert_ssa_Diggins26()</span></code></a> with <code class="docutils literal notranslate"><span class="pre">pitch_average=True</span></code>.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The De Marchi inversion reproduces the published equations, so <code class="docutils literal notranslate"><span class="pre">epsilon_E</span></code> is the fraction of the internal energy
+in the <strong>total</strong> electron energy <span class="math notranslate nohighlight">\(\int N\gamma\,m_e c^2\,d\gamma\)</span>. The other inversions in this module use
+the kinetic energy <span class="math notranslate nohighlight">\(\int N(\gamma-1)\,m_e c^2\,d\gamma\)</span> (see <a class="reference internal" href="synchrotron_theory.html#synch-equipartition-theory"><span class="std std-ref">Microphysical Closures and Equipartition</span></a>). The two differ by
+<span class="math notranslate nohighlight">\(\langle\gamma\rangle/\langle\gamma-1\rangle\)</span>, which is negligible for <span class="math notranslate nohighlight">\(\gamma_{\min}\gg1\)</span> and
+approaches <span class="math notranslate nohighlight">\(p-1\)</span> as <span class="math notranslate nohighlight">\(\gamma_{\min}\to1\)</span>, so compare results across the two with care.</p>
 </div>
 <p>Its interface follows the original implementation more closely than the rest of the module: bare floats are in GHz,
 Jy and Mpc, the filling factor is called <code class="docutils literal notranslate"><span class="pre">f</span></code>, and the singular case <span class="math notranslate nohighlight">\(p = 2\)</span> is not supported.</p>

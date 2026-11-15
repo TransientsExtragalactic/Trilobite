@@ -1327,19 +1327,19 @@ the equipartition closure.</p>
 
 <span class="n">B</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span>
 <span class="n">epsilon_B</span> <span class="o">=</span> <span class="mf">0.1</span>
-<span class="n">epsilon_E</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">epsilon_E</span> <span class="o">=</span> <span class="mf">0.1</span>    <span class="c1"># non-thermal electrons</span>
+<span class="n">epsilon_T</span> <span class="o">=</span> <span class="mf">0.4</span>    <span class="c1"># ratio of the thermal-electron to the ion energy</span>
 
 <span class="n">Theta</span> <span class="o">=</span> <span class="mf">200.0</span>      <span class="c1"># dimensionless temperature (kT / m_e c^2)</span>
 <span class="n">gamma_min</span> <span class="o">=</span> <span class="mf">100.0</span>
 <span class="n">p</span> <span class="o">=</span> <span class="mf">3.0</span>
-<span class="n">delta</span> <span class="o">=</span> <span class="mf">0.5</span>        <span class="c1"># fraction of energy in thermal component</span>
 
 <span class="n">N0</span> <span class="o">=</span> <span class="n">MaxwellJuettnerPowerLaw</span><span class="o">.</span><span class="n">normalize_from_magnetic_field</span><span class="p">(</span>
     <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
     <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">,</span>
     <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
-    <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span>
     <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span>
+    <span class="n">epsilon_T</span><span class="o">=</span><span class="n">epsilon_T</span><span class="p">,</span>
     <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span>
     <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1638,9 +1638,9 @@ to the overall spectrum.</p>
 <span class="n">B</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span>
 <span class="n">R</span> <span class="o">=</span> <span class="mf">1e17</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
 
-<span class="n">epsilon_e</span> <span class="o">=</span> <span class="mf">0.1</span>
 <span class="n">epsilon_B</span> <span class="o">=</span> <span class="mf">0.01</span>
-<span class="n">delta</span> <span class="o">=</span> <span class="mf">0.99999</span>   <span class="c1"># fraction of energy in thermal component</span>
+<span class="n">epsilon_T</span> <span class="o">=</span> <span class="mf">0.1</span>   <span class="c1"># ratio of the thermal-electron to the ion energy</span>
+<span class="n">epsilon_E</span> <span class="o">=</span> <span class="mf">1e-6</span>  <span class="c1"># non-thermal electrons: a small share of the energy</span>
 
 <span class="c1"># Thermal population</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">1e10</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
@@ -1655,10 +1655,10 @@ to the overall spectrum.</p>
 <span class="c1"># Normalize electron distributions (equipartition closure)</span>
 <span class="c1"># ---------------------------------------------------------------------</span>
 <span class="n">N_therm</span> <span class="o">=</span> <span class="n">MaxwellJuettner</span><span class="o">.</span><span class="n">normalize_from_magnetic_field</span><span class="p">(</span>
-    <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_e</span> <span class="o">*</span> <span class="n">delta</span><span class="p">,</span> <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span>
+    <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="o">=</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span> <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span>
 <span class="p">)</span>
 <span class="n">N_pl</span> <span class="o">=</span> <span class="n">PowerLaw</span><span class="o">.</span><span class="n">normalize_from_magnetic_field</span><span class="p">(</span>
-    <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_e</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">delta</span><span class="p">),</span>
+    <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span>
     <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
 <span class="p">)</span>
 

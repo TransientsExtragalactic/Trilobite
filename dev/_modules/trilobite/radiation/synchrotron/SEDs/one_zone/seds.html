@@ -531,6 +531,8 @@
     <span class="n">get_cosmology</span><span class="p">,</span>
     <span class="n">resolve_cosmological_distances</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.physics_utils.maxwell_juettner</span><span class="w"> </span><span class="kn">import</span> <span class="n">_opt_mj_log_pdf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.physics_utils.thermal_partition</span><span class="w"> </span><span class="kn">import</span> <span class="n">_opt_thermal_electron_energy_fraction</span><span class="p">,</span> <span class="n">_validate_partition</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">electron_rest_energy_cgs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.cooling</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynchrotronRadiativeCoolingEngine</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.electron_distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BrokenPowerLaw</span><span class="p">,</span> <span class="n">MaxwellJuettner</span><span class="p">,</span> <span class="n">PowerLaw</span>
@@ -1597,10 +1599,10 @@
 <span class="sd">            Filling factor of the emitting region, encoding geometric effects.</span>
 
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock energy carried by relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 
 <span class="sd">        alpha : float, optional</span>
 <span class="sd">            Electron pitch angle in radians. Ignored if</span>
@@ -1716,10 +1718,10 @@
 <span class="sd">            Filling factor of the emitting region.</span>
 
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy carried by relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 
 <span class="sd">        alpha : float, optional</span>
 <span class="sd">            Electron pitch angle in radians. Ignored if ``pitch_average=True``.</span>
@@ -1929,9 +1931,9 @@
 <span class="sd">            Power-law index of the non-thermal electron distribution,</span>
 <span class="sd">            :math:`N(\gamma) \propto \gamma^{-p}`.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of internal energy carried by relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of internal energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        f_V : float, optional</span>
 <span class="sd">            Effective volume filling factor of the emitting region.</span>
 
@@ -2097,9 +2099,9 @@
 <span class="sd">        p : float, optional</span>
 <span class="sd">            Power-law index of the electron energy distribution.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of internal energy carried by relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of internal energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        f_V : float, optional</span>
 <span class="sd">            Effective volume filling factor of the emitting region.</span>
 <span class="sd">        gamma_bulk : float, optional</span>
@@ -2855,9 +2857,9 @@
 <span class="sd">        f_A: float, optional</span>
 <span class="sd">            Area filling factor.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock energy in electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock energy in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        alpha : float, optional</span>
 <span class="sd">            Pitch angle in radians when ``pitch_average=False``.</span>
 <span class="sd">        gamma_bulk : float, optional</span>
@@ -2962,9 +2964,9 @@
 <span class="sd">        f_A : float, optional</span>
 <span class="sd">            Area filling factor.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy carried by relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        alpha : float, optional</span>
 <span class="sd">            Electron pitch angle in radians. Ignored if ``pitch_average=True``.</span>
 <span class="sd">        gamma_bulk : float, optional</span>
@@ -3247,15 +3249,13 @@
 <span class="sd">            shock-accelerated electron populations.</span>
 
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of the post-shock internal energy carried by relativistic</span>
-<span class="sd">            electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 
 <span class="sd">            This parameter enters the equipartition-style closure relation used</span>
 <span class="sd">            to normalize the electron distribution.</span>
 
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of the post-shock internal energy stored in magnetic</span>
-<span class="sd">            fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 
 <span class="sd">            Together with ``epsilon_E``, this parameter determines the relative</span>
 <span class="sd">            partition of energy between particles and magnetic fields in the</span>
@@ -3987,9 +3987,9 @@
 <span class="sd">        f_V : float, optional</span>
 <span class="sd">            Volume filling factor.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy carried by relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        alpha : float, optional</span>
 <span class="sd">            Electron pitch angle in radians.</span>
 <span class="sd">        gamma_bulk : float, optional</span>
@@ -4086,9 +4086,9 @@
 <span class="sd">        f_V : float, optional</span>
 <span class="sd">            Volume filling factor.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy carried by relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        alpha : float, optional</span>
 <span class="sd">            Electron pitch angle in radians. Ignored if ``pitch_average=True``.</span>
 <span class="sd">        gamma_bulk : float, optional</span>
@@ -4287,11 +4287,10 @@
 <span class="sd">            Power-law index of the electron energy distribution.</span>
 
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy carried by relativistic</span>
-<span class="sd">            electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 
 <span class="sd">        f_V : float, optional</span>
 <span class="sd">            Volume filling factor of the emitting region.</span>
@@ -4514,15 +4513,13 @@
 <span class="sd">            shock-accelerated electron populations.</span>
 
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of the post-shock internal energy carried by relativistic</span>
-<span class="sd">            electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 
 <span class="sd">            This parameter enters the equipartition-style closure relation used</span>
 <span class="sd">            to normalize the electron distribution.</span>
 
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of the post-shock internal energy stored in magnetic</span>
-<span class="sd">            fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 
 <span class="sd">            Together with ``epsilon_E``, this parameter determines the relative</span>
 <span class="sd">            partition of energy between particles and magnetic fields in the</span>
@@ -5335,9 +5332,9 @@
 <span class="sd">        f_A : float, optional</span>
 <span class="sd">            Area filling factor.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy carried by relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        alpha : float, optional</span>
 <span class="sd">            Electron pitch angle in radians.</span>
 <span class="sd">        gamma_bulk : float, optional</span>
@@ -5437,9 +5434,9 @@
 <span class="sd">        f_A : float, optional</span>
 <span class="sd">            Area filling factor entering the effective solid angle.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy carried by relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        alpha : float, optional</span>
 <span class="sd">            Electron pitch angle in radians. Ignored if ``pitch_average=True``.</span>
 <span class="sd">        gamma_bulk : float, optional</span>
@@ -5652,11 +5649,10 @@
 <span class="sd">            Power-law index of the electron energy distribution.</span>
 
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy carried by relativistic</span>
-<span class="sd">            electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock internal energy stored in magnetic fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 
 <span class="sd">        f_V : float, optional</span>
 <span class="sd">            Volume filling factor of the emitting region.</span>
@@ -5875,15 +5871,13 @@
 <span class="sd">            shock-accelerated electron populations.</span>
 
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of the post-shock internal energy carried by relativistic</span>
-<span class="sd">            electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 
 <span class="sd">            This parameter enters the equipartition-style closure relation used</span>
 <span class="sd">            to normalize the electron distribution.</span>
 
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of the post-shock internal energy stored in magnetic</span>
-<span class="sd">            fields.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 
 <span class="sd">            Together with ``epsilon_E``, this parameter determines the relative</span>
 <span class="sd">            partition of energy between particles and magnetic fields in the</span>
@@ -6126,6 +6120,9 @@
 <span class="sd">    - The special case :math:`p = 2` is not supported due to logarithmic</span>
 <span class="sd">      divergences in the electron energy integral and must be handled</span>
 <span class="sd">      separately.</span>
+<span class="sd">    - The closure reproduces the published equations, so ``epsilon_E`` is the fraction of the thermal energy in the</span>
+<span class="sd">      **total** electron energy (rest mass included). The other SED classes use the kinetic energy; see</span>
+<span class="sd">      :func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22`.</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -6299,9 +6296,10 @@
 <span class="sd">            Default is ``pi/2`` (i.e., perpendicular). If provided as a float, the value is used for all SEDs.</span>
 <span class="sd">            If provided as an array, its shape must be compatible with that of ``nu_brk``.</span>
 <span class="sd">        epsilon_B: float or array-like</span>
-<span class="sd">            The fraction of post-shock energy in magnetic fields, :math:`\epsilon_B`.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        epsilon_E: float or array-like</span>
-<span class="sd">            The fraction of post-shock energy in relativistic electrons, :math:`\epsilon_E`.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the</span>
+<span class="sd">            relativistic electrons.</span>
 <span class="sd">        gamma_min: float or array-like</span>
 <span class="sd">            The minimum Lorentz factor :math:`\gamma_{\rm min}` of the electron energy.</span>
 <span class="sd">        gamma_max: float or array-like</span>
@@ -6410,12 +6408,12 @@
 <span class="sd">            velocity, in radians. Default is ``\pi/2`` (isotropic average).</span>
 
 <span class="sd">        epsilon_B : float or array-like, optional</span>
-<span class="sd">            Fraction of post-shock internal energy in magnetic fields,</span>
-<span class="sd">            :math:`\epsilon_B`. Default is ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field. Default is ``0.1``.</span>
 
 <span class="sd">        epsilon_E : float or array-like, optional</span>
-<span class="sd">            Fraction of post-shock internal energy in relativistic electrons,</span>
-<span class="sd">            :math:`\epsilon_E`. Default is ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the</span>
+<span class="sd">            relativistic electrons.</span>
+<span class="sd">            Default is ``0.1``.</span>
 
 <span class="sd">        gamma_min : float or array-like, optional</span>
 <span class="sd">            Minimum electron Lorentz factor :math:`\gamma_{\rm min}`. Default is ``1``.</span>
@@ -6667,9 +6665,10 @@
 <span class="sd">        theta : float or array-like</span>
 <span class="sd">            Pitch angle in radians.</span>
 <span class="sd">        epsilon_B : float or array-like</span>
-<span class="sd">            Fraction of the post-shock energy density in the magnetic field.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        epsilon_E : float or array-like</span>
-<span class="sd">            Fraction of the post-shock energy density in relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the</span>
+<span class="sd">            relativistic electrons.</span>
 <span class="sd">        gamma_min : float or array-like</span>
 <span class="sd">            Minimum electron Lorentz factor.</span>
 <span class="sd">        gamma_max : float or array-like</span>
@@ -6769,6 +6768,56 @@
 
 
 
+<span class="n">_STEP_OFFSET</span> <span class="o">=</span> <span class="mf">1e-9</span>  <span class="c1"># offset in ln(gamma) between the two nodes that resolve a step in the distribution</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_trapezoid_weights</span><span class="p">(</span><span class="n">log_gamma</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Return the log of the trapezoid weights :math:`\gamma_i\,\Delta\!\ln\gamma_i` on a :math:`\ln\gamma` grid."""</span>
+    <span class="n">spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">log_gamma</span><span class="p">)</span>
+    <span class="n">half_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">log_gamma</span><span class="p">)</span>
+    <span class="n">half_width</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">spacing</span>
+    <span class="n">half_width</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">spacing</span>
+    <span class="k">return</span> <span class="n">log_gamma</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">half_width</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_support_grid</span><span class="p">(</span>
+    <span class="n">log_gamma</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">log_lower</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_breaks</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">()</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Return the quadrature grid and log weights for a distribution that is non-zero only on a finite support.</span>
+
+<span class="sd">    The nodes are the grid nodes strictly inside the support plus its two end points, so the trapezoid rule integrates</span>
+<span class="sd">    the support exactly up to its smooth error, wherever the edges fall between the grid nodes. Rounding an edge to the</span>
+<span class="sd">    nearest node instead is first-order accurate and shifts the result by a few percent when the grid is coarse. A</span>
+<span class="sd">    support that extends beyond the grid is truncated at the grid, as before. ``log_breaks`` are points inside the</span>
+<span class="sd">    support where the distribution is continuous but its slope changes, such as a cooling break; they are added as</span>
+<span class="sd">    nodes as well.</span>
+<span class="sd">    """</span>
+    <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">log_lower</span><span class="p">,</span> <span class="n">log_gamma</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">min</span><span class="p">(</span><span class="n">log_upper</span><span class="p">,</span> <span class="n">log_gamma</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lower</span> <span class="o">&lt;</span> <span class="n">upper</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The Lorentz-factor support does not overlap the quadrature grid."</span><span class="p">)</span>
+    <span class="n">inside</span> <span class="o">=</span> <span class="n">log_gamma</span><span class="p">[(</span><span class="n">log_gamma</span> <span class="o">&gt;</span> <span class="n">lower</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">log_gamma</span> <span class="o">&lt;</span> <span class="n">upper</span><span class="p">)]</span>
+    <span class="n">breaks</span> <span class="o">=</span> <span class="p">[</span><span class="n">point</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">log_breaks</span> <span class="k">if</span> <span class="n">lower</span> <span class="o">&lt;</span> <span class="n">point</span> <span class="o">&lt;</span> <span class="n">upper</span><span class="p">]</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="n">lower</span><span class="p">],</span> <span class="n">inside</span><span class="p">,</span> <span class="n">breaks</span><span class="p">,</span> <span class="p">[</span><span class="n">upper</span><span class="p">]]))</span>
+    <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">_log_trapezoid_weights</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_step_grid</span><span class="p">(</span><span class="n">log_gamma</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">log_lower</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Return the quadrature grid and log weights for a distribution with steps at ``log_lower`` and ``log_upper``.</span>
+
+<span class="sd">    A component that switches on at ``log_lower`` and off at ``log_upper`` while another component continues across</span>
+<span class="sd">    them has jumps there. Each jump is resolved by a pair of nodes a distance ``_STEP_OFFSET`` apart, one on each side,</span>
+<span class="sd">    so the trapezoid rule assigns no weight across it. Edges outside the grid, or on its end nodes, need no pair.</span>
+<span class="sd">    """</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">log_gamma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">edge</span><span class="p">,</span> <span class="n">offsets</span> <span class="ow">in</span> <span class="p">((</span><span class="n">log_lower</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">_STEP_OFFSET</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)),</span> <span class="p">(</span><span class="n">log_upper</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">_STEP_OFFSET</span><span class="p">))):</span>
+        <span class="k">if</span> <span class="n">log_gamma</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">edge</span> <span class="o">&lt;</span> <span class="n">log_gamma</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">keep</span> <span class="o">&amp;=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">log_gamma</span> <span class="o">-</span> <span class="n">edge</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">_STEP_OFFSET</span>
+            <span class="n">extra</span> <span class="o">+=</span> <span class="p">[</span><span class="n">edge</span> <span class="o">+</span> <span class="n">offset</span> <span class="k">for</span> <span class="n">offset</span> <span class="ow">in</span> <span class="n">offsets</span><span class="p">]</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">log_gamma</span><span class="p">[</span><span class="n">keep</span><span class="p">],</span> <span class="n">extra</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">_log_trapezoid_weights</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="Numerical_PowerLaw_SSA_SynchrotronSED">
 <a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.Numerical_PowerLaw_SSA_SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.seds.Numerical_PowerLaw_SSA_SynchrotronSED">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Numerical_PowerLaw_SSA_SynchrotronSED</span><span class="p">(</span><span class="n">SynchrotronSED</span><span class="p">):</span>
@@ -6799,8 +6848,8 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \epsilon_E\,\frac{B^2}{8\pi} = \int_{\gamma_{\min}}^{\gamma_{\max}}</span>
-<span class="sd">            N(\gamma)\,\gamma\,m_e c^2\,\mathrm{d}\gamma.</span>
+<span class="sd">        \frac{\epsilon_E}{\epsilon_B}\,\frac{B^2}{8\pi} = \int_{\gamma_{\min}}^{\gamma_{\max}}</span>
+<span class="sd">            N(\gamma)\,(\gamma - 1)\,m_e c^2\,\mathrm{d}\gamma.</span>
 
 <span class="sd">    .. rubric:: Radiative Transfer</span>
 
@@ -6853,10 +6902,10 @@
 <span class="sd">            grid. Must lie within the grid range set at instantiation.</span>
 <span class="sd">        * - Magnetic equipartition fraction</span>
 <span class="sd">          - :math:`\epsilon_B`</span>
-<span class="sd">          - Fraction of the post-shock energy density in magnetic fields.</span>
+<span class="sd">          - Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">        * - Electron equipartition fraction</span>
 <span class="sd">          - :math:`\epsilon_E`</span>
-<span class="sd">          - Fraction of the post-shock energy density in relativistic electrons.</span>
+<span class="sd">          - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">        * - Volume filling factor</span>
 <span class="sd">          - :math:`f_V`</span>
 <span class="sd">          - Fraction of the sphere occupied by emitting material. Controls the</span>
@@ -6997,7 +7046,7 @@
 <span class="sd">            Electron power-law index. Default ``3.0``.</span>
 <span class="sd">        f_V : float, optional</span>
 <span class="sd">            Volume filling factor. The effective LOS path length passed to</span>
-<span class="sd">            the radiative transfer is :math:`f_V R`. Default ``1.0``.</span>
+<span class="sd">            the radiative transfer is :math:`f_V^{1/3} R`. Default ``1.0``.</span>
 <span class="sd">        f_A : float, optional</span>
 <span class="sd">            Area filling factor. The effective projected area is</span>
 <span class="sd">            :math:`f_A \pi R^2`. Default ``1.0``.</span>
@@ -7012,9 +7061,10 @@
 <span class="sd">        z : float, optional</span>
 <span class="sd">            Source redshift. Default ``0.0``.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Magnetic equipartition fraction. Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Electron equipartition fraction. Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
+<span class="sd">            Default ``0.1``.</span>
 <span class="sd">        gamma_min : float, optional</span>
 <span class="sd">            Minimum electron Lorentz factor active in the power law.</span>
 <span class="sd">            Default ``1.0``.</span>
@@ -7050,10 +7100,10 @@
         <span class="n">log_A_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">f_A</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">log_D_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">D_A</span><span class="p">))</span>
 
-        <span class="c1"># Build the distribution function N(gamma) on the quadrature grid.</span>
-        <span class="n">log_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N0</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">),),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span> <span class="o">&gt;=</span> <span class="n">log_gamma_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span> <span class="o">&lt;=</span> <span class="n">log_gamma_max</span><span class="p">)</span>
-        <span class="n">log_N</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N0</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="c1"># Integrate over the power-law support only, with its edges as nodes, so the result does not depend on where</span>
+        <span class="c1"># gamma_min and gamma_max fall between the nodes of the default grid.</span>
+        <span class="n">log_gamma</span><span class="p">,</span> <span class="n">log_weights</span> <span class="o">=</span> <span class="n">_support_grid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span> <span class="n">log_gamma_min</span><span class="p">,</span> <span class="n">log_gamma_max</span><span class="p">)</span>
+        <span class="n">log_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N0</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="n">log_gamma</span>
 
         <span class="c1"># Pass off to the engine for the computation.</span>
         <span class="k">if</span> <span class="n">sin_alpha</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -7062,8 +7112,8 @@
                 <span class="n">log_slab_depth</span><span class="o">=</span><span class="n">log_R_eff</span><span class="p">,</span>
                 <span class="n">log_B</span><span class="o">=</span><span class="n">log_B</span><span class="p">,</span>
                 <span class="n">log_N</span><span class="o">=</span><span class="n">log_N</span><span class="p">,</span>
-                <span class="n">log_gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span>
-                <span class="n">log_weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_weights</span><span class="p">,</span>
+                <span class="n">log_gamma</span><span class="o">=</span><span class="n">log_gamma</span><span class="p">,</span>
+                <span class="n">log_weights</span><span class="o">=</span><span class="n">log_weights</span><span class="p">,</span>
                 <span class="n">log_A</span><span class="o">=</span><span class="n">log_A_eff</span><span class="p">,</span>
                 <span class="n">log_D_A</span><span class="o">=</span><span class="n">log_D_A</span><span class="p">,</span>
                 <span class="n">z</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">),</span>
@@ -7077,8 +7127,8 @@
                 <span class="n">log_slab_depth</span><span class="o">=</span><span class="n">log_R_eff</span><span class="p">,</span>
                 <span class="n">log_B</span><span class="o">=</span><span class="n">log_B</span><span class="p">,</span>
                 <span class="n">log_N</span><span class="o">=</span><span class="n">log_N</span><span class="p">,</span>
-                <span class="n">log_gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span>
-                <span class="n">log_weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_weights</span><span class="p">,</span>
+                <span class="n">log_gamma</span><span class="o">=</span><span class="n">log_gamma</span><span class="p">,</span>
+                <span class="n">log_weights</span><span class="o">=</span><span class="n">log_weights</span><span class="p">,</span>
                 <span class="n">log_A_eff</span><span class="o">=</span><span class="n">log_A_eff</span><span class="p">,</span>
                 <span class="n">log_D_A</span><span class="o">=</span><span class="n">log_D_A</span><span class="p">,</span>
                 <span class="n">z</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">),</span>
@@ -7125,7 +7175,7 @@
 <span class="sd">            Electron power-law index. Default ``3.0``.</span>
 <span class="sd">        f_V : float, optional</span>
 <span class="sd">            Volume filling factor; the effective LOS path length is</span>
-<span class="sd">            :math:`f_V R`. Default ``1.0``.</span>
+<span class="sd">            :math:`f_V^{1/3} R`. Default ``1.0``.</span>
 <span class="sd">        f_A : float, optional</span>
 <span class="sd">            Area filling factor; the effective projected area is</span>
 <span class="sd">            :math:`f_A \pi R^2`. Default ``1.0``.</span>
@@ -7138,9 +7188,9 @@
 <span class="sd">            Electron pitch angle. Bare values are treated as radians.</span>
 <span class="sd">            ``None`` selects the pitch-angle-averaged kernel. Default ``None``.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock energy in magnetic fields. Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock energy in relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">            Default ``0.1``.</span>
 <span class="sd">        gamma_min : float, optional</span>
 <span class="sd">            Minimum electron Lorentz factor active in the power law.</span>
@@ -7484,9 +7534,10 @@
 <span class="sd">        z : float, optional</span>
 <span class="sd">            Source redshift. Default ``0.0``.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Magnetic equipartition fraction. Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Electron equipartition fraction. Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
+<span class="sd">            Default ``0.1``.</span>
 <span class="sd">        gamma_min : float, optional</span>
 <span class="sd">            Minimum electron Lorentz factor active in the power law.</span>
 <span class="sd">            Default ``1.0``.</span>
@@ -7513,61 +7564,47 @@
         <span class="n">gamma_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cooling_engine</span><span class="o">.</span><span class="n">compute_cooling_gamma</span><span class="p">(</span><span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">sin_alpha</span><span class="o">=</span><span class="n">sin_alpha</span><span class="p">)</span>
         <span class="n">log_gamma_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">)</span>
 
-        <span class="c1"># Now perform the branching to normalize dependent on the the</span>
-        <span class="c1"># cooling regime.</span>
+        <span class="c1"># Integrate over the support of the cooled distribution only, with its edges and its cooling break as nodes,</span>
+        <span class="c1"># so the result does not depend on where they fall between the nodes of the default grid. The distribution</span>
+        <span class="c1"># is the broken power law of the matching regime.</span>
         <span class="k">if</span> <span class="n">log_gamma_c</span> <span class="o">&lt;</span> <span class="n">log_gamma_min</span><span class="p">:</span>
-            <span class="c1"># Compute masks.</span>
-            <span class="n">mask_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span> <span class="o">&lt;</span> <span class="n">log_gamma_c</span>
-            <span class="n">mask_2</span> <span class="o">=</span> <span class="p">(</span><span class="n">log_gamma_c</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span> <span class="o">&lt;</span> <span class="n">log_gamma_max</span><span class="p">)</span>
-
-            <span class="c1"># Normalize the electron distribution in each segment.</span>
+            <span class="c1"># Fast cooling: gamma^-2 from gamma_c to gamma_min, gamma^-(p+1) above.</span>
+            <span class="n">log_break</span><span class="p">,</span> <span class="n">slope_below</span><span class="p">,</span> <span class="n">slope_above</span> <span class="o">=</span> <span class="n">log_gamma_min</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">1.0</span>
+            <span class="n">log_gamma</span><span class="p">,</span> <span class="n">log_weights</span> <span class="o">=</span> <span class="n">_support_grid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span> <span class="n">log_gamma_c</span><span class="p">,</span> <span class="n">log_gamma_max</span><span class="p">,</span> <span class="p">(</span><span class="n">log_break</span><span class="p">,))</span>
             <span class="n">N0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
                 <span class="n">BrokenPowerLaw</span><span class="o">.</span><span class="n">_normalize_from_magnetic_field</span><span class="p">(</span>
                     <span class="n">B</span><span class="p">,</span>
                     <span class="n">epsilon_B</span><span class="p">,</span>
                     <span class="n">epsilon_E</span><span class="p">,</span>
-                    <span class="n">p1</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                    <span class="n">p2</span><span class="o">=</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">p1</span><span class="o">=</span><span class="n">slope_below</span><span class="p">,</span>
+                    <span class="n">p2</span><span class="o">=</span><span class="n">slope_above</span><span class="p">,</span>
                     <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_c</span><span class="p">,</span>
                     <span class="n">gamma_c</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
                     <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
                 <span class="p">),</span>
                 <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">log_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N0</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">),),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-
-            <span class="c1"># Insert the values into each segment.</span>
-            <span class="n">log_N</span><span class="p">[</span><span class="n">mask_1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">[</span><span class="n">mask_1</span><span class="p">]</span> <span class="o">-</span> <span class="n">log_gamma_min</span><span class="p">)</span>
-            <span class="n">log_N</span><span class="p">[</span><span class="n">mask_2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N0</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">[</span><span class="n">mask_2</span><span class="p">]</span> <span class="o">-</span> <span class="n">log_gamma_min</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">log_gamma_min</span> <span class="o">&lt;=</span> <span class="n">log_gamma_c</span> <span class="o">&lt;</span> <span class="n">log_gamma_max</span><span class="p">:</span>
-            <span class="c1"># Compute masks.</span>
-            <span class="n">mask_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span> <span class="o">&lt;</span> <span class="n">log_gamma_c</span>
-            <span class="n">mask_2</span> <span class="o">=</span> <span class="p">(</span><span class="n">log_gamma_c</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span> <span class="o">&lt;</span> <span class="n">log_gamma_max</span><span class="p">)</span>
-
-            <span class="c1"># Normalize the electron distribution in each segment.</span>
+        <span class="k">elif</span> <span class="n">log_gamma_c</span> <span class="o">&lt;</span> <span class="n">log_gamma_max</span><span class="p">:</span>
+            <span class="c1"># Slow cooling: gamma^-p from gamma_min to gamma_c, gamma^-(p+1) above.</span>
+            <span class="n">log_break</span><span class="p">,</span> <span class="n">slope_below</span><span class="p">,</span> <span class="n">slope_above</span> <span class="o">=</span> <span class="n">log_gamma_c</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">1.0</span>
+            <span class="n">log_gamma</span><span class="p">,</span> <span class="n">log_weights</span> <span class="o">=</span> <span class="n">_support_grid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span> <span class="n">log_gamma_min</span><span class="p">,</span> <span class="n">log_gamma_max</span><span class="p">,</span> <span class="p">(</span><span class="n">log_break</span><span class="p">,))</span>
             <span class="n">N0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
                 <span class="n">BrokenPowerLaw</span><span class="o">.</span><span class="n">_normalize_from_magnetic_field</span><span class="p">(</span>
                     <span class="n">B</span><span class="p">,</span>
                     <span class="n">epsilon_B</span><span class="p">,</span>
                     <span class="n">epsilon_E</span><span class="p">,</span>
-                    <span class="n">p1</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
-                    <span class="n">p2</span><span class="o">=</span><span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">p1</span><span class="o">=</span><span class="n">slope_below</span><span class="p">,</span>
+                    <span class="n">p2</span><span class="o">=</span><span class="n">slope_above</span><span class="p">,</span>
                     <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
                     <span class="n">gamma_c</span><span class="o">=</span><span class="n">gamma_c</span><span class="p">,</span>
                     <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
                 <span class="p">),</span>
                 <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">log_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N0</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">),),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-
-            <span class="c1"># Insert the values into each segment.</span>
-            <span class="n">log_N</span><span class="p">[</span><span class="n">mask_1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N0</span><span class="p">)</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">[</span><span class="n">mask_1</span><span class="p">]</span> <span class="o">-</span> <span class="n">log_gamma_c</span><span class="p">)</span>
-            <span class="n">log_N</span><span class="p">[</span><span class="n">mask_2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N0</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">[</span><span class="n">mask_2</span><span class="p">]</span> <span class="o">-</span> <span class="n">log_gamma_c</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Compute mask.</span>
-            <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">log_gamma_min</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span> <span class="o">&lt;</span> <span class="n">log_gamma_max</span><span class="p">)</span>
-
-            <span class="c1"># Normalize the electron distribution.</span>
+            <span class="c1"># No cooling inside the distribution: a single power law.</span>
+            <span class="n">log_break</span><span class="p">,</span> <span class="n">slope_below</span><span class="p">,</span> <span class="n">slope_above</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">p</span>  <span class="c1"># N = N0 gamma^-p: the reference point is gamma = 1</span>
+            <span class="n">log_gamma</span><span class="p">,</span> <span class="n">log_weights</span> <span class="o">=</span> <span class="n">_support_grid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span> <span class="n">log_gamma_min</span><span class="p">,</span> <span class="n">log_gamma_max</span><span class="p">)</span>
             <span class="n">N0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
                 <span class="n">PowerLaw</span><span class="o">.</span><span class="n">_normalize_from_magnetic_field</span><span class="p">(</span>
                     <span class="n">B</span><span class="p">,</span>
@@ -7579,8 +7616,11 @@
                 <span class="p">),</span>
                 <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">log_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N0</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">),),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-            <span class="n">log_N</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N0</span><span class="p">)</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
+
+        <span class="c1"># The shape is (gamma / gamma_break)^-slope, with the slope changing at the break (the normalization of each</span>
+        <span class="c1"># distribution above is for this form).</span>
+        <span class="n">slope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">log_gamma</span> <span class="o">&lt;</span> <span class="n">log_break</span><span class="p">,</span> <span class="n">slope_below</span><span class="p">,</span> <span class="n">slope_above</span><span class="p">)</span>
+        <span class="n">log_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N0</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">-</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">log_gamma</span> <span class="o">-</span> <span class="n">log_break</span><span class="p">)</span>
 
         <span class="c1"># Pass off to the engine for the computation.</span>
         <span class="k">if</span> <span class="n">sin_alpha</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -7589,8 +7629,8 @@
                 <span class="n">log_slab_depth</span><span class="o">=</span><span class="n">log_R_eff</span><span class="p">,</span>
                 <span class="n">log_B</span><span class="o">=</span><span class="n">log_B</span><span class="p">,</span>
                 <span class="n">log_N</span><span class="o">=</span><span class="n">log_N</span><span class="p">,</span>
-                <span class="n">log_gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span>
-                <span class="n">log_weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_weights</span><span class="p">,</span>
+                <span class="n">log_gamma</span><span class="o">=</span><span class="n">log_gamma</span><span class="p">,</span>
+                <span class="n">log_weights</span><span class="o">=</span><span class="n">log_weights</span><span class="p">,</span>
                 <span class="n">log_A</span><span class="o">=</span><span class="n">log_A_eff</span><span class="p">,</span>
                 <span class="n">log_D_A</span><span class="o">=</span><span class="n">log_D_A</span><span class="p">,</span>
                 <span class="n">z</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">),</span>
@@ -7604,8 +7644,8 @@
                 <span class="n">log_slab_depth</span><span class="o">=</span><span class="n">log_R_eff</span><span class="p">,</span>
                 <span class="n">log_B</span><span class="o">=</span><span class="n">log_B</span><span class="p">,</span>
                 <span class="n">log_N</span><span class="o">=</span><span class="n">log_N</span><span class="p">,</span>
-                <span class="n">log_gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span>
-                <span class="n">log_weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_weights</span><span class="p">,</span>
+                <span class="n">log_gamma</span><span class="o">=</span><span class="n">log_gamma</span><span class="p">,</span>
+                <span class="n">log_weights</span><span class="o">=</span><span class="n">log_weights</span><span class="p">,</span>
                 <span class="n">log_A_eff</span><span class="o">=</span><span class="n">log_A_eff</span><span class="p">,</span>
                 <span class="n">log_D_A</span><span class="o">=</span><span class="n">log_D_A</span><span class="p">,</span>
                 <span class="n">z</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">),</span>
@@ -7670,9 +7710,9 @@
 <span class="sd">            Electron pitch angle. Bare values are treated as radians.</span>
 <span class="sd">            ``None`` selects the pitch-angle-averaged kernel. Default ``None``.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock energy in magnetic fields. Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock energy in relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</span>
 <span class="sd">            Default ``0.1``.</span>
 <span class="sd">        gamma_min : float, optional</span>
 <span class="sd">            Minimum electron Lorentz factor active in the power law.</span>
@@ -7791,6 +7831,29 @@
 
 
 
+<span class="c1"># =========================================================================== #</span>
+<span class="c1"># Thermal electron distributions                                              #</span>
+<span class="c1"># =========================================================================== #</span>
+<span class="n">_THERMAL_X_MIN</span> <span class="o">=</span> <span class="mf">1e-6</span>  <span class="c1"># smallest gamma - 1 on the default thermal grids</span>
+<span class="n">_MIXED_X_MAX</span> <span class="o">=</span> <span class="mf">1e2</span>  <span class="c1"># largest gamma - 1 of the extra thermal points on the default mixed grid</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_thermal_gamma_grid</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_gamma</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mixed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Return the default Lorentz-factor grid for the thermal SEDs.</span>
+
+<span class="sd">    A thermal population sits at :math:`\gamma - 1 \sim \Theta`, so a grid log-spaced in :math:`\gamma` puts only a few</span>
+<span class="sd">    points across it for :math:`\Theta \lesssim 0.3`. Pure thermal SEDs therefore use ``n_gamma`` points log-spaced in</span>
+<span class="sd">    :math:`\gamma - 1`, which resolves the distribution for :math:`\Theta \gtrsim 10^{-3}`. Mixed SEDs also need the</span>
+<span class="sd">    log-spaced :math:`\gamma` grid for their power-law component, so they use its union with ``n_gamma // 2`` points</span>
+<span class="sd">    log-spaced in :math:`\gamma - 1` up to :math:`\gamma - 1 = 100`.</span>
+<span class="sd">    """</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">gamma_min</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">_THERMAL_X_MIN</span><span class="p">),</span> <span class="n">gamma_max</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">n_gamma</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">mixed</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">x</span>
+    <span class="n">x_thermal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">min</span><span class="p">(</span><span class="n">_MIXED_X_MAX</span><span class="p">,</span> <span class="n">gamma_max</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">n_gamma</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="n">n_gamma</span><span class="p">),</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">x_thermal</span><span class="p">]))</span>
+
+
 <div class="viewcode-block" id="Numerical_Thermal_SSA_SynchrotronSED">
 <a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.Numerical_Thermal_SSA_SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.seds.Numerical_Thermal_SSA_SynchrotronSED">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Numerical_Thermal_SSA_SynchrotronSED</span><span class="p">(</span><span class="n">SynchrotronSED</span><span class="p">):</span>
@@ -7812,27 +7875,33 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        N(\gamma) = \frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta},</span>
+<span class="sd">        N(\gamma) = N_{\rm therm}\,\frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)}\,e^{-\gamma/\Theta},</span>
+<span class="sd">        \qquad \beta = \sqrt{1 - \gamma^{-2}},</span>
 
 <span class="sd">    where :math:`\Theta = kT/(m_e c^2)` is the dimensionless electron</span>
-<span class="sd">    temperature and :math:`N_{\rm therm}` is fixed by the equipartition</span>
-<span class="sd">    prescription (see</span>
+<span class="sd">    temperature, :math:`K_2` is the modified Bessel function of the second kind, and :math:`N_{\rm therm}`, the total</span>
+<span class="sd">    number density, is fixed by the equipartition prescription (see</span>
 <span class="sd">    :meth:`~trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner._normalize_from_magnetic_field`):</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \epsilon_E\,\frac{B^2}{8\pi} = \int_1^\infty</span>
-<span class="sd">            N(\gamma)\,\gamma\,m_e c^2\,\mathrm{d}\gamma.</span>
+<span class="sd">        \frac{f_{\rm th}}{\epsilon_B}\,\frac{B^2}{8\pi} = \int_1^\infty</span>
+<span class="sd">            N(\gamma)\,(\gamma - 1)\,m_e c^2\,\mathrm{d}\gamma,</span>
+<span class="sd">        \qquad f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B)}{1 + \epsilon_T},</span>
+
+<span class="sd">    where :math:`\epsilon_T` is the ratio of the thermal-electron to the ion energy (see</span>
+<span class="sd">    :mod:`trilobite.physics_utils.thermal_partition`).</span>
 
 <span class="sd">    The thermal peak of the distribution is at :math:`\gamma_{\rm peak} \approx 3\Theta`</span>
 <span class="sd">    for :math:`\Theta \gg 1`, so the quadrature grid should be wide enough to</span>
-<span class="sd">    capture energies up to several multiples of :math:`\Theta`.</span>
+<span class="sd">    capture energies up to several multiples of :math:`\Theta`. By default the grid is log-spaced in</span>
+<span class="sd">    :math:`\gamma - 1`, which resolves the distribution for :math:`\Theta \gtrsim 10^{-3}`.</span>
 
 <span class="sd">    .. rubric:: Radiative Transfer</span>
 
 <span class="sd">    The emergent flux is computed identically to</span>
 <span class="sd">    :class:`Numerical_PowerLaw_SSA_SynchrotronSED`: a plane-parallel slab of</span>
-<span class="sd">    depth :math:`\ell = f_V\,R` (no cube-root factor for the thermal geometry) is</span>
+<span class="sd">    depth :math:`\ell = f_V^{1/3}\,R` is</span>
 <span class="sd">    solved for the full transition from optically thin to optically thick.</span>
 
 <span class="sd">    .. rubric:: Physical Parameters</span>
@@ -7850,21 +7919,21 @@
 <span class="sd">        * - Outer radius</span>
 <span class="sd">          - :math:`R`</span>
 <span class="sd">          - Characteristic size of the emitting region. The effective</span>
-<span class="sd">            line-of-sight depth is :math:`\ell = f_V\,R`.</span>
+<span class="sd">            line-of-sight depth is :math:`\ell = f_V^{1/3}\,R`.</span>
 <span class="sd">        * - Dimensionless temperature</span>
 <span class="sd">          - :math:`\Theta`</span>
 <span class="sd">          - :math:`\Theta = kT/(m_e c^2)`; controls the peak of the</span>
 <span class="sd">            Maxwell-Jüttner distribution.</span>
 <span class="sd">        * - Magnetic equipartition fraction</span>
 <span class="sd">          - :math:`\epsilon_B`</span>
-<span class="sd">          - Fraction of the post-shock energy density in magnetic fields.</span>
-<span class="sd">        * - Electron equipartition fraction</span>
-<span class="sd">          - :math:`\epsilon_E`</span>
-<span class="sd">          - Fraction of the post-shock energy density in thermal electrons.</span>
+<span class="sd">          - Fraction of the thermal (internal) energy density in the magnetic field.</span>
+<span class="sd">        * - Thermal-electron to ion energy ratio</span>
+<span class="sd">          - :math:`\epsilon_T`</span>
+<span class="sd">          - Ratio of the thermal-electron energy to the ion energy.</span>
 <span class="sd">        * - Volume filling factor</span>
 <span class="sd">          - :math:`f_V`</span>
 <span class="sd">          - Fraction of the sphere occupied by emitting material; controls</span>
-<span class="sd">            the effective slab depth :math:`\ell = f_V\,R`.</span>
+<span class="sd">            the effective slab depth :math:`\ell = f_V^{1/3}\,R`.</span>
 <span class="sd">        * - Area filling factor</span>
 <span class="sd">          - :math:`f_A`</span>
 <span class="sd">          - Fraction of the projected area that is emitting.</span>
@@ -7924,7 +7993,8 @@
 <span class="sd">            Explicit Lorentz factor grid. If ``None``, a log-uniform grid is</span>
 <span class="sd">            built from ``gamma_min``, ``gamma_max``, and ``n_gamma``.</span>
 <span class="sd">        gamma_min : float, optional</span>
-<span class="sd">            Lower bound of the Lorentz factor grid. Default ``1.0``.</span>
+<span class="sd">            Lower bound of the Lorentz factor grid. Default ``1.0``. The default grid is log-spaced in</span>
+<span class="sd">            :math:`\gamma - 1`, starting at :math:`\max(\gamma_{\min} - 1, 10^{-6})`.</span>
 <span class="sd">        gamma_max : float, optional</span>
 <span class="sd">            Upper bound of the Lorentz factor grid. Default ``1e8``.</span>
 <span class="sd">            Should extend to several times :math:`\Theta` to capture the</span>
@@ -7949,12 +8019,9 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">NumericalSynchrotronEngine</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">_build_gamma_grid</span><span class="p">(</span>
-            <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
-            <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
-            <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
-            <span class="n">n_gamma</span><span class="o">=</span><span class="n">n_gamma</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">gamma</span> <span class="o">=</span> <span class="n">_thermal_gamma_grid</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="n">n_gamma</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">_build_gamma_grid</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
 
         <span class="n">kernel_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"x_min"</span><span class="p">:</span> <span class="n">x_min</span><span class="p">,</span> <span class="s2">"x_max"</span><span class="p">:</span> <span class="n">x_max</span><span class="p">,</span> <span class="s2">"num_points"</span><span class="p">:</span> <span class="n">num_points</span><span class="p">,</span> <span class="s2">"spacing"</span><span class="p">:</span> <span class="n">spacing</span><span class="p">,</span> <span class="s2">"method"</span><span class="p">:</span> <span class="n">method</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">load_avg_first_kernel</span><span class="p">(</span><span class="o">**</span><span class="n">kernel_kwargs</span><span class="p">)</span>
@@ -7975,7 +8042,7 @@
         <span class="n">sin_alpha</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_ArrayLike"</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Low-level numerical thermal synchrotron SED evaluation.</span>
@@ -7995,7 +8062,7 @@
 <span class="sd">        Theta : float</span>
 <span class="sd">            Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.</span>
 <span class="sd">        f_V : float, optional</span>
-<span class="sd">            Volume filling factor. Effective LOS path length is :math:`f_V R`.</span>
+<span class="sd">            Volume filling factor. Effective LOS path length is :math:`f_V^{1/3} R`.</span>
 <span class="sd">            Default ``1.0``.</span>
 <span class="sd">        f_A : float, optional</span>
 <span class="sd">            Area filling factor. Effective projected area is</span>
@@ -8011,9 +8078,9 @@
 <span class="sd">        z : float, optional</span>
 <span class="sd">            Source redshift. Default ``0.0``.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Magnetic equipartition fraction. Default ``0.1``.</span>
-<span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Electron equipartition fraction. Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.</span>
+<span class="sd">        epsilon_T : float, optional</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy. Default ``0.1``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -8025,24 +8092,17 @@
             <span class="n">MaxwellJuettner</span><span class="o">.</span><span class="n">_normalize_from_magnetic_field</span><span class="p">(</span>
                 <span class="n">B</span><span class="p">,</span>
                 <span class="n">epsilon_B</span><span class="p">,</span>
-                <span class="n">epsilon_E</span><span class="p">,</span>
+                <span class="n">_opt_thermal_electron_energy_fraction</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                 <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># Maxwell-Jüttner: N(gamma) = N_therm/(2 Theta^3) * gamma^2 * exp(-gamma/Theta)</span>
-        <span class="n">log_N</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N_therm</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-            <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
-            <span class="o">-</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">))</span>
-            <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span>
-            <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">log_N</span> <span class="o">=</span> <span class="n">_opt_mj_log_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">),</span> <span class="n">Theta</span><span class="p">,</span> <span class="n">N_therm</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
 
         <span class="n">log_nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">))</span>
         <span class="n">log_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">B</span><span class="p">))</span>
-        <span class="n">log_R_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">f_V</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
+        <span class="n">log_R_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">f_V</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
         <span class="n">log_A_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">f_A</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">log_D_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">D_A</span><span class="p">))</span>
 
@@ -8091,7 +8151,7 @@
         <span class="n">cos_theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">alpha</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
         <span class="n">redshift</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">luminosity_distance</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">angular_diameter_distance</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -8113,7 +8173,7 @@
 <span class="sd">            Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.</span>
 <span class="sd">        f_V : float, optional</span>
 <span class="sd">            Volume filling factor; the effective LOS path length is</span>
-<span class="sd">            :math:`f_V R`. Default ``1.0``.</span>
+<span class="sd">            :math:`f_V^{1/3} R`. Default ``1.0``.</span>
 <span class="sd">        f_A : float, optional</span>
 <span class="sd">            Area filling factor; the effective projected area is</span>
 <span class="sd">            :math:`f_A \pi R^2`. Default ``1.0``.</span>
@@ -8126,10 +8186,9 @@
 <span class="sd">            Electron pitch angle. Bare values are treated as radians.</span>
 <span class="sd">            ``None`` selects the pitch-angle-averaged kernel. Default ``None``.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock energy in magnetic fields. Default ``0.1``.</span>
-<span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Fraction of post-shock energy in relativistic electrons.</span>
-<span class="sd">            Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.</span>
+<span class="sd">        epsilon_T : float, optional</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy. Default ``0.1``.</span>
 <span class="sd">        redshift : float, optional</span>
 <span class="sd">            Source redshift.</span>
 <span class="sd">        luminosity_distance : float or ~astropy.units.Quantity, optional</span>
@@ -8184,7 +8243,7 @@
 <span class="sd">                R=1e17 * u.cm,</span>
 <span class="sd">                Theta=10.0,</span>
 <span class="sd">                epsilon_B=0.1,</span>
-<span class="sd">                epsilon_E=0.1,</span>
+<span class="sd">                epsilon_T=0.1,</span>
 <span class="sd">                angular_diameter_distance=100 * u.Mpc,</span>
 <span class="sd">            )</span>
 <span class="sd">        """</span>
@@ -8199,6 +8258,7 @@
         <span class="n">D_A</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="s2">"angular_diameter_distance"</span><span class="p">],</span> <span class="s2">"cm"</span><span class="p">)</span>
         <span class="n">z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="s2">"redshift"</span><span class="p">])</span>
 
+        <span class="n">_validate_partition</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">nu_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="s2">"Hz"</span><span class="p">)</span>
         <span class="n">B_cgs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="s2">"G"</span><span class="p">))</span>
         <span class="n">R_cgs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="s2">"cm"</span><span class="p">))</span>
@@ -8219,7 +8279,7 @@
             <span class="n">sin_alpha</span><span class="o">=</span><span class="n">sin_alpha</span><span class="p">,</span>
             <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
             <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span>
-            <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span>
+            <span class="n">epsilon_T</span><span class="o">=</span><span class="n">epsilon_T</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_flux</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span></div>
@@ -8240,8 +8300,8 @@
 <span class="sd">    This class is appropriate for systems where both thermal and non-thermal</span>
 <span class="sd">    electrons contribute to the synchrotron emission, such as mildly relativistic</span>
 <span class="sd">    shocks or environments where the acceleration efficiency is uncertain. The</span>
-<span class="sd">    relative contribution of each component is controlled by the energy fraction</span>
-<span class="sd">    parameter :math:`\delta`.</span>
+<span class="sd">    relative contribution of each component is controlled by the energy budget</span>
+<span class="sd">    :math:`(\epsilon_T, \epsilon_B, \epsilon_E)`.</span>
 
 <span class="sd">    .. rubric:: Composite Electron Distribution</span>
 
@@ -8250,16 +8310,20 @@
 <span class="sd">    .. math::</span>
 
 <span class="sd">        N(\gamma) =</span>
-<span class="sd">            \underbrace{\frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta}}_{\text{thermal}}</span>
+<span class="sd">            \underbrace{N_{\rm therm}\,\frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)}\,e^{-\gamma/\Theta}}_{\text{thermal}}</span>
 <span class="sd">            +</span>
 <span class="sd">            \underbrace{N_0\,\gamma^{-p}\,\mathbf{1}_{[\gamma_{\min},\gamma_{\max}]}(\gamma)}_{\text{non-thermal}},</span>
 
-<span class="sd">    where the energy budget is split via the thermal fraction :math:`\delta`:</span>
+<span class="sd">    where the energy budget is split as in</span>
+<span class="sd">    :class:`~trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal`. The thermal electrons</span>
+<span class="sd">    and the non-thermal electrons carry the fractions</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \epsilon_{E,\rm therm} = \delta\,\epsilon_E, \qquad</span>
-<span class="sd">        \epsilon_{E,\rm PL}    = (1-\delta)\,\epsilon_E.</span>
+<span class="sd">        f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}, \qquad</span>
+<span class="sd">        f_{\rm PL} = \epsilon_E</span>
+
+<span class="sd">    of the thermal energy density, where :math:`\epsilon_T` is the ratio of the thermal-electron to the ion energy.</span>
 
 <span class="sd">    Each component is normalized independently by equipartition against its</span>
 <span class="sd">    own energy budget (see</span>
@@ -8271,11 +8335,11 @@
 
 <span class="sd">    .. rubric:: Spectral Properties</span>
 
-<span class="sd">    - In the limit :math:`\delta \to 1`, the SED reduces to the pure thermal</span>
+<span class="sd">    - For :math:`\epsilon_E = 0`, the SED reduces to the pure thermal</span>
 <span class="sd">      case (:class:`Numerical_Thermal_SSA_SynchrotronSED`).</span>
-<span class="sd">    - In the limit :math:`\delta \to 0`, the SED reduces to the pure power-law</span>
+<span class="sd">    - For :math:`\epsilon_T = 0`, the SED reduces to the pure power-law</span>
 <span class="sd">      case (:class:`Numerical_PowerLaw_SSA_SynchrotronSED`).</span>
-<span class="sd">    - For intermediate :math:`\delta`, the spectrum may exhibit features from</span>
+<span class="sd">    - Otherwise the spectrum may exhibit features from</span>
 <span class="sd">      both components, with the low-frequency self-absorbed regime shaped</span>
 <span class="sd">      primarily by the thermal component and the high-frequency optically thin</span>
 <span class="sd">      tail dominated by the power law.</span>
@@ -8343,7 +8407,9 @@
 <span class="sd">            Explicit Lorentz factor grid. If ``None``, a log-uniform grid is</span>
 <span class="sd">            built from ``gamma_min``, ``gamma_max``, and ``n_gamma``.</span>
 <span class="sd">        gamma_min : float, optional</span>
-<span class="sd">            Lower bound of the Lorentz factor grid. Default ``1.0``.</span>
+<span class="sd">            Lower bound of the Lorentz factor grid. Default ``1.0``. The default grid is the union of ``n_gamma``</span>
+<span class="sd">            points log-spaced in :math:`\gamma` and ``n_gamma // 2`` points log-spaced in :math:`\gamma - 1`,</span>
+<span class="sd">            which resolve the thermal component for :math:`\Theta \gtrsim 10^{-3}`.</span>
 <span class="sd">        gamma_max : float, optional</span>
 <span class="sd">            Upper bound of the Lorentz factor grid. Default ``1e8``. Should be</span>
 <span class="sd">            wide enough to capture the Maxwell-Jüttner tail (at least</span>
@@ -8369,12 +8435,9 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">NumericalSynchrotronEngine</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">_build_gamma_grid</span><span class="p">(</span>
-            <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
-            <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
-            <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
-            <span class="n">n_gamma</span><span class="o">=</span><span class="n">n_gamma</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">gamma</span> <span class="o">=</span> <span class="n">_thermal_gamma_grid</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="n">n_gamma</span><span class="p">,</span> <span class="n">mixed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">_build_gamma_grid</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
 
         <span class="n">kernel_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"x_min"</span><span class="p">:</span> <span class="n">x_min</span><span class="p">,</span> <span class="s2">"x_max"</span><span class="p">:</span> <span class="n">x_max</span><span class="p">,</span> <span class="s2">"num_points"</span><span class="p">:</span> <span class="n">num_points</span><span class="p">,</span> <span class="s2">"spacing"</span><span class="p">:</span> <span class="n">spacing</span><span class="p">,</span> <span class="s2">"method"</span><span class="p">:</span> <span class="n">method</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">load_avg_first_kernel</span><span class="p">(</span><span class="o">**</span><span class="n">kernel_kwargs</span><span class="p">)</span>
@@ -8389,7 +8452,6 @@
         <span class="n">Theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
-        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
         <span class="n">f_V</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">f_A</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -8397,6 +8459,7 @@
         <span class="n">sin_alpha</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
         <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
         <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e6</span><span class="p">,</span>
@@ -8420,11 +8483,8 @@
 <span class="sd">            Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.</span>
 <span class="sd">        p : float, optional</span>
 <span class="sd">            Power-law index of the non-thermal component. Default ``3.0``.</span>
-<span class="sd">        delta : float, optional</span>
-<span class="sd">            Fraction of total electron energy in the thermal component.</span>
-<span class="sd">            Must satisfy :math:`0 \le \delta \le 1`. Default ``0.5``.</span>
 <span class="sd">        f_V : float, optional</span>
-<span class="sd">            Volume filling factor. Effective LOS path length is :math:`f_V R`.</span>
+<span class="sd">            Volume filling factor. Effective LOS path length is :math:`f_V^{1/3} R`.</span>
 <span class="sd">            Default ``1.0``.</span>
 <span class="sd">        f_A : float, optional</span>
 <span class="sd">            Area filling factor. Effective projected area is</span>
@@ -8440,9 +8500,12 @@
 <span class="sd">        z : float, optional</span>
 <span class="sd">            Source redshift. Default ``0.0``.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Magnetic equipartition fraction. Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.</span>
+<span class="sd">        epsilon_T : float, optional</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy. Default ``0.1``.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Total electron equipartition fraction. Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of the non-thermal electrons.</span>
+<span class="sd">            Default ``0.1``.</span>
 <span class="sd">        gamma_min : float, optional</span>
 <span class="sd">            Minimum Lorentz factor of the non-thermal power-law component.</span>
 <span class="sd">            Default ``1.0``.</span>
@@ -8456,12 +8519,11 @@
 <span class="sd">            :math:`\ln F_\nu` in CGS</span>
 <span class="sd">            (:math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`).</span>
 <span class="sd">        """</span>
-        <span class="n">delta_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)</span>
         <span class="n">N_therm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
             <span class="n">MaxwellJuettner</span><span class="o">.</span><span class="n">_normalize_from_magnetic_field</span><span class="p">(</span>
                 <span class="n">B</span><span class="p">,</span>
                 <span class="n">epsilon_B</span><span class="p">,</span>
-                <span class="n">delta_arr</span> <span class="o">*</span> <span class="n">epsilon_E</span><span class="p">,</span>
+                <span class="n">_opt_thermal_electron_energy_fraction</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">),</span>
                 <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">,</span>
@@ -8470,7 +8532,7 @@
             <span class="n">PowerLaw</span><span class="o">.</span><span class="n">_normalize_from_magnetic_field</span><span class="p">(</span>
                 <span class="n">B</span><span class="p">,</span>
                 <span class="n">epsilon_B</span><span class="p">,</span>
-                <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">delta_arr</span><span class="p">)</span> <span class="o">*</span> <span class="n">epsilon_E</span><span class="p">,</span>
+                <span class="n">epsilon_E</span><span class="p">,</span>
                 <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
                 <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
                 <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
@@ -8478,26 +8540,24 @@
             <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">,</span>
         <span class="p">)</span>
 
+        <span class="c1"># The power law switches on at gamma_min and off at gamma_max while the thermal component continues across them.</span>
+        <span class="c1"># Resolve both steps with a pair of nodes so the result does not depend on where they fall on the grid.</span>
+        <span class="n">log_gamma</span><span class="p">,</span> <span class="n">log_weights</span> <span class="o">=</span> <span class="n">_step_grid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">))</span>
+
         <span class="c1"># Thermal component: Maxwell-Jüttner evaluated over the full grid.</span>
-        <span class="n">log_N_mjd</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N_therm</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-            <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
-            <span class="o">-</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">))</span>
-            <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span>
-            <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">log_N_mjd</span> <span class="o">=</span> <span class="n">_opt_mj_log_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_gamma</span><span class="p">),</span> <span class="n">Theta</span><span class="p">,</span> <span class="n">N_therm</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
 
         <span class="c1"># Non-thermal component: power law gated to [gamma_min, gamma_max].</span>
-        <span class="n">gamma_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">)</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma_arr</span> <span class="o">&gt;=</span> <span class="n">gamma_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma_arr</span> <span class="o">&lt;=</span> <span class="n">gamma_max</span><span class="p">)</span>
-        <span class="n">log_N_pl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N0_pl</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">),),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-        <span class="n">log_N_pl</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N0_pl</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">log_gamma</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">log_gamma</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">))</span>
+        <span class="n">log_N_pl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N0_pl</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">log_gamma</span><span class="p">),),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+            <span class="n">log_N_pl</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N0_pl</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="n">log_gamma</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
         <span class="n">log_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logaddexp</span><span class="p">(</span><span class="n">log_N_mjd</span><span class="p">,</span> <span class="n">log_N_pl</span><span class="p">)</span>
 
         <span class="n">log_nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">))</span>
         <span class="n">log_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">B</span><span class="p">))</span>
-        <span class="n">log_R_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">f_V</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
+        <span class="n">log_R_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">f_V</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
         <span class="n">log_A_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">f_A</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">log_D_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">D_A</span><span class="p">))</span>
 
@@ -8507,8 +8567,8 @@
                 <span class="n">log_slab_depth</span><span class="o">=</span><span class="n">log_R_eff</span><span class="p">,</span>
                 <span class="n">log_B</span><span class="o">=</span><span class="n">log_B</span><span class="p">,</span>
                 <span class="n">log_N</span><span class="o">=</span><span class="n">log_N</span><span class="p">,</span>
-                <span class="n">log_gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span>
-                <span class="n">log_weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_weights</span><span class="p">,</span>
+                <span class="n">log_gamma</span><span class="o">=</span><span class="n">log_gamma</span><span class="p">,</span>
+                <span class="n">log_weights</span><span class="o">=</span><span class="n">log_weights</span><span class="p">,</span>
                 <span class="n">log_A</span><span class="o">=</span><span class="n">log_A_eff</span><span class="p">,</span>
                 <span class="n">log_D_A</span><span class="o">=</span><span class="n">log_D_A</span><span class="p">,</span>
                 <span class="n">z</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">),</span>
@@ -8522,8 +8582,8 @@
                 <span class="n">log_slab_depth</span><span class="o">=</span><span class="n">log_R_eff</span><span class="p">,</span>
                 <span class="n">log_B</span><span class="o">=</span><span class="n">log_B</span><span class="p">,</span>
                 <span class="n">log_N</span><span class="o">=</span><span class="n">log_N</span><span class="p">,</span>
-                <span class="n">log_gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_gamma</span><span class="p">,</span>
-                <span class="n">log_weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_weights</span><span class="p">,</span>
+                <span class="n">log_gamma</span><span class="o">=</span><span class="n">log_gamma</span><span class="p">,</span>
+                <span class="n">log_weights</span><span class="o">=</span><span class="n">log_weights</span><span class="p">,</span>
                 <span class="n">log_A_eff</span><span class="o">=</span><span class="n">log_A_eff</span><span class="p">,</span>
                 <span class="n">log_D_A</span><span class="o">=</span><span class="n">log_D_A</span><span class="p">,</span>
                 <span class="n">z</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">),</span>
@@ -8541,13 +8601,13 @@
         <span class="n">Theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
-        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
         <span class="n">f_V</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">f_A</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">cos_theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">alpha</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">epsilon_T</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
         <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
         <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e6</span><span class="p">,</span>
@@ -8572,12 +8632,9 @@
 <span class="sd">            Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.</span>
 <span class="sd">        p : float, optional</span>
 <span class="sd">            Power-law index of the non-thermal electron component. Default ``3.0``.</span>
-<span class="sd">        delta : float, optional</span>
-<span class="sd">            Fraction of total electron energy in the thermal component</span>
-<span class="sd">            (:math:`0 \le \delta \le 1`). Default ``0.5``.</span>
 <span class="sd">        f_V : float, optional</span>
 <span class="sd">            Volume filling factor; the effective LOS path length is</span>
-<span class="sd">            :math:`f_V R`. Default ``1.0``.</span>
+<span class="sd">            :math:`f_V^{1/3} R`. Default ``1.0``.</span>
 <span class="sd">        f_A : float, optional</span>
 <span class="sd">            Area filling factor; the effective projected area is</span>
 <span class="sd">            :math:`f_A \pi R^2`. Default ``1.0``.</span>
@@ -8590,9 +8647,11 @@
 <span class="sd">            Electron pitch angle. Bare values are treated as radians.</span>
 <span class="sd">            ``None`` selects the pitch-angle-averaged kernel. Default ``None``.</span>
 <span class="sd">        epsilon_B : float, optional</span>
-<span class="sd">            Fraction of post-shock energy in magnetic fields. Default ``0.1``.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the magnetic field. Default ``0.1``.</span>
+<span class="sd">        epsilon_T : float, optional</span>
+<span class="sd">            Ratio of the thermal-electron energy to the ion energy. Default ``0.1``.</span>
 <span class="sd">        epsilon_E : float, optional</span>
-<span class="sd">            Total fraction of post-shock energy in relativistic electrons.</span>
+<span class="sd">            Fraction of the thermal (internal) energy density in the kinetic energy of the non-thermal electrons.</span>
 <span class="sd">            Default ``0.1``.</span>
 <span class="sd">        gamma_min : float, optional</span>
 <span class="sd">            Minimum Lorentz factor of the non-thermal power-law component.</span>
@@ -8621,9 +8680,9 @@
 <span class="sd">        -----</span>
 <span class="sd">        - The thermal and power-law normalization constants are computed</span>
 <span class="sd">          independently from their respective energy fractions</span>
-<span class="sd">          :math:`\delta\,\epsilon_E` and :math:`(1-\delta)\,\epsilon_E`, then</span>
+<span class="sd">          :math:`f_{\rm th}` and :math:`\epsilon_E`, then</span>
 <span class="sd">          combined in log-space before the radiative transfer integral. Setting</span>
-<span class="sd">          :math:`\delta = 1` recovers the pure thermal limit; :math:`\delta = 0`</span>
+<span class="sd">          :math:`\epsilon_E = 0` recovers the pure thermal limit; :math:`\epsilon_T = 0`</span>
 <span class="sd">          recovers the pure power-law limit.</span>
 <span class="sd">        - The quadrature grid constructed at instantiation must span both the</span>
 <span class="sd">          Maxwell-Jüttner peak (:math:`\gamma \sim 3\Theta`) and the power-law</span>
@@ -8659,8 +8718,8 @@
 <span class="sd">                R=1e17 * u.cm,</span>
 <span class="sd">                Theta=10.0,</span>
 <span class="sd">                p=2.4,</span>
-<span class="sd">                delta=0.5,</span>
 <span class="sd">                epsilon_B=0.1,</span>
+<span class="sd">                epsilon_T=0.1,</span>
 <span class="sd">                epsilon_E=0.1,</span>
 <span class="sd">                gamma_min=100.0,</span>
 <span class="sd">                gamma_max=1e5,</span>
@@ -8678,6 +8737,7 @@
         <span class="n">D_A</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="s2">"angular_diameter_distance"</span><span class="p">],</span> <span class="s2">"cm"</span><span class="p">)</span>
         <span class="n">z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="s2">"redshift"</span><span class="p">])</span>
 
+        <span class="n">_validate_partition</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">nu_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="s2">"Hz"</span><span class="p">)</span>
         <span class="n">B_cgs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="s2">"G"</span><span class="p">))</span>
         <span class="n">R_cgs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="s2">"cm"</span><span class="p">))</span>
@@ -8692,7 +8752,6 @@
             <span class="n">D_A</span><span class="o">=</span><span class="n">D_A_cgs</span><span class="p">,</span>
             <span class="n">Theta</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">Theta</span><span class="p">),</span>
             <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
-            <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span>
             <span class="n">f_V</span><span class="o">=</span><span class="n">f_V</span><span class="p">,</span>
             <span class="n">f_A</span><span class="o">=</span><span class="n">f_A</span><span class="p">,</span>
             <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span>
@@ -8700,6 +8759,7 @@
             <span class="n">sin_alpha</span><span class="o">=</span><span class="n">sin_alpha</span><span class="p">,</span>
             <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
             <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span>
+            <span class="n">epsilon_T</span><span class="o">=</span><span class="n">epsilon_T</span><span class="p">,</span>
             <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span>
             <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
             <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>

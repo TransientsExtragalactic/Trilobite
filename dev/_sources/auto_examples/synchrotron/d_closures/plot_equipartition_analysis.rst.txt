@@ -21,13 +21,14 @@
 Equipartition Analysis: What Does a Radio Peak Say About Source Energy?
 ========================================================================
 
-**Objective:** estimate the magnetic field, radius and total energy of a radio supernova from nothing but its
-SSA peak, and see how those estimates depend on the assumed energy partition.
+**Objective:** estimate the magnetic field, radius and energy (magnetic plus electron) of a radio supernova from
+nothing but its SSA peak, and see how those estimates depend on the assumed energy partition.
 
 The standard equipartition analysis
 (:footcite:t:`readheadEquipartitionBrightnessTemperature1994`) assumes that fixed fractions
-:math:`\epsilon_E` and :math:`\epsilon_B` of the post-shock energy go into relativistic electrons and magnetic
-fields. The peak frequency and flux then fix :math:`B` and :math:`R`, and the energy in the emitting region follows,
+:math:`\epsilon_E` and :math:`\epsilon_B` of the post-shock thermal energy density go into the kinetic energy of
+relativistic electrons and into magnetic fields. The peak frequency and flux then fix :math:`B` and :math:`R`, and the
+energy in the emitting region, magnetic plus electron kinetic, follows,
 
 .. math::
 
@@ -41,7 +42,7 @@ fields. The peak frequency and flux then fix :math:`B` and :math:`R`, and the en
     fit, and only then is it inverted with
     :func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_Diggins26`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 25-38
+.. GENERATED FROM PYTHON SOURCE LINES 26-39
 
 .. code-block:: Python
 
@@ -65,16 +66,16 @@ fields. The peak frequency and flux then fix :math:`B` and :math:`R`, and the en
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-45
+.. GENERATED FROM PYTHON SOURCE LINES 40-46
 
 The Source
 ----------
 
 We take a Type Ibc supernova at 20 Mpc, 30 days after explosion, with :math:`B = 0.5` G and
 :math:`R = 10^{16}` cm, an expansion speed of about :math:`0.13c`. The electrons carry
-:math:`\epsilon_E = 0.1` and the field :math:`\epsilon_B = 0.1` of the post-shock energy.
+:math:`\epsilon_E = 0.1` and the field :math:`\epsilon_B = 0.1` of the post-shock thermal energy density.
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-61
+.. GENERATED FROM PYTHON SOURCE LINES 46-62
 
 .. code-block:: Python
 
@@ -101,7 +102,7 @@ We take a Type Ibc supernova at 20 Mpc, 30 days after explosion, with :math:`B =
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-67
+.. GENERATED FROM PYTHON SOURCE LINES 63-68
 
 Extracting the Peak
 -------------------
@@ -109,7 +110,7 @@ Extracting the Peak
 A smoothly broken power law with a :math:`\nu^{5/2}` thick slope and a free thin slope gives the peak
 frequency :math:`\nu_{\rm pk}` and the asymptotic peak flux :math:`F_{\rm pk}`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-86
+.. GENERATED FROM PYTHON SOURCE LINES 68-87
 
 .. code-block:: Python
 
@@ -144,7 +145,7 @@ frequency :math:`\nu_{\rm pk}` and the asymptotic peak flux :math:`F_{\rm pk}`.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-92
+.. GENERATED FROM PYTHON SOURCE LINES 88-93
 
 Sweeping the Energy Partition
 -----------------------------
@@ -152,7 +153,7 @@ Sweeping the Energy Partition
 The observables are fixed, so we invert them for a range of :math:`\epsilon_B` at fixed
 :math:`\epsilon_E = 0.1`. All inputs broadcast, so the sweep is one call.
 
-.. GENERATED FROM PYTHON SOURCE LINES 92-120
+.. GENERATED FROM PYTHON SOURCE LINES 93-121
 
 .. code-block:: Python
 
@@ -177,7 +178,7 @@ The observables are fixed, so we invert them for a range of :math:`\epsilon_B` a
 
     ax_U.loglog(epsilon_B, U.to_value(u.erg))
     ax_U.plot(epsilon_B[i_min], U[i_min].to_value(u.erg), "ro", label=rf"Minimum at $\epsilon_B={epsilon_B[i_min]:.2f}$")
-    ax_U.set(xlabel=r"Assumed $\epsilon_B$", ylabel="Total energy $U$ [erg]", title="Energy in the emitting region")
+    ax_U.set(xlabel=r"Assumed $\epsilon_B$", ylabel="Energy $U$ [erg]", title="Energy in the emitting region")
     ax_U.legend()
 
     for ax in (ax_BR, ax_U):
@@ -196,7 +197,7 @@ The observables are fixed, so we invert them for a range of :math:`\epsilon_B` a
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 121-128
+.. GENERATED FROM PYTHON SOURCE LINES 122-129
 
 **Outcome:** the inferred radius is nearly independent of :math:`\epsilon_B` (within 20% over three decades),
 while the field changes by a factor of about four. The energy is minimized near equipartition, at
@@ -209,7 +210,7 @@ The dashed line marks the true :math:`\epsilon_B`.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.687 seconds)
+   **Total running time of the script:** (0 minutes 0.313 seconds)
 
 
 .. _sphx_glr_download_auto_examples_synchrotron_d_closures_plot_equipartition_analysis.py:

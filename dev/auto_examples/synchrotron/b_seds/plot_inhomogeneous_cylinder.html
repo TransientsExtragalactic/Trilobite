@@ -69,7 +69,7 @@
     <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Multi-Component Synchrotron SEDs with the Numerical Engine" href="plot_multi_component_numerical_SED.html" />
+    <link rel="next" title="On-Axis Asymmetric Synchrotron SEDs" href="plot_on_axis_numerical.html" />
     <link rel="prev" title="Spectral Energy Distributions" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
@@ -449,10 +449,10 @@
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Spectral Energy Distributions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3 current active"><a aria-current="page" class="current reference internal" href="#">Synchrotron SEDs from an Inhomogeneous Cylinder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_multi_component_numerical_SED.html">Multi-Component Synchrotron SEDs with the Numerical Engine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_on_axis_numerical.html">On-Axis Asymmetric Synchrotron SEDs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_sed_model_comparison.html">Comparing Synchrotron SED Models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_inhomogeneous_sphere.html">Synchrotron SEDs from an Inhomogeneous Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_multi_component_numerical_SED.html">Multi-Component Synchrotron SEDs with the Numerical Engine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_off_axis_numerical.html">Off-Axis Synchrotron SEDs from Axisymmetric Outflows</a></li>
 </ul>
@@ -725,7 +725,8 @@ returns the normalisation <span class="math notranslate nohighlight">\(K(r)\)</s
 \[N(\gamma, r) = K(r)\,\gamma^{-p},
 \qquad \gamma_{\min} \le \gamma \le \gamma_{\max},\]</div>
 <p>where <span class="math notranslate nohighlight">\(K(r)\)</span> is fixed by the equipartition condition
-<span class="math notranslate nohighlight">\(\epsilon_e / \epsilon_B = u_e / u_B\)</span> with
+<span class="math notranslate nohighlight">\(\epsilon_e / \epsilon_B = u_e / u_B\)</span>, where
+<span class="math notranslate nohighlight">\(u_e = \int N(\gamma-1)\,m_e c^2\,d\gamma\)</span> is the electron kinetic energy density and
 <span class="math notranslate nohighlight">\(u_B = B^2 / 8\pi\)</span>.  Because <span class="math notranslate nohighlight">\(u_B \propto B^2 \propto r^{-2}\)</span>,
 inner rings host a denser electron population.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">p</span></a> <span class="o">=</span> <span class="mi">3</span><span class="w">
@@ -819,7 +820,7 @@ prediction.  Each ring contributes a spectral hump shifted to the
 frequency set by its local <span class="math notranslate nohighlight">\(B(r)\)</span>, so observations spanning a
 narrow frequency window may mistake this multi-ring superposition for a
 simple broken power-law spectrum.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.504 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.383 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-synchrotron-b-seds-plot-inhomogeneous-cylinder-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../../_downloads/ccf3149630d904860a2ded7cbac063fc/plot_inhomogeneous_cylinder.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_inhomogeneous_cylinder.ipynb</span></code></a></p>
@@ -855,11 +856,11 @@ simple broken power-law spectrum.</p>
       </div>
     </a>
     <a class="right-next"
-       href="plot_multi_component_numerical_SED.html"
+       href="plot_on_axis_numerical.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Multi-Component Synchrotron SEDs with the Numerical Engine</p>
+        <p class="prev-next-title">On-Axis Asymmetric Synchrotron SEDs</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -1204,10 +1204,14 @@ compact approximation</p>
 \[\langle\gamma\rangle
 \approx
 \frac{15\Theta^2 + 11\Theta + 4}{4 + 5\Theta},\]</div>
-<p>accurate to <span class="math notranslate nohighlight">\(\lesssim 1\%\)</span> for all <span class="math notranslate nohighlight">\(\Theta &gt; 0\)</span>; see
+<p>accurate to <span class="math notranslate nohighlight">\(\lesssim 1.3\%\)</span> for all <span class="math notranslate nohighlight">\(\Theta &gt; 0\)</span>; see
 <a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.approx_first_moment.html#trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.approx_first_moment" title="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.approx_first_moment"><code class="xref py py-meth docutils literal notranslate"><span class="pre">approx_first_moment()</span></code></a>.</p>
 <p><strong>Normalization.</strong> The amplitude <span class="math notranslate nohighlight">\(N_0\)</span> is equal to the total
 number density <span class="math notranslate nohighlight">\(n_e\)</span> because <span class="math notranslate nohighlight">\(M_0 = 1\)</span>.</p>
+<p>When <span class="math notranslate nohighlight">\(N_0\)</span> is instead fixed by an energy budget
+(<a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density.html#trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density" title="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density"><code class="xref py py-meth docutils literal notranslate"><span class="pre">normalize_from_energy_density()</span></code></a>, <a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_magnetic_field.html#trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_magnetic_field" title="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_magnetic_field"><code class="xref py py-meth docutils literal notranslate"><span class="pre">normalize_from_magnetic_field()</span></code></a>), the kinetic energy per particle
+<span class="math notranslate nohighlight">\(\langle\gamma - 1\rangle = M_1 - 1\)</span> sets the amplitude, as for every distribution in this module. It is
+exact, and is about <span class="math notranslate nohighlight">\(3\Theta/2\)</span> for <span class="math notranslate nohighlight">\(\Theta \ll 1\)</span>.</p>
 <p class="rubric">Examples</p>
 <p>Evaluate the distribution at <span class="math notranslate nohighlight">\(\gamma = 2\)</span> for
 <span class="math notranslate nohighlight">\(\Theta = 1\)</span>:</p>
@@ -1251,7 +1255,7 @@ probability-normalised):</p>
 <td><p>Return a callable representation of the distribution.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.bol_emiss_from_energy_density.html#trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.bol_emiss_from_energy_density" title="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.bol_emiss_from_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bol_emiss_from_energy_density</span></code></a>(u_therm, ...)</p></td>
-<td><p>Bolometric synchrotron emissivity from thermal energy density via equipartition.</p></td>
+<td><p>Bolometric synchrotron emissivity from the thermal energy density via equipartition.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.bol_emiss_from_magnetic_field.html#trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.bol_emiss_from_magnetic_field" title="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.bol_emiss_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bol_emiss_from_magnetic_field</span></code></a>(B, epsilon_B, ...)</p></td>
 <td><p>Bolometric synchrotron emissivity from a magnetic field via equipartition.</p></td>
@@ -1295,8 +1299,8 @@ probability-normalised):</p>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_total.html#trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_total" title="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_total"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_total</span></code></a>([norm])</p></td>
 <td><p>Compute the total number of electrons in the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density.html#trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density" title="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_from_energy_density</span></code></a>(u_therm, ...)</p></td>
-<td><p>Compute N₀ from a fraction ε_E of the thermal energy density.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density.html#trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density" title="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_from_energy_density</span></code></a>(u_therm, *, ...)</p></td>
+<td><p>Compute N₀ from the thermal energy density.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_magnetic_field.html#trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_magnetic_field" title="trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_from_magnetic_field</span></code></a>(B, epsilon_B, ...)</p></td>
 <td><p>Compute N₀ via equipartition with a magnetic field.</p></td>

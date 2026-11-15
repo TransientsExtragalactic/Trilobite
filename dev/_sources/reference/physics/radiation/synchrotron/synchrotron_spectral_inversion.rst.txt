@@ -85,9 +85,10 @@ coefficients :math:`c_5` and :math:`c_6`, and, in the cooled inversions, the ang
 
 **Units.** Inputs may be :class:`~astropy.units.Quantity` objects or bare floats. Bare floats are interpreted in CGS
 (Hz, :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`, cm, s and :math:`\mathrm{erg\,s^{-1}}`), with the exception of
-:func:`invert_ssa_DeMarchi22`, which keeps the units of its original implementation (GHz, Jy and Mpc). Because the
-electron normalization uses the first moment of the distribution, ``p > 2`` is required unless ``gamma_max`` is
-finite.
+:func:`invert_ssa_DeMarchi22`, which keeps the units of its original implementation (GHz, Jy and Mpc) and its
+total-energy convention for ``epsilon_E`` (see its section below). Because the
+electron normalization uses the first kinetic moment of the distribution, ``p > 2`` is required unless ``gamma_max``
+is finite.
 
 **Broadcasting.** Every observable (``nu_brk``, ``F_brk``, ``distance``, ``t``, ``L``) and every microphysical
 parameter (``p``, ``epsilon_E``, ``epsilon_B``, ``f_A``, ``f_V``, ``alpha``, ``gamma_min``, ``gamma_max``) may be a
@@ -177,7 +178,9 @@ All of them share the same underlying forward model, summarized below.
         N_0 = A_N B^2, \qquad
         A_N = \frac{1}{8\pi m_ec^2}\,\frac{\epsilon_E}{\epsilon_B}\,\frac{1}{M_\gamma^{(1)}},
 
-    where :math:`M_\gamma^{(1)}` is the first moment of the Lorentz-factor distribution for the index :math:`p`.
+    where :math:`M_\gamma^{(1)} = \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1)\,\gamma^{-p}\,d\gamma` is the first
+    kinetic moment of the Lorentz-factor distribution for the index :math:`p` (rest mass excluded; see
+    :ref:`synch_equipartition_theory`).
     Collecting the dependence on :math:`B` and :math:`R`,
 
     .. math::
@@ -274,8 +277,17 @@ whether this holds for your solution is reported through the diagnostics describ
 
     The normalization :math:`N_0 = A_NB^2` is still set by the uncooled energy budget, which overestimates the
     electron energy by a factor :math:`1/(1-\delta_c)`, with
-    :math:`\delta_c = (\gamma_c/\gamma_m)^{2-p}/(p-1)` for :math:`\gamma_{\rm max}\to\infty` and :math:`p>2`. This is
-    returned as ``delta_c``. We write :math:`A_\nu^{(c)} = A_\nu(p+1)` and :math:`A_F^{(c)} = A_F(p+1)` below.
+    :math:`\delta_c` the kinetic energy :math:`\int N(\gamma-1)\,d\gamma` lost to cooling over the uncooled kinetic
+    energy,
+
+    .. math::
+
+        \delta_c = \frac{\gamma_c^{2-p}/[(p-1)(p-2)] - \gamma_c^{1-p}/[p(p-1)]}
+        {\gamma_m^{2-p}/(p-2) - \gamma_m^{1-p}/(p-1)}
+        \approx \frac{(\gamma_c/\gamma_m)^{2-p}}{p-1} \quad (\gamma_m \gg 1),
+
+    for :math:`\gamma_{\rm max}\to\infty` and :math:`p>2`. This is returned as ``delta_c``.
+    We write :math:`A_\nu^{(c)} = A_\nu(p+1)` and :math:`A_F^{(c)} = A_F(p+1)` below.
 
 .. dropdown:: Derivation: synchrotron cooling
     :icon: chevron-down
@@ -367,7 +379,7 @@ assumed rather than detected, each cooled inversion returns diagnostics for chec
 - ``accurate``: whether :math:`\nu_c < 0.1\,\nu_a`, for which the cooled asymptotic forms are good to better than
   0.1%,
 - ``slow_cooling``: whether :math:`\gamma_c > \gamma_{\min}`,
-- ``delta_c``: the fractional energy error of the uncooled normalization (NaN unless :math:`p>2` and
+- ``delta_c``: the fractional kinetic-energy error of the uncooled normalization (NaN unless :math:`p>2` and
   ``gamma_max`` is infinite), and
 - for the IC-cooled and combined inversions, the Compton parameter ``Y`` and ``ic_dominated`` (:math:`Y>1`).
 
@@ -419,6 +431,14 @@ directly with results in the literature.
 
     The De Marchi inversion does **not** pitch-angle average. It uses the fixed pitch angle ``theta`` throughout. To
     use the isotropic pitch-angle coefficients, use :func:`invert_ssa_Diggins26` with ``pitch_average=True``.
+
+.. important::
+
+    The De Marchi inversion reproduces the published equations, so ``epsilon_E`` is the fraction of the internal energy
+    in the **total** electron energy :math:`\int N\gamma\,m_e c^2\,d\gamma`. The other inversions in this module use
+    the kinetic energy :math:`\int N(\gamma-1)\,m_e c^2\,d\gamma` (see :ref:`synch_equipartition_theory`). The two differ by
+    :math:`\langle\gamma\rangle/\langle\gamma-1\rangle`, which is negligible for :math:`\gamma_{\min}\gg1` and
+    approaches :math:`p-1` as :math:`\gamma_{\min}\to1`, so compare results across the two with care.
 
 Its interface follows the original implementation more closely than the rest of the module: bare floats are in GHz,
 Jy and Mpc, the filling factor is called ``f``, and the singular case :math:`p = 2` is not supported.

@@ -515,7 +515,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_UnitBearingArrayLike</span><span class="p">,</span> <span class="n">_UnitBearingScalarLike</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.core.relativistic_jump_conditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_maxwell_juttner_temperature_cgs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.core.shock_engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShockEngine</span>
 
 <span class="c1"># --- CGS constants for the low-level backend ---</span>
@@ -572,12 +571,6 @@
 <span class="sd">    Proper (comoving-frame) post-shock pressure</span>
 <span class="sd">    :math:`p_2 \simeq \tfrac{2}{3}\rho_{\rm ext}c^2\Gamma^2`</span>
 <span class="sd">    in :math:`\mathrm{dyne\,cm^{-2}}`.</span>
-<span class="sd">    """</span>
-
-    <span class="n">post_shock_temperature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Proper (comoving-frame) post-shock temperature :math:`T_2` in K,</span>
-<span class="sd">    from the Maxwell--Jüttner internal-energy inversion.</span>
 <span class="sd">    """</span>
 
     <span class="n">post_shock_comoving_density</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]</span>
@@ -686,8 +679,6 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    mu : float, optional</span>
-<span class="sd">        Mean molecular weight in units of the proton mass. Default is ``0.61``.</span>
 <span class="sd">    gamma_hat : float, optional</span>
 <span class="sd">        Adiabatic index of the shocked gas. Default is :math:`4/3`.</span>
 <span class="sd">    lorentz_warn_threshold : float, optional</span>
@@ -713,7 +704,6 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.61</span><span class="p">,</span>
         <span class="n">gamma_hat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
         <span class="n">lorentz_warn_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -723,8 +713,6 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        mu : float, optional</span>
-<span class="sd">            Mean molecular weight in units of the proton mass. Default is ``0.61``.</span>
 <span class="sd">        gamma_hat : float, optional</span>
 <span class="sd">            Adiabatic index of the shocked gas. Default is :math:`4/3`.</span>
 <span class="sd">        lorentz_warn_threshold : float, optional</span>
@@ -734,7 +722,6 @@
 <span class="sd">            Forwarded to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mu</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gamma_hat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_hat</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lorentz_warn_threshold</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lorentz_warn_threshold</span><span class="p">)</span>
 
@@ -855,7 +842,6 @@
             <span class="n">velocity</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">velocity</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
             <span class="n">fluid_lorentz_factor</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">fluid_lorentz_factor</span><span class="p">,</span>
             <span class="n">post_shock_pressure</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">post_shock_pressure</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">dyne</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span>
-            <span class="n">post_shock_temperature</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">post_shock_temperature</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
             <span class="n">post_shock_comoving_density</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">post_shock_comoving_density</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>
             <span class="n">post_shock_lab_density</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">post_shock_lab_density</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>
             <span class="n">thermal_energy_density_comoving</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">thermal_energy_density_comoving</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>
@@ -951,9 +937,6 @@
         <span class="c1"># Proper total energy density: e = rho*c^2 + U_int</span>
         <span class="n">e2_total</span> <span class="o">=</span> <span class="n">rho2_proper</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">U_int2</span>
 
-        <span class="c1"># Post-shock temperature from the Maxwell-Jüttner inversion</span>
-        <span class="n">T2</span> <span class="o">=</span> <span class="n">_maxwell_juttner_temperature_cgs</span><span class="p">(</span><span class="n">U_int2</span><span class="p">,</span> <span class="n">rho2_proper</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mu</span><span class="p">)</span>
-
         <span class="c1"># Lab-frame quantities via Lorentz transformation</span>
         <span class="n">rho2_lab</span> <span class="o">=</span> <span class="n">gamma2_lab</span> <span class="o">*</span> <span class="n">rho2_proper</span>
         <span class="n">e2_lab</span> <span class="o">=</span> <span class="p">(</span><span class="n">e2_total</span> <span class="o">+</span> <span class="n">p2</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma2_lab</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">p2</span>  <span class="c1"># T^{00} = (e+p)γ² − p</span>
@@ -965,7 +948,6 @@
             <span class="n">velocity</span><span class="o">=</span><span class="n">velocity</span><span class="p">,</span>
             <span class="n">fluid_lorentz_factor</span><span class="o">=</span><span class="n">gamma2_lab</span><span class="p">,</span>
             <span class="n">post_shock_pressure</span><span class="o">=</span><span class="n">p2</span><span class="p">,</span>
-            <span class="n">post_shock_temperature</span><span class="o">=</span><span class="n">T2</span><span class="p">,</span>
             <span class="n">post_shock_comoving_density</span><span class="o">=</span><span class="n">rho2_proper</span><span class="p">,</span>
             <span class="n">post_shock_lab_density</span><span class="o">=</span><span class="n">rho2_lab</span><span class="p">,</span>
             <span class="n">thermal_energy_density_comoving</span><span class="o">=</span><span class="n">U_int2</span><span class="p">,</span>
@@ -1009,7 +991,7 @@
 <span class="sd">        \frac{9E}{8\pi K c^2}.</span>
 
 <span class="sd">    This class has no constructor of its own and accepts the same arguments as</span>
-<span class="sd">    :class:`BlandfordMcKeeShockEngine`: the mean molecular weight ``mu`` (default ``0.61``), the adiabatic index</span>
+<span class="sd">    :class:`BlandfordMcKeeShockEngine`: the adiabatic index</span>
 <span class="sd">    ``gamma_hat`` (default :math:`4/3`) and the Lorentz-factor threshold ``lorentz_warn_threshold`` of the</span>
 <span class="sd">    ultra-relativistic warning (default ``2.0``).</span>
 
@@ -1078,7 +1060,6 @@
             <span class="n">velocity</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">velocity</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
             <span class="n">fluid_lorentz_factor</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">fluid_lorentz_factor</span><span class="p">,</span>
             <span class="n">post_shock_pressure</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">post_shock_pressure</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">dyne</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span>
-            <span class="n">post_shock_temperature</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">post_shock_temperature</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
             <span class="n">post_shock_comoving_density</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">post_shock_comoving_density</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>
             <span class="n">post_shock_lab_density</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">post_shock_lab_density</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>
             <span class="n">thermal_energy_density_comoving</span><span class="o">=</span><span class="n">cgs</span><span class="o">.</span><span class="n">thermal_energy_density_comoving</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>

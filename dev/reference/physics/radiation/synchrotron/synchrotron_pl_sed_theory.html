@@ -1997,11 +1997,13 @@ In both cases, the electron distribution may be written in separable form:</p>
 <div class="math notranslate nohighlight">
 \[N(\gamma) = N_0 f(\gamma),\]</div>
 <p>where <span class="math notranslate nohighlight">\(f(\gamma)\)</span> encodes the shape of the distribution and possesses a known
-first moment</p>
+first kinetic moment</p>
 <div class="math notranslate nohighlight">
-\[M_\gamma^{(1)} \equiv \int \gamma f(\gamma)\, d\gamma.\]</div>
-<p>We assume that fixed fractions of the post-shock internal energy density
-are deposited into relativistic electrons and magnetic fields:</p>
+\[M_\gamma^{(1)} \equiv \int (\gamma - 1) f(\gamma)\, d\gamma,\]</div>
+<p>the mean kinetic energy per particle in units of <span class="math notranslate nohighlight">\(m_e c^2\)</span> (rest mass excluded, as the energy densities below
+are fractions of the thermal energy density; see <a class="reference internal" href="synchrotron_theory.html#synch-equipartition-theory"><span class="std std-ref">Microphysical Closures and Equipartition</span></a>).</p>
+<p>We assume that fixed fractions of the thermal (internal) energy density
+are deposited into the kinetic energy of relativistic electrons and into magnetic fields:</p>
 <div class="math notranslate nohighlight">
 \[u_e = \epsilon_e u_{\rm int},
 \qquad
@@ -2259,11 +2261,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -2309,7 +2311,7 @@ N_0 \,
 </div>
 <p>The electron normalization <span class="math notranslate nohighlight">\(N_0\)</span> is not a free parameter. Instead, it is determined by
 equipartition arguments through the choice of <span class="math notranslate nohighlight">\(\epsilon_e\)</span> and <span class="math notranslate nohighlight">\(\epsilon_B\)</span>, which
-relate the electron and magnetic energy densities to the post-shock internal energy density.
+relate the electron and magnetic energy densities to the thermal (internal) energy density.
 Once <span class="math notranslate nohighlight">\(N_0\)</span> is fixed in this manner, the flux at <span class="math notranslate nohighlight">\(\nu_m\)</span> — and hence the normalization
 of the entire canonical synchrotron SED — is fully specified.</p>
 <p class="rubric">Inversion</p>
@@ -2356,11 +2358,11 @@ of the entire canonical synchrotron SED — is fully specified.</p>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -2551,11 +2553,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -2601,7 +2603,7 @@ N_0 \,
 </div>
 <p>The electron normalization <span class="math notranslate nohighlight">\(N_0\)</span> is not a free parameter. Instead, it is determined by
 equipartition arguments through the choice of <span class="math notranslate nohighlight">\(\epsilon_e\)</span> and <span class="math notranslate nohighlight">\(\epsilon_B\)</span>, which
-relate the electron and magnetic energy densities to the post-shock internal energy density.
+relate the electron and magnetic energy densities to the thermal (internal) energy density.
 Once <span class="math notranslate nohighlight">\(N_0\)</span> is fixed in this manner, the flux at <span class="math notranslate nohighlight">\(\nu_c\)</span> — and hence the normalization
 of the entire canonical synchrotron SED — is fully specified.</p>
 <p class="rubric">Inversion</p>
@@ -2652,11 +2654,11 @@ of the entire canonical synchrotron SED — is fully specified.</p>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -2801,11 +2803,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -2853,7 +2855,7 @@ N_0 \,
 </div>
 <p>The electron normalization <span class="math notranslate nohighlight">\(N_0\)</span> is not a free parameter. Instead, it is determined by
 equipartition arguments through the choice of <span class="math notranslate nohighlight">\(\epsilon_e\)</span> and <span class="math notranslate nohighlight">\(\epsilon_B\)</span>, which
-relate the electron and magnetic energy densities to the post-shock internal energy density.
+relate the electron and magnetic energy densities to the thermal (internal) energy density.
 Once <span class="math notranslate nohighlight">\(N_0\)</span> is fixed in this manner, the flux at <span class="math notranslate nohighlight">\(\nu_m\)</span> — and hence the normalization
 of the entire canonical synchrotron SED — is fully specified.</p>
 <p class="rubric">Inversion</p>
@@ -2904,11 +2906,11 @@ of the entire canonical synchrotron SED — is fully specified.</p>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -3053,11 +3055,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -3103,7 +3105,7 @@ N_0 \,
 </div>
 <p>The electron normalization <span class="math notranslate nohighlight">\(N_0\)</span> is not a free parameter. Instead, it is determined by
 equipartition arguments through the choice of <span class="math notranslate nohighlight">\(\epsilon_e\)</span> and <span class="math notranslate nohighlight">\(\epsilon_B\)</span>, which
-relate the electron and magnetic energy densities to the post-shock internal energy density.
+relate the electron and magnetic energy densities to the thermal (internal) energy density.
 Once <span class="math notranslate nohighlight">\(N_0\)</span> is fixed in this manner, the flux at <span class="math notranslate nohighlight">\(\nu_m\)</span> — and hence the normalization
 of the entire canonical synchrotron SED — is fully specified.</p>
 <p class="rubric">Inversion</p>
@@ -3154,11 +3156,11 @@ of the entire canonical synchrotron SED — is fully specified.</p>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -3365,11 +3367,11 @@ peak and the normalization are coincident:</p>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -3548,11 +3550,11 @@ that this regime applies.</p>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -3774,11 +3776,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -3850,11 +3852,11 @@ peak and the normalization are coincident:</p>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -4008,11 +4010,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -4103,11 +4105,11 @@ that this regime applies.</p>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -4311,11 +4313,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -4387,11 +4389,11 @@ peak and the normalization are coincident:</p>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -4556,11 +4558,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -4651,11 +4653,11 @@ that this regime applies.</p>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -4900,11 +4902,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -4984,11 +4986,11 @@ peak and the normalization are coincident:</p>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -5167,11 +5169,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -5258,11 +5260,11 @@ matching condition derived above,</p>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -5468,11 +5470,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -5559,11 +5561,11 @@ matching condition derived above,</p>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -5773,11 +5775,11 @@ frequencies and enters the SED normalization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>
@@ -5864,11 +5866,11 @@ matching condition derived above,</p>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\epsilon_e\)</span></p></td>
 <td><p>Electron Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy carried by relativistic electrons.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\epsilon_B\)</span></p></td>
 <td><p>Magnetic Energy Fraction</p></td>
-<td><p>Fraction of post-shock internal energy stored in magnetic fields.</p></td>
+<td><p>Fraction of the thermal (internal) energy density in the magnetic field.</p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sin\alpha\)</span></p></td>
 <td><p>Pitch Angle Factor</p></td>

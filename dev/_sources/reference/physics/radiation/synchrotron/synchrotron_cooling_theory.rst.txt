@@ -655,7 +655,9 @@ or, in terms of energy,
     M_E^{(k)} = K_{\rm E,0} \int_{E_c}^{E_{\max}} E^k N(E) dE.
 
 The equipartition analysis then proceeds in exactly the same manner as described in :ref:`synchrotron_theory`, with
-the modified electron distribution used to compute the the relevant moments and corresponding energy densities.
+the modified electron distribution used to compute the the relevant moments and corresponding energy densities. As
+there, the electron energy density is the kinetic one, :math:`U_e = m_e c^2 \left(M_\gamma^{(1)} - M_\gamma^{(0)}\right)`,
+which excludes rest mass.
 
 
 

@@ -449,10 +449,10 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../synchrotron/b_seds/index.html">Spectral Energy Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../synchrotron/b_seds/plot_inhomogeneous_cylinder.html">Synchrotron SEDs from an Inhomogeneous Cylinder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../synchrotron/b_seds/plot_multi_component_numerical_SED.html">Multi-Component Synchrotron SEDs with the Numerical Engine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../synchrotron/b_seds/plot_on_axis_numerical.html">On-Axis Asymmetric Synchrotron SEDs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../synchrotron/b_seds/plot_sed_model_comparison.html">Comparing Synchrotron SED Models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../synchrotron/b_seds/plot_inhomogeneous_sphere.html">Synchrotron SEDs from an Inhomogeneous Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../synchrotron/b_seds/plot_multi_component_numerical_SED.html">Multi-Component Synchrotron SEDs with the Numerical Engine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../synchrotron/b_seds/plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../synchrotron/b_seds/plot_off_axis_numerical.html">Off-Axis Synchrotron SEDs from Axisymmetric Outflows</a></li>
 </ul>
@@ -641,8 +641,10 @@ fraction <span class="math notranslate nohighlight">\(\epsilon_B\)</span>, the f
 electrons have <span class="math notranslate nohighlight">\(p = 2.1\)</span>. The paper finds a magnetic energy density of 0.14 and a relativistic electron
 energy density of <span class="math notranslate nohighlight">\(5\times10^{-4}\)</span> (extrapolating the spectrum to <span class="math notranslate nohighlight">\(\gamma = 1\)</span>) relative to the
 thermal energy density, which it takes as <span class="math notranslate nohighlight">\(\rho V^2\)</span>. The jump conditions give a thermal energy
-density of <span class="math notranslate nohighlight">\(\tfrac{9}{8}\rho V^2\)</span>, so both fractions are scaled by 8/9 here. Free-free absorption
-and Coulomb losses, which the paper also includes, are not modeled.</p>
+density of <span class="math notranslate nohighlight">\(\tfrac{9}{8}\rho V^2\)</span>, so both fractions are scaled by 8/9 here. Trilobite counts
+<span class="math notranslate nohighlight">\(\epsilon_E\)</span> as electron kinetic energy, <span class="math notranslate nohighlight">\(\int N(\gamma-1)\,m_e c^2\,d\gamma\)</span>; for
+<span class="math notranslate nohighlight">\(\gamma_{\min} = 1\)</span> and <span class="math notranslate nohighlight">\(p = 2.1\)</span> this sets the electron normalization about 14% higher than counting
+total energy would. Free-free absorption and Coulomb losses, which the paper also includes, are not modeled.</p>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
@@ -745,7 +747,7 @@ self-absorption.</p>
 </span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend"><span class="n">ax_lc</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="p">)</span><span class="w">
 </span><a class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_plot_sn1993j_radio_sed_002.png" srcset="../../_images/sphx_glr_plot_sn1993j_radio_sed_002.png" alt="SED evolution, Light curves" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.386 seconds)</p>
+<img src="../../_images/sphx_glr_plot_sn1993j_radio_sed_002.png" srcset="../../_images/sphx_glr_plot_sn1993j_radio_sed_002.png" alt="SED evolution, Light curves" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.632 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-modeling-plot-sn1993j-radio-sed-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/3cae880f9856ffad38934178fbf6414d/plot_sn1993j_radio_sed.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_sn1993j_radio_sed.ipynb</span></code></a></p>

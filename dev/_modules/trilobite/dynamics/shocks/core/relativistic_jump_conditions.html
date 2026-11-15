@@ -535,51 +535,6 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">beta_shock</span> <span class="o">-</span> <span class="n">beta_upstream</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">beta_shock</span> <span class="o">*</span> <span class="n">beta_upstream</span><span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_maxwell_juttner_temperature_cgs</span><span class="p">(</span><span class="n">U_int</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Post-shock temperature from the Maxwell–Jüttner internal energy relation.</span>
-
-<span class="sd">    Inverts the Gammie–McKinney approximation :footcite:p:`1998ApJ...498..313G`</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        U_{\rm int} \approx \rho c^2 \Theta \frac{6 + 15\Theta}{4 + 5\Theta},</span>
-
-<span class="sd">    where :math:`\Theta = k_B T / (\mu m_p c^2)`, to obtain</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \Theta = \frac{5\xi - 6 + \sqrt{(6 - 5\xi)^2 + 240\xi}}{30},</span>
-
-<span class="sd">    with :math:`\xi = U_{\rm int} / (\rho c^2)`.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    The coefficient in the discriminant is 240, not 120 as printed in the</span>
-<span class="sd">    ``relativistic_jump_conditions_theory`` reference page (typographical error there).</span>
-<span class="sd">    The value 240 = 4 · 15 · 4 follows directly from the quadratic formula applied to</span>
-<span class="sd">    ``15Θ² + (6 − 5ξ)Θ − 4ξ = 0`` and is confirmed by substituting Θ = 1</span>
-<span class="sd">    (ξ = 7/3) and recovering the identity.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    U_int : float</span>
-<span class="sd">        Proper internal energy density (erg cm⁻³).</span>
-<span class="sd">    rho : float</span>
-<span class="sd">        Proper rest-mass density (g cm⁻³).</span>
-<span class="sd">    mu : float</span>
-<span class="sd">        Mean molecular weight.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    float</span>
-<span class="sd">        Post-shock temperature (K).</span>
-<span class="sd">    """</span>
-    <span class="n">xi</span> <span class="o">=</span> <span class="n">U_int</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">discriminant</span> <span class="o">=</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">-</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">xi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">240.0</span> <span class="o">*</span> <span class="n">xi</span>
-    <span class="n">theta</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">xi</span> <span class="o">-</span> <span class="mf">6.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">discriminant</span><span class="p">))</span> <span class="o">/</span> <span class="mf">30.0</span>
-    <span class="k">return</span> <span class="n">theta</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">m_p_cgs</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">k_B_cgs</span>
-
-
 <span class="k">def</span><span class="w"> </span><span class="nf">_relativistic_implicit_eq</span><span class="p">(</span><span class="n">beta2</span><span class="p">,</span> <span class="n">beta1</span><span class="p">,</span> <span class="n">gamma1</span><span class="p">,</span> <span class="n">omega1</span><span class="p">,</span> <span class="n">pi1</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Residual of the relativistic jump condition.</span>
 
@@ -663,9 +618,8 @@
     <span class="n">U_int2</span> <span class="o">=</span> <span class="n">P2</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma_hat</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
     <span class="n">e2</span> <span class="o">=</span> <span class="n">rho2</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">U_int2</span>
 
-    <span class="c1"># Proper number density and temperature</span>
+    <span class="c1"># Proper number density of all particles</span>
     <span class="n">n2</span> <span class="o">=</span> <span class="n">rho2</span> <span class="o">/</span> <span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="n">m_p_cgs</span><span class="p">)</span>
-    <span class="n">T2</span> <span class="o">=</span> <span class="n">_maxwell_juttner_temperature_cgs</span><span class="p">(</span><span class="n">U_int2</span><span class="p">,</span> <span class="n">rho2</span><span class="p">,</span> <span class="n">mu</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">"compression_ratio"</span><span class="p">:</span> <span class="n">R</span><span class="p">,</span>
@@ -674,7 +628,7 @@
         <span class="s2">"post_shock_density"</span><span class="p">:</span> <span class="n">rho2</span><span class="p">,</span>
         <span class="s2">"post_shock_number_density"</span><span class="p">:</span> <span class="n">n2</span><span class="p">,</span>
         <span class="s2">"post_shock_pressure"</span><span class="p">:</span> <span class="n">P2</span><span class="p">,</span>
-        <span class="s2">"post_shock_temperature"</span><span class="p">:</span> <span class="n">T2</span><span class="p">,</span>
+        <span class="s2">"post_shock_thermal_energy_density"</span><span class="p">:</span> <span class="n">U_int2</span><span class="p">,</span>
         <span class="s2">"post_shock_energy_density"</span><span class="p">:</span> <span class="n">e2</span><span class="p">,</span>
     <span class="p">}</span>
 
@@ -768,7 +722,7 @@
         <span class="p">(</span><span class="s2">"post_shock_density"</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>
         <span class="p">(</span><span class="s2">"post_shock_number_density"</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">),</span>
         <span class="p">(</span><span class="s2">"post_shock_pressure"</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">dyn</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"post_shock_temperature"</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"post_shock_thermal_energy_density"</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>
         <span class="p">(</span><span class="s2">"post_shock_energy_density"</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>
     <span class="p">)</span>
 <span class="w">    </span><span class="sd">"""tuple: Post-shock output fields as ``(name, unit)`` pairs.</span>
@@ -1106,9 +1060,8 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Although Π₁ does not enter β₂ in the UR limit, the upstream enthalpy Ω₁ still</span>
-<span class="sd">    affects :math:`w_2` and therefore :math:`P_2`, :math:`U_{\rm int,2}`, and</span>
-<span class="sd">    :math:`T_2`.  Pass *upstream_pressure* or *upstream_temperature* to account for</span>
-<span class="sd">    a warm upstream medium; leave both ``None`` to assume P₁ = 0 (equivalent to</span>
+<span class="sd">    affects :math:`w_2` and therefore :math:`P_2` and :math:`U_{\rm int,2}`.  Pass *upstream_pressure* or</span>
+<span class="sd">    *upstream_temperature* to account for a warm upstream medium; leave both ``None`` to assume P₁ = 0 (equivalent to</span>
 <span class="sd">    :class:`UltraRelativisticColdShockConditions`).</span>
 <span class="sd">    """</span>
 

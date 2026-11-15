@@ -543,6 +543,7 @@
     <span class="n">electron_rest_mass_cgs</span><span class="p">,</span>
     <span class="n">sigma_T_cgs</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.electron_distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerLaw</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">c_1_cgs</span><span class="p">,</span>
     <span class="n">c_1_gamma_cgs</span><span class="p">,</span>
@@ -603,19 +604,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">sin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">alpha</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">A_s</span> <span class="o">=</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">electron_rest_mass_cgs</span> <span class="o">*</span> <span class="n">c_cgs</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma_T_cgs</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sin</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
-        <span class="c1"># First moment of the Lorentz-factor distribution, M = int gamma^(1-p) dgamma, evaluated for array inputs.</span>
+        <span class="c1"># First kinetic moment of the distribution, M = int (gamma - 1) gamma^-p dgamma, for array inputs.</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_max</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_max` must be greater than `gamma_min`."</span><span class="p">)</span>
-        <span class="n">e</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>
         <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">over</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
-            <span class="n">M1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-                <span class="n">e</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_max</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">),</span>
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_max</span><span class="o">**</span><span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_min</span><span class="o">**</span><span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="n">e</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="n">M1</span> <span class="o">=</span> <span class="n">PowerLaw</span><span class="o">.</span><span class="n">_integral_power_law</span><span class="p">(</span>
+                <span class="mf">2.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_max</span>
+            <span class="p">)</span> <span class="o">-</span> <span class="n">PowerLaw</span><span class="o">.</span><span class="n">_integral_power_law</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_max</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">M1</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">"The first moment of the electron distribution is not finite. Use p &gt; 2 or a finite gamma_max."</span>
+                <span class="s2">"The mean kinetic energy of the electron distribution is not finite. Use p &gt; 2 or a finite gamma_max."</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">A_N</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">epsilon_E</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
             <span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="n">M1</span>
@@ -762,10 +760,13 @@
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
-        <span class="c1"># Fractional energy error (gamma_c / gamma_min)^(2-p) / (p-1) of the uncooled normalization (gamma_max -&gt; inf).</span>
+        <span class="c1"># Fractional error of the uncooled normalization (gamma_max -&gt; inf): the kinetic energy int N (gamma - 1)</span>
+        <span class="c1"># lost to cooling above gamma_c, divided by the uncooled kinetic energy.</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">g_m</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">mp</span><span class="o">.</span><span class="n">gamma_min</span>
+        <span class="n">lost</span> <span class="o">=</span> <span class="n">gamma_c</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">p</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">))</span> <span class="o">-</span> <span class="n">gamma_c</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))</span>
         <span class="n">delta_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">gamma_max</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">p</span> <span class="o">&gt;</span> <span class="mf">2.0</span><span class="p">),</span>
-            <span class="p">(</span><span class="n">gamma_c</span> <span class="o">/</span> <span class="n">mp</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">mp</span><span class="o">.</span><span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">p</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">gamma_max</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">p</span> <span class="o">&gt;</span> <span class="mf">2.0</span><span class="p">),</span>
+            <span class="n">lost</span> <span class="o">/</span> <span class="p">(</span><span class="n">g_m</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">g_m</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)),</span>
             <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="n">out</span> <span class="o">=</span> <span class="p">{</span>
@@ -850,7 +851,8 @@
 <span class="sd">    p : float or array-like, optional</span>
 <span class="sd">        Electron power-law index. Requires :math:`p &gt; 2` when ``gamma_max`` is infinite.</span>
 <span class="sd">    epsilon_E, epsilon_B : float or array-like, optional</span>
-<span class="sd">        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.</span>
+<span class="sd">        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the</span>
+<span class="sd">        magnetic field.</span>
 <span class="sd">    f_A, f_V : float or array-like, optional</span>
 <span class="sd">        Area and volume filling factors.</span>
 <span class="sd">    alpha : float or array-like, optional</span>
@@ -933,7 +935,8 @@
 <span class="sd">    p : float or array-like, optional</span>
 <span class="sd">        Electron power-law index. Requires :math:`p &gt; 2` when ``gamma_max`` is infinite.</span>
 <span class="sd">    epsilon_E, epsilon_B : float or array-like, optional</span>
-<span class="sd">        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.</span>
+<span class="sd">        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the</span>
+<span class="sd">        magnetic field.</span>
 <span class="sd">    f_A, f_V : float or array-like, optional</span>
 <span class="sd">        Area and volume filling factors.</span>
 <span class="sd">    alpha : float or array-like, optional</span>
@@ -951,7 +954,7 @@
 <span class="sd">        - ``"gamma_c"``: cooling Lorentz factor.</span>
 <span class="sd">        - ``"nu_c"``: synchrotron frequency of the cooling electrons (Hz).</span>
 <span class="sd">        - ``"nu_c_over_nu_a"``: regime diagnostic; the assumed branch requires :math:`\ll 1`.</span>
-<span class="sd">        - ``"delta_c"``: fractional energy error of the uncooled normalization (NaN unless :math:`p&gt;2` and</span>
+<span class="sd">        - ``"delta_c"``: fractional kinetic-energy error of the uncooled normalization (NaN unless :math:`p&gt;2` and</span>
 <span class="sd">          ``gamma_max`` is infinite).</span>
 <span class="sd">        - ``"consistent"``: ``nu_c &lt; nu_a``.</span>
 <span class="sd">        - ``"accurate"``: ``nu_c &lt; 0.1 nu_a`` (cooled asymptotic forms good to better than 0.1%).</span>
@@ -1028,7 +1031,8 @@
 <span class="sd">    p : float or array-like, optional</span>
 <span class="sd">        Electron power-law index. Requires :math:`p &gt; 2` when ``gamma_max`` is infinite.</span>
 <span class="sd">    epsilon_E, epsilon_B : float or array-like, optional</span>
-<span class="sd">        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.</span>
+<span class="sd">        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the</span>
+<span class="sd">        magnetic field.</span>
 <span class="sd">    f_A, f_V : float or array-like, optional</span>
 <span class="sd">        Area and volume filling factors.</span>
 <span class="sd">    alpha : float or array-like, optional</span>
@@ -1114,7 +1118,8 @@
 <span class="sd">    p : float or array-like, optional</span>
 <span class="sd">        Electron power-law index. Requires :math:`p &gt; 2` when ``gamma_max`` is infinite.</span>
 <span class="sd">    epsilon_E, epsilon_B : float or array-like, optional</span>
-<span class="sd">        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.</span>
+<span class="sd">        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the</span>
+<span class="sd">        magnetic field.</span>
 <span class="sd">    f_A, f_V : float or array-like, optional</span>
 <span class="sd">        Area and volume filling factors.</span>
 <span class="sd">    alpha : float or array-like, optional</span>
@@ -1201,7 +1206,8 @@
 <span class="sd">    p : float or array-like, optional</span>
 <span class="sd">        Electron power-law index. Requires :math:`p &gt; 2` when ``gamma_max`` is infinite.</span>
 <span class="sd">    epsilon_E, epsilon_B : float or array-like, optional</span>
-<span class="sd">        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.</span>
+<span class="sd">        Fractions of the thermal (internal) energy density in the kinetic energy of relativistic electrons and in the</span>
+<span class="sd">        magnetic field.</span>
 <span class="sd">    f_A, f_V : float or array-like, optional</span>
 <span class="sd">        Area and volume filling factors.</span>
 <span class="sd">    alpha : float or array-like, optional</span>
@@ -1337,9 +1343,10 @@
 <span class="sd">    theta : float or array-like, optional</span>
 <span class="sd">        Pitch angle in radians.</span>
 <span class="sd">    epsilon_B : float or array-like, optional</span>
-<span class="sd">        Fraction of internal energy in magnetic fields.</span>
+<span class="sd">        Fraction of the thermal (internal) energy density in the magnetic field.</span>
 <span class="sd">    epsilon_E : float or array-like, optional</span>
-<span class="sd">        Fraction of internal energy in relativistic electrons.</span>
+<span class="sd">        Fraction of the thermal (internal) energy density in the total energy (rest mass included) of the relativistic</span>
+<span class="sd">        electrons.</span>
 <span class="sd">    gamma_min : float or array-like, optional</span>
 <span class="sd">        Minimum electron Lorentz factor.</span>
 <span class="sd">    gamma_max : float or array-like, optional</span>
@@ -1488,7 +1495,8 @@
 <span class="sd">    theta : float or array-like, optional</span>
 <span class="sd">        Pitch angle in radians.</span>
 <span class="sd">    epsilon_B, epsilon_E : float or array-like, optional</span>
-<span class="sd">        Fractions of the internal energy in magnetic fields and in relativistic electrons.</span>
+<span class="sd">        Fractions of the thermal (internal) energy density in the magnetic field and in the **total** energy (rest mass</span>
+<span class="sd">        included) of the relativistic electrons; see the Notes.</span>
 <span class="sd">    gamma_min, gamma_max : float or array-like, optional</span>
 <span class="sd">        Bounds of the electron Lorentz-factor distribution. ``gamma_max`` matters only for :math:`p &lt; 2`.</span>
 
@@ -1507,6 +1515,14 @@
 
 <span class="sd">        This inversion does **not** pitch-angle average. It uses the fixed pitch angle ``theta`` throughout. To</span>
 <span class="sd">        use the isotropic pitch-angle coefficients, use :func:`invert_ssa_Diggins26`.</span>
+
+<span class="sd">    .. important::</span>
+
+<span class="sd">        This inversion reproduces the published equations, so ``epsilon_E`` is the fraction of the internal energy in</span>
+<span class="sd">        the **total** electron energy :math:`\int N\gamma\,m_e c^2\,d\gamma`. The other inversions in this module</span>
+<span class="sd">        use the kinetic energy :math:`\int N(\gamma-1)\,m_e c^2\,d\gamma`. The two differ by</span>
+<span class="sd">        :math:`\langle\gamma\rangle/\langle\gamma-1\rangle`, which is negligible for :math:`\gamma_{\min}\gg1`</span>
+<span class="sd">        and approaches :math:`p-1` as :math:`\gamma_{\min}\to1`.</span>
 
 <span class="sd">    The source is treated as local and non-relativistic, as for the other inversions in this module.</span>
 

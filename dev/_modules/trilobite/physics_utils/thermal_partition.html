@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>trilobite.physics_utils.thermal_partition &#8212; Trilobite dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=6a604523" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2d7cce99" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../_static/design-tabs.js?v=fcb327ea"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/trilobite/physics_utils/thermal_partition';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/catalog_search.js?v=ca4209dc"></script>
+    <script src="../../../_static/gallery_search.js?v=1fa25899"></script>
+    <script src="../../../_static/model_search.js?v=f6414914"></script>
+    <link rel="icon" href="../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../models/index.html">
+    Models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">trilobite.physics_utils.thermal_partition</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for trilobite.physics_utils.thermal_partition</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Partition of the post-shock thermal energy among ions, electrons and the magnetic field.</span>
+
+<span class="sd">The shock jump conditions fix the post-shock thermal (internal) energy density :math:`u_{\rm th}`, which excludes rest</span>
+<span class="sd">mass. How it is shared between species is microphysics. Trilobite splits it into disjoint parts,</span>
+
+<span class="sd">.. math::</span>
+
+<span class="sd">    u_{\rm th} = u_i + u_{e,\rm th} + u_{e,\rm nt} + u_B,</span>
+<span class="sd">    \qquad u_B = \epsilon_B u_{\rm th},</span>
+<span class="sd">    \quad u_{e,\rm nt} = \epsilon_E u_{\rm th},</span>
+<span class="sd">    \quad u_{e,\rm th} = \epsilon_T u_i,</span>
+
+<span class="sd">so that :math:`\epsilon_B` and :math:`\epsilon_E` keep their usual meaning as fractions of :math:`u_{\rm th}`, and</span>
+<span class="sd">:math:`\epsilon_T` is the ratio of the thermal-electron to the ion energy. Then</span>
+
+<span class="sd">.. math::</span>
+
+<span class="sd">    u_i = \frac{1 - \epsilon_B - \epsilon_E}{1 + \epsilon_T}\, u_{\rm th},</span>
+<span class="sd">    \qquad u_{e,\rm th} = \epsilon_T\, u_i .</span>
+
+<span class="sd">Each thermal species follows a Maxwell-Juettner distribution at its own temperature, so its energy per particle fixes</span>
+<span class="sd">its dimensionless temperature :math:`\Theta_s = k_B T_s / (m_s c^2)` through</span>
+<span class="sd">:math:`\langle \gamma - 1 \rangle(\Theta_s) = u_s / (n_s m_s c^2)`.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_ScalarLike</span><span class="p">,</span> <span class="n">_UnitBearingArrayLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.physics_utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">c_cgs</span><span class="p">,</span> <span class="n">m_e_cgs</span><span class="p">,</span> <span class="n">m_p_cgs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.physics_utils.maxwell_juettner</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_as_cgs</span><span class="p">,</span>
+    <span class="n">_as_dimensionless</span><span class="p">,</span>
+    <span class="n">_check</span><span class="p">,</span>
+    <span class="n">_opt_mj_exact_theta_from_kinetic_energy</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"compute_thermal_electron_energy_fraction"</span><span class="p">,</span>
+    <span class="s2">"compute_ion_electron_theta"</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="c1"># ============================================================================ #</span>
+<span class="c1"># Backends                                                                     #</span>
+<span class="c1"># ============================================================================ #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_opt_ion_energy_fraction</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">epsilon_B</span> <span class="o">-</span> <span class="n">epsilon_E</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon_T</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_opt_thermal_electron_energy_fraction</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">epsilon_T</span> <span class="o">*</span> <span class="n">_opt_ion_energy_fraction</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_opt_ion_electron_theta</span><span class="p">(</span><span class="n">u_th</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">mu_e</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">):</span>
+    <span class="n">u_i</span> <span class="o">=</span> <span class="n">_opt_ion_energy_fraction</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_th</span>
+    <span class="n">u_e</span> <span class="o">=</span> <span class="n">epsilon_T</span> <span class="o">*</span> <span class="n">u_i</span>
+    <span class="c1"># The ions carry the rest-mass density, n_i m_i = rho. The electrons have n_e = rho / (mu_e m_p).</span>
+    <span class="n">xi_i</span> <span class="o">=</span> <span class="n">u_i</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">xi_e</span> <span class="o">=</span> <span class="n">u_e</span> <span class="o">*</span> <span class="n">mu_e</span> <span class="o">*</span> <span class="n">m_p_cgs</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">m_e_cgs</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_opt_mj_exact_theta_from_kinetic_energy</span><span class="p">(</span><span class="n">xi_i</span><span class="p">),</span> <span class="n">_opt_mj_exact_theta_from_kinetic_energy</span><span class="p">(</span><span class="n">xi_e</span><span class="p">)</span>
+
+
+<span class="c1"># ============================================================================ #</span>
+<span class="c1"># Validation                                                                   #</span>
+<span class="c1"># ============================================================================ #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_partition</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">allow_zero_T</span><span class="p">):</span>
+    <span class="n">epsilon_T</span> <span class="o">=</span> <span class="n">_check</span><span class="p">(</span><span class="n">_as_dimensionless</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="s2">"epsilon_T"</span><span class="p">),</span> <span class="s2">"epsilon_T"</span><span class="p">,</span> <span class="n">allow_zero</span><span class="o">=</span><span class="n">allow_zero_T</span><span class="p">)</span>
+    <span class="n">epsilon_B</span> <span class="o">=</span> <span class="n">_check</span><span class="p">(</span><span class="n">_as_dimensionless</span><span class="p">(</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="s2">"epsilon_B"</span><span class="p">),</span> <span class="s2">"epsilon_B"</span><span class="p">,</span> <span class="n">allow_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">epsilon_E</span> <span class="o">=</span> <span class="n">_check</span><span class="p">(</span><span class="n">_as_dimensionless</span><span class="p">(</span><span class="n">epsilon_E</span><span class="p">,</span> <span class="s2">"epsilon_E"</span><span class="p">),</span> <span class="s2">"epsilon_E"</span><span class="p">,</span> <span class="n">allow_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">epsilon_B</span> <span class="o">+</span> <span class="n">epsilon_E</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`epsilon_B + epsilon_E` must be less than 1: the ions carry the remaining energy."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span>
+
+
+<span class="c1"># ============================================================================ #</span>
+<span class="c1"># Public interface                                                             #</span>
+<span class="c1"># ============================================================================ #</span>
+<div class="viewcode-block" id="compute_thermal_electron_energy_fraction">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.physics_utils.thermal_partition.compute_thermal_electron_energy_fraction.html#trilobite.physics_utils.thermal_partition.compute_thermal_electron_energy_fraction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_thermal_electron_energy_fraction</span><span class="p">(</span>
+    <span class="n">epsilon_T</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_ScalarLike</span><span class="p">],</span>
+    <span class="n">epsilon_B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_ScalarLike</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_ScalarLike</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">_ScalarLike</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Compute the fraction of the thermal energy density carried by the thermal electrons.</span>
+
+<span class="sd">    With :math:`u_{e,\rm th} = \epsilon_T u_i` and the magnetic and non-thermal electron energies removed first</span>
+<span class="sd">    (see :mod:`trilobite.physics_utils.thermal_partition`),</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \frac{u_{e,\rm th}}{u_{\rm th}} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    epsilon_T : float or array-like</span>
+<span class="sd">        Ratio of the thermal-electron energy to the ion energy, :math:`u_{e,\rm th} / u_i`. Must be non-negative.</span>
+<span class="sd">    epsilon_B : float or array-like, optional</span>
+<span class="sd">        Fraction of the thermal energy density in the magnetic field. Default is ``0``.</span>
+<span class="sd">    epsilon_E : float or array-like, optional</span>
+<span class="sd">        Fraction of the thermal energy density in the kinetic energy of non-thermal electrons. Default is ``0``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        :math:`u_{e,\rm th} / u_{\rm th}`.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If an input is negative or non-finite, or if ``epsilon_B + epsilon_E &gt;= 1``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">_opt_thermal_electron_energy_fraction</span><span class="p">(</span><span class="o">*</span><span class="n">_validate_partition</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="compute_ion_electron_theta">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.physics_utils.thermal_partition.compute_ion_electron_theta.html#trilobite.physics_utils.thermal_partition.compute_ion_electron_theta">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ion_electron_theta</span><span class="p">(</span>
+    <span class="n">u_th</span><span class="p">:</span> <span class="n">_UnitBearingArrayLike</span><span class="p">,</span>
+    <span class="n">rho</span><span class="p">:</span> <span class="n">_UnitBearingArrayLike</span><span class="p">,</span>
+    <span class="n">mu_e</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_ScalarLike</span><span class="p">],</span>
+    <span class="n">epsilon_T</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_ScalarLike</span><span class="p">],</span>
+    <span class="n">epsilon_B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_ScalarLike</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_ScalarLike</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">_ScalarLike</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">_ScalarLike</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Compute the dimensionless temperatures of the post-shock ions and thermal electrons.</span>
+
+<span class="sd">    The thermal energy density ``u_th`` is split as described in :mod:`trilobite.physics_utils.thermal_partition`.</span>
+<span class="sd">    Each species then follows a Maxwell-Juettner distribution whose energy per particle fixes its temperature,</span>
+<span class="sd">    :math:`\langle \gamma - 1 \rangle(\Theta_s) = \xi_s`, with</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \xi_i = \frac{u_i}{\rho c^2},</span>
+<span class="sd">        \qquad</span>
+<span class="sd">        \xi_e = \frac{u_{e,\rm th}\,\mu_e m_p}{\rho\, m_e c^2}.</span>
+
+<span class="sd">    Here :math:`\rho = n_i m_i = n_e \mu_e m_p` is the proper rest-mass density, so the ion mass :math:`m_i` is the</span>
+<span class="sd">    total mass per ion, :math:`\rho / n_i = \mu_i m_p`. The mean molecular weight per ion :math:`\mu_i` cancels:</span>
+<span class="sd">    :math:`\Theta_i = k_B T_i / (\mu_i m_p c^2)`, and the ion temperature is :math:`T_i = \Theta_i \mu_i m_p c^2 / k_B`.</span>
+<span class="sd">    The inversion of :math:`\langle \gamma - 1 \rangle` is exact; see</span>
+<span class="sd">    :func:`~trilobite.physics_utils.maxwell_juettner.compute_mj_theta_from_kinetic_energy`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    u_th : float or ~astropy.units.Quantity</span>
+<span class="sd">        Post-shock thermal (internal) energy density, excluding rest mass. Bare floats are in</span>
+<span class="sd">        :math:`\mathrm{erg\,cm^{-3}}`.</span>
+<span class="sd">    rho : float or ~astropy.units.Quantity</span>
+<span class="sd">        Post-shock proper rest-mass density. Bare floats are in :math:`\mathrm{g\,cm^{-3}}`.</span>
+<span class="sd">    mu_e : float or array-like</span>
+<span class="sd">        Mean molecular weight per electron, :math:`\rho / (n_e m_p)`; see</span>
+<span class="sd">        :func:`~trilobite.physics_utils.composition.compute_mean_molecular_weight_per_electron`.</span>
+<span class="sd">    epsilon_T : float or array-like</span>
+<span class="sd">        Ratio of the thermal-electron to the ion energy, :math:`u_{e,\rm th} / u_i`. Must be positive.</span>
+<span class="sd">    epsilon_B : float or array-like, optional</span>
+<span class="sd">        Fraction of the thermal energy density in the magnetic field. Default is ``0``.</span>
+<span class="sd">    epsilon_E : float or array-like, optional</span>
+<span class="sd">        Fraction of the thermal energy density in the kinetic energy of non-thermal electrons. Default is ``0``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Theta_i : float or ~numpy.ndarray</span>
+<span class="sd">        Dimensionless ion temperature :math:`\Theta_i = k_B T_i / (\mu_i m_p c^2)`.</span>
+<span class="sd">    Theta_e : float or ~numpy.ndarray</span>
+<span class="sd">        Dimensionless thermal-electron temperature :math:`\Theta_e = k_B T_e / (m_e c^2)`.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If an input is non-positive or non-finite, or if ``epsilon_B + epsilon_E &gt;= 1``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The jump conditions are solved with a single adiabatic index, whereas a mixture of non-relativistic ions and</span>
+<span class="sd">    partly relativistic electrons has an effective index that varies with :math:`\epsilon_T` and the shock speed. The</span>
+<span class="sd">    resulting change in :math:`u_{\rm th}` is small and is not corrected for.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    A :math:`0.1c` strong shock into hydrogen gas (:math:`\mu_e = 1`) gives ion and electron temperatures:</span>
+
+<span class="sd">    &gt;&gt;&gt; from trilobite.physics_utils.thermal_partition import (</span>
+<span class="sd">    ...     compute_ion_electron_theta,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; rho = 1e-20  # g / cm^3</span>
+<span class="sd">    &gt;&gt;&gt; u_th = (</span>
+<span class="sd">    ...     9 / 8 * rho * (0.1 * 2.998e10) ** 2</span>
+<span class="sd">    ... )  # erg / cm^3</span>
+<span class="sd">    &gt;&gt;&gt; Theta_i, Theta_e = compute_ion_electron_theta(</span>
+<span class="sd">    ...     u_th, rho, mu_e=1.0, epsilon_T=0.1</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; bool(Theta_e &gt; Theta_i)</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+    <span class="n">u_th</span> <span class="o">=</span> <span class="n">_as_cgs</span><span class="p">(</span><span class="n">u_th</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="s2">"u_th"</span><span class="p">)</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">_as_cgs</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="s2">"rho"</span><span class="p">)</span>
+    <span class="n">mu_e</span> <span class="o">=</span> <span class="n">_check</span><span class="p">(</span><span class="n">_as_dimensionless</span><span class="p">(</span><span class="n">mu_e</span><span class="p">,</span> <span class="s2">"mu_e"</span><span class="p">),</span> <span class="s2">"mu_e"</span><span class="p">)</span>
+    <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span> <span class="o">=</span> <span class="n">_validate_partition</span><span class="p">(</span><span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_opt_ion_electron_theta</span><span class="p">(</span><span class="n">u_th</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">mu_e</span><span class="p">,</span> <span class="n">epsilon_T</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

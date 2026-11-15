@@ -21,9 +21,9 @@ engine.load_avg_first_kernel()
 B = 1.0 * u.G
 R = 1e17 * u.cm
 
-epsilon_e = 0.1
 epsilon_B = 0.01
-delta = 0.99999   # fraction of energy in thermal component
+epsilon_T = 0.1   # ratio of the thermal-electron to the ion energy
+epsilon_E = 1e-6  # non-thermal electrons: a small share of the energy
 
 # Thermal population
 T = 1e10 * u.K
@@ -38,10 +38,10 @@ gamma_max = 1e10
 # Normalize electron distributions (equipartition closure)
 # ---------------------------------------------------------------------
 N_therm = MaxwellJuettner.normalize_from_magnetic_field(
-    B=B, epsilon_B=epsilon_B, epsilon_E=epsilon_e * delta, Theta=Theta
+    B=B, epsilon_B=epsilon_B, epsilon_T=epsilon_T, epsilon_E=epsilon_E, Theta=Theta
 )
 N_pl = PowerLaw.normalize_from_magnetic_field(
-    B=B, epsilon_B=epsilon_B, epsilon_E=epsilon_e * (1 - delta),
+    B=B, epsilon_B=epsilon_B, epsilon_E=epsilon_E,
     p=p, gamma_min=gamma_min, gamma_max=gamma_max,
 )
 

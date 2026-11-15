@@ -2,13 +2,14 @@ r"""
 Equipartition Analysis: What Does a Radio Peak Say About Source Energy?
 ========================================================================
 
-**Objective:** estimate the magnetic field, radius and total energy of a radio supernova from nothing but its
-SSA peak, and see how those estimates depend on the assumed energy partition.
+**Objective:** estimate the magnetic field, radius and energy (magnetic plus electron) of a radio supernova from
+nothing but its SSA peak, and see how those estimates depend on the assumed energy partition.
 
 The standard equipartition analysis
 (:footcite:t:`readheadEquipartitionBrightnessTemperature1994`) assumes that fixed fractions
-:math:`\epsilon_E` and :math:`\epsilon_B` of the post-shock energy go into relativistic electrons and magnetic
-fields. The peak frequency and flux then fix :math:`B` and :math:`R`, and the energy in the emitting region follows,
+:math:`\epsilon_E` and :math:`\epsilon_B` of the post-shock thermal energy density go into the kinetic energy of
+relativistic electrons and into magnetic fields. The peak frequency and flux then fix :math:`B` and :math:`R`, and the
+energy in the emitting region, magnetic plus electron kinetic, follows,
 
 .. math::
 
@@ -41,7 +42,7 @@ set_plot_style()
 #
 # We take a Type Ibc supernova at 20 Mpc, 30 days after explosion, with :math:`B = 0.5` G and
 # :math:`R = 10^{16}` cm, an expansion speed of about :math:`0.13c`. The electrons carry
-# :math:`\epsilon_E = 0.1` and the field :math:`\epsilon_B = 0.1` of the post-shock energy.
+# :math:`\epsilon_E = 0.1` and the field :math:`\epsilon_B = 0.1` of the post-shock thermal energy density.
 
 B_true, R_true, D, p = 0.5 * u.G, 1.0e16 * u.cm, 20.0 * u.Mpc, 3.0
 epsilon_E, epsilon_B_true = 0.1, 0.1
@@ -110,7 +111,7 @@ ax_BR.legend()
 
 ax_U.loglog(epsilon_B, U.to_value(u.erg))
 ax_U.plot(epsilon_B[i_min], U[i_min].to_value(u.erg), "ro", label=rf"Minimum at $\epsilon_B={epsilon_B[i_min]:.2f}$")
-ax_U.set(xlabel=r"Assumed $\epsilon_B$", ylabel="Total energy $U$ [erg]", title="Energy in the emitting region")
+ax_U.set(xlabel=r"Assumed $\epsilon_B$", ylabel="Energy $U$ [erg]", title="Energy in the emitting region")
 ax_U.legend()
 
 for ax in (ax_BR, ax_U):

@@ -40,10 +40,12 @@ The pipeline has four stages, each handled by one Trilobite component:
     electrons have :math:`p = 2.1`. The paper finds a magnetic energy density of 0.14 and a relativistic electron
     energy density of :math:`5\times10^{-4}` (extrapolating the spectrum to :math:`\gamma = 1`) relative to the
     thermal energy density, which it takes as :math:`\rho V^2`. The jump conditions give a thermal energy
-    density of :math:`\tfrac{9}{8}\rho V^2`, so both fractions are scaled by 8/9 here. Free-free absorption
-    and Coulomb losses, which the paper also includes, are not modeled.
+    density of :math:`\tfrac{9}{8}\rho V^2`, so both fractions are scaled by 8/9 here. Trilobite counts
+    :math:`\epsilon_E` as electron kinetic energy, :math:`\int N(\gamma-1)\,m_e c^2\,d\gamma`; for
+    :math:`\gamma_{\min} = 1` and :math:`p = 2.1` this sets the electron normalization about 14% higher than counting
+    total energy would. Free-free absorption and Coulomb losses, which the paper also includes, are not modeled.
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-42
+.. GENERATED FROM PYTHON SOURCE LINES 29-44
 
 .. code-block:: Python
 
@@ -69,7 +71,7 @@ The pipeline has four stages, each handled by one Trilobite component:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-51
+.. GENERATED FROM PYTHON SOURCE LINES 45-53
 
 Parameters
 ----------
@@ -80,7 +82,7 @@ effective value, not a measurement: a thin emitting shell is optically thick onl
 emitting area is a fraction of :math:`\pi R^2`, which the one-zone engine represents with :math:`f_A`. The
 optically thick flux scales linearly with it, so it sets the overall flux level.
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-61
+.. GENERATED FROM PYTHON SOURCE LINES 53-63
 
 .. code-block:: Python
 
@@ -101,7 +103,7 @@ optically thick flux scales linearly with it, so it sets the overall flux level.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-68
+.. GENERATED FROM PYTHON SOURCE LINES 64-70
 
 Shock and Magnetic Field
 ------------------------
@@ -110,7 +112,7 @@ The shock speed is constant at :math:`V_0` until :math:`t_p` and then falls as :
 the integral of that speed. The upstream density is the wind density at the shock radius, and the post-shock
 thermal energy density sets :math:`B = \sqrt{8\pi\,\epsilon_B\,e_{\rm th}}`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 68-87
+.. GENERATED FROM PYTHON SOURCE LINES 70-89
 
 .. code-block:: Python
 
@@ -145,7 +147,7 @@ thermal energy density sets :math:`B = \sqrt{8\pi\,\epsilon_B\,e_{\rm th}}`.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-98
+.. GENERATED FROM PYTHON SOURCE LINES 90-100
 
 Because the same shock speed and wind density enter both :math:`B` and the energy density, the field falls as
 :math:`B \propto V/R \approx t^{-1}`. At day 10 it is about 34 G, the value adopted in the paper.
@@ -158,7 +160,7 @@ Electrons above the cooling Lorentz factor :math:`\gamma_c` have lost their ener
 energy fraction :math:`\epsilon_E`, and let the numerical engine do the radiative transfer, including
 self-absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-117
+.. GENERATED FROM PYTHON SOURCE LINES 100-119
 
 .. code-block:: Python
 
@@ -188,14 +190,14 @@ self-absorption.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 118-122
+.. GENERATED FROM PYTHON SOURCE LINES 120-124
 
 SED Evolution and Light Curves
 ------------------------------
 
 The SED peak moves to lower frequency as the shock expands, which delays the light curves at low frequencies.
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-138
+.. GENERATED FROM PYTHON SOURCE LINES 124-140
 
 .. code-block:: Python
 
@@ -230,7 +232,7 @@ The SED peak moves to lower frequency as the shock expands, which delays the lig
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.386 seconds)
+   **Total running time of the script:** (0 minutes 0.632 seconds)
 
 
 .. _sphx_glr_download_auto_examples_modeling_plot_sn1993j_radio_sed.py:

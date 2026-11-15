@@ -150,9 +150,10 @@ plt.show()
 #
 # .. math::
 #
-#     u_e = \varepsilon_e\,u_B = \varepsilon_e\,\frac{B(r)^2}{8\pi},
+#     u_e = \frac{\epsilon_e}{\epsilon_B}\,u_B = \frac{\epsilon_e}{\epsilon_B}\,\frac{B(r)^2}{8\pi},
 #
-# so that :math:`K(r) \propto B(r)^2` and inner shells (stronger field) host
+# where :math:`u_e = \int N(\gamma-1)\,m_e c^2\,d\gamma` is the electron kinetic energy density, so that
+# :math:`K(r) \propto B(r)^2` and inner shells (stronger field) host
 # a proportionally denser electron population.
 # :meth:`~trilobite.radiation.synchrotron.electron_distributions.ElectronDistribution.normalize_from_magnetic_field`
 # handles this calculation for an array of :math:`B` values directly.

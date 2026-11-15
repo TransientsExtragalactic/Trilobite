@@ -50,7 +50,7 @@ Imports
 We start by importing the numerical and plotting dependencies, along with the
 Blandford-McKee shock engine.
 
-.. GENERATED FROM PYTHON SOURCE LINES 33-42
+.. GENERATED FROM PYTHON SOURCE LINES 33-43
 
 .. code-block:: Python
 
@@ -61,6 +61,7 @@ Blandford-McKee shock engine.
     from astropy import units as u
 
     from trilobite.dynamics.shocks import BlandfordMcKeeShockEngine
+    from trilobite.physics_utils import compute_ion_electron_theta, compute_mean_molecular_weight_per_electron
 
 
 
@@ -70,7 +71,7 @@ Blandford-McKee shock engine.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-53
+.. GENERATED FROM PYTHON SOURCE LINES 44-54
 
 External Medium
 ---------------
@@ -83,7 +84,7 @@ The general Blandford-McKee engine assumes a power-law external density,
 A uniform external medium corresponds to ``k = 0`` and
 ``K_csm = rho_0``.
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-60
+.. GENERATED FROM PYTHON SOURCE LINES 54-61
 
 .. code-block:: Python
 
@@ -101,7 +102,7 @@ A uniform external medium corresponds to ``k = 0`` and
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-67
+.. GENERATED FROM PYTHON SOURCE LINES 62-68
 
 Explosion Energy
 ----------------
@@ -110,7 +111,7 @@ energy. Here we choose a relatively modest value for visualization. The goal
 is not to model a particular event, but to keep the Lorentz factor in a useful
 range for plotting.
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-71
+.. GENERATED FROM PYTHON SOURCE LINES 68-72
 
 .. code-block:: Python
 
@@ -125,18 +126,17 @@ range for plotting.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-75
+.. GENERATED FROM PYTHON SOURCE LINES 73-76
 
 Gas Parameters
 --------------
 The shocked gas is modeled with an ultra-relativistic equation of state.
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-80
+.. GENERATED FROM PYTHON SOURCE LINES 76-80
 
 .. code-block:: Python
 
 
-    mu = 0.6
     gamma_hat = 4.0 / 3.0
 
 
@@ -154,13 +154,12 @@ Build the Shock Engine
 The engine emits a warning if the Lorentz factor falls below the configured
 threshold. We set the threshold to :math:`\Gamma = 2`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-93
+.. GENERATED FROM PYTHON SOURCE LINES 85-92
 
 .. code-block:: Python
 
 
     engine = BlandfordMcKeeShockEngine(
-        mu=mu,
         gamma_hat=gamma_hat,
         lorentz_warn_threshold=2.0,
     )
@@ -173,7 +172,7 @@ threshold. We set the threshold to :math:`\Gamma = 2`.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 94-99
+.. GENERATED FROM PYTHON SOURCE LINES 93-98
 
 Compute the Shock Evolution
 ---------------------------
@@ -181,7 +180,7 @@ We evaluate the solution over a time interval where the shock remains
 relativistic. In the BM approximation, the shock radius is approximately
 :math:`R \simeq ct`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-110
+.. GENERATED FROM PYTHON SOURCE LINES 98-109
 
 .. code-block:: Python
 
@@ -203,14 +202,14 @@ relativistic. In the BM approximation, the shock radius is approximately
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 111-115
+.. GENERATED FROM PYTHON SOURCE LINES 110-114
 
 Shock Radius
 ------------
 In the ultra-relativistic limit, the shock radius is nearly linear in time.
 We plot both the BM radius and the light-travel reference radius :math:`ct`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-139
+.. GENERATED FROM PYTHON SOURCE LINES 114-138
 
 .. code-block:: Python
 
@@ -250,7 +249,7 @@ We plot both the BM radius and the light-travel reference radius :math:`ct`.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 140-145
+.. GENERATED FROM PYTHON SOURCE LINES 139-144
 
 Lorentz Factor Decay
 --------------------
@@ -258,7 +257,7 @@ In a uniform medium, the BM Lorentz factor decreases as
 :math:`\Gamma \propto t^{-3/2}`. The horizontal line marks a rough threshold
 below which the ultra-relativistic approximation begins to break down.
 
-.. GENERATED FROM PYTHON SOURCE LINES 145-168
+.. GENERATED FROM PYTHON SOURCE LINES 144-167
 
 .. code-block:: Python
 
@@ -297,7 +296,7 @@ below which the ultra-relativistic approximation begins to break down.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 169-174
+.. GENERATED FROM PYTHON SOURCE LINES 168-173
 
 Relativistic Velocity Offset
 ----------------------------
@@ -305,7 +304,7 @@ In the ultra-relativistic limit, :math:`\beta = v/c` is extremely close to
 one. Plotting :math:`\beta` directly is usually uninformative because the
 interesting evolution is hidden in the small difference :math:`1-\beta`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 174-191
+.. GENERATED FROM PYTHON SOURCE LINES 173-190
 
 .. code-block:: Python
 
@@ -338,14 +337,14 @@ interesting evolution is hidden in the small difference :math:`1-\beta`.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 192-196
+.. GENERATED FROM PYTHON SOURCE LINES 191-195
 
 Post-Shock Pressure
 -------------------
 The proper post-shock pressure decreases as the blast wave decelerates and
 expands into the external medium.
 
-.. GENERATED FROM PYTHON SOURCE LINES 196-213
+.. GENERATED FROM PYTHON SOURCE LINES 195-212
 
 .. code-block:: Python
 
@@ -378,40 +377,43 @@ expands into the external medium.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 214-219
+.. GENERATED FROM PYTHON SOURCE LINES 213-220
 
-Post-Shock Thermal Energy Scale
--------------------------------
-Rather than plotting the post-shock temperature in Kelvin, it is often more
-meaningful in relativistic flows to plot the corresponding thermal energy
-scale, :math:`k_B T`, in MeV.
+Post-Shock Temperatures
+-----------------------
+The jump conditions fix the total thermal energy density :math:`u_{\rm th}`, not how it is shared between ions
+and electrons. We assign the thermal electrons an energy :math:`\epsilon_T u_i` relative to the ions with
+:func:`~trilobite.physics_utils.thermal_partition.compute_ion_electron_theta`, which returns the dimensionless
+temperature :math:`\Theta = k_B T / (m c^2)` of each species. The mean molecular weight per electron comes from
+:func:`~trilobite.physics_utils.composition.compute_mean_molecular_weight_per_electron`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 219-236
+.. GENERATED FROM PYTHON SOURCE LINES 220-238
 
 .. code-block:: Python
 
 
-    kT = (const.k_B * shock.post_shock_temperature).to(u.MeV)
+    mu_e = compute_mean_molecular_weight_per_electron(X=0.70, Y=0.28, Z=0.02)
 
     fig, ax = plt.subplots(figsize=(6, 4))
 
-    ax.loglog(
-        time.to_value(u.s),
-        kT.to_value(u.MeV),
-        label=r"$k_B T$",
-    )
+    for epsilon_T, color in zip([0.01, 0.1, 1.0], ["C0", "C1", "C2"]):
+        Theta_i, Theta_e = compute_ion_electron_theta(
+            shock.thermal_energy_density_comoving, shock.post_shock_comoving_density, mu_e, epsilon_T
+        )
+        ax.loglog(time.to_value(u.s), Theta_e, color=color, label=rf"$\Theta_e$, $\epsilon_T = {epsilon_T:g}$")
+        ax.loglog(time.to_value(u.s), Theta_i, color=color, ls="--", label=rf"$\Theta_i$, $\epsilon_T = {epsilon_T:g}$")
 
     ax.set_xlabel("Time [s]")
-    ax.set_ylabel(r"$k_B T$ [MeV]")
-    ax.set_title("Post-shock thermal energy scale")
-    ax.legend()
+    ax.set_ylabel(r"$\Theta = k_B T / m c^2$")
+    ax.set_title("Post-shock temperatures")
+    ax.legend(fontsize=8)
 
     plt.show()
 
 
 
 .. image-sg:: /auto_examples/dynamics/b_models/images/sphx_glr_plot_blandford_mcKee_005.png
-   :alt: Post-shock thermal energy scale
+   :alt: Post-shock temperatures
    :srcset: /auto_examples/dynamics/b_models/images/sphx_glr_plot_blandford_mcKee_005.png
    :class: sphx-glr-single-img
 
@@ -422,7 +424,7 @@ scale, :math:`k_B T`, in MeV.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.405 seconds)
+   **Total running time of the script:** (0 minutes 0.335 seconds)
 
 
 .. _sphx_glr_download_auto_examples_dynamics_b_models_plot_blandford_mcKee.py:
