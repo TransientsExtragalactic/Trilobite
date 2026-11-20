@@ -474,7 +474,6 @@
 <span class="sd">and the emitting geometry are described in :mod:`~trilobite.models.LFBOTs.sectors`.</span>
 <span class="sd">"""</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -484,22 +483,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core.status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelStatus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.diggins26</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_DYNAMICS_PARAMETERS</span><span class="p">,</span>
-    <span class="n">_FILLING_GRID</span><span class="p">,</span>
-    <span class="n">_FILLING_N_PIX</span><span class="p">,</span>
-    <span class="n">_FILLING_TABLE_CACHE</span><span class="p">,</span>
     <span class="n">Diggins26_TwoComponentModel</span><span class="p">,</span>
     <span class="n">_sector_dynamics_from_state</span><span class="p">,</span>
     <span class="n">_state_from_sector_dynamics</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.diggins26_relativistic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Diggins26_RelativisticTwoComponentModel</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.sectors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AREA_MODES</span><span class="p">,</span>
-    <span class="n">Segmentation</span><span class="p">,</span>
-    <span class="n">build_segment_filling_table</span><span class="p">,</span>
-    <span class="n">compute_segmentation</span><span class="p">,</span>
-    <span class="n">interpolate_segment_filling_table</span><span class="p">,</span>
-    <span class="n">segment_volume_fractions</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.sectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">Segmentation</span><span class="p">,</span> <span class="n">compute_segmentation</span><span class="p">,</span> <span class="n">segment_geometry</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">"Diggins26_NComponentModel"</span><span class="p">,</span>
@@ -597,16 +586,13 @@
 <span class="sd">    along a representative sightline sets the post-shock state, a cooled broken power-law electron population radiates</span>
 <span class="sd">    synchrotron emission from the segment's share of the shell, free-free absorption by the CSM exterior to the shock</span>
 <span class="sd">    attenuates it, and the observed flux density is the sum of the segments. The parameters, variables and all other</span>
-<span class="sd">    hyperparameters are those of the parent class, which describes the physics. The model adds two hyperparameters,</span>
-<span class="sd">    ``n_sectors`` and ``area_mode``.</span>
+<span class="sd">    hyperparameters are those of the parent class, which describes the physics. The model adds one hyperparameter,</span>
+<span class="sd">    ``n_sectors``.</span>
 
 <span class="sd">    .. important::</span>
 
-<span class="sd">        The first evaluation builds a table of the segments' projected areas, which takes longer than for the parent</span>
-<span class="sd">        (about 5 s at ``N = 2`` and a minute at ``N = 16``), and is then cached on the model and shared between</span>
-<span class="sd">        instances for the same ``n_sectors`` and ``area_mode``. Call :meth:`build_filling_table` beforehand when</span>
-<span class="sd">        evaluating in parallel. The cost of an evaluation grows linearly with ``n_sectors``, since a shock is solved</span>
-<span class="sd">        along every segment's sightline.</span>
+<span class="sd">        The cost of an evaluation grows linearly with ``n_sectors``, since a shock is solved along every segment's</span>
+<span class="sd">        sightline.</span>
 
 <span class="sd">    .. rubric:: Segmentation</span>
 
@@ -619,27 +605,16 @@
 <span class="sd">    every other segment by its midpoint in that variable. The segments are indexed from the pole to the equator. See</span>
 <span class="sd">    :mod:`~trilobite.models.LFBOTs.sectors`.</span>
 
-<span class="sd">    .. rubric:: Geometry and area modes</span>
+<span class="sd">    .. rubric:: Geometry</span>
 
 <span class="sd">    Segment :math:`k` holds the fraction :math:`f_{V,k} = f\,(\cos\theta_a - \cos\theta_b)` of the full-sphere volume,</span>
 <span class="sd">    which sums to the filling factor :math:`f` exactly, and has the projected area :math:`A_\perp = f_A\,\pi R_k^2`</span>
 <span class="sd">    and path length :math:`\ell = \tfrac{4}{3}(f_{V,k}/f_A)R_k` in the synchrotron calculation. The area fraction</span>
-<span class="sd">    :math:`f_A` depends on ``area_mode``:</span>
-
-<span class="sd">    ``"chord"`` (default)</span>
-<span class="sd">        Every sky pixel is split between the segments in proportion to their path lengths through the shell, so the</span>
-<span class="sd">        areas partition the shell's projected area. Because the segments' fluxes are added, a sightline that crosses</span>
-<span class="sd">        several segments would otherwise be counted once per segment, and the optically thick flux would overcount</span>
-<span class="sd">        roughly in proportion to the sum of the segments' areas. This definition does not, and the flux converges as</span>
-<span class="sd">        ``n_sectors`` grows.</span>
-<span class="sd">    ``"hit"``</span>
-<span class="sd">        Every pixel whose sightline meets the segment's shell counts fully toward it, which is the definition of the</span>
-<span class="sd">        two-component model. With ``n_sectors = 2`` the model is then identical to</span>
-<span class="sd">        :class:`~trilobite.models.LFBOTs.diggins26.Diggins26_TwoComponentModel`. Larger ``n_sectors`` overcounts the</span>
-<span class="sd">        optically thick flux, and a warning is issued.</span>
-
-<span class="sd">    Both are computed in units of each segment's own shock radius, so neither captures the depth ordering of segments</span>
-<span class="sd">    whose radii differ.</span>
+<span class="sd">    :math:`f_A` is the sky-projected area of the part of the segment's spherical surface that faces the observer. It</span>
+<span class="sd">    is an elementary function of the inclination (see :func:`~trilobite.models.LFBOTs.sectors.projected_area_fractions`)</span>
+<span class="sd">    and the segments' areas sum to :math:`\pi R^2`, so a sightline is counted in one segment only and the optically</span>
+<span class="sd">    thick flux does not overcount as ``n_sectors`` grows. The surface is that of a sphere of the segment's own shock</span>
+<span class="sd">    radius: the shell's thickness and the depth ordering of segments whose radii differ are not captured.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -654,8 +629,6 @@
 <span class="sd">        Cosmology used to convert between redshift and distance. Defaults to the Trilobite configuration cosmology.</span>
 <span class="sd">    n_sectors : int, optional</span>
 <span class="sd">        Number of segments, at least 2 (the two-component model). Default 8.</span>
-<span class="sd">    area_mode : {"chord", "hit"}, optional</span>
-<span class="sd">        Definition of the segments' projected areas. Default ``"chord"``.</span>
 <span class="sd">    hydrogen_mass_fraction : float, optional</span>
 <span class="sd">        Hydrogen mass fraction of the CSM. Default ``0.7``.</span>
 <span class="sd">    helium_mass_fraction : float, optional</span>
@@ -689,7 +662,7 @@
     <span class="n">STATUS</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="o">.</span><span class="n">NOVEL</span>
     <span class="n">STATUS_NOTE</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">"The N-segment generalization of the Diggins et al. (2026) model has no published counterpart to verify "</span>
-        <span class="s2">"against. With n_sectors=2 and area_mode='hit' it is the two-component model."</span>
+        <span class="s2">"against. With n_sectors=2 it is the two-component model."</span>
     <span class="p">)</span>
 
     <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="n">Diggins26_TwoComponentModel</span><span class="o">.</span><span class="n">PARAMETERS</span>
@@ -711,7 +684,6 @@
         <span class="n">cosmology</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">n_sectors</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
-        <span class="n">area_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"chord"</span><span class="p">,</span>
         <span class="n">hydrogen_mass_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span>
         <span class="n">helium_mass_fraction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adiabatic_index</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
@@ -728,7 +700,7 @@
 <span class="sd">        Initialize the model.</span>
 
 <span class="sd">        The arguments are those of :class:`~trilobite.models.LFBOTs.diggins26.Diggins26_TwoComponentModel`, plus</span>
-<span class="sd">        ``n_sectors`` and ``area_mode``.</span>
+<span class="sd">        ``n_sectors``.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -744,8 +716,6 @@
 <span class="sd">            cosmology.</span>
 <span class="sd">        n_sectors : int, optional</span>
 <span class="sd">            Number of segments, at least 2. ``n_sectors // 2`` are polar and the rest equatorial. Default 8.</span>
-<span class="sd">        area_mode : {"chord", "hit"}, optional</span>
-<span class="sd">            Definition of the segments' projected areas (see the class description). Default ``"chord"``.</span>
 <span class="sd">        hydrogen_mass_fraction : float, optional</span>
 <span class="sd">            Hydrogen mass fraction of the CSM. Default ``0.7``.</span>
 <span class="sd">        helium_mass_fraction : float, optional</span>
@@ -772,16 +742,6 @@
 <span class="sd">        """</span>
         <span class="n">n_sectors</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_sectors</span><span class="p">)</span>
         <span class="n">compute_segmentation</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">n_sectors</span><span class="p">)</span>  <span class="c1"># validates n_sectors</span>
-        <span class="k">if</span> <span class="n">area_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AREA_MODES</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"`area_mode` must be one of </span><span class="si">{</span><span class="n">AREA_MODES</span><span class="si">}</span><span class="s2">, not </span><span class="si">{</span><span class="n">area_mode</span><span class="si">!r}</span><span class="s2">."</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">area_mode</span> <span class="o">==</span> <span class="s2">"hit"</span> <span class="ow">and</span> <span class="n">n_sectors</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">"area_mode='hit' counts every pixel a segment's sightlines touch, so the optically thick flux "</span>
-                <span class="sa">f</span><span class="s2">"overcounts roughly in proportion to the number of segments (n_sectors=</span><span class="si">{</span><span class="n">n_sectors</span><span class="si">}</span><span class="s2">). "</span>
-                <span class="s2">"Use area_mode='chord' for n_sectors &gt; 2."</span><span class="p">,</span>
-                <span class="ne">UserWarning</span><span class="p">,</span>
-                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-            <span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">redshift</span><span class="o">=</span><span class="n">redshift</span><span class="p">,</span>
@@ -801,8 +761,7 @@
             <span class="n">seed_photon_luminosity</span><span class="o">=</span><span class="n">seed_photon_luminosity</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_sectors</span> <span class="o">=</span> <span class="n">n_sectors</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_area_mode</span> <span class="o">=</span> <span class="n">area_mode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_init_kwargs</span><span class="p">,</span> <span class="n">n_sectors</span><span class="o">=</span><span class="n">n_sectors</span><span class="p">,</span> <span class="n">area_mode</span><span class="o">=</span><span class="n">area_mode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_init_kwargs</span><span class="p">,</span> <span class="n">n_sectors</span><span class="o">=</span><span class="n">n_sectors</span><span class="p">)</span>
 
     <span class="c1"># =============================================== #</span>
     <span class="c1"># Configuration properties                        #</span>
@@ -811,11 +770,6 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">n_sectors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""int: Number of segments."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_sectors</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">area_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""str: Definition of the segments' projected areas, ``"chord"`` or ``"hit"``."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area_mode</span>
 
 <div class="viewcode-block" id="Diggins26_NComponentModel.segmentation">
 <a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel.segmentation.html#trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel.segmentation">[docs]</a>
@@ -845,49 +799,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_sector_sightlines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">_segment_sightlines</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">"inclination"</span><span class="p">],</span> <span class="n">theta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_azimuth</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sector_thetas</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
 
-<div class="viewcode-block" id="Diggins26_NComponentModel.build_filling_table">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel.build_filling_table.html#trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel.build_filling_table">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">build_filling_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Build (or fetch) the table of the segments' sky-projected area fractions and store it on the model.</span>
-
-<span class="sd">        The table is computed once per process for a fixed grid in aspect, inclination and filling factor, for the</span>
-<span class="sd">        model's ``n_sectors`` and ``area_mode``, and shared by every model instance with the same settings. It is</span>
-<span class="sd">        built automatically on the first evaluation, but calling this method beforehand keeps parallel workers from</span>
-<span class="sd">        each repeating the computation.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        progress : bool, optional</span>
-<span class="sd">            Show a progress bar while the table is built. Default ``True``.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        tuple</span>
-<span class="sd">            ``(aspect_grid, inclination_grid, filling_factor_grid, table)``, where ``table`` has shape</span>
-<span class="sd">            ``(n_sectors, n_aspect, n_inclination, n_filling_factor)``.</span>
-<span class="sd">        """</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"sectors"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_sectors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area_mode</span><span class="p">,</span> <span class="n">_FILLING_N_PIX</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">_FILLING_GRID</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_FILLING_TABLE_CACHE</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">build_segment_filling_table</span><span class="p">(</span>
-                <span class="o">*</span><span class="n">_FILLING_GRID</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_sectors</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_area_mode</span><span class="p">,</span> <span class="n">n_pix</span><span class="o">=</span><span class="n">_FILLING_N_PIX</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">progress</span>
-            <span class="p">)</span>
-            <span class="n">_FILLING_TABLE_CACHE</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">_FILLING_GRID</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_filling_table</span> <span class="o">=</span> <span class="n">_FILLING_TABLE_CACHE</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filling_table</span></div>
-
-
     <span class="k">def</span><span class="w"> </span><span class="nf">_sector_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""One dict of ``f_V``, ``f_A`` and ``ell_over_R`` per segment, from the pole to the equator."""</span>
-        <span class="c1"># The filling factor is clipped just inside (0, 1), where the geometry is defined.</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">"f_V"</span><span class="p">],</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">1e-6</span><span class="p">))</span>
-        <span class="n">edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">segmentation</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">"aspect"</span><span class="p">])</span><span class="o">.</span><span class="n">edges</span>
-        <span class="n">f_V</span> <span class="o">=</span> <span class="n">segment_volume_fractions</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
-        <span class="n">f_A</span> <span class="o">=</span> <span class="n">interpolate_segment_filling_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filling_table</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">"inclination"</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="s2">"aspect"</span><span class="p">])</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">"f_V"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="s2">"f_A"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="s2">"ell_over_R"</span><span class="p">:</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">if</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">}</span>
-            <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">f_V</span><span class="p">,</span> <span class="n">f_A</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">segment_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segmentation</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">"aspect"</span><span class="p">])</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">"f_V"</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="s2">"inclination"</span><span class="p">])</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">t_unique</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t_rest</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Diggins26NDynamics</span><span class="p">:</span>
         <span class="n">segmentation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">segmentation</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">"aspect"</span><span class="p">])</span>
@@ -994,12 +908,12 @@
 <span class="sd">    :class:`~trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel`, and the N-segment</span>
 <span class="sd">    generalization of</span>
 <span class="sd">    :class:`~trilobite.models.LFBOTs.diggins26_relativistic.Diggins26_RelativisticTwoComponentModel`: the segmentation,</span>
-<span class="sd">    area modes and evaluation paths are those of the former, and the relativistic shock, thermal electron population</span>
-<span class="sd">    (``epsilon_T``) and their caveats are those of the latter. With ``n_sectors=2`` and ``area_mode="hit"`` it is the</span>
-<span class="sd">    relativistic two-component model.</span>
+<span class="sd">    geometry and evaluation paths are those of the former, and the relativistic shock, thermal electron population</span>
+<span class="sd">    (``epsilon_T``) and their caveats are those of the latter. With ``n_sectors=2`` it is the relativistic</span>
+<span class="sd">    two-component model.</span>
 
 <span class="sd">    The constructor is that of :class:`~trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel`,</span>
-<span class="sd">    with the same ``n_sectors`` (default 8) and ``area_mode`` (default ``"chord"``) hyperparameters.</span>
+<span class="sd">    with the same ``n_sectors`` hyperparameter (default 8).</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>

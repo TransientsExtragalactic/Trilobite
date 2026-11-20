@@ -470,8 +470,9 @@
 
 <span class="sd">- :func:`compute_segmentation` places the segment edges and representative sightlines,</span>
 <span class="sd">- :func:`segment_volume_fractions` gives each segment's analytic share of the shell volume, and</span>
-<span class="sd">- :func:`projected_area_fractions` and :func:`build_segment_filling_table` give each segment's sky-projected area</span>
-<span class="sd">  fraction, in either of two definitions (see below).</span>
+<span class="sd">- :func:`projected_area_fractions` gives each segment's sky-projected area fraction, in closed form, and</span>
+<span class="sd">- :func:`segment_geometry` combines the two into the volume fraction, area fraction and mean path length that the</span>
+<span class="sd">  synchrotron calculation needs.</span>
 
 <span class="sd">.. rubric:: Segmentation</span>
 
@@ -487,36 +488,31 @@
 
 <span class="sd">.. rubric:: Projected areas</span>
 
-<span class="sd">``mode="hit"`` is the area of the sky pixels whose line of sight touches the segment's shell, which is the definition</span>
-<span class="sd">of the two-component model. It is correct for a segment on its own, but the segments overlap on the sky: summing the</span>
-<span class="sd">fluxes of independent slabs counts a sightline that crosses several segments once per segment, and the</span>
-<span class="sd">optically thick flux overcounts roughly in proportion to the sum of the areas, which grows with ``N``.</span>
-<span class="sd">``mode="chord"`` instead gives each segment, for every pixel, the share of the pixel's area equal to the segment's</span>
-<span class="sd">share of that sightline's path through the shell. The segments' areas then partition the shell's projected area, and</span>
-<span class="sd">:math:`\ell_k = V_k/A_k` remains the mean path length that the one-zone synchrotron engine needs.</span>
+<span class="sd">The projected area of a segment is the area of the sky covered by the part of its spherical surface that faces the</span>
+<span class="sd">observer: for a surface element of normal :math:`\hat n` and area :math:`dS` it is</span>
+<span class="sd">:math:`\max(\hat n\cdot\hat o, 0)\,dS`. The sphere is convex, so the visible elements never overlap on the sky, and</span>
+<span class="sd">the projected areas of the segments partition the disk :math:`\pi R^2` exactly, :math:`\sum_k f_{A,k} = 1`. This is what</span>
+<span class="sd">makes the segments' fluxes safe to add: a sightline is assigned to the one segment whose surface it meets first,</span>
+<span class="sd">rather than being counted once per segment it crosses. The areas are elementary functions of the inclination, so no</span>
+<span class="sd">table or sky grid is needed (see :func:`projected_area_fractions`).</span>
 
-<span class="sd">Both are computed in units of each segment's own shock radius (every segment is a unit-radius shell</span>
-<span class="sd">:math:`1 - \eta &lt; r &lt; 1` with :math:`\eta = 1 - (1 - f)^{1/3}`), as in</span>
-<span class="sd">:meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table`. They do not</span>
-<span class="sd">capture the depth ordering of segments whose radii differ.</span>
+<span class="sd">The surface is that of a sphere of the segment's own shock radius; the finite thickness of the shell and the depth</span>
+<span class="sd">ordering of segments whose radii differ are not captured. The mean path length :math:`\ell_k = V_k/A_k` that the</span>
+<span class="sd">one-zone synchrotron engine needs is built from the volume fraction of the whole segment (both hemispheres) over this</span>
+<span class="sd">projected area.</span>
 <span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.profiles.csm</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisymmetricCSMDensityProfile</span>
-
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">"Segmentation"</span><span class="p">,</span>
     <span class="s2">"compute_segmentation"</span><span class="p">,</span>
     <span class="s2">"segment_volume_fractions"</span><span class="p">,</span>
     <span class="s2">"projected_area_fractions"</span><span class="p">,</span>
-    <span class="s2">"build_segment_filling_table"</span><span class="p">,</span>
-    <span class="s2">"interpolate_segment_filling_table"</span><span class="p">,</span>
+    <span class="s2">"segment_geometry"</span><span class="p">,</span>
 <span class="p">]</span>
-
-<span class="n">AREA_MODES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"chord"</span><span class="p">,</span> <span class="s2">"hit"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Segmentation">
@@ -641,215 +637,132 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_visible_cap_area</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">inclination</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Visible projected area of the polar cap :math:`[0, \theta]` of a unit sphere, as a fraction of :math:`R^2`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    theta : numpy.ndarray</span>
+<span class="sd">        Colatitudes of the cap edge, in :math:`[0, \pi]`.</span>
+<span class="sd">    inclination : float</span>
+<span class="sd">        Angle between the symmetry axis and the line of sight, in :math:`[0, \pi/2]`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The edge of the cap is a circle whose projection is the ellipse with semi-axes :math:`\sin\theta` (across the</span>
+<span class="sd">    projected axis) and :math:`\sin\theta\cos i` (along it), centred at :math:`\cos\theta\sin i` along the</span>
+<span class="sd">    projected axis. With :math:`\kappa = \cot\theta\cot i`, the circle is wholly visible for</span>
+<span class="sd">    :math:`\kappa \ge 1` and wholly hidden for :math:`\kappa \le -1`. In between it crosses the limb at the sky</span>
+<span class="sd">    height :math:`y_0 = \cos\theta/\sin i`, and the visible part of the cap is the segment of the unit disk above</span>
+<span class="sd">    :math:`y_0` plus the part of the ellipse below it.</span>
+<span class="sd">    """</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">sin_t</span><span class="p">,</span> <span class="n">cos_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">sin_i</span><span class="p">,</span> <span class="n">cos_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">inclination</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">inclination</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">sin_i</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>  <span class="c1"># axis along the line of sight: the near cap is seen face-on, the far cap is hidden</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">theta</span> <span class="o">&lt;</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sin_t</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="n">kappa</span> <span class="o">=</span> <span class="n">cos_t</span> <span class="o">*</span> <span class="n">cos_i</span> <span class="o">/</span> <span class="p">(</span><span class="n">sin_t</span> <span class="o">*</span> <span class="n">sin_i</span><span class="p">)</span>  <span class="c1"># +-inf at the poles</span>
+    <span class="n">whole</span> <span class="o">=</span> <span class="n">kappa</span> <span class="o">&gt;=</span> <span class="mf">1.0</span>  <span class="c1"># cap entirely on the near side: a flat ellipse</span>
+    <span class="n">hidden</span> <span class="o">=</span> <span class="n">kappa</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># edge entirely on the far side: the cap covers the whole near hemisphere</span>
+
+    <span class="n">kappa_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">kappa</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cos_t</span> <span class="o">/</span> <span class="n">sin_i</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">phi_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">kappa_c</span><span class="p">)</span>
+    <span class="n">unit_disk_segment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span> <span class="o">-</span> <span class="n">y0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">y0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">ellipse_part</span> <span class="o">=</span> <span class="n">sin_t</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">cos_i</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">phi_0</span> <span class="o">+</span> <span class="n">kappa_c</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_0</span><span class="p">))</span>
+    <span class="n">partial</span> <span class="o">=</span> <span class="n">unit_disk_segment</span> <span class="o">+</span> <span class="n">ellipse_part</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">whole</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sin_t</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">cos_i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">partial</span><span class="p">))</span>
+
+
 <div class="viewcode-block" id="projected_area_fractions">
 <a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.projected_area_fractions.html#trilobite.models.LFBOTs.sectors.projected_area_fractions">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">projected_area_fractions</span><span class="p">(</span>
-    <span class="n">edges</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">inclination</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">eta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"chord"</span><span class="p">,</span> <span class="n">n_pix</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">projected_area_fractions</span><span class="p">(</span><span class="n">edges</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">inclination</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Sky-projected area fraction :math:`f_A = A_\perp/\pi R^2` of every segment of a unit-radius shell.</span>
+<span class="sd">    Sky-projected area fraction :math:`f_A = A_\perp/\pi R^2` of every segment of a spherical shell.</span>
+
+<span class="sd">    A segment is the zone :math:`[\theta_a, \theta_b]` together with its mirror image about the equator, and its</span>
+<span class="sd">    projected area is that of the part of the zone's surface that faces the observer,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        A_\perp = \int_{\rm zone}\max(\hat n\cdot\hat o,\,0)\,dS.</span>
+
+<span class="sd">    Writing :math:`F(\theta)` for the visible projected area of the cap :math:`[0, \theta]` (see below), the segment's</span>
+<span class="sd">    area is :math:`G(\theta_b) - G(\theta_a)` with :math:`G(\theta) = [F(\theta) - F(\pi - \theta)]/\pi` in units of</span>
+<span class="sd">    :math:`\pi R^2`. :math:`F` is elementary. With :math:`\kappa = \cot\theta\cot i`:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        F/R^2 = \begin{cases}</span>
+<span class="sd">            \pi\sin^2\theta\cos i &amp; \kappa \ge 1, \\</span>
+<span class="sd">            \pi &amp; \kappa \le -1, \\</span>
+<span class="sd">            \arccos y_0 - y_0\sqrt{1 - y_0^2}</span>
+<span class="sd">                + \sin^2\theta\cos i\,\left(\pi - \arccos\kappa + \kappa\sqrt{1 - \kappa^2}\right) &amp; {\rm otherwise,}</span>
+<span class="sd">        \end{cases}</span>
+
+<span class="sd">    where :math:`y_0 = \cos\theta/\sin i`. The areas sum to 1 for any inclination.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    edges : numpy.ndarray</span>
 <span class="sd">        Colatitudes of the segment edges from the pole to the equator, as in :class:`Segmentation`.</span>
 <span class="sd">    inclination : float</span>
-<span class="sd">        Angle between the symmetry axis and the line of sight, in radians.</span>
-<span class="sd">    eta : float</span>
-<span class="sd">        Fractional thickness of the shell, :math:`\eta = 1 - (1 - f)^{1/3}`.</span>
-<span class="sd">    mode : {"chord", "hit"}, optional</span>
-<span class="sd">        ``"hit"`` counts every pixel whose line of sight meets the segment's shell. ``"chord"`` splits each pixel</span>
-<span class="sd">        between the segments in proportion to their path lengths through the shell. See the module description.</span>
-<span class="sd">    n_pix : int, optional</span>
-<span class="sd">        Sky pixels across the diameter. Default 200.</span>
+<span class="sd">        Angle between the symmetry axis and the line of sight, in radians. The areas are symmetric under</span>
+<span class="sd">        :math:`i \to \pi - i`, and the inclination is folded into :math:`[0, \pi/2]`.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
 <span class="sd">        The area fraction of each segment, shape ``(N,)``, ordered from the pole to the equator.</span>
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AREA_MODES</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"`mode` must be one of </span><span class="si">{</span><span class="n">AREA_MODES</span><span class="si">}</span><span class="s2">, not </span><span class="si">{</span><span class="n">mode</span><span class="si">!r}</span><span class="s2">."</span><span class="p">)</span>
     <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">n_seg</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
-
-    <span class="c1"># Pixel centres across [-1, 1]; both the segments and the shell are mirror-symmetric under x -&gt; -x, so only</span>
-    <span class="c1"># x &gt; 0 is kept and the area is doubled at the end.</span>
-    <span class="n">pixel_size</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="n">n_pix</span>
-    <span class="n">centres</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_pix</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">pixel_size</span>
-    <span class="n">x_sky</span><span class="p">,</span> <span class="n">y_sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">centres</span><span class="p">[</span><span class="n">centres</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span> <span class="n">centres</span><span class="p">)</span>
-    <span class="n">rho_sq</span> <span class="o">=</span> <span class="n">x_sky</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y_sky</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">**</span> <span class="mi">2</span>
-    <span class="n">y_sky</span> <span class="o">=</span> <span class="n">y_sky</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-    <span class="n">on_disk</span> <span class="o">=</span> <span class="n">rho_sq</span> <span class="o">&lt;</span> <span class="mf">1.0</span>  <span class="c1"># only lines of sight inside the unit disk can meet the shell</span>
-    <span class="n">rho_sq</span><span class="p">,</span> <span class="n">y_sky</span> <span class="o">=</span> <span class="n">rho_sq</span><span class="p">[</span><span class="n">on_disk</span><span class="p">],</span> <span class="n">y_sky</span><span class="p">[</span><span class="n">on_disk</span><span class="p">]</span>
-
-    <span class="c1"># Along a line of sight r^2 = rho^2 + z^2, so the shell occupies z_in &lt; |z| &lt; z_out.</span>
-    <span class="n">z_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">rho_sq</span><span class="p">)</span>
-    <span class="n">z_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">rho_sq</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-
-    <span class="c1"># A segment boundary at colatitude theta_e is where cos^2(theta) = c_e^2, with cos(theta) = (y sin i + z cos i)/r.</span>
-    <span class="c1"># Multiplying by r^2 avoids square roots: g_e(z) = (y sin i + z cos i)^2 - c_e^2 (rho^2 + z^2) = qa z^2 + qb z + qc,</span>
-    <span class="c1"># positive where |cos(theta)| exceeds c_e (nearer the pole). Its roots are where the line of sight crosses the</span>
-    <span class="c1"># boundary.</span>
-    <span class="n">sin_inc</span><span class="p">,</span> <span class="n">cos_inc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">inclination</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">inclination</span><span class="p">)</span>
-    <span class="n">thresholds_sq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># interior edges, from the pole to the equator</span>
-    <span class="n">qa</span> <span class="o">=</span> <span class="n">cos_inc</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">thresholds_sq</span>  <span class="c1"># (n_edges,)</span>
-    <span class="n">qb</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">y_sky</span> <span class="o">*</span> <span class="n">sin_inc</span> <span class="o">*</span> <span class="n">cos_inc</span>  <span class="c1"># (n_pix,)</span>
-    <span class="n">qc</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_sky</span> <span class="o">*</span> <span class="n">sin_inc</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">thresholds_sq</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">rho_sq</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># (n_pix, n_edges)</span>
-
-    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
-        <span class="n">regular</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qa</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-14</span>
-        <span class="n">disc</span> <span class="o">=</span> <span class="n">qb</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">qa</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">qc</span>
-        <span class="n">sqrt_disc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">disc</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">disc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>  <span class="c1"># NaN: no crossing</span>
-        <span class="n">safe_qa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">regular</span><span class="p">,</span> <span class="n">qa</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">root_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">regular</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:],</span> <span class="p">(</span><span class="o">-</span><span class="n">qb</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">sqrt_disc</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">safe_qa</span><span class="p">),</span> <span class="o">-</span><span class="n">qc</span> <span class="o">/</span> <span class="n">qb</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span>
-        <span class="c1"># A line of sight parallel to the boundary has a linear g_e(z): a single crossing and no second root.</span>
-        <span class="n">root_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">regular</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:],</span> <span class="p">(</span><span class="o">-</span><span class="n">qb</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">sqrt_disc</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">safe_qa</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-
-    <span class="c1"># Missing roots (NaN) and roots outside the sphere move onto [-z_out, z_out]; a missing root lands on -z_out and</span>
-    <span class="c1"># only creates a zero-length piece, so every line of sight has the same number of breakpoints.</span>
-    <span class="n">cone_roots</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">nan</span><span class="o">=-</span><span class="mf">2.0</span><span class="p">),</span> <span class="o">-</span><span class="n">z_out</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">z_out</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">(</span><span class="n">root_lo</span><span class="p">,</span> <span class="n">root_hi</span><span class="p">)]</span>
-    <span class="n">breakpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="o">-</span><span class="n">z_out</span><span class="p">,</span> <span class="o">-</span><span class="n">z_in</span><span class="p">,</span> <span class="n">z_in</span><span class="p">,</span> <span class="n">z_out</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="o">*</span><span class="n">cone_roots</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-        <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">z_lo</span><span class="p">,</span> <span class="n">z_hi</span> <span class="o">=</span> <span class="n">breakpoints</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">breakpoints</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
-    <span class="n">z_mid</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">z_lo</span> <span class="o">+</span> <span class="n">z_hi</span><span class="p">)</span>
-    <span class="n">length</span> <span class="o">=</span> <span class="n">z_hi</span> <span class="o">-</span> <span class="n">z_lo</span>
-
-    <span class="c1"># Between consecutive breakpoints nothing changes sign, so the midpoint decides which segment a piece belongs</span>
-    <span class="c1"># to and whether it lies in the shell.</span>
-    <span class="n">r_mid_sq</span> <span class="o">=</span> <span class="n">rho_sq</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">z_mid</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">in_shell</span> <span class="o">=</span> <span class="p">(</span><span class="n">r_mid_sq</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">r_mid_sq</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">)</span>
-    <span class="n">cos_sq_mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_sky</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin_inc</span> <span class="o">+</span> <span class="n">z_mid</span> <span class="o">*</span> <span class="n">cos_inc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">r_mid_sq</span>
-    <span class="c1"># Number of interior boundaries whose cone (|cos| above the boundary's) contains the piece: n_seg - 1 is the</span>
-    <span class="c1"># polar segment and 0 the equatorial-most one.</span>
-    <span class="n">nearer_pole</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">thresholds_sq</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">cos_sq_mid</span><span class="p">)</span>
-    <span class="n">segment</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_seg</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">nearer_pole</span>  <span class="c1"># 0 is the polar segment</span>
-
-    <span class="c1"># Accumulate the path length (or the number of pieces) of every segment along every line of sight.</span>
-    <span class="n">n_los</span> <span class="o">=</span> <span class="n">rho_sq</span><span class="o">.</span><span class="n">size</span>
-    <span class="n">slot</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_los</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_seg</span> <span class="o">+</span> <span class="n">segment</span><span class="p">)[</span><span class="n">in_shell</span><span class="p">]</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">slot</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">length</span><span class="p">[</span><span class="n">in_shell</span><span class="p">],</span> <span class="n">minlength</span><span class="o">=</span><span class="n">n_los</span> <span class="o">*</span> <span class="n">n_seg</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_los</span><span class="p">,</span> <span class="n">n_seg</span><span class="p">)</span>
-
-    <span class="n">area_scale</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">pixel_size</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># pixel area x 2 (mirror half-plane) / pi (unit disk area)</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"hit"</span><span class="p">:</span>
-        <span class="c1"># A line of sight meets a segment if some piece of non-zero length lies in the segment's shell.</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">path</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">area_scale</span>
-    <span class="c1"># Each line of sight splits its pixel between the segments in proportion to their path lengths.</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="n">path</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">area_scale</span></div>
+    <span class="n">inclination</span> <span class="o">=</span> <span class="n">_fold_inclination</span><span class="p">(</span><span class="n">inclination</span><span class="p">)</span>
+    <span class="n">cap_near</span> <span class="o">=</span> <span class="n">_visible_cap_area</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">inclination</span><span class="p">)</span>
+    <span class="n">cap_far</span> <span class="o">=</span> <span class="n">_visible_cap_area</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">edges</span><span class="p">,</span> <span class="n">inclination</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">cap_near</span> <span class="o">-</span> <span class="n">cap_far</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span></div>
 
 
 
-<div class="viewcode-block" id="build_segment_filling_table">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.build_segment_filling_table.html#trilobite.models.LFBOTs.sectors.build_segment_filling_table">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">build_segment_filling_table</span><span class="p">(</span>
-    <span class="n">aspect</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="n">filling_factor</span><span class="p">,</span> <span class="n">n_sectors</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"chord"</span><span class="p">,</span> <span class="n">n_pix</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="segment_geometry">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.segment_geometry.html#trilobite.models.LFBOTs.sectors.segment_geometry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segment_geometry</span><span class="p">(</span><span class="n">edges</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">filling_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">inclination</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Tabulate the projected area fraction of every segment on a grid of aspect, inclination and filling factor.</span>
-
-<span class="sd">    This is the N-segment counterpart of</span>
-<span class="sd">    :meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table`. The</span>
-<span class="sd">    segment edges depend on the aspect (see :func:`compute_segmentation`), so they are recomputed for every grid</span>
-<span class="sd">    aspect.</span>
+<span class="sd">    Volume fraction, area fraction and mean path length of every segment, from the pole to the equator.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    aspect : array-like</span>
-<span class="sd">        Grid of disk angular thicknesses. Must be positive.</span>
-<span class="sd">    inclination : array-like</span>
-<span class="sd">        Grid of inclinations in radians. Both hemispheres are symmetric, so :math:`[0, \pi/2]` suffices.</span>
-<span class="sd">    filling_factor : array-like</span>
-<span class="sd">        Grid of shell volume filling factors, within :math:`(0, 1)`.</span>
-<span class="sd">    n_sectors : int</span>
-<span class="sd">        Number of segments.</span>
-<span class="sd">    mode : {"chord", "hit"}, optional</span>
-<span class="sd">        Area definition; see :func:`projected_area_fractions`.</span>
-<span class="sd">    n_pix : int, optional</span>
-<span class="sd">        Sky pixels across the diameter. Default 200.</span>
-<span class="sd">    progress : bool, optional</span>
-<span class="sd">        Show a ``tqdm`` progress bar. Default ``False``.</span>
+<span class="sd">    edges : numpy.ndarray</span>
+<span class="sd">        Colatitudes of the segment edges from the pole to the equator, as in :class:`Segmentation`.</span>
+<span class="sd">    filling_factor : float</span>
+<span class="sd">        Shell volume filling factor :math:`f`. It is clipped just inside :math:`(0, 1)`.</span>
+<span class="sd">    inclination : float</span>
+<span class="sd">        Angle between the symmetry axis and the line of sight, in radians.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    numpy.ndarray</span>
-<span class="sd">        Array of shape ``(n_sectors, len(aspect), len(inclination), len(filling_factor))``, ordered from the pole to</span>
-<span class="sd">        the equator along the first axis.</span>
+<span class="sd">    tuple of dict</span>
+<span class="sd">        One dict per segment with the float entries ``f_V`` (:func:`segment_volume_fractions`), ``f_A``</span>
+<span class="sd">        (:func:`projected_area_fractions`) and ``ell_over_R = (4/3) f_V / f_A``, the mean path length in units of the</span>
+<span class="sd">        segment's shock radius (0 for a segment with no projected area).</span>
 <span class="sd">    """</span>
-    <span class="n">aspect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">aspect</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
-    <span class="n">inclination</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">inclination</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
-    <span class="n">filling_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">filling_factor</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">aspect</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">aspect</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`aspect` must be positive and finite."</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">filling_factor</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">filling_factor</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`filling_factor` must lie in (0, 1)."</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">inclination</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`inclination` must be finite."</span><span class="p">)</span>
-
-    <span class="n">eta</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">filling_factor</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
-    <span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_sectors</span><span class="p">,</span> <span class="n">aspect</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">inclination</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">filling_factor</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
-    <span class="n">bar</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
-
-            <span class="n">bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">aspect</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="n">inclination</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Building filling-factor table"</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="k">pass</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">aspect</span><span class="p">):</span>
-        <span class="n">edges</span> <span class="o">=</span> <span class="n">compute_segmentation</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">n_sectors</span><span class="p">)</span><span class="o">.</span><span class="n">edges</span>
-        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">inc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inclination</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">et</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eta</span><span class="p">):</span>
-                <span class="n">table</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">projected_area_fractions</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">inc</span><span class="p">,</span> <span class="n">et</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">n_pix</span><span class="o">=</span><span class="n">n_pix</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">bar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">bar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">table</span></div>
-
-
-
-<div class="viewcode-block" id="interpolate_segment_filling_table">
-<a class="viewcode-back" href="../../../../_as_gen/trilobite.models.LFBOTs.sectors.interpolate_segment_filling_table.html#trilobite.models.LFBOTs.sectors.interpolate_segment_filling_table">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">interpolate_segment_filling_table</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">filling_factor</span><span class="p">,</span> <span class="n">inclination</span><span class="p">,</span> <span class="n">aspect</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Interpolate the area fractions of every segment from a precomputed table.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    table : tuple</span>
-<span class="sd">        ``(aspect_grid, inclination_grid, filling_factor_grid, f_A_table)`` with ``f_A_table`` from</span>
-<span class="sd">        :func:`build_segment_filling_table`.</span>
-<span class="sd">    filling_factor, inclination, aspect : float</span>
-<span class="sd">        The point to evaluate. The inclination is folded into :math:`[0, \pi/2]`.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    numpy.ndarray</span>
-<span class="sd">        The area fractions, shape ``(N,)``. The interpolation is trilinear in :math:`(\ln b, i, f)` and points</span>
-<span class="sd">        beyond the grid take the value at its nearest edge.</span>
-<span class="sd">    """</span>
-    <span class="n">aspect_grid</span><span class="p">,</span> <span class="n">inc_grid</span><span class="p">,</span> <span class="n">f_grid</span><span class="p">,</span> <span class="n">f_A_table</span> <span class="o">=</span> <span class="n">table</span>
-    <span class="n">f_A_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">f_A_table</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">AxisymmetricCSMDensityProfile</span><span class="o">.</span><span class="n">_interpolate_filling_table</span><span class="p">(</span>
-        <span class="n">f_A_table</span><span class="p">,</span>
-        <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">aspect_grid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">inc_grid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">f_grid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">aspect</span><span class="p">))),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">_fold_inclination</span><span class="p">(</span><span class="n">inclination</span><span class="p">)),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">filling_factor</span><span class="p">)),</span>
-        <span class="p">),</span>
-    <span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span></div>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">filling_factor</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">1e-6</span><span class="p">))</span>
+    <span class="n">f_V</span> <span class="o">=</span> <span class="n">segment_volume_fractions</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="n">f_A</span> <span class="o">=</span> <span class="n">projected_area_fractions</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">inclination</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">"f_V"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="s2">"f_A"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="s2">"ell_over_R"</span><span class="p">:</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">if</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">f_V</span><span class="p">,</span> <span class="n">f_A</span><span class="p">)</span>
+    <span class="p">)</span></div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_fold_inclination</span><span class="p">(</span><span class="n">inclination</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Fold an inclination into :math:`[0, \pi/2]`, using the symmetry under :math:`i \to \pi - i`."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">inclination</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`inclination` must be finite."</span><span class="p">)</span>
     <span class="n">inc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">inclination</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">inc</span> <span class="k">if</span> <span class="n">inc</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="k">else</span> <span class="n">inc</span>
 </pre></div>
