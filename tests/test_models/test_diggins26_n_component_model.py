@@ -1,12 +1,9 @@
 """Tests for the N-component Diggins26 models."""
 
-import warnings
-
 import numpy as np
 import pytest
 from astropy import units as u
 
-import trilobite.models.LFBOTs.diggins26_n_component as n_component_module
 from trilobite.models.LFBOTs import (
     Diggins26_NComponentModel,
     Diggins26_RelativisticNComponentModel,
@@ -31,7 +28,7 @@ def two():
 
 @pytest.fixture(scope="module")
 def n2(two):
-    return Diggins26_NComponentModel(luminosity_distance=100 * u.Mpc, n_sectors=2, area_mode="hit")
+    return Diggins26_NComponentModel(luminosity_distance=100 * u.Mpc, n_sectors=2)
 
 
 @pytest.fixture(scope="module")
@@ -41,7 +38,7 @@ def rel_two():
 
 @pytest.fixture(scope="module")
 def rel_n2():
-    return Diggins26_RelativisticNComponentModel(luminosity_distance=100 * u.Mpc, n_sectors=2, area_mode="hit")
+    return Diggins26_RelativisticNComponentModel(luminosity_distance=100 * u.Mpc, n_sectors=2)
 
 
 class TestTwoSegmentLimit:
@@ -84,24 +81,13 @@ class TestTwoSegmentLimit:
 class TestConstruction:
     def test_defaults(self):
         m = Diggins26_NComponentModel(redshift=0.01)
-        assert m.n_sectors == 8 and m.area_mode == "chord"
+        assert m.n_sectors == 8
         assert Diggins26_RelativisticNComponentModel(redshift=0.01).n_sectors == 8
 
     @pytest.mark.parametrize("n", [1, 0, -2])
     def test_rejects_too_few_segments(self, n):
         with pytest.raises(ValueError, match="at least 2"):
             Diggins26_NComponentModel(redshift=0.01, n_sectors=n)
-
-    def test_rejects_unknown_area_mode(self):
-        with pytest.raises(ValueError, match="area_mode"):
-            Diggins26_NComponentModel(redshift=0.01, area_mode="sum")
-
-    def test_hit_mode_warns_only_beyond_two_segments(self):
-        with warnings.catch_warnings():
-            warnings.simplefilter("error")
-            Diggins26_NComponentModel(redshift=0.01, n_sectors=2, area_mode="hit")
-        with pytest.warns(UserWarning, match="overcounts"):
-            Diggins26_NComponentModel(redshift=0.01, n_sectors=4, area_mode="hit")
 
     def test_the_parents_arguments_still_apply(self):
         m = Diggins26_NComponentModel(redshift=0.01, hydrogen_mass_fraction=0.6, n_azimuth=6, n_sectors=3)
@@ -123,62 +109,49 @@ class TestConstruction:
 
     @pytest.mark.parametrize("cls", [Diggins26_NComponentModel, Diggins26_RelativisticNComponentModel])
     def test_round_trips_through_the_model_spec(self, cls):
-        m = cls(redshift=0.02, n_sectors=5, area_mode="chord", n_azimuth=3)
+        m = cls(redshift=0.02, n_sectors=5, n_azimuth=3)
         spec = m.to_model_spec()
-        assert spec.kwargs["n_sectors"] == 5 and spec.kwargs["area_mode"] == "chord"
+        assert spec.kwargs["n_sectors"] == 5 and "area_mode" not in spec.kwargs
         rebuilt = cls.from_model_spec(spec)
         assert type(rebuilt) is cls
-        assert (rebuilt.n_sectors, rebuilt.area_mode, rebuilt._n_azimuth) == (5, "chord", 3)
+        assert (rebuilt.n_sectors, rebuilt._n_azimuth) == (5, 3)
         assert rebuilt.redshift == pytest.approx(m.redshift)
 
 
 # =========================================================================== #
-# Geometry and structure (coarse area table: the tests do not need accuracy)  #
+# Geometry and structure                                                      #
 # =========================================================================== #
 @pytest.fixture(scope="module")
-def coarse_tables():
-    patch = pytest.MonkeyPatch()
-    patch.setattr(
-        n_component_module,
-        "_FILLING_GRID",
-        (np.geomspace(0.2, 25.0, 6), np.linspace(0, np.pi / 2, 5), np.linspace(0.05, 0.95, 4)),
-    )
-    patch.setattr(n_component_module, "_FILLING_N_PIX", 100)
-    yield
-    patch.undo()
-
-
-@pytest.fixture(scope="module")
-def chord8(coarse_tables):
+def n8():
     return Diggins26_NComponentModel(luminosity_distance=100 * u.Mpc, n_sectors=8)
 
 
 class TestStructure:
-    def test_geometry_conserves_the_volume(self, chord8):
-        p = chord8._coerce({"aspect": 1.7, "f_V": 0.4, "inclination": 0.9})
-        geometry = chord8._sector_geometry(p)
+    def test_geometry_conserves_the_volume(self, n8):
+        p = n8._coerce({"aspect": 1.7, "f_V": 0.4, "inclination": 0.9})
+        geometry = n8._sector_geometry(p)
         assert len(geometry) == 8
         assert sum(g["f_V"] for g in geometry) == pytest.approx(0.4, rel=1e-12)
         for g in geometry:
             assert g["f_A"] > 0 and g["ell_over_R"] == pytest.approx(4 / 3 * g["f_V"] / g["f_A"])
-        # The areas partition the shell's silhouette (about the unit disk) in chord mode.
-        assert sum(g["f_A"] for g in geometry) == pytest.approx(1.0, abs=0.05)
+        # The areas partition the disk of the shock sphere.
+        assert sum(g["f_A"] for g in geometry) == pytest.approx(1.0, rel=1e-12)
 
-    def test_sightline_sampling(self, chord8):
-        p = chord8._coerce({"inclination": 1.0})
-        sightlines = chord8._sector_sightlines(p)
+    def test_sightline_sampling(self, n8):
+        p = n8._coerce({"inclination": 1.0})
+        sightlines = n8._sector_sightlines(p)
         assert len(sightlines) == 8
         (cos_pole, z_pole), (cos_eq, z_eq) = sightlines[0], sightlines[-1]
         np.testing.assert_allclose(cos_pole, [np.cos(1.0), -np.cos(1.0)])
         np.testing.assert_array_equal(z_pole, [1.0, -1.0])
-        assert cos_eq.size == chord8._n_azimuth and np.all(z_eq == 0.0)
+        assert cos_eq.size == n8._n_azimuth and np.all(z_eq == 0.0)
         for cos_psi, z_hat in sightlines:
             assert np.all(np.abs(cos_psi) <= 1.0 + 1e-12) and np.all(np.abs(z_hat) <= 1.0)
 
-    def test_dynamics_container(self, chord8):
-        dyn = chord8.compute_dynamics({"aspect": 3.0}, TIMES)
+    def test_dynamics_container(self, n8):
+        dyn = n8.compute_dynamics({"aspect": 3.0}, TIMES)
         assert isinstance(dyn, Diggins26NDynamics)
-        seg = chord8.segmentation(3.0)
+        seg = n8.segmentation(3.0)
         assert len(dyn.sectors) == 8 and dyn.n_polar == 4 == seg.n_polar
         np.testing.assert_allclose(dyn.colatitude, seg.colatitude)
         np.testing.assert_allclose(dyn.colatitude_edges, seg.edges)
@@ -186,35 +159,35 @@ class TestStructure:
         radii = np.array([s.radius.value[-1] for s in dyn.sectors])
         assert np.all(np.diff(radii) < 0)
 
-    def test_tabulation_is_the_sum_of_its_segments(self, chord8):
-        tab = chord8.tabulate(TIMES, FREQS, {"aspect": 1.0})
+    def test_tabulation_is_the_sum_of_its_segments(self, n8):
+        tab = n8.tabulate(TIMES, FREQS, {"aspect": 1.0})
         assert isinstance(tab, Diggins26NTabulation) and len(tab.sectors) == 8
         total = sum(s.flux_density_attenuated.to_value(u.Jy) for s in tab.sectors)
         np.testing.assert_allclose(tab.flux_density.to_value(u.Jy), total, rtol=1e-12)
         np.testing.assert_allclose(sum(s.volume_fraction for s in tab.sectors), 0.5, rtol=1e-12)
 
-    def test_forward_model_matches_the_tabulation(self, chord8):
+    def test_forward_model_matches_the_tabulation(self, n8):
         p = {"aspect": 1.5, "inclination": 0.6}
-        tab = chord8.tabulate(TIMES, FREQS, p).flux_density.to_value(u.Jy)
-        paired = chord8.forward_model({"time": TIMES * u.s, "frequency": FREQS * u.Hz}, p).flux_density
+        tab = n8.tabulate(TIMES, FREQS, p).flux_density.to_value(u.Jy)
+        paired = n8.forward_model({"time": TIMES * u.s, "frequency": FREQS * u.Hz}, p).flux_density
         np.testing.assert_allclose(paired.to_value(u.Jy), np.diag(tab), rtol=1e-9)
 
-    def test_dynamics_can_be_reused_and_must_match(self, chord8, coarse_tables):
+    def test_dynamics_can_be_reused_and_must_match(self, n8):
         p = {"aspect": 1.5}
-        dyn = chord8.compute_dynamics(p, TIMES)
+        dyn = n8.compute_dynamics(p, TIMES)
         np.testing.assert_allclose(
-            chord8.tabulate(TIMES, FREQS, p, dynamics=dyn).flux_density.value,
-            chord8.tabulate(TIMES, FREQS, p).flux_density.value,
+            n8.tabulate(TIMES, FREQS, p, dynamics=dyn).flux_density.value,
+            n8.tabulate(TIMES, FREQS, p).flux_density.value,
             rtol=1e-12,
         )
         with pytest.raises(ValueError, match="different `aspect`"):
-            chord8.tabulate(TIMES, FREQS, {"aspect": 2.5}, dynamics=dyn)
+            n8.tabulate(TIMES, FREQS, {"aspect": 2.5}, dynamics=dyn)
         other = Diggins26_NComponentModel(luminosity_distance=100 * u.Mpc, n_sectors=4)
         with pytest.raises(ValueError, match="n_sectors"):
             other.tabulate(TIMES, FREQS, p, dynamics=dyn)
 
     @pytest.mark.parametrize("n", [2, 3, 4])
-    def test_polar_cap_is_kept_for_a_thick_disk(self, coarse_tables, n):
+    def test_polar_cap_is_kept_for_a_thick_disk(self, n):
         """At b = 20 the polar cap is only about 4 degrees wide, but its segment is still there and radiates."""
         m = Diggins26_NComponentModel(luminosity_distance=100 * u.Mpc, n_sectors=n)
         tab = m.tabulate(TIMES, FREQS, {"aspect": 20.0, "inclination": 0.4, "f_pole": 0.05})
@@ -226,46 +199,30 @@ class TestStructure:
         assert polar.volume_fraction > 0 and polar.area_fraction > 0
         assert np.all(polar.flux_density.value >= 0) and np.any(polar.flux_density.value > 0)
 
-    def test_infeasible_parameters_give_nan(self, chord8):
+    def test_infeasible_parameters_give_nan(self, n8):
         t = np.array([5.0, 20.0]) * DAY * u.s
-        out = chord8.forward_model({"time": t, "frequency": np.array([5e9, 5e9]) * u.Hz}, {"E_ej": 1e55}).flux_density
+        out = n8.forward_model({"time": t, "frequency": np.array([5e9, 5e9]) * u.Hz}, {"E_ej": 1e55}).flux_density
         assert np.all(np.isnan(out.value))
-        assert chord8.diagnose({"E_ej": 1e55}) is not None
+        assert n8.diagnose({"E_ej": 1e55}) is not None
 
 
 # =========================================================================== #
-# Convergence in N, and the area modes                                        #
+# Convergence in N                                                            #
 # =========================================================================== #
 class TestConvergence:
     @pytest.fixture(scope="class")
-    def fluxes(self, coarse_tables):
+    def fluxes(self):
         t = np.array([3.0, 10.0, 30.0, 100.0]) * DAY * u.s
         nu = np.array([1e9, 5e9, 2e10, 1e11]) * u.Hz
         out = {}
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            for mode in ("chord", "hit"):
-                for n in (2, 4, 8, 16):
-                    m = Diggins26_NComponentModel(luminosity_distance=100 * u.Mpc, n_sectors=n, area_mode=mode)
-                    out[mode, n] = m.tabulate(t, nu, {}).flux_density.to_value(u.Jy)
+        for n in (2, 4, 8, 16):
+            m = Diggins26_NComponentModel(luminosity_distance=100 * u.Mpc, n_sectors=n)
+            out[n] = m.tabulate(t, nu, {}).flux_density.to_value(u.Jy)
         return out
 
-    def test_chord_flux_converges_with_the_number_of_segments(self, fluxes):
-        reference = fluxes["chord", 16]
+    def test_flux_converges_with_the_number_of_segments(self, fluxes):
+        reference = fluxes[16]
         measurable = reference > 1e-6  # leave the exponentially absorbed corner out
-        error = {n: np.abs(fluxes["chord", n][measurable] / reference[measurable] - 1) for n in (2, 4, 8)}
+        error = {n: np.abs(fluxes[n][measurable] / reference[measurable] - 1) for n in (2, 4, 8)}
         assert error[2].max() > error[4].max() > error[8].max()
         assert np.median(error[8]) < 0.03 and error[8].max() < 0.15
-
-    def test_hit_flux_does_not_converge(self, fluxes):
-        """Counting every touched pixel in every segment keeps raising the optically thick flux with N."""
-        thick = fluxes["chord", 8] > 1e-6
-        ratio_8 = fluxes["hit", 8][thick] / fluxes["chord", 8][thick]
-        ratio_16 = fluxes["hit", 16][thick] / fluxes["chord", 16][thick]
-        assert np.median(ratio_8) > 1.5
-        assert np.median(ratio_16) > np.median(ratio_8)
-
-    def test_modes_agree_where_the_source_is_optically_thin(self, fluxes):
-        """At late times and high frequency the path through the shell is transparent and both definitions agree."""
-        for n in (4, 8, 16):
-            assert fluxes["hit", n][-1, -1] == pytest.approx(fluxes["chord", n][-1, -1], rel=0.02)

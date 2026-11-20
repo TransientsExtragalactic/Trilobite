@@ -390,16 +390,9 @@ class TestSightlinesAndTransmission:
 
 
 # =========================================================================== #
-# Geometry and the area-fraction table                                        #
+# Geometry                                                                      #
 # =========================================================================== #
 class TestGeometry:
-    def test_table_is_built_once_and_shared(self, model):
-        other = Diggins26_TwoComponentModel(redshift=0.02)
-        assert other.filling_table is model.filling_table
-        assert model.build_filling_table() is model.filling_table
-        aspect, inc, f, table = model.filling_table
-        assert table.shape == (2, aspect.size, inc.size, f.size)
-
     def test_volume_fractions_partition_the_filling_factor(self, model):
         eq, pol = model._sector_geometry(model._coerce({"f_V": 0.4, "aspect": 1.5}))
         assert eq["f_V"] + pol["f_V"] == pytest.approx(0.4)
@@ -414,11 +407,15 @@ class TestGeometry:
         assert a[0]["f_A"] != pytest.approx(b[0]["f_A"], rel=1e-3)
         assert a[0]["f_V"] == pytest.approx(b[0]["f_V"], rel=1e-12)
 
-    def test_table_agrees_with_direct_computation(self, model):
-        p = model._coerce({"inclination": 0.8, "aspect": 1.4, "f_V": 0.35})
-        direct = AxisymmetricCSMDensityProfile.compute_filling_parameters(0.35, 0.8, 1.4)
-        for geo, kind in zip(model._sector_geometry(p), ("equatorial", "polar")):
-            assert geo["f_A"] == pytest.approx(float(direct[kind]["f_A"]), abs=0.03)
+    def test_area_fractions_partition_the_disk(self, model):
+        for inclination in (0.0, 0.6, np.pi / 2):
+            eq, pol = model._sector_geometry(model._coerce({"inclination": inclination, "aspect": 1.4}))
+            assert eq["f_A"] + pol["f_A"] == pytest.approx(1.0, rel=1e-12)
+
+    def test_pole_on_areas_are_the_sectors_flat_silhouettes(self, model):
+        aspect = 1.4
+        eq, pol = model._sector_geometry(model._coerce({"inclination": 0.0, "aspect": aspect}))
+        assert pol["f_A"] == pytest.approx(np.cos(np.arctan(aspect * np.log(2.0))) ** 2)
 
     @pytest.mark.parametrize("f_V", [0.0, 1.0])
     def test_filling_factor_limits_do_not_raise(self, model, f_V):

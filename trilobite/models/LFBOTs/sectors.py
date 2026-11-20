@@ -7,8 +7,9 @@ sightline. This module holds the geometry shared by the models:
 
 - :func:`compute_segmentation` places the segment edges and representative sightlines,
 - :func:`segment_volume_fractions` gives each segment's analytic share of the shell volume, and
-- :func:`projected_area_fractions` and :func:`build_segment_filling_table` give each segment's sky-projected area
-  fraction, in either of two definitions (see below).
+- :func:`projected_area_fractions` gives each segment's sky-projected area fraction, in closed form, and
+- :func:`segment_geometry` combines the two into the volume fraction, area fraction and mean path length that the
+  synchrotron calculation needs.
 
 .. rubric:: Segmentation
 
@@ -24,36 +25,31 @@ split of :class:`~trilobite.models.LFBOTs.diggins26.Diggins26_TwoComponentModel`
 
 .. rubric:: Projected areas
 
-``mode="hit"`` is the area of the sky pixels whose line of sight touches the segment's shell, which is the definition
-of the two-component model. It is correct for a segment on its own, but the segments overlap on the sky: summing the
-fluxes of independent slabs counts a sightline that crosses several segments once per segment, and the
-optically thick flux overcounts roughly in proportion to the sum of the areas, which grows with ``N``.
-``mode="chord"`` instead gives each segment, for every pixel, the share of the pixel's area equal to the segment's
-share of that sightline's path through the shell. The segments' areas then partition the shell's projected area, and
-:math:`\ell_k = V_k/A_k` remains the mean path length that the one-zone synchrotron engine needs.
+The projected area of a segment is the area of the sky covered by the part of its spherical surface that faces the
+observer: for a surface element of normal :math:`\hat n` and area :math:`dS` it is
+:math:`\max(\hat n\cdot\hat o, 0)\,dS`. The sphere is convex, so the visible elements never overlap on the sky, and
+the projected areas of the segments partition the disk :math:`\pi R^2` exactly, :math:`\sum_k f_{A,k} = 1`. This is what
+makes the segments' fluxes safe to add: a sightline is assigned to the one segment whose surface it meets first,
+rather than being counted once per segment it crosses. The areas are elementary functions of the inclination, so no
+table or sky grid is needed (see :func:`projected_area_fractions`).
 
-Both are computed in units of each segment's own shock radius (every segment is a unit-radius shell
-:math:`1 - \eta < r < 1` with :math:`\eta = 1 - (1 - f)^{1/3}`), as in
-:meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table`. They do not
-capture the depth ordering of segments whose radii differ.
+The surface is that of a sphere of the segment's own shock radius; the finite thickness of the shell and the depth
+ordering of segments whose radii differ are not captured. The mean path length :math:`\ell_k = V_k/A_k` that the
+one-zone synchrotron engine needs is built from the volume fraction of the whole segment (both hemispheres) over this
+projected area.
 """
 
 from typing import NamedTuple
 
 import numpy as np
 
-from trilobite.dynamics.profiles.csm import AxisymmetricCSMDensityProfile
-
 __all__ = [
     "Segmentation",
     "compute_segmentation",
     "segment_volume_fractions",
     "projected_area_fractions",
-    "build_segment_filling_table",
-    "interpolate_segment_filling_table",
+    "segment_geometry",
 ]
-
-AREA_MODES = ("chord", "hit")
 
 
 class Segmentation(NamedTuple):
@@ -166,205 +162,125 @@ def segment_volume_fractions(edges: np.ndarray, filling_factor: float) -> np.nda
     return float(filling_factor) * (np.cos(edges[:-1]) - np.cos(edges[1:]))
 
 
-def projected_area_fractions(
-    edges: np.ndarray, inclination: float, eta: float, *, mode: str = "chord", n_pix: int = 200
-) -> np.ndarray:
+def _visible_cap_area(theta: np.ndarray, inclination: float) -> np.ndarray:
     r"""
-    Sky-projected area fraction :math:`f_A = A_\perp/\pi R^2` of every segment of a unit-radius shell.
+    Visible projected area of the polar cap :math:`[0, \theta]` of a unit sphere, as a fraction of :math:`R^2`.
+
+    Parameters
+    ----------
+    theta : numpy.ndarray
+        Colatitudes of the cap edge, in :math:`[0, \pi]`.
+    inclination : float
+        Angle between the symmetry axis and the line of sight, in :math:`[0, \pi/2]`.
+
+    Notes
+    -----
+    The edge of the cap is a circle whose projection is the ellipse with semi-axes :math:`\sin\theta` (across the
+    projected axis) and :math:`\sin\theta\cos i` (along it), centred at :math:`\cos\theta\sin i` along the
+    projected axis. With :math:`\kappa = \cot\theta\cot i`, the circle is wholly visible for
+    :math:`\kappa \ge 1` and wholly hidden for :math:`\kappa \le -1`. In between it crosses the limb at the sky
+    height :math:`y_0 = \cos\theta/\sin i`, and the visible part of the cap is the segment of the unit disk above
+    :math:`y_0` plus the part of the ellipse below it.
+    """
+    theta = np.asarray(theta, dtype=float)
+    sin_t, cos_t = np.sin(theta), np.cos(theta)
+    sin_i, cos_i = np.sin(inclination), np.cos(inclination)
+
+    if sin_i < 1e-12:  # axis along the line of sight: the near cap is seen face-on, the far cap is hidden
+        return np.where(theta < 0.5 * np.pi, np.pi * sin_t**2, np.pi)
+
+    with np.errstate(divide="ignore", invalid="ignore"):
+        kappa = cos_t * cos_i / (sin_t * sin_i)  # +-inf at the poles
+    whole = kappa >= 1.0  # cap entirely on the near side: a flat ellipse
+    hidden = kappa <= -1.0  # edge entirely on the far side: the cap covers the whole near hemisphere
+
+    kappa_c = np.clip(np.nan_to_num(kappa), -1.0, 1.0)
+    y0 = np.clip(cos_t / sin_i, -1.0, 1.0)
+    phi_0 = np.arccos(kappa_c)
+    unit_disk_segment = np.arccos(y0) - y0 * np.sqrt(1.0 - y0**2)
+    ellipse_part = sin_t**2 * cos_i * (np.pi - phi_0 + kappa_c * np.sin(phi_0))
+    partial = unit_disk_segment + ellipse_part
+    return np.where(whole, np.pi * sin_t**2 * cos_i, np.where(hidden, np.pi, partial))
+
+
+def projected_area_fractions(edges: np.ndarray, inclination: float) -> np.ndarray:
+    r"""
+    Sky-projected area fraction :math:`f_A = A_\perp/\pi R^2` of every segment of a spherical shell.
+
+    A segment is the zone :math:`[\theta_a, \theta_b]` together with its mirror image about the equator, and its
+    projected area is that of the part of the zone's surface that faces the observer,
+
+    .. math::
+
+        A_\perp = \int_{\rm zone}\max(\hat n\cdot\hat o,\,0)\,dS.
+
+    Writing :math:`F(\theta)` for the visible projected area of the cap :math:`[0, \theta]` (see below), the segment's
+    area is :math:`G(\theta_b) - G(\theta_a)` with :math:`G(\theta) = [F(\theta) - F(\pi - \theta)]/\pi` in units of
+    :math:`\pi R^2`. :math:`F` is elementary. With :math:`\kappa = \cot\theta\cot i`:
+
+    .. math::
+
+        F/R^2 = \begin{cases}
+            \pi\sin^2\theta\cos i & \kappa \ge 1, \\
+            \pi & \kappa \le -1, \\
+            \arccos y_0 - y_0\sqrt{1 - y_0^2}
+                + \sin^2\theta\cos i\,\left(\pi - \arccos\kappa + \kappa\sqrt{1 - \kappa^2}\right) & {\rm otherwise,}
+        \end{cases}
+
+    where :math:`y_0 = \cos\theta/\sin i`. The areas sum to 1 for any inclination.
 
     Parameters
     ----------
     edges : numpy.ndarray
         Colatitudes of the segment edges from the pole to the equator, as in :class:`Segmentation`.
     inclination : float
-        Angle between the symmetry axis and the line of sight, in radians.
-    eta : float
-        Fractional thickness of the shell, :math:`\eta = 1 - (1 - f)^{1/3}`.
-    mode : {"chord", "hit"}, optional
-        ``"hit"`` counts every pixel whose line of sight meets the segment's shell. ``"chord"`` splits each pixel
-        between the segments in proportion to their path lengths through the shell. See the module description.
-    n_pix : int, optional
-        Sky pixels across the diameter. Default 200.
+        Angle between the symmetry axis and the line of sight, in radians. The areas are symmetric under
+        :math:`i \to \pi - i`, and the inclination is folded into :math:`[0, \pi/2]`.
 
     Returns
     -------
     numpy.ndarray
         The area fraction of each segment, shape ``(N,)``, ordered from the pole to the equator.
     """
-    if mode not in AREA_MODES:
-        raise ValueError(f"`mode` must be one of {AREA_MODES}, not {mode!r}.")
     edges = np.asarray(edges, dtype=float)
-    n_seg = edges.size - 1
+    inclination = _fold_inclination(inclination)
+    cap_near = _visible_cap_area(edges, inclination)
+    cap_far = _visible_cap_area(np.pi - edges, inclination)
+    return np.diff(cap_near - cap_far) / np.pi
 
-    # Pixel centres across [-1, 1]; both the segments and the shell are mirror-symmetric under x -> -x, so only
-    # x > 0 is kept and the area is doubled at the end.
-    pixel_size = 2.0 / n_pix
-    centres = -1.0 + (np.arange(n_pix) + 0.5) * pixel_size
-    x_sky, y_sky = np.meshgrid(centres[centres > 0], centres)
-    rho_sq = x_sky.ravel() ** 2 + y_sky.ravel() ** 2
-    y_sky = y_sky.ravel()
-    on_disk = rho_sq < 1.0  # only lines of sight inside the unit disk can meet the shell
-    rho_sq, y_sky = rho_sq[on_disk], y_sky[on_disk]
 
-    # Along a line of sight r^2 = rho^2 + z^2, so the shell occupies z_in < |z| < z_out.
-    z_out = np.sqrt(1.0 - rho_sq)
-    z_in = np.sqrt(np.clip((1.0 - eta) ** 2 - rho_sq, 0.0, None))
+def segment_geometry(edges: np.ndarray, filling_factor: float, inclination: float) -> tuple[dict, ...]:
+    r"""
+    Volume fraction, area fraction and mean path length of every segment, from the pole to the equator.
 
-    # A segment boundary at colatitude theta_e is where cos^2(theta) = c_e^2, with cos(theta) = (y sin i + z cos i)/r.
-    # Multiplying by r^2 avoids square roots: g_e(z) = (y sin i + z cos i)^2 - c_e^2 (rho^2 + z^2) = qa z^2 + qb z + qc,
-    # positive where |cos(theta)| exceeds c_e (nearer the pole). Its roots are where the line of sight crosses the
-    # boundary.
-    sin_inc, cos_inc = np.sin(inclination), np.cos(inclination)
-    thresholds_sq = np.cos(edges[1:-1]) ** 2  # interior edges, from the pole to the equator
-    qa = cos_inc**2 - thresholds_sq  # (n_edges,)
-    qb = 2.0 * y_sky * sin_inc * cos_inc  # (n_pix,)
-    qc = (y_sky * sin_inc)[:, None] ** 2 - thresholds_sq[None, :] * rho_sq[:, None]  # (n_pix, n_edges)
+    Parameters
+    ----------
+    edges : numpy.ndarray
+        Colatitudes of the segment edges from the pole to the equator, as in :class:`Segmentation`.
+    filling_factor : float
+        Shell volume filling factor :math:`f`. It is clipped just inside :math:`(0, 1)`.
+    inclination : float
+        Angle between the symmetry axis and the line of sight, in radians.
 
-    with np.errstate(invalid="ignore", divide="ignore"):
-        regular = np.abs(qa) > 1e-14
-        disc = qb[:, None] ** 2 - 4.0 * qa[None, :] * qc
-        sqrt_disc = np.sqrt(np.where(disc > 0.0, disc, np.nan))  # NaN: no crossing
-        safe_qa = np.where(regular, qa, 1.0)[None, :]
-        root_lo = np.where(regular[None, :], (-qb[:, None] - sqrt_disc) / (2.0 * safe_qa), -qc / qb[:, None])
-        # A line of sight parallel to the boundary has a linear g_e(z): a single crossing and no second root.
-        root_hi = np.where(regular[None, :], (-qb[:, None] + sqrt_disc) / (2.0 * safe_qa), np.nan)
-
-    # Missing roots (NaN) and roots outside the sphere move onto [-z_out, z_out]; a missing root lands on -z_out and
-    # only creates a zero-length piece, so every line of sight has the same number of breakpoints.
-    cone_roots = [np.clip(np.nan_to_num(r, nan=-2.0), -z_out[:, None], z_out[:, None]) for r in (root_lo, root_hi)]
-    breakpoints = np.sort(
-        np.concatenate([np.stack([-z_out, -z_in, z_in, z_out], axis=1), *cone_roots], axis=1),
-        axis=1,
+    Returns
+    -------
+    tuple of dict
+        One dict per segment with the float entries ``f_V`` (:func:`segment_volume_fractions`), ``f_A``
+        (:func:`projected_area_fractions`) and ``ell_over_R = (4/3) f_V / f_A``, the mean path length in units of the
+        segment's shock radius (0 for a segment with no projected area).
+    """
+    f = float(np.clip(filling_factor, 1e-6, 1.0 - 1e-6))
+    f_V = segment_volume_fractions(edges, f)
+    f_A = projected_area_fractions(edges, inclination)
+    return tuple(
+        {"f_V": float(v), "f_A": float(a), "ell_over_R": (4.0 / 3.0) * float(v) / float(a) if a > 0.0 else 0.0}
+        for v, a in zip(f_V, f_A)
     )
-    z_lo, z_hi = breakpoints[:, :-1], breakpoints[:, 1:]
-    z_mid = 0.5 * (z_lo + z_hi)
-    length = z_hi - z_lo
-
-    # Between consecutive breakpoints nothing changes sign, so the midpoint decides which segment a piece belongs
-    # to and whether it lies in the shell.
-    r_mid_sq = rho_sq[:, None] + z_mid**2
-    in_shell = (r_mid_sq > (1.0 - eta) ** 2) & (r_mid_sq < 1.0)
-    cos_sq_mid = (y_sky[:, None] * sin_inc + z_mid * cos_inc) ** 2 / r_mid_sq
-    # Number of interior boundaries whose cone (|cos| above the boundary's) contains the piece: n_seg - 1 is the
-    # polar segment and 0 the equatorial-most one.
-    nearer_pole = np.searchsorted(thresholds_sq[::-1], cos_sq_mid)
-    segment = (n_seg - 1) - nearer_pole  # 0 is the polar segment
-
-    # Accumulate the path length (or the number of pieces) of every segment along every line of sight.
-    n_los = rho_sq.size
-    slot = (np.arange(n_los)[:, None] * n_seg + segment)[in_shell]
-    path = np.bincount(slot, weights=length[in_shell], minlength=n_los * n_seg).reshape(n_los, n_seg)
-
-    area_scale = 2.0 * pixel_size**2 / np.pi  # pixel area x 2 (mirror half-plane) / pi (unit disk area)
-    if mode == "hit":
-        # A line of sight meets a segment if some piece of non-zero length lies in the segment's shell.
-        return (path > 0.0).sum(axis=0) * area_scale
-    # Each line of sight splits its pixel between the segments in proportion to their path lengths.
-    return (path / path.sum(axis=1, keepdims=True)).sum(axis=0) * area_scale
-
-
-def build_segment_filling_table(
-    aspect, inclination, filling_factor, n_sectors: int, *, mode: str = "chord", n_pix: int = 200, progress=False
-) -> np.ndarray:
-    r"""
-    Tabulate the projected area fraction of every segment on a grid of aspect, inclination and filling factor.
-
-    This is the N-segment counterpart of
-    :meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table`. The
-    segment edges depend on the aspect (see :func:`compute_segmentation`), so they are recomputed for every grid
-    aspect.
-
-    Parameters
-    ----------
-    aspect : array-like
-        Grid of disk angular thicknesses. Must be positive.
-    inclination : array-like
-        Grid of inclinations in radians. Both hemispheres are symmetric, so :math:`[0, \pi/2]` suffices.
-    filling_factor : array-like
-        Grid of shell volume filling factors, within :math:`(0, 1)`.
-    n_sectors : int
-        Number of segments.
-    mode : {"chord", "hit"}, optional
-        Area definition; see :func:`projected_area_fractions`.
-    n_pix : int, optional
-        Sky pixels across the diameter. Default 200.
-    progress : bool, optional
-        Show a ``tqdm`` progress bar. Default ``False``.
-
-    Returns
-    -------
-    numpy.ndarray
-        Array of shape ``(n_sectors, len(aspect), len(inclination), len(filling_factor))``, ordered from the pole to
-        the equator along the first axis.
-    """
-    aspect = np.atleast_1d(np.asarray(aspect, dtype=float))
-    inclination = np.atleast_1d(np.asarray(inclination, dtype=float))
-    filling_factor = np.atleast_1d(np.asarray(filling_factor, dtype=float))
-    if np.any(aspect <= 0) or not np.all(np.isfinite(aspect)):
-        raise ValueError("`aspect` must be positive and finite.")
-    if np.any((filling_factor <= 0) | (filling_factor >= 1)):
-        raise ValueError("`filling_factor` must lie in (0, 1).")
-    if not np.all(np.isfinite(inclination)):
-        raise ValueError("`inclination` must be finite.")
-
-    eta = 1.0 - (1.0 - filling_factor) ** (1.0 / 3.0)
-    table = np.empty((n_sectors, aspect.size, inclination.size, filling_factor.size))
-    bar = None
-    if progress:
-        try:
-            from tqdm.auto import tqdm
-
-            bar = tqdm(total=aspect.size * inclination.size, desc="Building filling-factor table")
-        except ImportError:
-            pass
-    for i, b in enumerate(aspect):
-        edges = compute_segmentation(b, n_sectors).edges
-        for j, inc in enumerate(inclination):
-            for k, et in enumerate(eta):
-                table[:, i, j, k] = projected_area_fractions(edges, inc, et, mode=mode, n_pix=n_pix)
-            if bar is not None:
-                bar.update(1)
-    if bar is not None:
-        bar.close()
-    return table
-
-
-def interpolate_segment_filling_table(table: tuple, filling_factor, inclination, aspect) -> np.ndarray:
-    r"""
-    Interpolate the area fractions of every segment from a precomputed table.
-
-    Parameters
-    ----------
-    table : tuple
-        ``(aspect_grid, inclination_grid, filling_factor_grid, f_A_table)`` with ``f_A_table`` from
-        :func:`build_segment_filling_table`.
-    filling_factor, inclination, aspect : float
-        The point to evaluate. The inclination is folded into :math:`[0, \pi/2]`.
-
-    Returns
-    -------
-    numpy.ndarray
-        The area fractions, shape ``(N,)``. The interpolation is trilinear in :math:`(\ln b, i, f)` and points
-        beyond the grid take the value at its nearest edge.
-    """
-    aspect_grid, inc_grid, f_grid, f_A_table = table
-    f_A_table = np.asarray(f_A_table, dtype=float)
-    return AxisymmetricCSMDensityProfile._interpolate_filling_table(
-        f_A_table,
-        (
-            np.log(np.asarray(aspect_grid, dtype=float)),
-            np.asarray(inc_grid, dtype=float),
-            np.asarray(f_grid, dtype=float),
-        ),
-        (
-            np.log(np.atleast_1d(float(aspect))),
-            np.atleast_1d(_fold_inclination(inclination)),
-            np.atleast_1d(float(filling_factor)),
-        ),
-    )[:, 0]
 
 
 def _fold_inclination(inclination: float) -> float:
     r"""Fold an inclination into :math:`[0, \pi/2]`, using the symmetry under :math:`i \to \pi - i`."""
+    if not np.isfinite(inclination):
+        raise ValueError("`inclination` must be finite.")
     inc = float(np.mod(inclination, np.pi))
     return np.pi - inc if inc > 0.5 * np.pi else inc

@@ -5,10 +5,9 @@ import pytest
 
 from trilobite.dynamics.profiles.csm import AxisymmetricCSMDensityProfile
 from trilobite.models.LFBOTs.sectors import (
-    build_segment_filling_table,
     compute_segmentation,
-    interpolate_segment_filling_table,
     projected_area_fractions,
+    segment_geometry,
     segment_volume_fractions,
     split_segments,
 )
@@ -108,105 +107,99 @@ class TestVolumeFractions:
 # =========================================================================== #
 # Projected areas                                                             #
 # =========================================================================== #
-def _eta(f):
-    return 1.0 - (1.0 - f) ** (1.0 / 3.0)
+def _quadrature_areas(edges, inclination, n=1500):
+    """Brute-force midpoint integral of max(n . o, 0) over each segment's surface, both hemispheres, over pi."""
+    cos_t = (np.arange(n) + 0.5) / n  # north hemisphere, cos(theta) in (0, 1)
+    phi = (np.arange(n) + 0.5) * 2.0 * np.pi / n
+    c, ph = np.meshgrid(cos_t, phi, indexing="ij")
+    s_t = np.sqrt(1.0 - c**2)
+    weight = (1.0 / n) * (2.0 * np.pi / n)
+    out = np.zeros(edges.size - 1)
+    for sign in (1.0, -1.0):  # the north zone and its mirror image
+        mu = sign * c * np.cos(inclination) + s_t * np.sin(inclination) * np.cos(ph)
+        visible = np.maximum(mu, 0.0) * weight
+        theta = np.arccos(c)
+        for k in range(out.size):
+            out[k] += visible[(theta >= edges[k]) & (theta < edges[k + 1])].sum()
+    return out / np.pi
 
 
 class TestProjectedAreas:
     @pytest.mark.parametrize("aspect", [0.3, 2.0, 12.0])
-    @pytest.mark.parametrize("inclination", [0.0, 0.7, 0.5 * np.pi])
-    @pytest.mark.parametrize("f", [0.1, 0.6])
-    def test_two_segment_hit_area_is_the_two_component_area(self, aspect, inclination, f):
-        phi_e = _phi_e(aspect)
-        new = projected_area_fractions(compute_segmentation(aspect, 2).edges, inclination, _eta(f), mode="hit")
-        old = [
-            AxisymmetricCSMDensityProfile._projected_area_fraction("polar", 0.5 * np.pi - phi_e, inclination, _eta(f)),
-            AxisymmetricCSMDensityProfile._projected_area_fraction("equatorial", phi_e, inclination, _eta(f)),
-        ]
-        np.testing.assert_allclose(new, old, rtol=1e-12, atol=1e-14)
+    @pytest.mark.parametrize("n", [2, 3, 6])
+    @pytest.mark.parametrize("inclination", [0.0, 0.4, 1.0, 0.5 * np.pi])
+    def test_matches_a_brute_force_surface_integral(self, aspect, n, inclination):
+        edges = compute_segmentation(aspect, n).edges
+        np.testing.assert_allclose(
+            projected_area_fractions(edges, inclination), _quadrature_areas(edges, inclination), atol=2e-3
+        )
 
     @pytest.mark.parametrize("n", [2, 3, 6, 9])
-    @pytest.mark.parametrize("inclination", [0.0, 1.0, 0.5 * np.pi])
-    def test_chord_areas_partition_the_shells_footprint(self, n, inclination):
-        """Summing the chord areas gives the area of the whole shell's silhouette, however many segments."""
-        eta = _eta(0.5)
-        whole = projected_area_fractions(np.array([0.0, 0.5 * np.pi]), inclination, eta, mode="hit")[0]
-        chord = projected_area_fractions(compute_segmentation(2.0, n).edges, inclination, eta, mode="chord")
-        assert np.all(chord >= 0)
-        assert chord.sum() == pytest.approx(whole, rel=1e-12)
+    @pytest.mark.parametrize("inclination", [0.0, 1e-9, 0.3, 1.0, 1.5, 0.5 * np.pi, 2.2, np.pi, -0.7])
+    def test_areas_partition_the_disk(self, n, inclination):
+        """The visible surfaces of a sphere do not overlap on the sky, so the segments' areas sum to pi R^2."""
+        f_A = projected_area_fractions(compute_segmentation(2.0, n).edges, inclination)
+        assert np.all(f_A >= 0)
+        assert f_A.sum() == pytest.approx(1.0, abs=1e-12)
 
-    def test_whole_shell_footprint_is_the_projected_disk(self):
-        """A shell of finite thickness seen from outside has the area of its outer sphere's disk."""
-        whole = projected_area_fractions(np.array([0.0, 0.5 * np.pi]), 0.9, _eta(0.5), mode="chord")[0]
-        assert whole == pytest.approx(1.0, abs=2e-3)
-
-    @pytest.mark.parametrize("n", [3, 6])
-    def test_hit_areas_overlap_and_chord_areas_do_not_exceed_them(self, n):
-        edges = compute_segmentation(2.0, n).edges
-        hit = projected_area_fractions(edges, 1.0, _eta(0.5), mode="hit")
-        chord = projected_area_fractions(edges, 1.0, _eta(0.5), mode="chord")
-        assert hit.sum() > 1.3  # the sightlines of several segments touch the same pixels
-        assert np.all(chord <= hit + 1e-12)
-
-    def test_pole_on_polar_area_is_the_silhouette_of_the_cap(self):
-        """Seen pole-on, the polar cap's silhouette is the disk of radius sin(theta_p) around the axis."""
-        theta_p = 0.4
-        edges = np.array([0.0, theta_p, 0.5 * np.pi])
-        # Thin enough that the shell's inner sphere does not hide the cap's footprint.
-        hit = projected_area_fractions(edges, 0.0, 0.3, mode="hit", n_pix=400)
-        assert hit[0] == pytest.approx(np.sin(theta_p) ** 2, rel=2e-2)
-
-    def test_rejects_unknown_mode(self):
-        with pytest.raises(ValueError, match="mode"):
-            projected_area_fractions(np.array([0.0, 1.0, 1.5]), 0.5, 0.2, mode="nope")
-
-
-# =========================================================================== #
-# Table                                                                       #
-# =========================================================================== #
-class TestTable:
-    GRIDS = (np.geomspace(0.3, 6.0, 4), np.linspace(0.0, 0.5 * np.pi, 3), np.array([0.2, 0.6]))
-
-    @pytest.fixture(scope="class")
-    def table(self):
-        return build_segment_filling_table(*self.GRIDS, 4, mode="chord", n_pix=80)
-
-    def test_shape_and_grid_values(self, table):
-        assert table.shape == (4, 4, 3, 2)
-        edges = compute_segmentation(self.GRIDS[0][2], 4).edges
-        direct = projected_area_fractions(edges, self.GRIDS[1][1], _eta(0.6), mode="chord", n_pix=80)
-        np.testing.assert_array_equal(table[:, 2, 1, 1], direct)
-
-    def test_interpolation_reproduces_grid_points_and_clamps(self, table):
-        full = (*self.GRIDS, table)
+    @pytest.mark.parametrize("theta_b", [0.4, 1.0])
+    def test_pole_on_areas_are_the_flat_silhouettes(self, theta_b):
+        """Seen pole-on, only the near hemisphere is visible and a zone is the annulus sin^2(theta_a) to sin^2(theta_b)."""
+        edges = np.array([0.0, theta_b, 0.5 * np.pi])
         np.testing.assert_allclose(
-            interpolate_segment_filling_table(full, 0.6, self.GRIDS[1][1], self.GRIDS[0][2]),
-            table[:, 2, 1, 1],
-            rtol=1e-12,
+            projected_area_fractions(edges, 0.0), [np.sin(theta_b) ** 2, 1.0 - np.sin(theta_b) ** 2], rtol=1e-12
         )
-        # Beyond the grid the nearest edge value is used.
+
+    def test_edge_on_areas_have_a_closed_form(self):
+        """At i = pi / 2 the cap area is (theta - sin(theta) cos(theta)), giving (2 d(theta) - d sin(2 theta)) / pi."""
+        edges = compute_segmentation(1.3, 5).edges
+        expected = (2.0 * np.diff(edges) - np.diff(np.sin(2.0 * edges))) / np.pi
+        np.testing.assert_allclose(projected_area_fractions(edges, 0.5 * np.pi), expected, rtol=1e-12)
+
+    def test_single_segment_is_the_whole_disk(self):
+        for inclination in (0.0, 0.8, 0.5 * np.pi):
+            assert projected_area_fractions(np.array([0.0, 0.5 * np.pi]), inclination)[0] == pytest.approx(1.0)
+
+    def test_is_continuous_in_inclination(self):
+        edges = compute_segmentation(0.7, 4).edges
         np.testing.assert_allclose(
-            interpolate_segment_filling_table(full, 0.9, 0.5 * np.pi, 100.0), table[:, -1, -1, -1], rtol=1e-12
+            projected_area_fractions(edges, 1e-9), projected_area_fractions(edges, 1e-4), atol=1e-6
         )
-        # The inclination is folded about pi / 2.
         np.testing.assert_allclose(
-            interpolate_segment_filling_table(full, 0.4, np.pi - 0.3, 1.0),
-            interpolate_segment_filling_table(full, 0.4, 0.3, 1.0),
+            projected_area_fractions(edges, 0.5 * np.pi), projected_area_fractions(edges, 0.5 * np.pi - 1e-6), atol=1e-5
+        )
+
+    def test_polar_area_shrinks_and_equatorial_area_grows_toward_edge_on(self):
+        edges = compute_segmentation(1.0, 2).edges
+        inclinations = np.linspace(0.0, 0.5 * np.pi, 12)
+        areas = np.array([projected_area_fractions(edges, i) for i in inclinations])
+        assert np.all(np.diff(areas[:, 0]) < 0) and np.all(np.diff(areas[:, 1]) > 0)
+
+    @pytest.mark.parametrize("inclination", [0.3, 1.2])
+    def test_symmetric_under_inclination_reflection(self, inclination):
+        edges = compute_segmentation(1.0, 4).edges
+        np.testing.assert_allclose(
+            projected_area_fractions(edges, np.pi - inclination),
+            projected_area_fractions(edges, inclination),
             rtol=1e-12,
         )
 
-    def test_rejects_bad_grids(self):
-        with pytest.raises(ValueError, match="filling_factor"):
-            build_segment_filling_table([1.0], [0.5], [1.0], 2)
-        with pytest.raises(ValueError, match="aspect"):
-            build_segment_filling_table([0.0], [0.5], [0.5], 2)
+    def test_rejects_non_finite_inclination(self):
+        with pytest.raises(ValueError, match="inclination"):
+            projected_area_fractions(np.array([0.0, 1.0, 1.5]), np.nan)
 
-    def test_shared_interpolation_matches_the_two_component_table(self):
-        """The two-component profile interpolates through the same helper, so its results are unchanged."""
-        aspect, inc, f = np.geomspace(0.3, 6.0, 4), np.linspace(0.0, 0.5 * np.pi, 3), np.array([0.2, 0.6])
-        built = AxisymmetricCSMDensityProfile.build_filling_parameter_table(aspect, inc, f, n_pix=60)
-        got = AxisymmetricCSMDensityProfile.compute_filling_parameters(
-            0.6, inc[1], aspect[2], table=(aspect, inc, f, built)
-        )
-        assert got["polar"]["f_A"] == pytest.approx(built[0, 2, 1, 1], rel=1e-12)
-        assert got["equatorial"]["f_A"] == pytest.approx(built[1, 2, 1, 1], rel=1e-12)
+
+class TestSegmentGeometry:
+    def test_combines_volume_area_and_path_length(self):
+        edges = compute_segmentation(1.5, 5).edges
+        geometry = segment_geometry(edges, 0.4, 0.9)
+        assert len(geometry) == 5
+        np.testing.assert_allclose([g["f_V"] for g in geometry], segment_volume_fractions(edges, 0.4))
+        np.testing.assert_allclose([g["f_A"] for g in geometry], projected_area_fractions(edges, 0.9))
+        for g in geometry:
+            assert g["ell_over_R"] == pytest.approx(4.0 / 3.0 * g["f_V"] / g["f_A"])
+
+    @pytest.mark.parametrize("f", [0.0, 1.0])
+    def test_filling_factor_limits_are_clipped(self, f):
+        for g in segment_geometry(compute_segmentation(1.0, 3).edges, f, 0.5):
+            assert np.isfinite(g["f_V"]) and np.isfinite(g["ell_over_R"])

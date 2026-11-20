@@ -11,7 +11,6 @@ the polar and equatorial regions distinct at any ``N``, and ``N = 2`` is the two
 and the emitting geometry are described in :mod:`~trilobite.models.LFBOTs.sectors`.
 """
 
-import warnings
 from collections.abc import Callable
 from typing import NamedTuple, Optional, Union
 
@@ -21,22 +20,12 @@ from astropy import units as u
 from ..core.status import ModelStatus
 from .diggins26 import (
     _DYNAMICS_PARAMETERS,
-    _FILLING_GRID,
-    _FILLING_N_PIX,
-    _FILLING_TABLE_CACHE,
     Diggins26_TwoComponentModel,
     _sector_dynamics_from_state,
     _state_from_sector_dynamics,
 )
 from .diggins26_relativistic import Diggins26_RelativisticTwoComponentModel
-from .sectors import (
-    AREA_MODES,
-    Segmentation,
-    build_segment_filling_table,
-    compute_segmentation,
-    interpolate_segment_filling_table,
-    segment_volume_fractions,
-)
+from .sectors import Segmentation, compute_segmentation, segment_geometry
 
 __all__ = [
     "Diggins26_NComponentModel",
@@ -126,16 +115,13 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
     along a representative sightline sets the post-shock state, a cooled broken power-law electron population radiates
     synchrotron emission from the segment's share of the shell, free-free absorption by the CSM exterior to the shock
     attenuates it, and the observed flux density is the sum of the segments. The parameters, variables and all other
-    hyperparameters are those of the parent class, which describes the physics. The model adds two hyperparameters,
-    ``n_sectors`` and ``area_mode``.
+    hyperparameters are those of the parent class, which describes the physics. The model adds one hyperparameter,
+    ``n_sectors``.
 
     .. important::
 
-        The first evaluation builds a table of the segments' projected areas, which takes longer than for the parent
-        (about 5 s at ``N = 2`` and a minute at ``N = 16``), and is then cached on the model and shared between
-        instances for the same ``n_sectors`` and ``area_mode``. Call :meth:`build_filling_table` beforehand when
-        evaluating in parallel. The cost of an evaluation grows linearly with ``n_sectors``, since a shock is solved
-        along every segment's sightline.
+        The cost of an evaluation grows linearly with ``n_sectors``, since a shock is solved along every segment's
+        sightline.
 
     .. rubric:: Segmentation
 
@@ -148,27 +134,16 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
     every other segment by its midpoint in that variable. The segments are indexed from the pole to the equator. See
     :mod:`~trilobite.models.LFBOTs.sectors`.
 
-    .. rubric:: Geometry and area modes
+    .. rubric:: Geometry
 
     Segment :math:`k` holds the fraction :math:`f_{V,k} = f\,(\cos\theta_a - \cos\theta_b)` of the full-sphere volume,
     which sums to the filling factor :math:`f` exactly, and has the projected area :math:`A_\perp = f_A\,\pi R_k^2`
     and path length :math:`\ell = \tfrac{4}{3}(f_{V,k}/f_A)R_k` in the synchrotron calculation. The area fraction
-    :math:`f_A` depends on ``area_mode``:
-
-    ``"chord"`` (default)
-        Every sky pixel is split between the segments in proportion to their path lengths through the shell, so the
-        areas partition the shell's projected area. Because the segments' fluxes are added, a sightline that crosses
-        several segments would otherwise be counted once per segment, and the optically thick flux would overcount
-        roughly in proportion to the sum of the segments' areas. This definition does not, and the flux converges as
-        ``n_sectors`` grows.
-    ``"hit"``
-        Every pixel whose sightline meets the segment's shell counts fully toward it, which is the definition of the
-        two-component model. With ``n_sectors = 2`` the model is then identical to
-        :class:`~trilobite.models.LFBOTs.diggins26.Diggins26_TwoComponentModel`. Larger ``n_sectors`` overcounts the
-        optically thick flux, and a warning is issued.
-
-    Both are computed in units of each segment's own shock radius, so neither captures the depth ordering of segments
-    whose radii differ.
+    :math:`f_A` is the sky-projected area of the part of the segment's spherical surface that faces the observer. It
+    is an elementary function of the inclination (see :func:`~trilobite.models.LFBOTs.sectors.projected_area_fractions`)
+    and the segments' areas sum to :math:`\pi R^2`, so a sightline is counted in one segment only and the optically
+    thick flux does not overcount as ``n_sectors`` grows. The surface is that of a sphere of the segment's own shock
+    radius: the shell's thickness and the depth ordering of segments whose radii differ are not captured.
 
     Parameters
     ----------
@@ -183,8 +158,6 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
         Cosmology used to convert between redshift and distance. Defaults to the Trilobite configuration cosmology.
     n_sectors : int, optional
         Number of segments, at least 2 (the two-component model). Default 8.
-    area_mode : {"chord", "hit"}, optional
-        Definition of the segments' projected areas. Default ``"chord"``.
     hydrogen_mass_fraction : float, optional
         Hydrogen mass fraction of the CSM. Default ``0.7``.
     helium_mass_fraction : float, optional
@@ -218,7 +191,7 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
     STATUS = ModelStatus.NOVEL
     STATUS_NOTE = (
         "The N-segment generalization of the Diggins et al. (2026) model has no published counterpart to verify "
-        "against. With n_sectors=2 and area_mode='hit' it is the two-component model."
+        "against. With n_sectors=2 it is the two-component model."
     )
 
     PARAMETERS = Diggins26_TwoComponentModel.PARAMETERS
@@ -240,7 +213,6 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
         cosmology=None,
         *,
         n_sectors: int = 8,
-        area_mode: str = "chord",
         hydrogen_mass_fraction: float = 0.7,
         helium_mass_fraction: Optional[float] = None,
         adiabatic_index: float = 5.0 / 3.0,
@@ -257,7 +229,7 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
         Initialize the model.
 
         The arguments are those of :class:`~trilobite.models.LFBOTs.diggins26.Diggins26_TwoComponentModel`, plus
-        ``n_sectors`` and ``area_mode``.
+        ``n_sectors``.
 
         Parameters
         ----------
@@ -273,8 +245,6 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
             cosmology.
         n_sectors : int, optional
             Number of segments, at least 2. ``n_sectors // 2`` are polar and the rest equatorial. Default 8.
-        area_mode : {"chord", "hit"}, optional
-            Definition of the segments' projected areas (see the class description). Default ``"chord"``.
         hydrogen_mass_fraction : float, optional
             Hydrogen mass fraction of the CSM. Default ``0.7``.
         helium_mass_fraction : float, optional
@@ -301,16 +271,6 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
         """
         n_sectors = int(n_sectors)
         compute_segmentation(1.0, n_sectors)  # validates n_sectors
-        if area_mode not in AREA_MODES:
-            raise ValueError(f"`area_mode` must be one of {AREA_MODES}, not {area_mode!r}.")
-        if area_mode == "hit" and n_sectors > 2:
-            warnings.warn(
-                "area_mode='hit' counts every pixel a segment's sightlines touch, so the optically thick flux "
-                f"overcounts roughly in proportion to the number of segments (n_sectors={n_sectors}). "
-                "Use area_mode='chord' for n_sectors > 2.",
-                UserWarning,
-                stacklevel=2,
-            )
 
         super().__init__(
             redshift=redshift,
@@ -330,8 +290,7 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
             seed_photon_luminosity=seed_photon_luminosity,
         )
         self._n_sectors = n_sectors
-        self._area_mode = area_mode
-        self._register_init(**self._model_init_kwargs, n_sectors=n_sectors, area_mode=area_mode)
+        self._register_init(**self._model_init_kwargs, n_sectors=n_sectors)
 
     # =============================================== #
     # Configuration properties                        #
@@ -340,11 +299,6 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
     def n_sectors(self) -> int:
         """int: Number of segments."""
         return self._n_sectors
-
-    @property
-    def area_mode(self) -> str:
-        """str: Definition of the segments' projected areas, ``"chord"`` or ``"hit"``."""
-        return self._area_mode
 
     def segmentation(self, aspect: float) -> Segmentation:
         """
@@ -371,46 +325,9 @@ class Diggins26_NComponentModel(Diggins26_TwoComponentModel):
     def _sector_sightlines(self, p: dict) -> tuple:
         return tuple(_segment_sightlines(p["inclination"], theta, self._n_azimuth) for theta in self._sector_thetas(p))
 
-    def build_filling_table(self, *, progress: bool = True) -> tuple:
-        """
-        Build (or fetch) the table of the segments' sky-projected area fractions and store it on the model.
-
-        The table is computed once per process for a fixed grid in aspect, inclination and filling factor, for the
-        model's ``n_sectors`` and ``area_mode``, and shared by every model instance with the same settings. It is
-        built automatically on the first evaluation, but calling this method beforehand keeps parallel workers from
-        each repeating the computation.
-
-        Parameters
-        ----------
-        progress : bool, optional
-            Show a progress bar while the table is built. Default ``True``.
-
-        Returns
-        -------
-        tuple
-            ``(aspect_grid, inclination_grid, filling_factor_grid, table)``, where ``table`` has shape
-            ``(n_sectors, n_aspect, n_inclination, n_filling_factor)``.
-        """
-        key = ("sectors", self._n_sectors, self._area_mode, _FILLING_N_PIX) + tuple(g.tobytes() for g in _FILLING_GRID)
-        if key not in _FILLING_TABLE_CACHE:
-            table = build_segment_filling_table(
-                *_FILLING_GRID, self._n_sectors, mode=self._area_mode, n_pix=_FILLING_N_PIX, progress=progress
-            )
-            _FILLING_TABLE_CACHE[key] = (*_FILLING_GRID, table)
-        self._filling_table = _FILLING_TABLE_CACHE[key]
-        return self._filling_table
-
     def _sector_geometry(self, p: dict) -> tuple:
         """One dict of ``f_V``, ``f_A`` and ``ell_over_R`` per segment, from the pole to the equator."""
-        # The filling factor is clipped just inside (0, 1), where the geometry is defined.
-        f = float(np.clip(p["f_V"], 1e-6, 1.0 - 1e-6))
-        edges = self.segmentation(p["aspect"]).edges
-        f_V = segment_volume_fractions(edges, f)
-        f_A = interpolate_segment_filling_table(self.filling_table, f, p["inclination"], p["aspect"])
-        return tuple(
-            {"f_V": float(v), "f_A": float(a), "ell_over_R": (4.0 / 3.0) * float(v) / float(a) if a > 0.0 else 0.0}
-            for v, a in zip(f_V, f_A)
-        )
+        return segment_geometry(self.segmentation(p["aspect"]).edges, p["f_V"], p["inclination"])
 
     def _build_dynamics(self, p: dict, t_unique: np.ndarray, t_rest: np.ndarray, states: tuple) -> Diggins26NDynamics:
         segmentation = self.segmentation(p["aspect"])
@@ -508,12 +425,12 @@ class Diggins26_RelativisticNComponentModel(Diggins26_NComponentModel, Diggins26
     :class:`~trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel`, and the N-segment
     generalization of
     :class:`~trilobite.models.LFBOTs.diggins26_relativistic.Diggins26_RelativisticTwoComponentModel`: the segmentation,
-    area modes and evaluation paths are those of the former, and the relativistic shock, thermal electron population
-    (``epsilon_T``) and their caveats are those of the latter. With ``n_sectors=2`` and ``area_mode="hit"`` it is the
-    relativistic two-component model.
+    geometry and evaluation paths are those of the former, and the relativistic shock, thermal electron population
+    (``epsilon_T``) and their caveats are those of the latter. With ``n_sectors=2`` it is the relativistic
+    two-component model.
 
     The constructor is that of :class:`~trilobite.models.LFBOTs.diggins26_n_component.Diggins26_NComponentModel`,
-    with the same ``n_sectors`` (default 8) and ``area_mode`` (default ``"chord"``) hyperparameters.
+    with the same ``n_sectors`` hyperparameter (default 8).
 
     References
     ----------

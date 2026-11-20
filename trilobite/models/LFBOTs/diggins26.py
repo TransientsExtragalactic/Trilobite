@@ -14,7 +14,7 @@ two sightlines, the equator and the pole, each of which stands in for its solid-
 3. The numerical synchrotron engine computes each sector's spectrum.
 4. The emitting geometry of each sector (sky-projected area, volume and mean path length) follows from the CSM
    opening angle, the observer's inclination and a shell volume filling factor
-   (:meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters`).
+   (:func:`~trilobite.models.LFBOTs.sectors.segment_geometry`).
 5. Free-free absorption by the CSM exterior to the shock attenuates each sector, integrated along the actual line of
    sight from the sector to the observer.
 6. The observed flux density is the sum of the attenuated sectors.
@@ -52,6 +52,7 @@ from trilobite.radiation.synchrotron.SEDs.numerical.core import NumericalSynchro
 from trilobite.utils.misc_utils import ensure_in_units
 
 from ..core.status import ModelStatus
+from .sectors import compute_segmentation, segment_geometry
 
 __all__ = [
     "Diggins26_TwoComponentModel",
@@ -83,13 +84,6 @@ _GL_NODES, _GL_WEIGHTS = np.polynomial.legendre.leggauss(6)
 _LOS_EPSILON = 1e-2
 # Cap on the number of quadrature nodes evaluated at once, which bounds the size of the work arrays.
 _LOS_MAX_NODES = 2_000_000
-
-# Grid of the sky-projected area-fraction table: (aspect, inclination [rad], volume filling factor). The aspect range
-# keeps both sectors wider than about 4 degrees; outside the grid the table is clamped to its edge values.
-_FILLING_GRID = (np.geomspace(0.1, 20.0, 20), np.linspace(0.0, 0.5 * np.pi, 16), np.linspace(0.02, 0.98, 7))
-_FILLING_N_PIX = 200
-# Tables already built in this process, shared between model instances.
-_FILLING_TABLE_CACHE: dict = {}
 
 # Maximum number of (epoch, frequency) pairs sent to the synchrotron engine at once; this bounds the size of its
 # (pairs x Lorentz-factor) work arrays on large tabulation grids.
@@ -275,14 +269,6 @@ class Diggins26_TwoComponentModel(Model):
     absorption by the ionized CSM exterior to the shock attenuates each sector along its line of sight to the
     observer, and the observed flux density is the sum of the sectors. The observer's inclination to the symmetry axis
     sets the sectors' projected areas and the lines of sight. The technical details are given in the Notes below.
-
-    .. important::
-
-        The first evaluation builds a table of the sectors' sky-projected area fractions (a few seconds, with a
-        progress bar), which is then cached on the model and shared between instances. Call
-        :meth:`build_filling_table` beforehand when evaluating in parallel so that workers do not each repeat it.
-        Keep ``aspect`` within 0.1 to 20, and ``f_V`` within 0.02 to 0.98: outside the table's range the geometry is
-        held at its edge values.
 
     .. dropdown:: Parameters
 
@@ -470,11 +456,11 @@ class Diggins26_TwoComponentModel(Model):
     The two sectors are split at the disk half-maximum latitude :math:`\arctan(b\ln 2)`. Each is a shell of
     fractional thickness :math:`\eta = 1 - (1-f)^{1/3}` set by the shared filling factor :math:`f` (``f_V``), so that
     sector :math:`k` holds a fraction :math:`f_{V,k} = f\,\Omega_k/4\pi` of the full-sphere volume. The sky-projected
-    area fraction :math:`f_A` of each sector depends on the aspect :math:`b`, the inclination :math:`i` and
-    :math:`f`; it is interpolated from a table built with
-    :meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.build_filling_parameter_table`, and
-    :math:`\ell_{\rm eff}` is the mean path length :math:`V/A_\perp`. None of these are free parameters apart from
-    :math:`f`, :math:`b` and :math:`i`. The shock dynamics do not depend on the inclination.
+    area fraction :math:`f_A` of each sector is the sky-projected area of the part of its spherical surface facing the
+    observer, which depends on the aspect :math:`b` and the inclination :math:`i` only and is analytic (see
+    :func:`~trilobite.models.LFBOTs.sectors.projected_area_fractions`); the two sectors' areas sum to
+    :math:`\pi R^2`. :math:`\ell_{\rm eff}` is the mean path length :math:`V/A_\perp`. None of these are free
+    parameters apart from :math:`f`, :math:`b` and :math:`i`. The shock dynamics do not depend on the inclination.
 
     .. rubric:: Cooling
 
@@ -901,7 +887,6 @@ class Diggins26_TwoComponentModel(Model):
         self._max_initial_beta = float(max_initial_beta)
         self._gamma_points_per_decade = int(gamma_points_per_decade)
         self._n_azimuth = int(n_azimuth)
-        self._filling_table = None  # built on first use; see `filling_table`
 
         # The model's defaults are applied first so that anything the user passes takes precedence.
         self._integrator_kw = {"method": "LSODA", "rtol": 1e-7, **(integrator_kw or {})}
@@ -1191,49 +1176,10 @@ class Diggins26_TwoComponentModel(Model):
     # =============================================== #
     # Radiation                                       #
     # =============================================== #
-    def build_filling_table(self, *, progress: bool = True) -> tuple:
-        """
-        Build (or fetch) the table of the sectors' sky-projected area fractions and store it on the model.
-
-        The table is computed once per process for a fixed grid in aspect, inclination and filling factor (a few
-        seconds) and shared by every model instance. It is built automatically on the first evaluation, but calling
-        this method beforehand keeps parallel workers from each repeating the computation.
-
-        Parameters
-        ----------
-        progress : bool, optional
-            Show a progress bar while the table is built. Default ``True``.
-
-        Returns
-        -------
-        tuple
-            ``(aspect_grid, inclination_grid, filling_factor_grid, table)``, as accepted by
-            :meth:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile.compute_filling_parameters`.
-        """
-        key = tuple(g.tobytes() for g in _FILLING_GRID) + (_FILLING_N_PIX,)
-        if key not in _FILLING_TABLE_CACHE:
-            table = AxisymmetricCSMDensityProfile.build_filling_parameter_table(
-                *_FILLING_GRID, n_pix=_FILLING_N_PIX, progress=progress
-            )
-            _FILLING_TABLE_CACHE[key] = (*_FILLING_GRID, table)
-        self._filling_table = _FILLING_TABLE_CACHE[key]
-        return self._filling_table
-
-    @property
-    def filling_table(self) -> tuple:
-        """tuple: The area-fraction table, built on first access (see :meth:`build_filling_table`)."""
-        if self._filling_table is None:
-            self.build_filling_table()
-        return self._filling_table
-
     def _sector_geometry(self, p: dict) -> tuple[dict, dict]:
         """``(equatorial, polar)`` dicts of ``f_V``, ``f_A`` and ``ell_over_R`` (floats) at the current parameters."""
-        # The filling factor is clipped just inside (0, 1), where the geometry is defined.
-        f = float(np.clip(p["f_V"], 1e-6, 1.0 - 1e-6))
-        geometry = AxisymmetricCSMDensityProfile.compute_filling_parameters(
-            f, p["inclination"], p["aspect"], table=self.filling_table
-        )
-        return tuple({k: float(v) for k, v in geometry[kind].items()} for kind in ("equatorial", "polar"))
+        polar, equatorial = segment_geometry(compute_segmentation(p["aspect"], 2).edges, p["f_V"], p["inclination"])
+        return equatorial, polar
 
     @staticmethod
     def _gamma_grid(p: dict, n_per_decade: int) -> np.ndarray:
