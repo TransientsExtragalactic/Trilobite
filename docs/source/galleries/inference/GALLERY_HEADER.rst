@@ -8,20 +8,21 @@ These examples demonstrate end-to-end Bayesian parameter inference with Trilobit
 from observational data (real or simulated), they walk through constructing a likelihood,
 defining priors, running an MCMC sampler, and interpreting the resulting posteriors.
 
-The :mod:`~trilobite.inference` subpackage ties a physical model to a dataset via a
-:class:`~trilobite.inference.InferenceProblem`. The sampler backend (``emcee``) handles
+The :mod:`trilobite.inference` subpackage ties a physical model to a dataset via a
+:class:`~trilobite.inference.problem.InferenceProblem`. The sampler backend (``emcee``) handles
 the MCMC, and result containers provide convergence diagnostics, posterior summaries, and
 corner plots.
 
 .. rubric:: What you'll find here
 
 - Fitting a single-epoch synchrotron SED (with and without upper limits)
+- Fitting a free systematic error term (a likelihood-level nuisance parameter) when the quoted errors are too small
 - Fitting an evolving, multi-epoch SED time series
 - Recovering shock physical parameters from a simulated radio light curve
 - Propagating SED posteriors through closure relations to obtain source-size posteriors
 
 .. rubric:: API reference
 
-:mod:`trilobite.inference` — :class:`~trilobite.inference.InferenceProblem`,
-:class:`~trilobite.data.InferenceData`,
-:class:`~trilobite.inference.GaussianCensoredLikelihood`
+:mod:`trilobite.inference` — :class:`~trilobite.inference.problem.InferenceProblem`,
+:class:`~trilobite.data.core.InferenceData`,
+:class:`~trilobite.inference.likelihood.base.GaussianCensoredLikelihood`

@@ -89,7 +89,6 @@ def get_opacity(
         corresponding class's :meth:`~trilobite.radiation.opacity.base.OpacityLaw.load_default` method
         for initialization. This allows for flexible configuration of opacity instances based on user input.
 
-
     Returns
     -------
     ~trilobite.radiation.opacity.base.OpacityLaw

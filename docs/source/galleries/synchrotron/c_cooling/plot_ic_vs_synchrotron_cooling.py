@@ -30,15 +30,11 @@ cooling break frequency.
 
 .. note::
 
-    Both classes are imported from :mod:`radiation.synchrotron.cooling`.
+    Both classes are imported from
+    :mod:`trilobite.radiation.synchrotron.cooling`.
     The Thomson-regime approximation used here breaks down at
     :math:`4\gamma E_{\rm ph} / (m_e c^2) \gtrsim 1`; Klein–Nishina corrections
     are not included in the current implementation.
-
-Relevant API References
------------------------
-- :class:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`
-- :class:`~radiation.synchrotron.cooling.InverseComptonCoolingEngine`
 """
 
 import matplotlib.pyplot as plt
@@ -56,7 +52,7 @@ from trilobite.utils.plot_utils import set_plot_style
 # Engine Instantiation
 # --------------------
 
-synch_engine = SynchrotronRadiativeCoolingEngine(pitch_averaged=True)
+synch_engine = SynchrotronRadiativeCoolingEngine()
 ic_engine = InverseComptonCoolingEngine(pitch_averaged=True)
 
 gamma_arr = np.geomspace(10, 1e7, 500)
@@ -100,14 +96,6 @@ ax.grid(True, which="both", ls="--", alpha=0.3)
 
 plt.tight_layout()
 plt.show()
-
-# Compute Compton Y for the reference parameters
-u_rad = (L_bol_ref / (4 * np.pi * R_ref**2 * const.c)).to(u.erg / u.cm**3)
-u_B = (B_ref.to_value("G") ** 2 / (8 * np.pi)) * (u.erg / u.cm**3)
-Y_ref = (u_rad / u_B).decompose().value
-print(f"Radiation energy density u_rad = {u_rad:.3e}")
-print(f"Magnetic energy density  u_B   = {u_B:.3e}")
-print(f"Compton Y = {Y_ref:.2f}  ({'IC-dominated' if Y_ref > 1 else 'synchrotron-dominated'})")
 
 # %%
 # Section 2: The Compton Y Parameter
@@ -189,7 +177,6 @@ for B, label, color in zip(B_values, B_labels, colors):
         u_B_val = B.to_value("G") ** 2 / (8 * np.pi)
         Y = u_rad_val / u_B_val
         Y_arr.append(Y)
-        # Combined cooling: IC + synch
         gamma_c_eff = gamma_c_synch / (1 + Y)
         nu_c_eff = synch_engine.compute_characteristic_frequency(B=B, gamma=gamma_c_eff).to_value(u.Hz)
         nu_c_eff_arr.append(nu_c_eff)

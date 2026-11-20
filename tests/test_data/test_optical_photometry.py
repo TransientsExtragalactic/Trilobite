@@ -83,13 +83,13 @@ def _mock_model(filter_names=("g", "r", "i")):
 
     model = MagicMock()
     model.bundle = bundle
-    model.variable_names = ["time", "band_idx"]
+    model.variable_names = ["time", "band_index"]
     model.output_names = ["flux_density"]
 
     # VARIABLES with proper .name and .base_units
     model.VARIABLES = [
         _mock_variable("time", u.s),
-        _mock_variable("band_idx", u.dimensionless_unscaled),
+        _mock_variable("band_index", u.dimensionless_unscaled),
     ]
 
     # OUTPUTS named tuple fields
@@ -378,7 +378,7 @@ class TestToInferenceData:
         c, model = self._make_container_and_model()
         idata = c.to_inference_data(model)
         expected = np.array([0, 1, 2, 0, 1])  # g→0, r→1, i→2, g→0, r→1
-        np.testing.assert_array_equal(idata.x["band_idx"], expected)
+        np.testing.assert_array_equal(idata.x["band_index"], expected)
 
     def test_unknown_band_name_raises(self):
         c, model = self._make_container_and_model()
@@ -421,7 +421,7 @@ class TestToInferenceData:
         c, model = self._make_container_and_model()
         idata = c.to_inference_data(model)
         assert "time" in idata.x
-        assert "band_idx" in idata.x
+        assert "band_index" in idata.x
 
     def test_upper_limits_propagated(self):
         t = _flux_table(with_upper_limits=True)
@@ -491,11 +491,11 @@ def _epoch_mag_table(n=3):
 
 def _epoch_mock_model():
     model = MagicMock()
-    model.variable_names = ["band_idx"]
+    model.variable_names = ["band_index"]
     model.output_names = ["flux_density"]
 
     var = MagicMock()
-    var.name = "band_idx"
+    var.name = "band_index"
     var.base_units = u.dimensionless_unscaled
     model.VARIABLES = [var]
 
@@ -563,18 +563,18 @@ class TestOpticalPhotometryEpochDetection:
 
 
 class TestOpticalPhotometryEpochToInferenceData:
-    def test_band_idx_in_x(self):
+    def test_band_index_in_x(self):
         e = OpticalPhotometryEpoch(_epoch_flux_table(n=4, n_upper=0))
         model = _epoch_mock_model()
         idata = e.to_inference_data(model)
-        assert "band_idx" in idata.x
+        assert "band_index" in idata.x
 
-    def test_band_idx_values(self):
+    def test_band_index_values(self):
         e = OpticalPhotometryEpoch(_epoch_flux_table(n=4, n_upper=0))
         model = _epoch_mock_model()
         idata = e.to_inference_data(model)
         # bands are g, r, i, z → indices 0, 1, 2, 3
-        np.testing.assert_array_equal(idata.x["band_idx"], [0, 1, 2, 3])
+        np.testing.assert_array_equal(idata.x["band_index"], [0, 1, 2, 3])
 
     def test_flux_density_in_observables(self):
         e = OpticalPhotometryEpoch(_epoch_flux_table(n=4, n_upper=0))

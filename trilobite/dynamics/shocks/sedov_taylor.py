@@ -71,7 +71,7 @@ def sedov_taylor_beta(gamma, *, eps=1e-10, epsabs=1e-12, epsrel=1e-12, limit=500
 
     Returns
     -------
-    beta : float
+    float
         Normalization coefficient in
         :math:`R_s(t) = \beta\,(E\,t^2/\rho_0)^{1/5}`.
 
@@ -429,7 +429,23 @@ class SedovTaylorShockEngine(ShockEngine):
     # DUNDER METHODS                              #
     # =========================================== #
     def __str__(self):
+        """
+        Return a readable summary of the engine.
+
+        Returns
+        -------
+        str
+            The engine name with its adiabatic index and mean molecular weight.
+        """
         return f"SedovTaylorShockEngine(gamma={self._gamma:.4f}, mu={self._mu:.4f})"
 
     def __repr__(self):
+        """
+        Return an unambiguous representation of the engine.
+
+        Returns
+        -------
+        str
+            The engine name with its adiabatic index and mean molecular weight.
+        """
         return f"<SedovTaylorShockEngine(gamma={self._gamma:.4f}, mu={self._mu:.4f})>"

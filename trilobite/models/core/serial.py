@@ -40,9 +40,8 @@ class ModelSpec:
 
         "package.module:ClassName"
 
-    Example
-    -------
-
+    Examples
+    --------
     .. code-block:: python
 
         spec = ModelSpec(
@@ -93,7 +92,14 @@ class ModelSpec:
         return cls(**self.kwargs)
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert this ModelSpec to a JSON-safe dictionary."""
+        """
+        Convert this ModelSpec to a JSON-safe dictionary.
+
+        Returns
+        -------
+        dict
+            A JSON-safe dictionary representing the specification.
+        """
         return {
             "format": self.FORMAT,
             "version": self.VERSION,
@@ -103,7 +109,19 @@ class ModelSpec:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ModelSpec":
-        """Construct a ModelSpec from a dictionary."""
+        """
+        Construct a ModelSpec from a dictionary.
+
+        Parameters
+        ----------
+        data : dict
+            Dictionary produced by :meth:`to_dict`.
+
+        Returns
+        -------
+        ~trilobite.models.core.serial.ModelSpec
+            The reconstructed specification.
+        """
         if not isinstance(data, dict):
             raise TypeError("Input must be a dictionary.")
 
@@ -116,12 +134,36 @@ class ModelSpec:
         )
 
     def to_json(self, indent: int = 2) -> str:
-        """Serialize this ModelSpec to a JSON string."""
+        """
+        Serialize this ModelSpec to a JSON string.
+
+        Parameters
+        ----------
+        indent : int, optional
+            Indentation of the JSON output. Default is ``2``.
+
+        Returns
+        -------
+        str
+            The JSON string.
+        """
         return json.dumps(self.to_dict(), indent=indent)
 
     @classmethod
     def from_json(cls, json_string: str) -> "ModelSpec":
-        """Deserialize a ModelSpec from a JSON string."""
+        """
+        Deserialize a ModelSpec from a JSON string.
+
+        Parameters
+        ----------
+        json_string : str
+            JSON string produced by :meth:`to_json`.
+
+        Returns
+        -------
+        ~trilobite.models.core.serial.ModelSpec
+            The reconstructed specification.
+        """
         data = json.loads(json_string)
         return cls.from_dict(data)
 
@@ -130,12 +172,29 @@ class ModelSpec:
         Return a compact single-line string representation.
 
         Suitable for storing in HDF5 attributes.
+
+        Returns
+        -------
+        str
+            A compact single-line JSON string.
         """
         return json.dumps(self.to_dict(), separators=(",", ":"))
 
     @classmethod
     def from_string(cls, string: str) -> "ModelSpec":
-        """Deserialize a ModelSpec from a compact string representation."""
+        """
+        Deserialize a ModelSpec from a compact string representation.
+
+        Parameters
+        ----------
+        string : str
+            String produced by :meth:`to_string`.
+
+        Returns
+        -------
+        ~trilobite.models.core.serial.ModelSpec
+            The reconstructed specification.
+        """
         data = json.loads(string)
         return cls.from_dict(data)
 
@@ -160,7 +219,19 @@ class ModelSpec:
 
     @classmethod
     def from_file(cls, filename: Union[str, Path]) -> "ModelSpec":
-        """Load a ModelSpec from a JSON file."""
+        """
+        Load a ModelSpec from a JSON file.
+
+        Parameters
+        ----------
+        filename : str or ~pathlib.Path
+            Path of the JSON file to read.
+
+        Returns
+        -------
+        ~trilobite.models.core.serial.ModelSpec
+            The specification loaded from the file.
+        """
         path = Path(filename)
 
         if not path.exists():

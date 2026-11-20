@@ -5,8 +5,8 @@ This module provides a specialized multiprocessing pool designed
 specifically for evaluating an `InferenceProblem` in parallel
 (e.g. for use with `emcee`).
 
-Design Overview
----------------
+.. rubric:: Design Overview
+
 `emcee` expects a pool object that implements:
 
     pool.map(func, iterable) -> sequence
@@ -25,8 +25,8 @@ To avoid repeated pickling of a complex problem object:
 This dramatically reduces serialization overhead and avoids
 common multiprocessing pitfalls.
 
-Interrupt Handling
-------------------
+.. rubric:: Interrupt Handling
+
 Workers ignore SIGINT so that Ctrl+C is handled cleanly by the
 parent process. The parent polls with a timeout so KeyboardInterrupt
 is not swallowed by blocking waits.
@@ -130,8 +130,8 @@ class LikelihoodMPPool(Pool[Any, float]):
         - close()
         - context manager support
 
-    Important
-    ---------
+    .. rubric:: Important
+
     The `func` argument to `map()` is intentionally ignored.
     We always evaluate `_worker_log_prob`, since the problem
     is stored inside each worker process.
@@ -158,6 +158,15 @@ class LikelihoodMPPool(Pool[Any, float]):
 
         The problem is serialized once in the parent and reconstructed
         once per worker process.
+
+        Parameters
+        ----------
+        problem : InferenceProblem
+            Problem to evaluate.
+        processes : int, optional
+            Number of worker processes. Defaults to `cpu_count()`.
+        wait_timeout : int, optional
+            Timeout (seconds) used when polling async results. This allows KeyboardInterrupt to be caught properly.
         """
         if processes is None:
             processes = mp.cpu_count()
@@ -182,7 +191,7 @@ class LikelihoodMPPool(Pool[Any, float]):
 
     @property
     def size(self) -> int:
-        """Number of worker processes."""
+        """int: Number of worker processes."""
         return self._processes
 
     # ------------------------------------------------------------------
@@ -200,9 +209,9 @@ class LikelihoodMPPool(Pool[Any, float]):
 
         Parameters
         ----------
-        func
+        func : object
             Ignored. Present only for compatibility with `emcee`.
-        iterable
+        iterable : ~collections.abc.Iterable
             Iterable of parameter vectors (`theta`).
         callback : callable, optional
             Called with each result after collection. Fired once per element
@@ -266,6 +275,14 @@ class LikelihoodMPPool(Pool[Any, float]):
     # ------------------------------------------------------------------
 
     def __enter__(self) -> "LikelihoodMPPool":
+        """
+        Enter the pool's context.
+
+        Returns
+        -------
+        ~trilobite.parallel.mp.LikelihoodMPPool
+            The pool itself.
+        """
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
@@ -274,6 +291,15 @@ class LikelihoodMPPool(Pool[Any, float]):
 
         If exiting due to an exception, terminate immediately.
         Otherwise close gracefully.
+
+        Parameters
+        ----------
+        exc_type : type or None
+            Type of the exception raised in the context, if any.
+        exc : BaseException or None
+            The exception raised in the context, if any.
+        tb : traceback or None
+            Traceback of the exception raised in the context, if any.
         """
         if exc_type is not None:
             self.terminate()

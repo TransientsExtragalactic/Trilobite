@@ -23,13 +23,13 @@ The tools in this module fall into two categories:
    and :func:`~trilobite.radiation.synchrotron.core.compute_averaged_first_synchrotron_kernel` for direct evaluation
    of :math:`F(x)` and :math:`\bar{F}(x)`, backed by private log-space
    implementations consumed by
-   :class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`.
+   :class:`~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine`.
 
 .. note::
 
     Population-averaged emissivities, absorption coefficients, and spectral flux
     densities are not implemented here. Use
-    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`
+    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine`
     for those quantities.
 
 .. currentmodule:: trilobite.radiation.synchrotron.core
@@ -200,9 +200,9 @@ quadrature in the interior stitched to asymptotic forms at the domain edges;
 .. note::
 
     For performance-critical applications such as inference loops, prefer
-    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`,
+    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine`,
     which pre-tabulates the kernel on a spline grid with
-    :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel`
+    :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.core.NumericalSynchrotronEngine.load_first_kernel`
     and avoids repeated Bessel-function quadrature.
 
 .. rubric:: References

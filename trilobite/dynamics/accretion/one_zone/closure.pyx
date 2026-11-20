@@ -77,7 +77,7 @@ cdef class OneZoneClosure:
         The python layer is given a set of output fields and indices referring to their respective
         location in the resulting array.
 
-    opacity : ~radiation.opacity.base.GreyOpacityLaw or ~radiation.opacity.opacity_base.C_GreyOpacityBase
+    opacity : ~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw or ``C_GreyOpacityBase``
         An opacity object which provides access to C-level callables for computing opacities as
         needed inside of the thermodynamics layer of the integrator.
 
@@ -169,7 +169,7 @@ cdef class OneZoneClosure:
 
     @property
     def opacity(self):
-        """The installed opacity law (a :class:`~trilobite.radiation.opacity.base.GreyOpacityLaw` instance)."""
+        """The installed opacity law (a :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` instance)."""
         return self._opacity_obj
 
     @opacity.setter

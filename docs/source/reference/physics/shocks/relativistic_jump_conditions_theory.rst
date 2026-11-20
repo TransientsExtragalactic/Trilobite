@@ -1,4 +1,5 @@
 .. _relativistic_jump_conditions_theory:
+
 ==============================================
 Methods: (Relativistic) Jump Conditions
 ==============================================
@@ -357,12 +358,15 @@ and the (proper) total energy density is
 
     e_2 = \rho_2 c^2 + U_{\rm int, 2}.
 
-Assigning Post-Shock Temperatures
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Post-Shock Temperatures
+~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to assign a temperature to the fluid, one must invoke an equation of state for the fluid. A standard
-Maxwellian distribution is no longer a sufficient choice for the relativistic fluid as the post-shock temperatures
-will likely be relativistic. We therefore adopt a Maxwell-Juttner distribution
+The jump conditions fix the proper thermal energy density :math:`U_{\rm int,2}` and rest-mass density :math:`\rho_2` of the
+shocked gas, but not a temperature. In a collisionless shock the ions and electrons need not share one, so the solvers
+report the thermal energy density and no single gas temperature. How :math:`U_{\rm int,2}` is shared between species sets
+their temperatures; see :ref:`synch_thermal_budget`.
+
+The post-shock temperatures can be relativistic, so each species is described by a Maxwell-Juttner distribution
 (see :footcite:p:`1996ApJ...465..327M, margalitThermalElectronsMildlyrelativistic2021` for a discussion; the original
 paper :footcite:p:`juttner1911maxwellsche` is in German):
 
@@ -370,28 +374,37 @@ paper :footcite:p:`juttner1911maxwellsche` is in German):
 
     f(\gamma) = n \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right),
 
-where :math:`\Theta = k_B T / (m c^2)` is the dimensionless temperature, :math:`K_2` is the modified Bessel function
-of the second kind, and :math:`N_0` is a normalization constant.
-
-The internal energy density of a relativistic Maxwell-Juttner
-distribution is given by\ :footcite:p:`1998ApJ...498..313G, 2000ApJ...541..234O, chandrasekhar1957introduction`
+where :math:`\Theta = k_B T / (m c^2)` is the dimensionless temperature of the species of mass :math:`m`, and
+:math:`K_2` is the modified Bessel function of the second kind. The internal energy per particle, in units of
+:math:`m c^2`, is\ :footcite:p:`1998ApJ...498..313G, 2000ApJ...541..234O, chandrasekhar1957introduction`
 
 .. math::
 
-    U_{\rm int} = \rho c^2 \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} -1 \right],
+    \xi = \langle \gamma - 1 \rangle = \frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1,
 
-which, in turn, is well approximated by\ :footcite:p:`1998ApJ...498..313G`
-
-.. math::
-
-    U_{\rm int}  \approx \rho c^2 \Theta \left(\frac{6+15\Theta}{4+5\Theta}\right)
-
-To determine the temperature to assign to the post-shock fluid, we may invert this expression. Letting
-:math:`\xi = U_{\rm int} / (\rho c^2)`, we have
+which is well approximated by\ :footcite:p:`1998ApJ...498..313G`
 
 .. math::
 
-    \Theta = \frac{5\xi - 6 + \sqrt{(6-5\xi)^2 + 120\xi}}{30}.
+    \xi \approx \Theta \left(\frac{6+15\Theta}{4+5\Theta}\right).
+
+A species with energy density :math:`u_s` and number density :math:`n_s` has :math:`\xi_s = u_s / (n_s m_s c^2)`, and
+:math:`\Theta_s` is the inverse of the relation above. Inverting the approximation gives the closed form
+
+.. math::
+
+    \Theta = \frac{5\xi - 6 + \sqrt{(6-5\xi)^2 + 240\xi}}{30},
+
+while the exact inversion is a short Newton iteration. Both are in
+:func:`~trilobite.physics_utils.maxwell_juettner.compute_mj_theta_from_kinetic_energy`. For the ions and thermal electrons
+of a shock, :func:`~trilobite.physics_utils.thermal_partition.compute_ion_electron_theta` does this from
+:math:`U_{\rm int,2}`, :math:`\rho_2` and the energy budget.
+
+.. note::
+
+    The jump conditions above use a single constant adiabatic index :math:`\hat{\gamma}` for the whole fluid. A mixture
+    of non-relativistic ions and partly relativistic electrons has an effective index that varies with the energy
+    partition and the shock speed. This changes :math:`U_{\rm int,2}` by a small factor and is not corrected for.
 
 .. note::
 

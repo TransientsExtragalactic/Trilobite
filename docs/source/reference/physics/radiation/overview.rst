@@ -47,7 +47,7 @@ the various algorithms.
     .. grid-item-card:: Usage Reference
 
         - :ref:`synchrotron_core` -- kernel functions, single-electron spectra
-        - :ref:`synchrotron_microphysics` -- distributions, equipartition closure
+        - :ref:`synchrotron_electron_distributions` -- distributions, equipartition closure
         - :ref:`synchrotron_seds` -- one-zone SED models and spectrum inversion
         - :ref:`synchrotron_cooling` -- radiative cooling engines
 
@@ -57,9 +57,8 @@ the various algorithms.
         - :ref:`synch_sed_theory`
         - :ref:`synch_numerical_sed_theory`
         - :ref:`synchrotron_cooling_theory`
-        - :ref:`synchrotron_cooling_closure`
+        - :ref:`synchrotron_spectral_inversion`
         - :ref:`stratified_absorption`
-        - :ref:`barnoil_duran`
 
 .. toctree::
     :hidden:
@@ -68,16 +67,15 @@ the various algorithms.
 
     synchrotron/synchrotron_overview
     synchrotron/synchrotron_core
-    synchrotron/synchrotron_microphysics
+    synchrotron/synchrotron_electron_distributions
     synchrotron/synchrotron_seds
     synchrotron/synchrotron_cooling
     synchrotron/synchrotron_theory
     synchrotron/synchrotron_pl_sed_theory
     synchrotron/synchrotron_numerical_seds
     synchrotron/synchrotron_cooling_theory
-    synchrotron/synchrotron_cooling_closure
+    synchrotron/synchrotron_spectral_inversion
     synchrotron/synchrotron_stratified_absorption
-    synchrotron/synchrotron_barniol_duran
 
 ----
 

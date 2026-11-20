@@ -24,7 +24,7 @@ decoupled from any particular model or filter ordering convention.
 
 .. rubric:: In this section
 
-- `Schema`_
+- :ref:`optical_photometry_schema`
 - `Construction`_
 - `Dual-Representation Properties`_
 - `Detection / Non-Detection Logic`_
@@ -33,6 +33,8 @@ decoupled from any particular model or filter ordering convention.
 - `API Reference`_
 
 ----
+
+.. _optical_photometry_schema:
 
 Schema
 ------
@@ -240,14 +242,14 @@ Connecting to Inference
 bridges the container to the Trilobite inference pipeline.  It performs three key steps:
 
 1. **Band mapping** — looks up each ``band_name`` in ``model.bundle.filter_names`` to produce
-   the ``band_idx`` array stored in ``InferenceData.x``.
+   the ``band_index`` array stored in ``InferenceData.x``.
 2. **Flux conversion** — converts magnitudes to F\ :sub:`ν` (if the data are in mag space).
 3. **Error inference** — optionally fills missing uncertainties for non-detections from their
    upper limits (``infer_errors=True``, ``detection_threshold=3.0``).
 
 The resulting :class:`~trilobite.data.core.InferenceData` has
-``x = {"time": ..., "band_idx": ...}`` and ``y = {"flux_density": ...}``, which is exactly
-what :class:`~trilobite.inference.likelihood.GaussianLikelihood` expects.
+``x = {"time": ..., "band_index": ...}`` and ``y = {"flux_density": ...}``, which is exactly
+what :class:`~trilobite.inference.likelihood.base.GaussianLikelihood` expects.
 
 .. code-block:: python
 
@@ -266,19 +268,19 @@ what :class:`~trilobite.inference.likelihood.GaussianLikelihood` expects.
 .. code-block:: python
 
     class OpticalTransientModel(Model):
-        VARIABLES = [ModelVariable("time", u.s), ModelVariable("band_idx", u.dimensionless_unscaled)]
+        VARIABLES = [ModelVariable("time", u.s), ModelVariable("band_index", u.dimensionless_unscaled)]
 
         def __init__(self, bundle: FilterBundle, **kwargs):
             self._bundle = bundle
             super().__init__(**kwargs)
 
-        def _forward_model(self, time, band_idx, **theta):
+        def _forward_model(self, time, band_index, **theta):
             F_nu_sed = self._compute_sed(time, **theta)       # (N_obs, N_grid)
             F_bands  = self._bundle.apply(F_nu_sed)           # (N_obs, N_filters)
-            return F_bands[np.arrange(len(band_idx)), band_idx] # (N_obs,)
+            return F_bands[np.arrange(len(band_index)), band_index] # (N_obs,)
 
 The ``FilterBundle``'s ``filter_names`` list is the single source of truth for the
-``band_name → band_idx`` mapping.
+``band_name → band_index`` mapping.
 
 ----
 

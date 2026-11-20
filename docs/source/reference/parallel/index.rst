@@ -8,7 +8,7 @@ Trilobite provides a unified framework for parallel execution across several
 backends. Parallelism appears at multiple levels of the library:
 
 - **Inference** — evaluating log-posteriors for many walker positions simultaneously
-  (e.g., during MCMC sampling with :mod:`emcee`).
+  (e.g., during MCMC sampling with ``emcee``).
 - **Grid execution** — sweeping physical models over large parameter grids to build
   interpolation tables or survey parameter space.
 - **Simulation batches** — running independent simulations in parallel for ensemble

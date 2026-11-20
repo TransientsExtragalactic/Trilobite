@@ -5,11 +5,11 @@ Inference Data Containers
 ================================
 
 The :class:`~trilobite.data.core.InferenceData` class defines the numerical
-interface between the :mod:`trilobite.data` layer and the :mod:`trilobite.inference` layer.
+interface between the :mod:`trilobite.data.core` layer and the :mod:`trilobite.inference.problem` layer.
 
 It is the only data object recognized by likelihood classes.
 
-While :class:`DataContainer` subclasses are responsible for interpreting
+While :class:`~trilobite.data.core.DataContainer` subclasses are responsible for interpreting
 tables, resolving column names, and coercing units, an
 :class:`InferenceData` instance contains only validated NumPy arrays that are
 guaranteed to be consistent with a specific model. Once constructed, it is
@@ -53,7 +53,7 @@ From Data Containers
 ^^^^^^^^^^^^^^^^^^^^
 
 The most common workflow is to construct inference-ready data directly from
-a :class:`DataContainer`. Since data containers already understand their own
+a :class:`~trilobite.data.core.DataContainer`. Since data containers already understand their own
 schema and units, they can perform the conversion with minimal user input.
 
 .. code-block:: python
@@ -70,7 +70,7 @@ From Arrays
 ^^^^^^^^^^^
 
 For synthetic data, simulations, or programmatic workflows,
-:meth:`InferenceData.from_arrays` provides a direct constructor.
+:meth:`~trilobite.data.core.InferenceData.from_arrays` provides a direct constructor.
 
 .. code-block:: python
 
@@ -92,7 +92,7 @@ From Astropy Tables
 ^^^^^^^^^^^^^^^^^^^
 
 When working directly with an :class:`astropy.table.Table`, use
-:meth:`InferenceData.from_table`.
+:meth:`~trilobite.data.core.InferenceData.from_table`.
 
 .. code-block:: python
 

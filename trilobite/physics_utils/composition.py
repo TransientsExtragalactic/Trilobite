@@ -173,7 +173,7 @@ def compute_mean_molecular_weight_primordial(hydrogen_fraction: float):
 
     Parameters
     ----------
-    hydrogen_fraction: float
+    hydrogen_fraction : float
         The relevant hydrogen fraction (:math:`\chi_H<1`).
 
     Returns
@@ -203,7 +203,6 @@ def compute_mean_molecular_weight_primordial(hydrogen_fraction: float):
     .. math::
 
         \mu = \frac{1}{2\chi_H + (3/4)(1-\chi_H)}.
-
     """
     return 1.0 / (2.0 * hydrogen_fraction + 0.75 * (1.0 - hydrogen_fraction))
 
@@ -213,7 +212,7 @@ def compute_mean_molecular_weight_per_electron_primordial(hydrogen_fraction: flo
 
     Parameters
     ----------
-    hydrogen_fraction: float
+    hydrogen_fraction : float
         The relevant hydrogen fraction (:math:`\chi_H<1`).
 
     Returns
@@ -242,6 +241,5 @@ def compute_mean_molecular_weight_per_electron_primordial(hydrogen_fraction: flo
     .. math::
 
         \mu = \frac{1}{1\chi_H + (1/2)(1-\chi_H)}.
-
     """
     return 1 / (hydrogen_fraction + 0.5 * (1 - hydrogen_fraction))

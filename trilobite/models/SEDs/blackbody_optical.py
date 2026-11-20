@@ -22,6 +22,8 @@ from trilobite.models.core.optical import OpticalEpochModel, OpticalModel
 from trilobite.models.core.parameters import ModelParameter
 from trilobite.radiation.blackbody import _log_specific_flux_fnu_cgs
 
+from ..core.status import ModelStatus
+
 if TYPE_CHECKING:
     from trilobite._typing import _ModelParametersInputRaw
     from trilobite.utils.phot_utils import FilterBundle
@@ -71,11 +73,21 @@ class BlackbodyOpticalModel(OpticalModel):
         Filter set defining the observable bands.
     """
 
+    STATUS = ModelStatus.UNVERIFIED
+
     PARAMETERS = _BB_PARAMETERS
     DESCRIPTION = "Static spherical blackbody observed through an optical filter set."
     REFERENCE = "Planck 1901."
 
     def __init__(self, bundle: "FilterBundle") -> None:
+        """
+        Initialize the model.
+
+        Parameters
+        ----------
+        bundle : FilterBundle
+            Filter set defining the observable bands.
+        """
         super().__init__(bundle)
 
     def _compute_sed(
@@ -105,11 +117,21 @@ class BlackbodyOpticalEpochModel(OpticalEpochModel):
         Filter set defining the observable bands.
     """
 
+    STATUS = ModelStatus.UNVERIFIED
+
     PARAMETERS = _BB_PARAMETERS
     DESCRIPTION = "Static spherical blackbody SED observed through an optical filter set."
     REFERENCE = "Planck 1901."
 
     def __init__(self, bundle: "FilterBundle") -> None:
+        """
+        Initialize the model.
+
+        Parameters
+        ----------
+        bundle : FilterBundle
+            Filter set defining the observable bands.
+        """
         super().__init__(bundle)
 
     def _compute_sed(

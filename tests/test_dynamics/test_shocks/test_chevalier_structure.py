@@ -10,7 +10,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 
-from trilobite.dynamics.shocks.chevalier import compute_self_similar_functions
+from trilobite.dynamics.shocks.chevalier import ChevalierTwoShockSelfSimilarEngine, compute_self_similar_functions
 
 
 class TestChevalierSelfSimilarFunctions:
@@ -120,3 +120,31 @@ class TestChevalierSelfSimilarFunctions:
 
         plt.savefig(diagnostic_plots_dir / "test_chevalier_self_similar_structure.png")
         plt.close(fig)
+
+
+class TestChevalierTwoShockTableInterpolation:
+    """Off-grid accuracy of the tabulated constants used by ``ChevalierTwoShockSelfSimilarEngine``."""
+
+    @pytest.fixture(scope="class")
+    def engine(self):
+        return ChevalierTwoShockSelfSimilarEngine(
+            gamma=5.0 / 3.0,
+            n_grid=np.arange(6.0, 15.0),
+            s_grid=np.arange(0.0, 2.6, 0.5),
+            show_progress=False,
+        )
+
+    @pytest.mark.parametrize("n, s", [(6.5, 0.25), (7.5, 2.25), (6.5, 2.25), (9.5, 1.75)])
+    def test_offgrid_A_matches_direct_solution(self, engine, n, s):
+        """
+        A varies steeply (~ n^-3), so it must be interpolated in log space.
+
+        Linear interpolation of A overestimates it by up to ~17% between nodes (~4% in R_cd);
+        log-space interpolation keeps the implied R_cd = A^{1/(n-s)} error below 1%.
+        """
+        A_interp, xi_fs, xi_rs = engine._interpolate_constants(n, s)
+        direct = compute_self_similar_functions(n=n, s=s, gamma=5.0 / 3.0)
+
+        assert_allclose(A_interp ** (1.0 / (n - s)), direct.A ** (1.0 / (n - s)), rtol=1.0e-2)
+        assert_allclose(xi_fs, direct.radius_fs_over_radius_cd, rtol=1.0e-2)
+        assert_allclose(xi_rs, direct.radius_rs_over_radius_cd, rtol=1.0e-2)

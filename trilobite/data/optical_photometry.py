@@ -26,6 +26,8 @@ from .core import DataContainer, InferenceData
 if TYPE_CHECKING:
     from trilobite.models.core.base import Model  # noqa: F401
 
+    from .light_curve import OpticalLightCurveContainer
+
 
 __all__ = ["OpticalPhotometryContainer", "OpticalPhotometryEpoch"]
 
@@ -46,11 +48,11 @@ class OpticalPhotometryContainer(DataContainer):
     Band identification uses human-readable **band names** (e.g. ``"g"``, ``"r"``)
     rather than integer indices.  Integer indices are resolved at
     :meth:`to_inference_data` time by looking up each name in the optical model's
-    :attr:`FilterBundle.filter_names` list.  This keeps the container independent
+    :attr:`~trilobite.utils.phot_utils.FilterBundle.filter_names` list.  This keeps the container independent
     of any particular model or filter ordering convention.
 
-    Schema
-    ------
+    .. rubric:: Schema
+
     Required columns:
 
     - ``time`` [day] — relative time of each observation.
@@ -69,6 +71,18 @@ class OpticalPhotometryContainer(DataContainer):
     - ``obs_name`` [str]
     - ``epoch_id`` [int]
 
+    Parameters
+    ----------
+    table : ~astropy.table.Table
+        The photometry table. It must conform to the container schema.
+
+    See Also
+    --------
+    trilobite.utils.phot_utils.FilterBundle
+        The filter bundle whose ``filter_names`` list defines the band→index mapping.
+    trilobite.data.photometry.RadioPhotometryContainer
+        Equivalent container for radio photometry.
+
     Notes
     -----
     - All properties return :class:`astropy.units.Quantity` objects for physical
@@ -77,13 +91,6 @@ class OpticalPhotometryContainer(DataContainer):
       :math:`F_0 = 3.631 \times 10^{-20}` erg/s/cm²/Hz.
     - Flux error → magnitude error: :math:`\sigma_m = 1.0857 \cdot \sigma_F / F`
     - Magnitude error → flux error: :math:`\sigma_F = F \cdot \sigma_m / 1.0857`
-
-    See Also
-    --------
-    trilobite.utils.phot_utils.FilterBundle
-        The filter bundle whose ``filter_names`` list defines the band→index mapping.
-    trilobite.data.photometry.RadioPhotometryContainer
-        Equivalent container for radio photometry.
     """
 
     # ========================= SCHEMA DEFINITION ========================= #
@@ -97,7 +104,7 @@ class OpticalPhotometryContainer(DataContainer):
             "required": True,
         },
         # Band identification — band_name is the canonical identifier;
-        # band_idx is intentionally absent and only appears in InferenceData.x
+        # band_index is intentionally absent and only appears in InferenceData.x
         {
             "name": "band_name",
             "dtype": str,
@@ -222,48 +229,48 @@ class OpticalPhotometryContainer(DataContainer):
     # ========================= Core Properties ========================= #
     @property
     def n_obs(self) -> int:
-        """Return the total number of observations."""
+        """int: Return the total number of observations."""
         return len(self.__table__)
 
     @property
     def time(self) -> u.Quantity:
-        """Observation times as an Astropy Quantity (days)."""
+        """~astropy.units.Quantity: Observation times as an Astropy Quantity (days)."""
         return self.__table__["time"].quantity
 
     @property
     def band_name(self) -> np.ndarray:
-        """Survey band names (string array)."""
+        """~numpy.ndarray: Survey band names (string array)."""
         return np.asarray(self.__table__["band_name"].data)
 
     # ========================= Detection Properties ========================= #
     @property
     def detection_mask(self) -> np.ndarray:
-        """Boolean mask selecting detections (rows where upper limit is NaN)."""
+        """~numpy.ndarray: True where the row is a detection (upper limit is NaN); False otherwise."""
         return self.__detection_mask__.copy()
 
     @property
     def non_detection_mask(self) -> np.ndarray:
-        """Boolean mask selecting non-detections / upper limits."""
+        """~numpy.ndarray: True where the row is a non-detection; False for detections."""
         return self.__non_detection_mask__.copy()
 
     @property
     def n_detections(self) -> int:
-        """Number of detections."""
+        """int: Number of detections."""
         return int(self.__detection_mask__.sum())
 
     @property
     def n_non_detections(self) -> int:
-        """Number of non-detections (upper limits)."""
+        """int: Number of non-detections (upper limits)."""
         return int(self.__non_detection_mask__.sum())
 
     @property
     def detections(self) -> "OpticalPhotometryContainer":
-        """Return a new container containing only detections."""
+        """~trilobite.data.optical_photometry.OpticalPhotometryContainer: Container holding only detections."""
         return self.apply_mask(self.__detection_mask__)
 
     @property
     def upper_limits(self) -> "OpticalPhotometryContainer":
-        """Return a new container containing only non-detections (upper limits)."""
+        """~trilobite.data.optical_photometry.OpticalPhotometryContainer: Container holding only upper limits."""
         return self.apply_mask(self.__non_detection_mask__)
 
     # ========================= Flux Properties ========================= #
@@ -278,7 +285,7 @@ class OpticalPhotometryContainer(DataContainer):
     @property
     def flux(self) -> u.Quantity:
         """
-        Flux density F_ν in erg/s/cm²/Hz.
+        ~astropy.units.Quantity: Flux density F_ν in erg/s/cm²/Hz.
 
         Returns the ``flux_density`` column if present.  Otherwise converts
         ``mag_ab`` to flux using the AB zero-point.
@@ -291,7 +298,7 @@ class OpticalPhotometryContainer(DataContainer):
     @property
     def flux_error(self) -> u.Quantity:
         r"""
-        1-sigma uncertainty on F_ν in erg/s/cm²/Hz.
+        ~astropy.units.Quantity: 1-sigma uncertainty on F_ν in erg/s/cm²/Hz.
 
         Returns ``flux_density_error`` if present.  Otherwise propagates from
         ``mag_ab_error`` using :math:`\sigma_F = F \cdot \sigma_m / 1.0857`.
@@ -304,7 +311,7 @@ class OpticalPhotometryContainer(DataContainer):
     @property
     def flux_upper_limit(self) -> u.Quantity:
         """
-        Upper limit on F_ν in erg/s/cm²/Hz (NaN for detections).
+        ~astropy.units.Quantity: Upper limit on F_ν in erg/s/cm²/Hz (NaN for detections).
 
         Returns ``flux_upper_limit`` if present.  Otherwise converts
         ``mag_ab_upper_limit`` to flux.
@@ -321,7 +328,7 @@ class OpticalPhotometryContainer(DataContainer):
     @property
     def mag(self) -> np.ndarray:
         """
-        AB magnitude (dimensionless array).
+        ~numpy.ndarray: AB magnitude (dimensionless array).
 
         Returns ``mag_ab`` if present.  Otherwise converts ``flux_density``
         using the AB zero-point.
@@ -334,7 +341,7 @@ class OpticalPhotometryContainer(DataContainer):
     @property
     def mag_error(self) -> np.ndarray:
         r"""
-        1-sigma uncertainty on AB magnitude.
+        ~numpy.ndarray: 1-sigma uncertainty on AB magnitude.
 
         Returns ``mag_ab_error`` if present.  Otherwise propagates from
         ``flux_density_error`` using :math:`\sigma_m = 1.0857 \cdot \sigma_F / F`.
@@ -348,7 +355,7 @@ class OpticalPhotometryContainer(DataContainer):
     @property
     def mag_upper_limit(self) -> np.ndarray:
         """
-        AB magnitude upper limit (NaN for detections).
+        ~numpy.ndarray: AB magnitude upper limit (NaN for detections).
 
         Returns ``mag_ab_upper_limit`` if present.  Otherwise converts
         ``flux_upper_limit`` to magnitudes.
@@ -360,7 +367,7 @@ class OpticalPhotometryContainer(DataContainer):
     # ========================= Optional Metadata Properties ========================= #
     @property
     def obs_name(self) -> np.ndarray:
-        """Observation names (raises if column absent)."""
+        """~numpy.ndarray: Observation names (raises if column absent)."""
         if "obs_name" not in self.__table__.colnames:
             raise AttributeError("Column 'obs_name' not found in the table.")
         return np.asarray(self.__table__["obs_name"].data)
@@ -368,25 +375,37 @@ class OpticalPhotometryContainer(DataContainer):
     # ========================= Epoch Support ========================= #
     @property
     def has_epochs(self) -> bool:
-        """Return True if epoch IDs have been assigned."""
+        """bool: Return True if epoch IDs have been assigned."""
         return self.__epoch_ids__ is not None
 
     @property
     def epoch_ids(self) -> np.ndarray:
-        """Return a copy of the epoch ID array (raises if epochs not set)."""
+        """~numpy.ndarray: Return a copy of the epoch ID array (raises if epochs not set)."""
         if self.__epoch_ids__ is None:
             raise AttributeError("No epochs defined.")
         return self.__epoch_ids__.copy()
 
     @property
     def n_epochs(self) -> Optional[int]:
-        """Number of unique epochs, or None if epochs are not defined."""
+        """`int` or `None`: Number of unique epochs, or None if epochs are not defined."""
         if self.__epoch_ids__ is None:
             return None
         return int(len(np.unique(self.__epoch_ids__)))
 
     def get_epoch_mask(self, epoch: int) -> np.ndarray:
-        """Return a boolean mask for observations in *epoch*."""
+        """
+        Return a boolean mask for observations in *epoch*.
+
+        Parameters
+        ----------
+        epoch : int
+            Epoch identifier.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Boolean mask selecting the observations in ``epoch``.
+        """
         if self.__epoch_ids__ is None:
             raise AttributeError("No epochs defined.")
         return self.__epoch_ids__ == epoch
@@ -441,12 +460,53 @@ class OpticalPhotometryContainer(DataContainer):
 
         Returns
         -------
-        OpticalPhotometryContainer
+        ~trilobite.data.optical_photometry.OpticalPhotometryContainer
+            A new container holding only the selected rows.
         """
         sliced = self.table[mask]
         if self.has_epochs and "epoch_id" not in sliced.colnames:
             sliced["epoch_id"] = self.__epoch_ids__[mask]
         return self.__class__.from_table(sliced)
+
+    def extract_lightcurve(self, band: str) -> "OpticalLightCurveContainer":
+        """Extract a single-band light curve from this container.
+
+        Selects all observations whose ``band_name`` matches *band* and returns
+        them as an :class:`~trilobite.data.light_curve.OpticalLightCurveContainer`.
+
+        Parameters
+        ----------
+        band : str
+            Band name to extract (e.g. ``"g"``, ``"r"``). Must match a value
+            present in the ``band_name`` column.
+
+        Returns
+        -------
+        ~trilobite.data.light_curve.OpticalLightCurveContainer
+            Light curve for the requested band, ordered by time.
+
+        Raises
+        ------
+        ValueError
+            If *band* is not found in this container.
+        """
+        from .light_curve import OpticalLightCurveContainer
+
+        available = np.unique(self.band_name)
+        if band not in available:
+            raise ValueError(f"Band '{band}' not found. Available bands: {list(available)}.")
+
+        mask = self.band_name == band
+        sliced = self.table[mask]
+
+        # band_name is now metadata on the container; drop it from the table.
+        drop = [c for c in ["band_name", "epoch_id"] if c in sliced.colnames]
+        if drop:
+            sliced = sliced.copy()
+            sliced.remove_columns(drop)
+
+        sort_order = np.argsort(sliced["time"])
+        return OpticalLightCurveContainer(sliced[sort_order], band=band)
 
     # ========================= IO Methods ========================= #
     @classmethod
@@ -465,30 +525,27 @@ class OpticalPhotometryContainer(DataContainer):
         ----------
         table : astropy.table.Table
             Input table containing optical photometry data.
-
         column_map : dict, optional
             Mapping from existing column names → expected schema column names.
             Use this to rename non-standard column names before validation.
-
         time_start : float or astropy.units.Quantity, optional
             Reference time subtracted from the ``time`` column to convert absolute
             times to relative times.  When ``internal_time_format="relative"``
             this is interpreted as days (float) or an Astropy Quantity.
-
         internal_time_format : str, default ``"relative"``
             Format of the ``time`` column in the input table.
 
             - ``"relative"`` — time is already elapsed days since some reference.
             - Any valid Astropy time format (e.g. ``"mjd"``, ``"jd"``,
               ``"iso"``, ``"unix"``).
-
         internal_time_scale : str, default ``"utc"``
             Astropy time scale used when interpreting absolute time formats.
             Ignored when ``internal_time_format="relative"``.
 
         Returns
         -------
-        OpticalPhotometryContainer
+        ~trilobite.data.optical_photometry.OpticalPhotometryContainer
+            The constructed container.
 
         Examples
         --------
@@ -554,7 +611,7 @@ class OpticalPhotometryContainer(DataContainer):
         r"""
         Convert this container to :class:`~trilobite.data.core.InferenceData`.
 
-        The independent variable ``band_idx`` is resolved at call time by
+        The independent variable ``band_index`` is resolved at call time by
         looking up each observation's ``band_name`` in
         ``model.bundle.filter_names``.  The model is therefore the single
         source of truth for the band → index mapping, and the container remains
@@ -567,36 +624,32 @@ class OpticalPhotometryContainer(DataContainer):
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             Optical model instance.  Must expose a ``bundle`` attribute
             (:class:`~trilobite.utils.phot_utils.FilterBundle`) whose
             ``filter_names`` list maps band names to integer indices.
-
         variables : dict, optional
             Override the default variable mapping.  By default:
 
             - ``"time"`` → ``time`` column (converted to model units)
-            - ``"band_idx"`` → resolved from ``band_name`` via
+            - ``"band_index"`` → resolved from ``band_name`` via
               ``model.bundle.filter_names``
-
         observables : dict, optional
             Override the default observable mapping.  By default, the single
             model observable is mapped to
             ``("flux_density", "flux_density_error", "flux_upper_limit", None)``.
-
         infer_errors : bool, default True
             If True, infer 1-sigma uncertainties for non-detections from their
             upper limits: :math:`\sigma = F_\mathrm{upper} / N_\sigma`.
-
         detection_threshold : float, default 3.0
             :math:`N_\sigma` used in error inference above.
-
         mask : np.ndarray of bool, optional
             Optional row mask applied before building the InferenceData.
 
         Returns
         -------
-        InferenceData
+        ~trilobite.data.core.InferenceData
+            The inference dataset built from the photometry.
 
         Raises
         ------
@@ -607,7 +660,7 @@ class OpticalPhotometryContainer(DataContainer):
             ``model.bundle.filter_names``.
         """
         # ------------------------------------------------------------------
-        # Resolve band_name → band_idx via model.bundle
+        # Resolve band_name → band_index via model.bundle
         # ------------------------------------------------------------------
         if not hasattr(model, "bundle"):
             raise AttributeError(
@@ -621,7 +674,7 @@ class OpticalPhotometryContainer(DataContainer):
 
         band_names = self.band_name
         try:
-            band_idx = np.array([name_to_idx[n] for n in band_names], dtype=int)
+            band_index = np.array([name_to_idx[n] for n in band_names], dtype=int)
         except KeyError as exc:
             bad = str(exc).strip("'")
             raise KeyError(
@@ -638,7 +691,7 @@ class OpticalPhotometryContainer(DataContainer):
             mask = np.ones(self.n_obs, dtype=bool)
 
         t_vals = self.time.to(u.day).value[mask]
-        idx_vals = band_idx[mask]
+        idx_vals = band_index[mask]
 
         # ------------------------------------------------------------------
         # Resolve flux values — convert from mag if needed
@@ -671,7 +724,7 @@ class OpticalPhotometryContainer(DataContainer):
         # ------------------------------------------------------------------
         x = {
             "time": t_vals * u.day,
-            "band_idx": idx_vals,
+            "band_index": idx_vals,
         }
         y = {model.output_names[0]: flux_vals * u.Unit("erg/(s cm2 Hz)")}
         y_err = {model.output_names[0]: flux_err_vals * u.Unit("erg/(s cm2 Hz)")}
@@ -704,8 +757,8 @@ class OpticalPhotometryEpoch(DataContainer):
     ``model.bundle.filter_names``, keeping the container independent of any
     particular model or filter ordering convention.
 
-    Schema
-    ------
+    .. rubric:: Schema
+
     Required:
 
     - ``band_name`` [str] — survey band identifier (e.g. ``"g"``, ``"r"``).
@@ -721,17 +774,17 @@ class OpticalPhotometryEpoch(DataContainer):
 
     - ``obs_name`` [str]
 
+    See Also
+    --------
+    :obj:`~trilobite.data.photometry.RadioPhotometryEpoch`
+        Equivalent container for single-epoch radio SED measurements.
+    :obj:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`
+        Multi-epoch optical photometry container.
+
     Notes
     -----
     Unlike :class:`OpticalPhotometryContainer`, there is no ``time`` column —
     all measurements are assumed to belong to the same epoch.
-
-    See Also
-    --------
-    RadioPhotometryEpoch
-        Equivalent container for single-epoch radio SED measurements.
-    OpticalPhotometryContainer
-        Multi-epoch optical photometry container.
     """
 
     # ========================= SCHEMA ========================= #
@@ -814,17 +867,17 @@ class OpticalPhotometryEpoch(DataContainer):
     # ========================= DATA ACCESS ========================= #
     @property
     def band_name(self) -> np.ndarray:
-        """Band names as a string array."""
+        """~numpy.ndarray: Band names as a string array."""
         return np.asarray(self.__table__["band_name"].data)
 
     @property
     def n_obs(self) -> int:
-        """Number of bands / observations."""
+        """int: Number of bands / observations."""
         return len(self)
 
     @property
     def flux(self) -> u.Quantity:
-        """Flux density F_ν in erg/s/cm²/Hz (converted from mag if needed)."""
+        """~astropy.units.Quantity: Flux density F_ν in erg/s/cm²/Hz (converted from mag if needed)."""
         if self._has_flux_column:
             return self.__table__["flux_density"].quantity
         mag_vals = np.asarray(self.__table__["mag_ab"].data, dtype=float)
@@ -832,7 +885,7 @@ class OpticalPhotometryEpoch(DataContainer):
 
     @property
     def flux_error(self) -> u.Quantity:
-        r"""1-sigma uncertainty on F_ν (propagated from mag error if needed)."""
+        r"""~astropy.units.Quantity: 1-sigma uncertainty on F_ν (propagated from mag error if needed)."""
         if self._has_flux_column and "flux_density_error" in self.__table__.colnames:
             return self.__table__["flux_density_error"].quantity
         mag_err = np.asarray(self.__table__["mag_ab_error"].data, dtype=float)
@@ -840,7 +893,7 @@ class OpticalPhotometryEpoch(DataContainer):
 
     @property
     def flux_upper_limit(self) -> u.Quantity:
-        """Upper limit on F_ν in erg/s/cm²/Hz (NaN for detections)."""
+        """~astropy.units.Quantity: Upper limit on F_ν in erg/s/cm²/Hz (NaN for detections)."""
         if "flux_upper_limit" in self.__table__.colnames:
             return self.__table__["flux_upper_limit"].quantity
         if "mag_ab_upper_limit" in self.__table__.colnames:
@@ -850,21 +903,21 @@ class OpticalPhotometryEpoch(DataContainer):
 
     @property
     def mag(self) -> np.ndarray:
-        """AB magnitudes (converted from flux if needed)."""
+        """~numpy.ndarray: AB magnitudes (converted from flux if needed)."""
         if self._has_mag_column:
             return np.asarray(self.__table__["mag_ab"].data, dtype=float)
         return flux_to_ab_mag(self.flux.value)
 
     @property
     def mag_error(self) -> np.ndarray:
-        r"""1-sigma uncertainty on AB magnitude (propagated from flux if needed)."""
+        r"""~numpy.ndarray: 1-sigma uncertainty on AB magnitude (propagated from flux if needed)."""
         if self._has_mag_column and "mag_ab_error" in self.__table__.colnames:
             return np.asarray(self.__table__["mag_ab_error"].data, dtype=float)
         return 1.0857 * self.flux_error.value / self.flux.value
 
     @property
     def mag_upper_limit(self) -> np.ndarray:
-        """AB magnitude upper limit (NaN for detections; converted from flux if needed)."""
+        """~numpy.ndarray: AB magnitude upper limit (NaN for detections; converted from flux if needed)."""
         if "mag_ab_upper_limit" in self.__table__.colnames:
             return np.asarray(self.__table__["mag_ab_upper_limit"].data, dtype=float)
         return flux_to_ab_mag(self.flux_upper_limit.value)
@@ -872,25 +925,39 @@ class OpticalPhotometryEpoch(DataContainer):
     # ========================= DETECTION LOGIC ========================= #
     @property
     def detection_mask(self) -> np.ndarray:
-        """Boolean mask: True for detections."""
+        """~numpy.ndarray: True where the row is a detection; False for upper limits."""
         return np.isnan(self.flux_upper_limit.value)
 
     @property
     def non_detection_mask(self) -> np.ndarray:
-        """Boolean mask: True for upper limits (non-detections)."""
+        """~numpy.ndarray: True where the row is an upper limit; False for detections."""
         return ~self.detection_mask
 
     @property
     def n_detections(self) -> int:
+        """int: Number of detections."""
         return int(self.detection_mask.sum())
 
     @property
     def n_non_detections(self) -> int:
+        """int: Number of non-detections (upper limits)."""
         return int(self.non_detection_mask.sum())
 
     # ========================= MASKING ========================= #
     def apply_mask(self, mask) -> "OpticalPhotometryEpoch":
-        """Return a new container with only the rows selected by *mask*."""
+        """
+        Return a new container with only the rows selected by *mask*.
+
+        Parameters
+        ----------
+        mask : ~numpy.ndarray
+            Boolean mask selecting the rows to keep.
+
+        Returns
+        -------
+        ~trilobite.data.optical_photometry.OpticalPhotometryEpoch
+            A new epoch holding only the selected rows.
+        """
         mask = np.asarray(mask)
         return type(self)(self.__table__[mask].copy())
 
@@ -913,12 +980,12 @@ class OpticalPhotometryEpoch(DataContainer):
 
         Default mapping:
 
-        - ``variables``: ``{"band_idx": <resolved integer indices>}``
+        - ``variables``: ``{"band_index": <resolved integer indices>}``
         - ``observables``: the single model output mapped to flux columns
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             Optical model instance exposing a ``bundle`` attribute
             (:class:`~trilobite.utils.phot_utils.FilterBundle`).
         variables : dict, optional
@@ -934,7 +1001,8 @@ class OpticalPhotometryEpoch(DataContainer):
 
         Returns
         -------
-        InferenceData
+        ~trilobite.data.core.InferenceData
+            The inference dataset built from the photometry.
 
         Raises
         ------
@@ -954,7 +1022,7 @@ class OpticalPhotometryEpoch(DataContainer):
         name_to_idx = {name: idx for idx, name in enumerate(filter_names)}
 
         try:
-            band_idx = np.array([name_to_idx[n] for n in self.band_name], dtype=int)
+            band_index = np.array([name_to_idx[n] for n in self.band_name], dtype=int)
         except KeyError as exc:
             bad = str(exc).strip("'")
             raise KeyError(
@@ -969,7 +1037,7 @@ class OpticalPhotometryEpoch(DataContainer):
         else:
             mask_arr = np.ones(self.n_obs, dtype=bool)
 
-        idx_vals = band_idx[mask_arr]
+        idx_vals = band_index[mask_arr]
         flux_vals = self.flux.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
         flux_err_vals = self.flux_error.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
         flux_ul_vals = self.flux_upper_limit.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
@@ -990,7 +1058,7 @@ class OpticalPhotometryEpoch(DataContainer):
             )
 
         if variables is None:
-            variables = {"band_idx": idx_vals}
+            variables = {"band_index": idx_vals}
 
         if observables is None:
             if len(model.output_names) != 1:
@@ -1015,7 +1083,7 @@ class OpticalPhotometryEpoch(DataContainer):
         scratch = self.__table__.copy()
         if mask is not None:
             scratch = scratch[mask_arr]
-        scratch["band_idx"] = idx_vals
+        scratch["band_index"] = idx_vals
         return InferenceData.from_table(
             model=model,
             table=scratch,
@@ -1030,7 +1098,21 @@ class OpticalPhotometryEpoch(DataContainer):
         table: Table,
         column_map: Optional[dict] = None,
     ) -> "OpticalPhotometryEpoch":
-        """Construct an :class:`OpticalPhotometryEpoch` from an Astropy table."""
+        """
+        Construct an :class:`OpticalPhotometryEpoch` from an Astropy table.
+
+        Parameters
+        ----------
+        table : ~astropy.table.Table
+            The epoch's photometry table.
+        column_map : dict, optional
+            Mapping from existing column names to the schema's column names.
+
+        Returns
+        -------
+        ~trilobite.data.optical_photometry.OpticalPhotometryEpoch
+            The constructed epoch.
+        """
         if column_map is not None:
             table = table.copy()
             table.rename_columns(list(column_map.keys()), list(column_map.values()))
@@ -1042,6 +1124,20 @@ class OpticalPhotometryEpoch(DataContainer):
         path,
         **kwargs,
     ) -> "OpticalPhotometryEpoch":
-        """Construct an :class:`OpticalPhotometryEpoch` from a file on disk."""
+        """
+        Construct an :class:`OpticalPhotometryEpoch` from a file on disk.
+
+        Parameters
+        ----------
+        path : str or ~pathlib.Path
+            Path to the file to read.
+        **kwargs : dict
+            Additional keyword arguments passed to ``astropy.table.Table.read``.
+
+        Returns
+        -------
+        ~trilobite.data.optical_photometry.OpticalPhotometryEpoch
+            The constructed epoch.
+        """
         table = Table.read(path, **kwargs)
         return cls(table)

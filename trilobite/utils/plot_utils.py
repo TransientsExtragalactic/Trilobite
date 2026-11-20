@@ -20,7 +20,7 @@ def resolve_fig_axes(fig=None, axes=None, fig_size=None):
 
     Returns
     -------
-    fig : matplotlib.figure.Figure
+    matplotlib.figure.Figure
         The resolved figure object.
     """
     import matplotlib.pyplot as plt
@@ -58,7 +58,7 @@ def get_default_cmap():
 
     Returns
     -------
-    cmap : matplotlib.colors.Colormap
+    matplotlib.colors.Colormap
         The default colormap.
     """
     return plt.get_cmap(trilobite_config["plotting.default_cmap"])

@@ -303,9 +303,9 @@ class TestPostShockConsistency:
         """T^{00} > U_int (lab-frame energy includes bulk kinetic energy)."""
         assert np.all(state_k0.thermal_energy_density_lab > state_k0.thermal_energy_density_comoving)
 
-    def test_temperature_positive(self, state_k0):
-        """Post-shock temperature is strictly positive."""
-        assert np.all(state_k0.post_shock_temperature > 0.0)
+    def test_thermal_energy_positive(self, state_k0):
+        """The comoving thermal energy density is strictly positive."""
+        assert np.all(state_k0.thermal_energy_density_comoving > 0.0)
 
     def test_all_fields_finite(self, state_k0):
         """All state fields are finite at every time step."""
@@ -415,7 +415,6 @@ class TestInterface:
             "radius",
             "velocity",
             "post_shock_pressure",
-            "post_shock_temperature",
             "post_shock_comoving_density",
             "post_shock_lab_density",
             "thermal_energy_density_comoving",

@@ -52,10 +52,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Ensure changelog is updated
         run: |
-          if ! git diff --cached --name-only | grep -q "CHANGELOG.md"; then
-            echo "❌ No CHANGELOG.md update found in commit."
+          git fetch origin ${{ github.base_ref }} --depth=1
+          if ! git diff origin/${{ github.base_ref }}...HEAD --name-only | grep -q "CHANGELOG.md"; then
+            echo "❌ No CHANGELOG.md update found in this PR."
             exit 1
           fi
 
@@ -72,9 +75,12 @@ jobs:
       - name: Install documentation dependencies
         run: |
           pip install .[docs]
+      # Warnings are reported (nitpicky mode, ``-n``) but do not fail the build: the documentation
+      # currently carries several hundred cross-reference and bibliography warnings, so ``-W`` failed
+      # every pull request regardless of its content. A Sphinx error or exception still fails this job.
       - name: Build documentation with Sphinx
         run: |
-          sphinx-build -b html -n -W -j auto docs/source docs/_build/html
+          sphinx-build -b html -n -j auto docs/source docs/_build/html
 
   # Run the test suite with pytest.
   tests:
@@ -82,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python

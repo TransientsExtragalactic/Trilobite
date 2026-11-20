@@ -969,9 +969,14 @@ def compute_ff_emissivity(
 
     Returns
     -------
-    j_nu : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         Monochromatic emissivity
         :math:`j_\nu` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].
+
+    See Also
+    --------
+    compute_ff_absorption : Free–free absorption coefficient for the same plasma.
+    compute_ff_RJ_emissivity : Fast Rayleigh–Jeans approximation (:math:`h\nu \ll k_B T`).
 
     Notes
     -----
@@ -1016,11 +1021,6 @@ def compute_ff_emissivity(
             Z=1,
             T=1e4 * u.K,
         )
-
-    See Also
-    --------
-    compute_ff_absorption : Free–free absorption coefficient for the same plasma.
-    compute_ff_RJ_emissivity : Fast Rayleigh–Jeans approximation (:math:`h\nu \ll k_B T`).
     """
     nu = ensure_in_units(nu, u.Hz)
     n_e = ensure_in_units(n_e, u.cm**-3)
@@ -1104,8 +1104,13 @@ def compute_ff_absorption(
 
     Returns
     -------
-    alpha_nu : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         Absorption coefficient :math:`\alpha_\nu` [cm\ :sup:`-1`].
+
+    See Also
+    --------
+    compute_ff_emissivity : Corresponding spectral emissivity.
+    compute_ff_RJ_absorption : Rayleigh–Jeans approximation (:math:`h\nu \ll k_B T`).
 
     Notes
     -----
@@ -1157,11 +1162,6 @@ def compute_ff_absorption(
         )
         L = 1e17 * u.cm  # depth of the shell
         tau = (alpha_arr * L).decompose()
-
-    See Also
-    --------
-    compute_ff_emissivity : Corresponding spectral emissivity.
-    compute_ff_RJ_absorption : Rayleigh–Jeans approximation (:math:`h\nu \ll k_B T`).
     """
     nu = ensure_in_units(nu, u.Hz)
     n_e = ensure_in_units(n_e, u.cm**-3)
@@ -1193,7 +1193,7 @@ def compute_ff_RJ_emissivity(
     approx: str = "draine",
 ) -> u.Quantity:
     r"""
-    Rayleigh–Jeans limit free–free spectral emissivity.
+    Compute the Rayleigh–Jeans limit free–free spectral emissivity.
 
     Valid when :math:`h\nu \ll k_B T` (i.e.\ radio through sub-mm frequencies
     for plasmas with :math:`T \gtrsim 10^4` K), this approximation drops the
@@ -1239,9 +1239,14 @@ def compute_ff_RJ_emissivity(
 
     Returns
     -------
-    j_nu : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         Emissivity
         :math:`j_\nu^{\rm RJ}` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].
+
+    See Also
+    --------
+    compute_ff_emissivity : Exact emissivity valid at all frequencies.
+    compute_ff_RJ_absorption : Matching RJ absorption coefficient.
 
     Notes
     -----
@@ -1288,11 +1293,6 @@ def compute_ff_RJ_emissivity(
         print(
             f"Ratio : {(j_rj / j_exact).decompose():.6f}"
         )  # should be ≈ 1
-
-    See Also
-    --------
-    compute_ff_emissivity : Exact emissivity valid at all frequencies.
-    compute_ff_RJ_absorption : Matching RJ absorption coefficient.
     """
     nu = ensure_in_units(nu, u.Hz)
     n_e = ensure_in_units(n_e, u.cm**-3)
@@ -1324,7 +1324,7 @@ def compute_ff_RJ_absorption(
     approx: str = "draine",
 ) -> u.Quantity:
     r"""
-    Rayleigh–Jeans limit free–free absorption coefficient.
+    Compute the Rayleigh–Jeans limit free–free absorption coefficient.
 
     Valid when :math:`h\nu \ll k_B T`, the stimulated-emission correction
     simplifies to :math:`(1 - e^{-h\nu/k_B T}) \approx h\nu / k_B T` and
@@ -1369,9 +1369,14 @@ def compute_ff_RJ_absorption(
 
     Returns
     -------
-    alpha_nu : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         Absorption coefficient
         :math:`\alpha_\nu^{\rm RJ}` [cm\ :sup:`-1`].
+
+    See Also
+    --------
+    compute_ff_absorption : Exact absorption valid at all frequencies.
+    compute_ff_RJ_emissivity : Matching RJ emissivity.
 
     Notes
     -----
@@ -1426,11 +1431,6 @@ def compute_ff_RJ_absorption(
         tau_arr = (
             alpha_arr * L_shell
         ).decompose()  # optical depth vs frequency
-
-    See Also
-    --------
-    compute_ff_absorption : Exact absorption valid at all frequencies.
-    compute_ff_RJ_emissivity : Matching RJ emissivity.
     """
     nu = ensure_in_units(nu, u.Hz)
     n_e = ensure_in_units(n_e, u.cm**-3)
@@ -1497,7 +1497,7 @@ def compute_ff_emissivity_comp(
 
     Returns
     -------
-    j_nu : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         Emissivity [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].
 
     See Also
@@ -1566,7 +1566,7 @@ def compute_ff_absorption_comp(
 
     Returns
     -------
-    alpha_nu : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         Absorption coefficient [cm\ :sup:`-1`].
 
     See Also
@@ -1602,7 +1602,7 @@ def compute_ff_RJ_emissivity_comp(
     g_ffs: "Union[_ArrayLike, None]" = None,
     approx: str = "draine",
 ) -> u.Quantity:
-    r"""Rayleigh–Jeans free–free emissivity for a multi-species plasma.
+    r"""Compute the Rayleigh–Jeans free–free emissivity for a multi-species plasma.
 
     Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`) of
     :func:`compute_ff_emissivity_comp`.  Uses the frequency-averaged Gaunt
@@ -1631,7 +1631,7 @@ def compute_ff_RJ_emissivity_comp(
 
     Returns
     -------
-    j_nu : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         RJ emissivity [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].
 
     See Also
@@ -1667,7 +1667,7 @@ def compute_ff_RJ_absorption_comp(
     g_ffs: "Union[_ArrayLike, None]" = None,
     approx: str = "draine",
 ) -> u.Quantity:
-    r"""Rayleigh–Jeans free–free absorption coefficient for a multi-species plasma.
+    r"""Compute the Rayleigh–Jeans free–free absorption coefficient for a multi-species plasma.
 
     Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`) of
     :func:`compute_ff_absorption_comp`.  Uses the frequency-averaged Gaunt
@@ -1696,7 +1696,7 @@ def compute_ff_RJ_absorption_comp(
 
     Returns
     -------
-    alpha_nu : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         RJ absorption coefficient [cm\ :sup:`-1`].
 
     See Also

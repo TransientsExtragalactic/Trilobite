@@ -61,7 +61,7 @@ from astropy import units as u
 from numpy.testing import assert_allclose
 
 from trilobite.dynamics.shocks import ChevalierSelfSimilarShockEngine, ChevalierSelfSimilarWindShockEngine
-from trilobite.dynamics.shocks.utils import _normalize_BPL_ejecta
+from trilobite.dynamics.profiles.ejecta import _normalize_bpl_cgs as _normalize_BPL_ejecta_cgs
 
 # -------------------------------------------------------------------- #
 # Test Fixtures / Data                                                 #
@@ -307,7 +307,7 @@ class TestChevalierSelfSimilarShockEngine:
 
         # K_EJ: outer ejecta normalization (= g^n in Chevalier notation),
         # computed identically to the engine's internal call.
-        v_t, K_inner = _normalize_BPL_ejecta(E_ej_cgs, M_ej_cgs, n=n, delta=0)
+        K_inner, v_t = _normalize_BPL_ejecta_cgs(E_ej_cgs, M_ej_cgs, n=n, delta=0, v_max=np.inf)
         K_EJ = K_inner * v_t**n
 
         R_chevalier = (A_chevalier * K_EJ / K_csm_cgs) ** (1 / (n - s)) * t_ref_s**_lambda

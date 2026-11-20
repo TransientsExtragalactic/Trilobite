@@ -64,8 +64,8 @@ class DataContainer(ABC):
     domain-specific preprocessing (e.g., detection logic, epoch grouping, masking,
     or derived quantities).
 
-    Design principles
-    -----------------
+    .. rubric:: Design principles
+
     - **Schema-driven**:
       Each subclass declares a formal column schema describing required and optional
       columns, expected dtypes, and physical units. Validation occurs eagerly at
@@ -83,8 +83,8 @@ class DataContainer(ABC):
       Containers support NumPy coercion (``np.asarray(container)``) and explicit CGS
       conversion via :meth:`to_cgs_array` for efficient numerical evaluation.
 
-    Role in the Trilobite pipeline
-    --------------------------------
+    .. rubric:: Role in the Trilobite pipeline
+
     DataContainer objects are typically consumed by likelihood classes, which
     define how model predictions are statistically compared to data. Models and
     samplers **never interact with raw tables directly**—all data access flows
@@ -94,13 +94,12 @@ class DataContainer(ABC):
     (e.g., photometry, spectra, time series, generic ``(x, y)`` datasets) while
     maintaining a consistent and robust inference API.
 
-    Notes
-    -----
-    - This class is abstract and cannot be instantiated directly.
-    - Subclasses should call ``super().__init__`` to ensure schema validation.
-    - Equality comparisons compare the underlying tables.
-    - This class deliberately does **not** subclass :class:`astropy.table.Table`
-      in order to strictly control mutability and invariants.
+    Parameters
+    ----------
+    table : ~astropy.table.Table
+        The data table to be contained. It must conform to the schema defined in :attr:`COLUMNS`.
+    **kwargs : dict
+        Additional keyword arguments for subclass-specific configuration.
 
     See Also
     --------
@@ -108,6 +107,14 @@ class DataContainer(ABC):
         Likelihood classes that consume DataContainer instances.
     astropy.table.Table
         Underlying data structure used for storage.
+
+    Notes
+    -----
+    - This class is abstract and cannot be instantiated directly.
+    - Subclasses should call ``super().__init__`` to ensure schema validation.
+    - Equality comparisons compare the underlying tables.
+    - This class deliberately does **not** subclass :class:`astropy.table.Table`
+      in order to strictly control mutability and invariants.
     """
 
     # ========================= SCHEMA DEFINITION ========================= #
@@ -154,10 +161,10 @@ class DataContainer(ABC):
 
         Parameters
         ----------
-        table: ~astropy.table.Table
+        table : ~astropy.table.Table
             The data table to be contained. This must conform to the schema defined in the
             :attr:`COLUMNS`` class attribute.
-        kwargs:
+        **kwargs : dict
             Additional keyword arguments for subclass-specific configuration.
         """
         # Assign the table to the data class.
@@ -261,9 +268,30 @@ class DataContainer(ABC):
     __array_priority__ = 1000
 
     def __len__(self):
+        """
+        Return the number of rows in the container.
+
+        Returns
+        -------
+        int
+            The number of rows in the underlying table.
+        """
         return self.__table__.__len__()
 
     def __getitem__(self, item):
+        """
+        Return a copy of a column, row or slice of the underlying table.
+
+        Parameters
+        ----------
+        item : str or int or slice or ~numpy.ndarray
+            Column name, row index, slice or mask selecting the part of the table to return.
+
+        Returns
+        -------
+        ~astropy.table.Table or ~astropy.table.Column
+            A copy of the selected part of the table.
+        """
         result = self.__table__.__getitem__(item)
         if isinstance(result, Table):
             return result.copy()
@@ -271,21 +299,79 @@ class DataContainer(ABC):
             return result.copy()
 
     def __iter__(self):
+        """
+        Iterate over the rows of a copy of the underlying table.
+
+        Returns
+        -------
+        iterator
+            An iterator over the table rows.
+        """
         return iter(self.__table__.copy())
 
     def __str__(self):
+        """
+        Return the string form of the underlying table.
+
+        Returns
+        -------
+        str
+            The formatted table.
+        """
         return str(self.__table__)
 
     def __repr__(self):
+        """
+        Return a short representation giving the class name and the number of observations.
+
+        Returns
+        -------
+        str
+            The representation string.
+        """
         return f"<{self.__class__.__name__} n_obs={len(self)}>"
 
     def __contains__(self, item):
+        """
+        Check whether a column name is present in the table.
+
+        Parameters
+        ----------
+        item : str
+            The column name to look for.
+
+        Returns
+        -------
+        bool
+            ``True`` if ``item`` is a column of the table.
+        """
         return self.__table__.__contains__(item)
 
     def __bool__(self):
+        """
+        Check whether the container holds any rows.
+
+        Returns
+        -------
+        bool
+            ``True`` if the container is non-empty.
+        """
         return len(self) > 0
 
     def __eq__(self, other):
+        """
+        Compare this container with another container of the same class.
+
+        Parameters
+        ----------
+        other : object
+            The object to compare with.
+
+        Returns
+        -------
+        bool or NotImplemented
+            Whether the underlying tables are equal, or ``NotImplemented`` if ``other`` is of a different class.
+        """
         if not isinstance(other, self.__class__):
             return NotImplemented
         return self.__table__ == other.__table__
@@ -341,7 +427,7 @@ class DataContainer(ABC):
     @property
     def table(self) -> Table:
         """
-        Return a copy of the underlying Astropy table.
+        ~astropy.table.Table: Return a copy of the underlying Astropy table.
 
         This prevents mutation of the internal container state.
         """
@@ -366,7 +452,14 @@ class DataContainer(ABC):
         return {}
 
     def copy(self):
-        """Create a copy of this container."""
+        """
+        Create a copy of this container.
+
+        Returns
+        -------
+        ~trilobite.data.core.DataContainer
+            A new container of the same class holding a copy of the table.
+        """
         return self.__class__.from_table(self.__table__.copy(), **self._copy_kwargs())
 
     def apply_mask(self, mask) -> "DataContainer":
@@ -381,7 +474,7 @@ class DataContainer(ABC):
 
         Returns
         -------
-        DataContainer
+        ~trilobite.data.core.DataContainer
             A new instance of the same class containing only the selected rows,
             with full schema validation re-applied.
 
@@ -455,12 +548,12 @@ class DataContainer(ABC):
         ----------
         table : ~astropy.table.Table
             The input table containing the data.
-        kwargs:
+        **kwargs : dict
             Additional keyword arguments for subclass-specific configuration.
 
         Returns
         -------
-        DataContainer
+        ~trilobite.data.core.DataContainer
             An instance of the subclass containing the data from the table.
         """
         pass
@@ -476,12 +569,12 @@ class DataContainer(ABC):
             The file path to the FITS file containing the data.
         read_kws : dict
             Additional keyword arguments to pass to ``astropy.table.Table.read()``.
-        kwargs:
-            Additional keyword arguments to pass to :meth:`from_table`.
+        **kwargs : dict
+            Additional keyword arguments passed to :meth:`from_table`.
 
         Returns
         -------
-        DataContainer
+        ~trilobite.data.core.DataContainer
             An instance of the subclass containing the data from the FITS file.
         """
         # Coerce the read kwargs.
@@ -502,8 +595,8 @@ class DataContainer(ABC):
             The file path where the FITS file will be saved.
         write_kws : dict
             Additional keyword arguments to pass to ``astropy.table.Table.write()``.
-        **kwargs:
-            Additional keyword arguments to be used in subclasses.
+        **_ : dict
+            Ignored; accepted so that subclasses can take additional keyword arguments.
         """
         if write_kws is None:
             write_kws = {}
@@ -546,7 +639,6 @@ class DataContainer(ABC):
             - Required independent variable names
             - Required observable names
             - Expected units for each quantity
-
         variables : dict[str, tuple[str, ...]] or str, optional
             Manual overrides for independent variable column resolution.
 
@@ -560,13 +652,14 @@ class DataContainer(ABC):
 
             If not provided, default column names are assumed to match
             the model variable names directly.
-
         observables : dict[str, tuple[str, ...]] or str, optional
             Manual overrides for observable column resolution.
 
             Keys must match model observable names.
 
             Same tuple formats as ``variables``.
+        **_ : dict
+            Ignored; accepted so that subclasses can take additional keyword arguments.
 
         Returns
         -------
@@ -578,15 +671,8 @@ class DataContainer(ABC):
         ValueError
             If required columns are missing or shapes are inconsistent.
 
-        UnitsError
+        ~astropy.units.UnitsError
             If table column units cannot be coerced to model-declared units.
-
-        Notes
-        -----
-        - No transformations (e.g., log-scaling) are applied.
-        - No statistical assumptions are imposed.
-        - All validation logic is centralized in :class:`InferenceData`.
-        - This method is intentionally thin and deterministic.
 
         See Also
         --------
@@ -594,6 +680,13 @@ class DataContainer(ABC):
             Lower-level table ingestion logic.
         InferenceData.from_arrays :
             Direct array-based ingestion.
+
+        Notes
+        -----
+        - No transformations (e.g., log-scaling) are applied.
+        - No statistical assumptions are imposed.
+        - All validation logic is centralized in :class:`InferenceData`.
+        - This method is intentionally thin and deterministic.
         """
         return InferenceData.from_table(
             model=model,
@@ -624,8 +717,8 @@ class Observable:
     interpret the data according to the needs of the problem at hand while
     being agnostic about the physical meaning of the observable.
 
-    Parameters
-    ----------
+    .. rubric:: Attributes
+
     value : np.ndarray
         Measured values of the observable. This should be provided
         as a ``(n,)`` array where ``n`` is the number of observations.
@@ -657,6 +750,7 @@ class Observable:
     # resulting object is correctly generated and does not
     # have any foundational issues.
     def __post_init__(self):
+        """Validate the arrays and coerce them to a consistent form."""
         # Coerce the input object to an array so that we
         # are guaranteed to have a consistent interface for the rest of the code.
         value = np.asarray(self.value)
@@ -715,9 +809,25 @@ class Observable:
     __array_priority__ = 1000  # ensure numpy defers properly
 
     def __repr__(self) -> str:
+        """
+        Return a short representation of the observable.
+
+        Returns
+        -------
+        str
+            The representation string.
+        """
         return f"<Observable shape={self.shape} error={self.has_error} censoring={self.has_censoring}>"
 
     def __str__(self) -> str:
+        """
+        Return a readable summary of the observable.
+
+        Returns
+        -------
+        str
+            The number of points and the error and censoring flags.
+        """
         return (
             f"Observable(n={self.size}, "
             f"error={self.has_error}, "
@@ -726,10 +836,25 @@ class Observable:
         )
 
     def __len__(self) -> int:
+        """
+        Return the number of observations.
+
+        Returns
+        -------
+        int
+            The number of observations.
+        """
         return self.size
 
     def __bool__(self) -> bool:
-        """Truthiness defined as non-empty."""
+        """
+        Truthiness defined as non-empty.
+
+        Returns
+        -------
+        bool
+            ``True`` if the observable contains at least one point.
+        """
         return self.size > 0
 
     def __array__(self, dtype=None) -> np.ndarray:
@@ -738,13 +863,30 @@ class Observable:
 
         This allows:
             np.asarray(observable)
+
+        Parameters
+        ----------
+        dtype : ~numpy.dtype, optional
+            Requested dtype of the returned array.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            The observable values.
         """
         if dtype is not None:
             return np.asarray(self.value, dtype=dtype)
         return np.asarray(self.value)
 
     def __iter__(self):
-        """Iterate over values."""
+        """
+        Iterate over values.
+
+        Returns
+        -------
+        iterator
+            An iterator over the observable values.
+        """
         return iter(self.value)
 
     def __getitem__(self, item):
@@ -752,6 +894,16 @@ class Observable:
         Return a sliced Observable.
 
         This preserves error and censoring information.
+
+        Parameters
+        ----------
+        item : int or slice or ~numpy.ndarray
+            Index, slice or mask selecting the points to keep.
+
+        Returns
+        -------
+        ~trilobite.data.core.Observable
+            A new observable restricted to the selected points.
         """
         return Observable(
             value=self.value[item],
@@ -761,6 +913,19 @@ class Observable:
         )
 
     def __eq__(self, other) -> bool:
+        """
+        Compare this observable with another one.
+
+        Parameters
+        ----------
+        other : object
+            The object to compare with.
+
+        Returns
+        -------
+        bool or NotImplemented
+            Whether all arrays are equal, or ``NotImplemented`` if ``other`` is not an observable.
+        """
         if not isinstance(other, Observable):
             return NotImplemented
 
@@ -783,14 +948,14 @@ class Observable:
     # ------------------------------------------------------------------
     @property
     def upper_mask(self) -> Optional[np.ndarray]:
-        """Boolean mask of upper-censored points."""
+        """~numpy.ndarray or None: Boolean mask of upper-censored points."""
         if self.upper is None:
             return None
         return np.isfinite(self.upper)
 
     @property
     def lower_mask(self) -> Optional[np.ndarray]:
-        """Boolean mask of lower-censored points."""
+        """~numpy.ndarray or None: Boolean mask of lower-censored points."""
         if self.lower is None:
             return None
         return np.isfinite(self.lower)
@@ -800,32 +965,32 @@ class Observable:
     # ------------------------------------------------------------------
     @property
     def shape(self) -> tuple[int, ...]:
-        """Shape of the observable."""
+        """Tuple of int: Shape of the observable."""
         return self.value.shape
 
     @property
     def size(self) -> int:
-        """Number of observations."""
+        """int: Number of observations."""
         return self.value.size
 
     @property
     def has_error(self) -> bool:
-        """True if uncertainties are provided."""
+        """bool: True if uncertainties are provided."""
         return self.error is not None
 
     @property
     def has_upper_limits(self) -> bool:
-        """True if any upper-censored points exist."""
+        """bool: True if any upper-censored points exist."""
         return self.upper is not None and np.any(self.upper_mask)
 
     @property
     def has_lower_limits(self) -> bool:
-        """True if any lower-censored points exist."""
+        """bool: True if any lower-censored points exist."""
         return self.lower is not None and np.any(self.lower_mask)
 
     @property
     def has_censoring(self) -> bool:
-        """True if any censoring exists."""
+        """bool: True if any censoring exists."""
         return self.has_upper_limits or self.has_lower_limits
 
 
@@ -866,8 +1031,8 @@ class InferenceData:
     one-dimensional dataset or ``(N, M)`` for a grid). Likelihoods may
     derive stacked views from this base shape but do not modify it.
 
-    Parameters
-    ----------
+    .. rubric:: Attributes
+
     x : dict of str to numpy.ndarray
         Mapping from model variable names to arrays.
 
@@ -905,6 +1070,17 @@ class InferenceData:
     x_lower : dict of str to numpy.ndarray, optional
         Lower limits on independent variables.
         Missing entries are interpreted as no censoring.
+
+    See Also
+    --------
+    :class:`trilobite.data.core.DataContainer`
+        High-level data ingestion and column resolution.
+
+    :class:`trilobite.inference.likelihood.base.Likelihood`
+        Statistical layer that consumes :class:`InferenceData`.
+
+    :class:`Observable`
+        Lightweight container representing a single dependent variable.
 
     Notes
     -----
@@ -962,17 +1138,6 @@ class InferenceData:
                 )
             },
         )
-
-    See Also
-    --------
-    :class:`trilobite.data.core.DataContainer`
-        High-level data ingestion and column resolution.
-
-    :class:`trilobite.inference.likelihood.base.Likelihood`
-        Statistical layer that consumes :class:`InferenceData`.
-
-    :class:`Observable`
-        Lightweight container representing a single dependent variable.
     """
 
     # ----------------------------------------------------------------
@@ -988,6 +1153,7 @@ class InferenceData:
     # Initialization / Validation
     # ------------------------------------------------------------------
     def __post_init__(self):
+        """Validate the variables and observables and check that their shapes are consistent."""
         # Validate the independent variable exists and is in the
         # correct format before doing anything else.
         if not isinstance(self.observables, dict):
@@ -1092,6 +1258,14 @@ class InferenceData:
     # Dunder Methods
     # ------------------------------------------------------------------
     def __repr__(self) -> str:
+        """
+        Return a multi-line representation of the dataset.
+
+        Returns
+        -------
+        str
+            The representation string.
+        """
         has_x_err = self.x_error is not None
         any_censored = any(obs.upper is not None or obs.lower is not None for obs in self.observables.values())
         parts = [
@@ -1104,6 +1278,14 @@ class InferenceData:
         return "InferenceData(\n" + "\n".join(parts) + "\n)"
 
     def __str__(self) -> str:
+        """
+        Return the same string as :meth:`__repr__`.
+
+        Returns
+        -------
+        str
+            The representation string.
+        """
         return self.__repr__()
 
     def describe(self) -> str:
@@ -1173,9 +1355,31 @@ class InferenceData:
         return result
 
     def __len__(self) -> int:
+        """
+        Return the number of data points.
+
+        Returns
+        -------
+        int
+            The number of data points.
+        """
         return self.size
 
     def __eq__(self, other):
+        """
+        Compare this dataset with another one.
+
+        Parameters
+        ----------
+        other : object
+            The object to compare with.
+
+        Returns
+        -------
+        bool or NotImplemented
+            Whether variables, errors and observables are all equal, or ``NotImplemented`` if ``other`` is not an
+            inference dataset.
+        """
         if not isinstance(other, InferenceData):
             return NotImplemented
 
@@ -1226,34 +1430,46 @@ class InferenceData:
     # ------------------------------------------------------------------
     @property
     def shape(self) -> tuple[int, ...]:
-        """Shape of the dataset."""
+        """Tuple of int: Shape of the dataset."""
         return next(iter(self.x.values())).shape
 
     @property
     def size(self) -> int:
-        """Total number of data points."""
+        """int: Total number of data points."""
         return int(np.prod(self.shape))
 
     @property
     def variable_names(self) -> list[str]:
-        """List of independent variable names."""
+        """List of str: List of independent variable names."""
         return list(self.x.keys())
 
     @property
     def observable_names(self) -> list[str]:
-        """List of observable names."""
+        """List of str: List of observable names."""
         return list(self.observables.keys())
 
     @property
     def n_observables(self) -> int:
-        """Number of dependent variables."""
+        """int: Number of dependent variables."""
         return len(self.observables)
 
     # ------------------------------------------------------------------
     # Helper Methods
     # ------------------------------------------------------------------
     def get_observable(self, name: str) -> Observable:
-        """Return a specific observable by name."""
+        """
+        Return a specific observable by name.
+
+        Parameters
+        ----------
+        name : str
+            Name of the observable.
+
+        Returns
+        -------
+        ~trilobite.data.core.Observable
+            The observable called ``name``.
+        """
         try:
             return self.observables[name]
         except KeyError as exp:
@@ -1593,7 +1809,7 @@ class InferenceData:
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             The model defining:
 
             - Required independent variable names
@@ -1654,7 +1870,6 @@ class InferenceData:
 
         Examples
         --------
-
         .. code-block:: python
 
             x = {"time": np.linspace(0, 10, 100)}
@@ -1890,12 +2105,10 @@ class InferenceData:
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             Model defining required variable and observable names and units.
-
         table : astropy.table.Table
             Input data table.
-
         variables : dict[str, tuple or str], optional
             Manual column specifications for independent variables.
 
@@ -1905,14 +2118,14 @@ class InferenceData:
             - "column_name"
             - ("column", "error")
             - ("column", "error", "upper", "lower")
-
         observables : dict[str, tuple or str], optional
             Manual column specifications for observables.
             Same format as `variables`.
 
         Returns
         -------
-        InferenceData
+        ~trilobite.data.core.InferenceData
+            The assembled inference dataset.
 
         Raises
         ------
@@ -2058,6 +2271,13 @@ class InferenceData:
             JSON-safe dictionary representation of this
             :class:`InferenceData` instance.
 
+        See Also
+        --------
+        from_dict :
+            Reconstruct an :class:`InferenceData` instance from a dictionary.
+        json.dumps :
+            Serialize dictionary to JSON.
+
         Notes
         -----
         The dictionary structure has the following canonical form:
@@ -2098,13 +2318,6 @@ class InferenceData:
           included if present.
         - Optional observable fields (``error``, ``upper``, ``lower``)
           are only included when defined.
-
-        See Also
-        --------
-        from_dict :
-            Reconstruct an :class:`InferenceData` instance from a dictionary.
-        json.dumps :
-            Serialize dictionary to JSON.
         """
         # Construct the scaffold dictionary for the eventual serialized array.
         out: dict[str, Any] = {
@@ -2255,6 +2468,13 @@ class InferenceData:
         FileExistsError
             If the file exists and ``overwrite=False``.
 
+        See Also
+        --------
+        from_json :
+            Inverse operation.
+        to_dict :
+            Canonical serialization backend.
+
         Notes
         -----
         - Output is fully JSON-safe (pure Python types only).
@@ -2262,13 +2482,6 @@ class InferenceData:
         - NaN values are preserved according to Python's JSON encoding rules.
         - The resulting file is human-readable.
         - This method does not modify the object state.
-
-        See Also
-        --------
-        from_json :
-            Inverse operation.
-        to_dict :
-            Canonical serialization backend.
         """
         import json
 
@@ -2308,19 +2521,19 @@ class InferenceData:
         ValueError
             If the file contents are not a valid InferenceData structure.
 
-        Notes
-        -----
-        - All arrays are restored as NumPy arrays.
-        - Shape and structural validation occur during object construction.
-        - Metadata stored in the ``attrs`` block is not automatically
-          attached to the returned object but remains available in the file.
-
         See Also
         --------
         to_json :
             JSON serialization method.
         from_dict :
             Canonical reconstruction backend.
+
+        Notes
+        -----
+        - All arrays are restored as NumPy arrays.
+        - Shape and structural validation occur during object construction.
+        - Metadata stored in the ``attrs`` block is not automatically
+          attached to the returned object but remains available in the file.
         """
         import json
 
@@ -2362,6 +2575,13 @@ class InferenceData:
         FileExistsError
             If the file exists and ``overwrite=False``.
 
+        See Also
+        --------
+        from_hdf5 :
+            Inverse operation.
+        to_dict :
+            JSON serialization backend.
+
         Notes
         -----
         - Independent variables are stored under ``/x``.
@@ -2371,13 +2591,6 @@ class InferenceData:
         - Root attributes include ``format`` and ``version``.
         - Arrays are written in native NumPy format (no conversion to lists).
         - This method is suitable for large datasets and high-performance workflows.
-
-        See Also
-        --------
-        from_hdf5 :
-            Inverse operation.
-        to_dict :
-            JSON serialization backend.
         """
         import h5py
 
@@ -2454,6 +2667,11 @@ class InferenceData:
         ValueError
             If the file does not conform to the expected format.
 
+        See Also
+        --------
+        to_hdf5 :
+            HDF5 serialization method.
+
         Notes
         -----
         - The file must contain a root attribute ``format="InferenceData"``.
@@ -2461,11 +2679,6 @@ class InferenceData:
         - Structural validation occurs during object construction.
         - Metadata stored in HDF5 attributes is not automatically
           attached to the returned object.
-
-        See Also
-        --------
-        to_hdf5 :
-            HDF5 serialization method.
         """
         import h5py
 
@@ -2547,15 +2760,15 @@ class InferenceData:
         ValueError
             If the file extension is unsupported.
 
-        Notes
-        -----
-        This is a convenience wrapper around :meth:`to_json`
-        and :meth:`to_hdf5`.
-
         See Also
         --------
         from_file :
             Inverse operation.
+
+        Notes
+        -----
+        This is a convenience wrapper around :meth:`to_json`
+        and :meth:`to_hdf5`.
         """
         path = Path(filename)
         suffix = path.suffix.lower()
@@ -2597,15 +2810,15 @@ class InferenceData:
         ValueError
             If the file extension is unsupported.
 
-        Notes
-        -----
-        This is a convenience wrapper around :meth:`from_json`
-        and :meth:`from_hdf5`.
-
         See Also
         --------
         to_file :
             Generic serialization method.
+
+        Notes
+        -----
+        This is a convenience wrapper around :meth:`from_json`
+        and :meth:`from_hdf5`.
         """
         path = Path(filename)
         suffix = path.suffix.lower()
@@ -2650,8 +2863,8 @@ class XYDataContainer(DataContainer, ABC):
     Interpretation of errors and censoring is entirely delegated to likelihood
     implementations.
 
-    Key features
-    ------------
+    .. rubric:: Key features
+
     - **Axis abstraction**:
       Independent and dependent variables are identified via class attributes
       rather than hard-coded column names.
@@ -2670,8 +2883,8 @@ class XYDataContainer(DataContainer, ABC):
     - **Immutable**:
       Like all :class:`~trilobite.data.core.DataContainer` subclasses, this container is read-only.
 
-    Detection and censoring model
-    -----------------------------
+    .. rubric:: Detection and censoring model
+
     Censoring is inferred purely from the presence of *finite values* in
     declared limit columns:
 
@@ -2691,8 +2904,8 @@ class XYDataContainer(DataContainer, ABC):
     No assumptions are made about how these limits should enter a likelihood
     (e.g., one-sided Gaussian, survival analysis, hard truncation).
 
-    Intended use
-    ------------
+    .. rubric:: Intended use
+
     :class:`~trilobite.data.core.XYDataContainer` is intended to serve as a *common interface* between
     diverse data products and inference machinery, including:
 
@@ -2707,6 +2920,20 @@ class XYDataContainer(DataContainer, ABC):
     - setting axis column attributes (``X_COLUMN``, ``Y_COLUMN``, etc.),
     - adding domain-specific convenience properties if needed.
 
+    Parameters
+    ----------
+    table : ~astropy.table.Table
+        The data table to be contained. It must conform to the schema defined in :attr:`COLUMNS`.
+    **kwargs : dict
+        Additional keyword arguments for subclass-specific configuration.
+
+    See Also
+    --------
+    :obj:`~trilobite.data.core.DataContainer`
+     Base class providing schema validation and immutability.
+    trilobite.inference.likelihood.base.Likelihood
+     Likelihood classes that interpret uncertainties and censoring.
+
     Notes
     -----
     - This class is abstract and cannot be instantiated directly.
@@ -2714,13 +2941,6 @@ class XYDataContainer(DataContainer, ABC):
     interpreted by the likelihood.
     - If both upper and lower limits are present for the same axis and
     observation, the data point is considered interval-censored.
-
-    See Also
-    --------
-    DataContainer
-     Base class providing schema validation and immutability.
-    trilobite.inference.likelihood.base.Likelihood
-     Likelihood classes that interpret uncertainties and censoring.
     """
 
     # ========================= SCHEMA DEFINITION ========================= #
@@ -2822,10 +3042,10 @@ class XYDataContainer(DataContainer, ABC):
 
         Parameters
         ----------
-        table: ~astropy.table.Table
+        table : ~astropy.table.Table
             The data table to be contained. This must conform to the schema defined in the
             :attr:`COLUMNS`` class attribute.
-        kwargs:
+        **kwargs : dict
             Additional keyword arguments for subclass-specific configuration.
         """
         # Pass off to the super class to instantiate the
@@ -3011,32 +3231,74 @@ class XYDataContainer(DataContainer, ABC):
     # ====================================================================== #
     @classmethod
     def class_has_x_column(cls) -> bool:
-        """Check if the class defines an x-axis column."""
+        """
+        Check if the class defines an x-axis column.
+
+        Returns
+        -------
+        bool
+            ``True`` if the class defines an x-axis column.
+        """
         return cls.X_COLUMN is not None
 
     @classmethod
     def class_has_y_column(cls) -> bool:
-        """Check if the class defines a y-axis column."""
+        """
+        Check if the class defines a y-axis column.
+
+        Returns
+        -------
+        bool
+            ``True`` if the class defines a y-axis column.
+        """
         return cls.Y_COLUMN is not None
 
     @classmethod
     def class_has_y_error_column(cls) -> bool:
-        """Check if the class defines a y-axis error column."""
+        """
+        Check if the class defines a y-axis error column.
+
+        Returns
+        -------
+        bool
+            ``True`` if the class defines a y-axis error column.
+        """
         return cls.Y_ERROR_COLUMN is not None
 
     @classmethod
     def class_has_y_upper_limit_column(cls) -> bool:
-        """Check if the class defines a y-axis upper limit column."""
+        """
+        Check if the class defines a y-axis upper limit column.
+
+        Returns
+        -------
+        bool
+            ``True`` if the class defines a y-axis upper-limit column.
+        """
         return cls.Y_UPPER_LIMIT_COLUMN is not None
 
     @classmethod
     def class_has_x_error_column(cls) -> bool:
-        """Check if the class defines an x-axis error column."""
+        """
+        Check if the class defines an x-axis error column.
+
+        Returns
+        -------
+        bool
+            ``True`` if the class defines an x-axis error column.
+        """
         return cls.X_ERROR_COLUMN is not None
 
     @classmethod
     def class_has_x_upper_limit_column(cls) -> bool:
-        """Check if the class defines an x-axis upper limit column."""
+        """
+        Check if the class defines an x-axis upper limit column.
+
+        Returns
+        -------
+        bool
+            ``True`` if the class defines an x-axis upper-limit column.
+        """
         return cls.X_UPPER_LIMIT_COLUMN is not None
 
     # ===================================================================== #

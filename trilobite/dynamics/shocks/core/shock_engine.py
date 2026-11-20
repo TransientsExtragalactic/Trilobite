@@ -52,6 +52,11 @@ class ShockEngine(ABC):
 
         all of which have very different internal structures but can be interfaced in a consistent manner via
         the :class:`ShockEngine` abstraction.
+
+    Parameters
+    ----------
+    **kwargs : dict
+        Engine-specific configuration keyword arguments.
     """
 
     _STATE_CLASS: "Union[type, None]" = None
@@ -70,10 +75,8 @@ class ShockEngine(ABC):
 
         Parameters
         ----------
-        kwargs
-            Parameters to be used for initializing the shock engine. These may vary
-            depending on the specific implementation and its requirements. By default, the
-            parameters are not used.
+        **kwargs : dict
+            Engine-specific configuration keyword arguments.
         """
         # DEVELOPER NOTE: ``**kwargs`` here should be instance-level parameters for things like
         # the cache size, numerical tolerances, etc. These are NOT the physical parameters
@@ -96,12 +99,12 @@ class ShockEngine(ABC):
 
         Parameters
         ----------
-        time: float, astropy.units.Quantity, np.ndarray
+        time : float, astropy.units.Quantity, np.ndarray
             An array-like object representing the time at which to evaluate the shock properties. If
             ``time`` possesses units, they will be accounted for. Otherwise, CGS units are assumed and
             the ``time`` is treated in seconds. If a vector quantity is passed, it will be broadcast following
             standard numpy conventions.
-        parameters:
+        **parameters : dict
             Shock parameters necessary for evaluating the dynamics. These are made
             explicit in subclass implementations.
 
@@ -121,9 +124,25 @@ class ShockEngine(ABC):
     # DUNDER METHODS                              #
     # =========================================== #
     def __str__(self):
+        """
+        Return a readable description of the engine.
+
+        Returns
+        -------
+        str
+            The engine class name.
+        """
         return "ShockEngine()"
 
     def __repr__(self):
+        """
+        Return an unambiguous representation of the engine.
+
+        Returns
+        -------
+        str
+            The engine class name.
+        """
         return "<ShockEngine()>"
 
     def __call__(self, time: _UnitBearingArrayLike, **parameters) -> dict[str, _UnitBearingArrayLike]:
@@ -134,12 +153,12 @@ class ShockEngine(ABC):
 
         Parameters
         ----------
-        time: float, astropy.units.Quantity, np.ndarray
+        time : float, astropy.units.Quantity, np.ndarray
             An array-like object representing the time at which to evaluate the shock properties. If
             ``time`` possesses units, they will be accounted for. Otherwise, CGS units are assumed and
             the ``time`` is treated in seconds. If a vector quantity is passed, it will be broadcast following
             standard numpy conventions.
-        parameters:
+        **parameters : dict
             Shock parameters necessary for evaluating the dynamics. These are made
             explicit in subclass implementations.
 

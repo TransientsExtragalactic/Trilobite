@@ -469,7 +469,7 @@ GRB-like blast waves:
    print(result.post_shock_beta)          # ≈ 1/3 for gamma_hat = 4/3
    print(result.compression_ratio)
    print(result.post_shock_pressure)
-   print(result.post_shock_temperature)
+   print(result.post_shock_thermal_energy_density)
 
 The returned object is a named tuple. Dimensionless quantities such as
 ``compression_ratio``, ``post_shock_beta``, and ``post_shock_lorentz_factor`` are
@@ -567,10 +567,9 @@ All relativistic solvers return the same set of post-shock fields:
    * - ``post_shock_pressure``
      - :math:`\mathrm{dyn\,cm^{-2}}`
      - Proper downstream pressure.
-   * - ``post_shock_temperature``
-     - :math:`\mathrm{K}`
-     - Temperature obtained by inverting the Maxwell--Jüttner internal-energy
-       relation.
+   * - ``post_shock_thermal_energy_density``
+     - :math:`\mathrm{erg\,cm^{-3}}`
+     - Proper downstream thermal (internal) energy density, excluding rest mass.
    * - ``post_shock_energy_density``
      - :math:`\mathrm{erg\,cm^{-3}}`
      - Total proper downstream energy density, including rest-mass and internal

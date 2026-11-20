@@ -43,6 +43,7 @@ import numpy as np
 from astropy import units as u
 
 from ...core import ModelParameter, ModelVariable
+from ...core.status import ModelStatus
 from .base import EvolvingSEDModel
 
 __all__ = [
@@ -397,9 +398,12 @@ class PL_Evolving_SBPL_Model(EvolvingSEDModel):
     - The model reduces to a single power law when
       :math:`\alpha_1 = \alpha_2`.
 
+    References
+    ----------
+    .. footbibliography::
+
     Examples
     --------
-
     .. plot::
         :include-source:
 
@@ -470,11 +474,9 @@ class PL_Evolving_SBPL_Model(EvolvingSEDModel):
         plt.legend()
         plt.tight_layout()
         plt.show()
-
-    References
-    ----------
-    .. footbibliography::
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     VARIABLES = (
         ModelVariable("frequency", base_units=u.Hz, description="Observing frequency."),
@@ -499,6 +501,7 @@ class PL_Evolving_SBPL_Model(EvolvingSEDModel):
     REFERENCE = "Generic self-similar synchrotron evolution model."
 
     def __init__(self):
+        """Initialize the model."""
         self._register_init()
 
     # ------------------------------------------------------------
@@ -506,6 +509,21 @@ class PL_Evolving_SBPL_Model(EvolvingSEDModel):
     # ------------------------------------------------------------
 
     def _compute_log_norm(self, log_t, parameters):
+        """
+        Compute the log break flux density, evolving as a single power law in time.
+
+        Parameters
+        ----------
+        log_t : ndarray
+            Natural logarithm of time, ``ln(t)``.
+        parameters : dict-like
+            Coerced, unitless model parameters.
+
+        Returns
+        -------
+        ndarray
+            ``ln(F_brk(t)) = ln(F_brk_0) + gamma * ln(t / t_0)``.
+        """
         log_F0 = np.log(parameters["F_brk_0"])
         log_t0 = np.log(parameters["t_0"])
 
@@ -517,6 +535,21 @@ class PL_Evolving_SBPL_Model(EvolvingSEDModel):
     # ------------------------------------------------------------
 
     def _compute_log_breaks(self, log_t, parameters):
+        """
+        Compute the log break frequency, evolving as a single power law in time.
+
+        Parameters
+        ----------
+        log_t : ndarray
+            Natural logarithm of time, ``ln(t)``.
+        parameters : dict-like
+            Coerced, unitless model parameters.
+
+        Returns
+        -------
+        dict[str, ndarray]
+            ``{"nu_brk": ln(nu_brk_0) + beta * ln(t / t_0)}``.
+        """
         log_nu0 = np.log(parameters["nu_brk_0"])
         log_t0 = np.log(parameters["t_0"])
 
@@ -531,6 +564,25 @@ class PL_Evolving_SBPL_Model(EvolvingSEDModel):
     # ------------------------------------------------------------
 
     def _compute_log_shape(self, log_nu, log_t, log_breaks, parameters):
+        """
+        Compute the log spectral shape: a smoothed broken power law in frequency about the break.
+
+        Parameters
+        ----------
+        log_nu : ndarray
+            Natural logarithm of frequency, ``ln(nu)``.
+        log_t : ndarray
+            Natural logarithm of time, ``ln(t)``.
+        log_breaks : dict[str, ndarray]
+            Output of :meth:`_compute_log_breaks`.
+        parameters : dict-like
+            Coerced, unitless model parameters.
+
+        Returns
+        -------
+        ndarray
+            ``ln(Phi)`` with spectral indices ``alpha_1`` and ``alpha_2`` and smoothness ``s``.
+        """
         log_nu_brk = log_breaks["nu_brk"]
 
         return log_smooth_broken_power_law(
@@ -673,6 +725,8 @@ class BPL_Evolving_SBPL_Model(EvolvingSEDModel):
     - This model does **not** enforce microphysical closure relations.
     """
 
+    STATUS = ModelStatus.UNVERIFIED
+
     VARIABLES = (
         ModelVariable("frequency", base_units=u.Hz, description="Observing frequency."),
         ModelVariable("time", base_units=u.s, description="Time since explosion."),
@@ -701,9 +755,25 @@ class BPL_Evolving_SBPL_Model(EvolvingSEDModel):
     REFERENCE = "Generic multi-stage synchrotron evolution model."
 
     def __init__(self):
+        """Initialize the model."""
         self._register_init()
 
     def _compute_log_norm(self, log_t, parameters):
+        """
+        Compute the log break flux density, evolving as a broken power law in time.
+
+        Parameters
+        ----------
+        log_t : ndarray
+            Natural logarithm of time, ``ln(t)``.
+        parameters : dict-like
+            Coerced, unitless model parameters.
+
+        Returns
+        -------
+        ndarray
+            ``ln(F_brk(t))`` with temporal indices ``gamma1`` (``t < t_0``) and ``gamma2`` (``t >= t_0``).
+        """
         log_F0 = np.log(parameters["F_brk_0"])
         log_t0 = np.log(parameters["t_0"])
 
@@ -715,6 +785,21 @@ class BPL_Evolving_SBPL_Model(EvolvingSEDModel):
         )
 
     def _compute_log_breaks(self, log_t, parameters):
+        """
+        Compute the log break frequency, evolving as a broken power law in time.
+
+        Parameters
+        ----------
+        log_t : ndarray
+            Natural logarithm of time, ``ln(t)``.
+        parameters : dict-like
+            Coerced, unitless model parameters.
+
+        Returns
+        -------
+        dict[str, ndarray]
+            ``{"nu_brk": ln(nu_brk(t))}`` with temporal indices ``beta1`` (``t < t_0``) and ``beta2`` (``t >= t_0``).
+        """
         log_nu0 = np.log(parameters["nu_brk_0"])
         log_t0 = np.log(parameters["t_0"])
 
@@ -728,6 +813,26 @@ class BPL_Evolving_SBPL_Model(EvolvingSEDModel):
         return {"nu_brk": log_nu_brk}
 
     def _compute_log_shape(self, log_nu, log_t, log_breaks, parameters):
+        """
+        Compute the log spectral shape, using separate smoothed broken power laws before and after ``t_0``.
+
+        Parameters
+        ----------
+        log_nu : ndarray
+            Natural logarithm of frequency, ``ln(nu)``.
+        log_t : ndarray
+            Natural logarithm of time, ``ln(t)``.
+        log_breaks : dict[str, ndarray]
+            Output of :meth:`_compute_log_breaks`.
+        parameters : dict-like
+            Coerced, unitless model parameters.
+
+        Returns
+        -------
+        ndarray
+            ``ln(Phi)``, built from ``alpha_11``, ``alpha_21`` and ``s1`` for ``t < t_0``, and from
+            ``alpha_12``, ``alpha_22`` and ``s2`` for ``t >= t_0``.
+        """
         log_nu_brk = log_breaks["nu_brk"]
         log_t0 = np.log(parameters["t_0"])
 
@@ -886,6 +991,8 @@ class TripleBPL_Evolving_SBPL_Model(EvolvingSEDModel):
     - This model does **not** enforce physical closure relations.
     """
 
+    STATUS = ModelStatus.UNVERIFIED
+
     VARIABLES = (
         ModelVariable("frequency", base_units=u.Hz, description="Observing frequency."),
         ModelVariable("time", base_units=u.s, description="Time since explosion."),
@@ -920,9 +1027,25 @@ class TripleBPL_Evolving_SBPL_Model(EvolvingSEDModel):
     REFERENCE = "Generic multi-stage synchrotron evolution model."
 
     def __init__(self):
+        """Initialize the model."""
         self._register_init()
 
     def _compute_log_norm(self, log_t, parameters):
+        """
+        Compute the log break flux density, evolving as a triple broken power law in time.
+
+        Parameters
+        ----------
+        log_t : ndarray
+            Natural logarithm of time, ``ln(t)``.
+        parameters : dict-like
+            Coerced, unitless model parameters.
+
+        Returns
+        -------
+        ndarray
+            ``ln(F_brk(t))`` with temporal indices ``gamma1``, ``gamma2`` and ``gamma3`` split at ``t_0`` and ``t_1``.
+        """
         log_F0 = np.log(parameters["F_brk_0"])
         log_t0 = np.log(parameters["t_0"])
         log_t1 = np.log(parameters["t_1"])
@@ -937,6 +1060,22 @@ class TripleBPL_Evolving_SBPL_Model(EvolvingSEDModel):
         )
 
     def _compute_log_breaks(self, log_t, parameters):
+        """
+        Compute the log break frequency, evolving as a triple broken power law in time.
+
+        Parameters
+        ----------
+        log_t : ndarray
+            Natural logarithm of time, ``ln(t)``.
+        parameters : dict-like
+            Coerced, unitless model parameters.
+
+        Returns
+        -------
+        dict[str, ndarray]
+            ``{"nu_brk": ln(nu_brk(t))}`` with temporal indices ``beta1``, ``beta2`` and ``beta3``
+            split at ``t_0`` and ``t_1``.
+        """
         log_nu0 = np.log(parameters["nu_brk_0"])
         log_t0 = np.log(parameters["t_0"])
         log_t1 = np.log(parameters["t_1"])
@@ -952,6 +1091,26 @@ class TripleBPL_Evolving_SBPL_Model(EvolvingSEDModel):
         return {"nu_brk": log_nu_brk}
 
     def _compute_log_shape(self, log_nu, log_t, log_breaks, parameters):
+        """
+        Compute the log spectral shape, using a separate smoothed broken power law in each of three epochs.
+
+        Parameters
+        ----------
+        log_nu : ndarray
+            Natural logarithm of frequency, ``ln(nu)``.
+        log_t : ndarray
+            Natural logarithm of time, ``ln(t)``.
+        log_breaks : dict[str, ndarray]
+            Output of :meth:`_compute_log_breaks`.
+        parameters : dict-like
+            Coerced, unitless model parameters.
+
+        Returns
+        -------
+        ndarray
+            ``ln(Phi)``. Regime ``i`` (``t < t_0``, ``t_0 <= t < t_1``, ``t >= t_1``) uses
+            ``alpha_1i``, ``alpha_2i`` and ``s_i``.
+        """
         log_nu_brk = log_breaks["nu_brk"]
         log_t0 = np.log(parameters["t_0"])
         log_t1 = np.log(parameters["t_1"])

@@ -49,6 +49,23 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
 
         Q^{+} = Q^{-}.
 
+    Parameters
+    ----------
+    mu : float, optional
+        Mean molecular weight of the disk gas (dimensionless). Default ``0.6``.
+    opacity : str or ~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw, optional
+        Opacity model. Accepted strings: ``"electron_scattering"`` (default), ``"kramers_ff"``, ``"kramers_bf"``,
+        ``"kramers"``, ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``. A
+        :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` instance may also be passed directly.
+    fallback : bool, optional
+        If ``True``, enable a power-law debris-stream mass supply. The runtime parameters ``M_fb_0``, ``t_fb``, and
+        ``beta_fb`` must then be provided to :meth:`solve`. Default ``False``.
+
+    See Also
+    --------
+    FullPressureDisk :
+        Sibling with combined gas + radiation pressure.
+
     Examples
     --------
     .. code-block:: python
@@ -72,11 +89,6 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
             },
             t_span=(1.0e6 * u.s, 5.0e9 * u.s),
         )
-
-    See Also
-    --------
-    FullPressureDisk :
-        Sibling with combined gas + radiation pressure.
     """
 
     # ================================================== #
@@ -96,6 +108,7 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
     }
     RUNTIME_PARAMETERS: dict = FALLBACK_RUNTIME_PARAMETERS
     INITIAL_CONDITIONS: dict = BASE_INITIAL_CONDITIONS
+    #: Ordered mapping of output field names to their column indices in the result array.
     RESULT_FIELDS: dict = FALLBACK_RESULT_FIELDS
     CYTHON_FIELD_MAP: dict = FALLBACK_CYTHON_FIELD_MAP
 
@@ -111,11 +124,11 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
         mu : float, optional
             Mean molecular weight of the disk gas (dimensionless).
             Default ``0.6``.
-        opacity : str or ~trilobite.radiation.opacity.base.GreyOpacityLaw, optional
+        opacity : str or ~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw, optional
             Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
             ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
             ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
-            A :class:`~trilobite.radiation.opacity.base.GreyOpacityLaw` instance
+            A :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` instance
             may also be passed directly.
         fallback : bool, optional
             If ``True``, enable a power-law debris-stream mass supply.  The
@@ -170,6 +183,25 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
     The midplane temperature is solved **iteratively** at each timestep
     via bracket expansion + Brent's method.
 
+    Parameters
+    ----------
+    mu : float, optional
+        Mean molecular weight of the disk gas (dimensionless). Default ``0.6``.
+    opacity : str or ~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw, optional
+        Opacity model. Accepted strings: ``"electron_scattering"`` (default), ``"kramers_ff"``, ``"kramers_bf"``,
+        ``"kramers"``, ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``. A
+        :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` instance may also be passed directly.
+    fallback : bool, optional
+        If ``True``, enable a power-law debris-stream mass supply. The runtime parameters ``M_fb_0``, ``t_fb``, and
+        ``beta_fb`` must then be provided to :meth:`solve`. Default ``False``.
+
+    See Also
+    --------
+    GasPressureDisk :
+        Simpler closure with analytic temperature solve.
+    AdvectiveDisk :
+        Extended closure with advective cooling term.
+
     Examples
     --------
     .. code-block:: python
@@ -193,13 +225,6 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
             },
             t_span=(1.0e6 * u.s, 5.0e9 * u.s),
         )
-
-    See Also
-    --------
-    GasPressureDisk :
-        Simpler closure with analytic temperature solve.
-    AdvectiveDisk :
-        Extended closure with advective cooling term.
     """
 
     # ================================================== #
@@ -219,6 +244,7 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
     }
     RUNTIME_PARAMETERS: dict = FALLBACK_RUNTIME_PARAMETERS
     INITIAL_CONDITIONS: dict = BASE_INITIAL_CONDITIONS
+    #: Ordered mapping of output field names to their column indices in the result array.
     RESULT_FIELDS: dict = FALLBACK_RESULT_FIELDS
     CYTHON_FIELD_MAP: dict = FALLBACK_CYTHON_FIELD_MAP
 
@@ -234,11 +260,11 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
         mu : float, optional
             Mean molecular weight of the disk gas (dimensionless).
             Default ``0.6``.
-        opacity : str or ~trilobite.radiation.opacity.base.GreyOpacityLaw, optional
+        opacity : str or ~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw, optional
             Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
             ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
             ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
-            A :class:`~trilobite.radiation.opacity.base.GreyOpacityLaw` instance
+            A :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` instance
             may also be passed directly.
         fallback : bool, optional
             If ``True``, enable a power-law debris-stream mass supply.  The
@@ -316,15 +342,20 @@ class AdvectiveDisk(OneZoneAccretionDiskBase):
         Default ``0.6``.
     xi : float, optional
         Entropy gradient parameter (dimensionless, > 0).  Default ``0.5``.
-    opacity : str or ~trilobite.radiation.opacity.base.GreyOpacityLaw, optional
+    opacity : str or ~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw, optional
         Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
         ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
         ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
-        A :class:`~trilobite.radiation.opacity.base.GreyOpacityLaw` instance
+        A :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` instance
         may also be passed directly.
     fallback : bool, optional
         If ``True``, enable a power-law debris-stream mass supply.
         Default ``False``.
+
+    See Also
+    --------
+    FullPressureDisk :
+        Non-advective sibling (xi → 0 limit).
 
     Examples
     --------
@@ -352,11 +383,6 @@ class AdvectiveDisk(OneZoneAccretionDiskBase):
         print(
             result.data["Q_adv"] / result.data["Q_visc"]
         )
-
-    See Also
-    --------
-    FullPressureDisk :
-        Non-advective sibling (xi → 0 limit).
     """
 
     # ================================================== #
@@ -377,6 +403,7 @@ class AdvectiveDisk(OneZoneAccretionDiskBase):
     }
     RUNTIME_PARAMETERS: dict = FALLBACK_RUNTIME_PARAMETERS
     INITIAL_CONDITIONS: dict = BASE_INITIAL_CONDITIONS
+    #: Ordered mapping of output field names to their column indices in the result array.
     RESULT_FIELDS: dict = ADV_FB_RESULT_FIELDS
     CYTHON_FIELD_MAP: dict = ADV_FB_CYTHON_FIELD_MAP
 
@@ -387,6 +414,23 @@ class AdvectiveDisk(OneZoneAccretionDiskBase):
         opacity: str = "electron_scattering",
         fallback: bool = False,
     ):
+        """
+        Initialize the advective disk model.
+
+        Parameters
+        ----------
+        mu : float, optional
+            Mean molecular weight of the disk gas (dimensionless). Default ``0.6``.
+        xi : float, optional
+            Entropy gradient parameter (dimensionless, > 0). Default ``0.5``.
+        opacity : str or ~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw, optional
+            Opacity model. Accepted strings: ``"electron_scattering"`` (default), ``"kramers_ff"``, ``"kramers_bf"``,
+            ``"kramers"``, ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``. A
+            :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` instance may also be passed
+            directly.
+        fallback : bool, optional
+            If ``True``, enable a power-law debris-stream mass supply. Default ``False``.
+        """
         # Callback to the superclass to get things setup. This ensures
         # the context parameters are generated.
         super().__init__(mu=mu, xi=xi, opacity=opacity, fallback=fallback)

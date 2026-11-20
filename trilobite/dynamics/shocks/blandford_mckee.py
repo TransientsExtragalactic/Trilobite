@@ -52,7 +52,6 @@ import numpy as np
 from astropy import units as u
 
 from trilobite._typing import _ArrayLike, _UnitBearingArrayLike, _UnitBearingScalarLike
-from trilobite.dynamics.shocks.core.relativistic_jump_conditions import _maxwell_juttner_temperature_cgs
 from trilobite.dynamics.shocks.core.shock_engine import ShockEngine
 
 # --- CGS constants for the low-level backend ---
@@ -107,12 +106,6 @@ class BlandfordMcKeeShockState(NamedTuple):
     Proper (comoving-frame) post-shock pressure
     :math:`p_2 \simeq \tfrac{2}{3}\rho_{\rm ext}c^2\Gamma^2`
     in :math:`\mathrm{dyne\,cm^{-2}}`.
-    """
-
-    post_shock_temperature: Union[np.ndarray, u.Quantity]
-    r"""
-    Proper (comoving-frame) post-shock temperature :math:`T_2` in K,
-    from the Maxwell--Jüttner internal-energy inversion.
     """
 
     post_shock_comoving_density: Union[np.ndarray, u.Quantity]
@@ -218,16 +211,12 @@ class BlandfordMcKeeShockEngine(ShockEngine):
 
     Parameters
     ----------
-    mu : float, optional
-        Mean molecular weight in units of the proton mass used for the post-shock
-        temperature calculation. Default is ``0.61`` (fully ionized, solar-composition
-        plasma).
     gamma_hat : float, optional
-        Adiabatic index of the shocked gas. Default is :math:`4/3` (ultra-relativistic
-        EOS).
+        Adiabatic index of the shocked gas. Default is :math:`4/3`.
     lorentz_warn_threshold : float, optional
-        Lorentz factor below which a :class:`RuntimeWarning` is emitted. Default
-        is ``2.0``.
+        Emit a :class:`RuntimeWarning` when :math:`\Gamma` falls below this value. Default is ``2.0``.
+    **kwargs :
+        Forwarded to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
 
     See Also
     --------
@@ -247,7 +236,6 @@ class BlandfordMcKeeShockEngine(ShockEngine):
 
     def __init__(
         self,
-        mu: float = 0.61,
         gamma_hat: float = 4.0 / 3.0,
         lorentz_warn_threshold: float = 2.0,
         **kwargs,
@@ -257,8 +245,6 @@ class BlandfordMcKeeShockEngine(ShockEngine):
 
         Parameters
         ----------
-        mu : float, optional
-            Mean molecular weight in units of the proton mass. Default is ``0.61``.
         gamma_hat : float, optional
             Adiabatic index of the shocked gas. Default is :math:`4/3`.
         lorentz_warn_threshold : float, optional
@@ -268,7 +254,6 @@ class BlandfordMcKeeShockEngine(ShockEngine):
             Forwarded to :class:`~trilobite.dynamics.shocks.core.shock_engine.ShockEngine`.
         """
         super().__init__(**kwargs)
-        self._mu = float(mu)
         self._gamma_hat = float(gamma_hat)
         self._lorentz_warn_threshold = float(lorentz_warn_threshold)
 
@@ -303,7 +288,7 @@ class BlandfordMcKeeShockEngine(ShockEngine):
 
         Returns
         -------
-        K : ~astropy.units.Quantity
+        ~astropy.units.Quantity
             Normalization constant with units
             :math:`\mathrm{g\,cm^{k-3}}`.
         """
@@ -384,7 +369,6 @@ class BlandfordMcKeeShockEngine(ShockEngine):
             velocity=cgs.velocity * (u.cm / u.s),
             fluid_lorentz_factor=cgs.fluid_lorentz_factor,
             post_shock_pressure=cgs.post_shock_pressure * (u.dyne / u.cm**2),
-            post_shock_temperature=cgs.post_shock_temperature * u.K,
             post_shock_comoving_density=cgs.post_shock_comoving_density * (u.g / u.cm**3),
             post_shock_lab_density=cgs.post_shock_lab_density * (u.g / u.cm**3),
             thermal_energy_density_comoving=cgs.thermal_energy_density_comoving * (u.erg / u.cm**3),
@@ -479,9 +463,6 @@ class BlandfordMcKeeShockEngine(ShockEngine):
         # Proper total energy density: e = rho*c^2 + U_int
         e2_total = rho2_proper * c_cgs**2 + U_int2
 
-        # Post-shock temperature from the Maxwell-Jüttner inversion
-        T2 = _maxwell_juttner_temperature_cgs(U_int2, rho2_proper, self._mu)
-
         # Lab-frame quantities via Lorentz transformation
         rho2_lab = gamma2_lab * rho2_proper
         e2_lab = (e2_total + p2) * gamma2_lab**2 - p2  # T^{00} = (e+p)γ² − p
@@ -493,7 +474,6 @@ class BlandfordMcKeeShockEngine(ShockEngine):
             velocity=velocity,
             fluid_lorentz_factor=gamma2_lab,
             post_shock_pressure=p2,
-            post_shock_temperature=T2,
             post_shock_comoving_density=rho2_proper,
             post_shock_lab_density=rho2_lab,
             thermal_energy_density_comoving=U_int2,
@@ -533,14 +513,10 @@ class BlandfordMcKeeWindShockEngine(BlandfordMcKeeShockEngine):
         =
         \frac{9E}{8\pi K c^2}.
 
-    Parameters
-    ----------
-    mu : float, optional
-        Mean molecular weight. Default is ``0.61``.
-    gamma_hat : float, optional
-        Adiabatic index. Default is :math:`4/3`.
-    lorentz_warn_threshold : float, optional
-        Lorentz factor threshold for the ultra-relativistic warning. Default ``2.0``.
+    This class has no constructor of its own and accepts the same arguments as
+    :class:`BlandfordMcKeeShockEngine`: the adiabatic index
+    ``gamma_hat`` (default :math:`4/3`) and the Lorentz-factor threshold ``lorentz_warn_threshold`` of the
+    ultra-relativistic warning (default ``2.0``).
 
     See Also
     --------
@@ -605,7 +581,6 @@ class BlandfordMcKeeWindShockEngine(BlandfordMcKeeShockEngine):
             velocity=cgs.velocity * (u.cm / u.s),
             fluid_lorentz_factor=cgs.fluid_lorentz_factor,
             post_shock_pressure=cgs.post_shock_pressure * (u.dyne / u.cm**2),
-            post_shock_temperature=cgs.post_shock_temperature * u.K,
             post_shock_comoving_density=cgs.post_shock_comoving_density * (u.g / u.cm**3),
             post_shock_lab_density=cgs.post_shock_lab_density * (u.g / u.cm**3),
             thermal_energy_density_comoving=cgs.thermal_energy_density_comoving * (u.erg / u.cm**3),

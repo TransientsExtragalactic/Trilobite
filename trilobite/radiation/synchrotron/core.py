@@ -9,8 +9,8 @@ kernels, and other low-level building blocks that are used across the codebase.
 
     :mod:`~trilobite.radiation.synchrotron.SEDs`: SEDs for synchrotron emitting regions.
 
-    :mod:`~trilobite.radiation.synchrotron.microphysics`: Microphysical distribution functions for
-    synchrotron-emitting electrons.
+    :mod:`~trilobite.radiation.synchrotron.electron_distributions`: Electron distribution classes
+    (power law, broken power law, Maxwell-Jüttner, mixed) for synchrotron-emitting electrons.
 
     :mod:`~trilobite.radiation.synchrotron.cooling`: Synchrotron cooling calculations and timescales.
 
@@ -226,7 +226,7 @@ def _opt_compute_synch_frequency(
     No unit validation is performed.
     """
     if pitch_average:
-        sin_alpha_factor = 2 / np.pi
+        sin_alpha_factor = np.pi / 4
     else:
         sin_alpha_factor = sin_alpha
 
@@ -259,7 +259,7 @@ def _opt_compute_log_synch_frequency(
         Natural logarithm of the synchrotron injection frequency in Hz.
     """
     if pitch_average:
-        log_sin_alpha_factor = np.log(2 / np.pi)
+        log_sin_alpha_factor = np.log(np.pi / 4)
     else:
         log_sin_alpha_factor = np.log(sin_alpha)
 
@@ -304,7 +304,7 @@ def _opt_compute_synch_gamma(
         \nu = \gamma^2 \frac{3 e B \sin\alpha}{4\pi m_e c}
     """
     if pitch_average:
-        sin_alpha_factor = 2 / np.pi
+        sin_alpha_factor = np.pi / 4
     else:
         sin_alpha_factor = sin_alpha
 
@@ -427,7 +427,7 @@ def compute_gyrofrequency(
 
     Returns
     -------
-    nu_g : astropy.units.Quantity
+    astropy.units.Quantity
         Synchrotron gyrofrequency in Hz.
 
     Notes
@@ -470,12 +470,12 @@ def compute_nu_critical(
 
     B : float, ~numpy.ndarray, or astropy.units.Quantity
         Magnetic field strength. Default units are Gauss.
-    alpha: float
+    alpha : float
         Pitch angle in radians. Default is ``pi/2``.
 
     Returns
     -------
-    nu_critical : astropy.units.Quantity
+    astropy.units.Quantity
         Synchrotron critical frequency in Hz.
 
     Notes
@@ -533,7 +533,7 @@ def compute_synchrotron_frequency(
 
     Returns
     -------
-    nu_synch : astropy.units.Quantity
+    astropy.units.Quantity
         Synchrotron characteristic frequency in Hz.
 
     Notes
@@ -601,7 +601,7 @@ def compute_synchrotron_gamma(
 
     Returns
     -------
-    gamma : astropy.units.Quantity
+    astropy.units.Quantity
         Electron Lorentz factor (dimensionless).
 
     Notes
@@ -656,7 +656,7 @@ def compute_single_electron_power(
 
     Returns
     -------
-    P_nu : ~astropy.units.Quantity
+    ~astropy.units.Quantity
         Power per unit frequency in :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.
 
     Notes
@@ -860,7 +860,7 @@ def _log_averaged_first_synchrotron_kernel(
             log_F[rmsk] = (np.log(np.pi) - np.log(2.0)) + np.log1p(-eps) - x_r
 
             if derivative:
-                dlog_F_dlog_x[rmsk] = 0.5 - x_r
+                dlog_F_dlog_x[rmsk] = eps / (1.0 - eps) - x_r
 
         # Now we perform the exact computation using the Bessel functions. This is taken from
         # Wenbin Lu's book equation 8.79.
@@ -942,7 +942,7 @@ def compute_first_synchrotron_kernel(
 
     Returns
     -------
-    F : float or ~numpy.ndarray
+    float or ~numpy.ndarray
         :math:`F(x)` at each input point.
 
     Notes
@@ -994,7 +994,7 @@ def compute_averaged_first_synchrotron_kernel(
 
     Returns
     -------
-    F_avg : float or ~numpy.ndarray
+    float or ~numpy.ndarray
         :math:`\bar{F}(x)` at each input point.
 
     Notes

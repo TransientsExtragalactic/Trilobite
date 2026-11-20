@@ -46,6 +46,7 @@ the literature (see e.g. :footcite:t:`2025ApJ...992L..18S`).
 
 
 .. _single_zone_foundational_assumptions:
+
 Foundational Assumptions
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -382,9 +383,9 @@ frequency as
 
 .. hint::
 
-    In general, one selects a cooling mechanism (see :ref:`synchrotron_theory` and :ref:`synchrotron_microphysics`)
+    In general, one selects a cooling mechanism (see :ref:`synchrotron_theory` and :ref:`synchrotron_electron_distributions`)
     and computes :math:`\gamma_c(t)` as a function of time and provides that to the SED. Cooling is implemented in
-    :mod:`~radiation.synchrotron.cooling`.
+    :mod:`~trilobite.radiation.synchrotron.cooling`.
 
 .. _single_zone_ssa_frequency:
 
@@ -693,7 +694,7 @@ for each case:
     at which we anchor the normalization of the SED) and the **peak emission frequency** (i.e., the frequency at which
     the SED peaks).
 
-    In :mod:`~radiation.synchrotron.SEDs`, we **NEVER** refer directly to the **normalization frequency**. This is an
+    In :mod:`~trilobite.radiation.synchrotron.SEDs`, we **NEVER** refer directly to the **normalization frequency**. This is an
     internal conceptualization used to tie microphysics and dynamics to SED normalization. When parameterizing each
     SED, we normalize using the **peak emission frequency** which is *calculated* from the normalization frequency and
     power-law slopes of the SED.
@@ -981,9 +982,9 @@ Inversion
     In addition, some other inversion schemes are provided in the code with varying levels of applicability. The links
     below provide some examples of these other inversion schemes:
 
-    - :ref:`synchrotron_cooling_closure` provides a closure relation for which :math:`\gamma_c` may be treated as a dependent
-      variable and thus inferred from the SED. There are a number of caveats and restrictions to this approach
-      which are described in the theory note.
+    - :ref:`synchrotron_spectral_inversion` provides closed-form inversions from a break frequency and flux
+      alone, including inversions for which :math:`\gamma_c` is a dependent variable set by synchrotron and
+      inverse-Compton cooling over the source age.
 
 The final theoretical topic which must be discussed in the context of our single-zone SED implementation is that of
 inversion. By inversion, we mean the process of taking an observed SED and inferring the underlying physical parameters which
@@ -1031,14 +1032,17 @@ In both cases, the electron distribution may be written in separable form:
     N(\gamma) = N_0 f(\gamma),
 
 where :math:`f(\gamma)` encodes the shape of the distribution and possesses a known
-first moment
+first kinetic moment
 
 .. math::
 
-    M_\gamma^{(1)} \equiv \int \gamma f(\gamma)\, d\gamma.
+    M_\gamma^{(1)} \equiv \int (\gamma - 1) f(\gamma)\, d\gamma,
 
-We assume that fixed fractions of the post-shock internal energy density
-are deposited into relativistic electrons and magnetic fields:
+the mean kinetic energy per particle in units of :math:`m_e c^2` (rest mass excluded, as the energy densities below
+are fractions of the thermal energy density; see :ref:`synch_equipartition_theory`).
+
+We assume that fixed fractions of the thermal (internal) energy density
+are deposited into the kinetic energy of relativistic electrons and into magnetic fields:
 
 .. math::
 
@@ -1328,10 +1332,10 @@ The normalization of the canonical SED is fixed by the following physical parame
           - Upper cutoff of the electron Lorentz factor distribution.
         * - :math:`\epsilon_e`
           - Electron Energy Fraction
-          - Fraction of post-shock internal energy carried by relativistic electrons.
+          - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         * - :math:`\epsilon_B`
           - Magnetic Energy Fraction
-          - Fraction of post-shock internal energy stored in magnetic fields.
+          - Fraction of the thermal (internal) energy density in the magnetic field.
         * - :math:`\sin\alpha`
           - Pitch Angle Factor
           - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -1377,7 +1381,7 @@ The flux density at this frequency sets the overall normalization of the SED.
 
 The electron normalization :math:`N_0` is not a free parameter. Instead, it is determined by
 equipartition arguments through the choice of :math:`\epsilon_e` and :math:`\epsilon_B`, which
-relate the electron and magnetic energy densities to the post-shock internal energy density.
+relate the electron and magnetic energy densities to the thermal (internal) energy density.
 Once :math:`N_0` is fixed in this manner, the flux at :math:`\nu_m` — and hence the normalization
 of the entire canonical synchrotron SED — is fully specified.
 
@@ -1414,10 +1418,10 @@ The inversion is the simple case of an optically thin peak at :math:`\nu_m`.
           - Upper cutoff of the electron Lorentz factor distribution.
         * - :math:`\epsilon_e`
           - Electron Energy Fraction
-          - Fraction of post-shock internal energy carried by relativistic electrons.
+          - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
         * - :math:`\epsilon_B`
           - Magnetic Energy Fraction
-          - Fraction of post-shock internal energy stored in magnetic fields.
+          - Fraction of the thermal (internal) energy density in the magnetic field.
         * - :math:`\sin\alpha`
           - Pitch Angle Factor
           - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -1576,10 +1580,10 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Lorentz factor above which electrons cool efficiently. In the no-cooling limit, :math:`\gamma_c \to \infty`.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -1625,7 +1629,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
 
         The electron normalization :math:`N_0` is not a free parameter. Instead, it is determined by
         equipartition arguments through the choice of :math:`\epsilon_e` and :math:`\epsilon_B`, which
-        relate the electron and magnetic energy densities to the post-shock internal energy density.
+        relate the electron and magnetic energy densities to the thermal (internal) energy density.
         Once :math:`N_0` is fixed in this manner, the flux at :math:`\nu_c` — and hence the normalization
         of the entire canonical synchrotron SED — is fully specified.
 
@@ -1666,10 +1670,10 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Lorentz factor above which electrons cool efficiently. In the no-cooling limit, :math:`\gamma_c \to \infty`.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -1789,10 +1793,10 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Lorentz factor above which electrons cool efficiently. In the no-cooling limit, :math:`\gamma_c \to \infty`.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -1841,7 +1845,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
 
         The electron normalization :math:`N_0` is not a free parameter. Instead, it is determined by
         equipartition arguments through the choice of :math:`\epsilon_e` and :math:`\epsilon_B`, which
-        relate the electron and magnetic energy densities to the post-shock internal energy density.
+        relate the electron and magnetic energy densities to the thermal (internal) energy density.
         Once :math:`N_0` is fixed in this manner, the flux at :math:`\nu_m` — and hence the normalization
         of the entire canonical synchrotron SED — is fully specified.
 
@@ -1881,10 +1885,10 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Lorentz factor above which electrons cool efficiently. In the no-cooling limit, :math:`\gamma_c \to \infty`.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -2005,10 +2009,10 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Lorentz factor above which electrons cool efficiently. In the no-cooling limit, :math:`\gamma_c \to \infty`.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -2055,7 +2059,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
 
         The electron normalization :math:`N_0` is not a free parameter. Instead, it is determined by
         equipartition arguments through the choice of :math:`\epsilon_e` and :math:`\epsilon_B`, which
-        relate the electron and magnetic energy densities to the post-shock internal energy density.
+        relate the electron and magnetic energy densities to the thermal (internal) energy density.
         Once :math:`N_0` is fixed in this manner, the flux at :math:`\nu_m` — and hence the normalization
         of the entire canonical synchrotron SED — is fully specified.
 
@@ -2095,10 +2099,10 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Lorentz factor above which electrons cool efficiently. In the no-cooling limit, :math:`\gamma_c \to \infty`.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -2291,10 +2295,10 @@ We now progress to the case with SSA but no cooling. In this case, there are 2(3
                   - Upper cutoff of the electron Lorentz factor distribution.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -2472,10 +2476,10 @@ We now progress to the case with SSA but no cooling. In this case, there are 2(3
                   - Upper cutoff of the electron Lorentz factor distribution.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -2701,10 +2705,10 @@ various cases.
                   - Lorentz factor above which electrons cool efficiently within the dynamical time.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -2765,10 +2769,10 @@ various cases.
                   - Upper cutoff of the electron Lorentz factor distribution.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -2904,10 +2908,10 @@ various cases.
                   - Lorentz factor above which electrons cool efficiently within the dynamical time.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -2992,10 +2996,10 @@ various cases.
                   - Upper cutoff of the electron Lorentz factor distribution.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -3198,10 +3202,10 @@ various cases.
                   - Lorentz factor above which electrons cool efficiently within the dynamical time.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -3262,10 +3266,10 @@ various cases.
                   - Upper cutoff of the electron Lorentz factor distribution.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -3409,10 +3413,10 @@ various cases.
                   - Lorentz factor above which electrons cool efficiently within the dynamical time.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -3497,10 +3501,10 @@ various cases.
                   - Upper cutoff of the electron Lorentz factor distribution.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -3753,10 +3757,10 @@ various cases.
                   - Lorentz factor above which electrons cool efficiently within the dynamical time.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -3826,10 +3830,10 @@ various cases.
                   - Lorentz factor above which electrons cool efficiently. In the no-cooling limit, :math:`\gamma_c \to \infty`.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -3990,10 +3994,10 @@ various cases.
                   - Lorentz factor above which electrons cool efficiently within the dynamical time.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -4073,10 +4077,10 @@ various cases.
                   - Upper cutoff of the electron Lorentz factor distribution.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -4280,10 +4284,10 @@ various cases.
                   - Lorentz factor above which electrons cool efficiently within the dynamical time.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -4364,10 +4368,10 @@ various cases.
                   - Upper cutoff of the electron Lorentz factor distribution.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -4578,10 +4582,10 @@ various cases.
                   - Lorentz factor above which electrons cool efficiently within the dynamical time.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
@@ -4662,10 +4666,10 @@ various cases.
                   - Upper cutoff of the electron Lorentz factor distribution.
                 * - :math:`\epsilon_e`
                   - Electron Energy Fraction
-                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                  - Fraction of the thermal (internal) energy density in the kinetic energy of relativistic electrons.
                 * - :math:`\epsilon_B`
                   - Magnetic Energy Fraction
-                  - Fraction of post-shock internal energy stored in magnetic fields.
+                  - Fraction of the thermal (internal) energy density in the magnetic field.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
                   - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch

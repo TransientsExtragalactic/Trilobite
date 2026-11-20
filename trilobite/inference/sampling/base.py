@@ -19,6 +19,13 @@ class Sampler(ABC):
     from this class and implement the required abstract methods. The :class:`Sampler` class
     is designed to be very general, allowing for a wide range of sampling techniques to be
     integrated into the Trilobite ecosystem.
+
+    Parameters
+    ----------
+    inference_problem : ~trilobite.inference.problem.InferenceProblem
+        The inference problem to sample from.
+    **kwargs : dict
+        Additional arguments specific to the sampler implementation.
     """
 
     # -------------------------------------- #
@@ -35,9 +42,9 @@ class Sampler(ABC):
 
         Parameters
         ----------
-        inference_problem: ~trilobite.inference.problem.InferenceProblem
+        inference_problem : ~trilobite.inference.problem.InferenceProblem
             The inference problem to sample from.
-        **kwargs:
+        **kwargs : dict
             Additional arguments specific to the sampler implementation.
         """
         # Declare the inference problem
@@ -75,6 +82,11 @@ class Sampler(ABC):
         execution, and result collection. The specific arguments required for running
         the sampler may vary depending on the implementation and should be provided
         through ``kwargs``.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Sampler-specific arguments controlling the run.
 
         Returns
         -------

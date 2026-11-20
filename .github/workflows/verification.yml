@@ -1,0 +1,58 @@
+name: Model Verification
+
+# Verification tests compare the models with published results or independent references (see tests/verification/README.md).
+# They are deselected from the regular test runs, so they run here instead: weekly, and on demand.
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install build dependencies
+        run: pip install "setuptools>=61.2" "numpy>=1.26" "Cython>=3.0"
+
+      - name: Build Cython extensions
+        run: python setup.py build_ext --inplace
+
+      - name: Install package with test and optical dependencies
+        run: pip install -e .[test,optical] --no-build-isolation
+
+      # pytest exits with status 5 when nothing is collected. Until the first case is added that is expected, so it is
+      # reported as a notice rather than a failure; every other non-zero status still fails the job.
+      - name: Run verification tests
+        run: |
+          set +e
+          pytest -m verification --tb=short --disable-warnings --verification-report verification_report.json
+          status=$?
+          if [ "$status" -eq 5 ]; then
+            echo "::notice::No verification cases are registered yet."
+            exit 0
+          fi
+          exit "$status"
+
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-report
+          path: verification_report.json
+          if-no-files-found: ignore

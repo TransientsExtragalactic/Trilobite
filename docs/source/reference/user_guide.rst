@@ -1,8 +1,29 @@
+.. raw:: html
+
+   <div class="page-header">
+
+.. image:: /images/logo.svg
+   :class: page-header-logo
+   :alt: Trilobite logo
+
+.. raw:: html
+
+   <div class="page-header-text">
+
 .. _user_guide:
 
 ========================
 Trilobite User Guide
 ========================
+
+.. raw:: html
+
+   <p class="page-header-tagline">Technical documentation for the Trilobite library.</p>
+   <p class="page-header-lede">
+      Topic-by-topic explanations of the components that make up Trilobite, from data and physics modules to inference.
+   </p>
+   </div>
+   </div>
 
 Welcome to the **Trilobite User Guide**! This page is the location of all technical documentation for the
 trilobite library and is generally the first place to look when seeking information on how to use the library. In
@@ -19,14 +40,15 @@ a comprehensive overview of the relevant components and their usage.
 
     The core structure of TRILOBITE, from data and physics modules to a final inference product. The typical workflow
     in Trilobite will touch each of these 4 layers, but the user can also interact with each layer independently.
+
 ----
 
 Getting Started
 ---------------
 
-To get started with trilobite, check out :ref:`getting_started` guide which walks through installation,
-basic usage, and a simple example. This is a great place to begin if you're new to trilobite or scientific
-Python in general. You can also explore the :ref:`examples` section for more in-depth tutorials and use cases.
+To get started with trilobite, check out the :doc:`Quickstart Guide </getting_started>` which walks through
+installation, basic usage, and a simple example. This is a great place to begin if you're new to trilobite or
+scientific Python in general. You can also explore the example galleries for more in-depth tutorials and use cases.
 
 Data Loading, Handling, and Visualization
 -----------------------------------------
@@ -52,13 +74,9 @@ Trilobite Models
 
 The core functionality of trilobite is its ability to create physical models of radio sources and their
 environments. These models are built using a combination of modular building blocks that represent different physical
-processes and components. The following guides provide an overview of the modeling capabilities of trilobite:
-
-.. toctree::
-    :maxdepth: 1
-
-    models/overview
-    models/directory
+processes and components. Models have their own top-level section: see the :doc:`model directory
+</models/index>` for a searchable catalog of every available model and its development status, and the
+:doc:`modeling guide </models/overview>` for how to build your own.
 
 More than any other part of the Trilobite library, the models section is designed for extensibility, even by every
 day users of the code. It is important to be able to correctly leverage the capabilities of the building blocks and
@@ -85,7 +103,7 @@ of the system being modeled. These building blocks can be combined in various wa
 capture the nuances of radio observations. Each major division of the building-block layer has its own landing page
 that provides an overview of the available modules and links to detailed user, theory, and developer documentation:
 
-.. grid:: 3
+.. grid:: 2 2 3 3
     :gutter: 2
 
     .. grid-item-card:: Shocks
@@ -108,6 +126,13 @@ that provides an overview of the available modules and links to detailed user, t
         Time-dependent one-zone disk models: thermodynamic closures, viscous spreading, fallback
         accretion, and the advective RIAF regime.
 
+    .. grid-item-card:: Dynamical Profiles
+        :link: profiles_user_guide
+        :link-type: ref
+
+        Parameterized analytic field classes for CSM densities, homologous ejecta, and upstream
+        velocity distributions. Used as source functions by shock engines and ODE integrators.
+
 .. toctree::
     :maxdepth: 1
     :hidden:
@@ -115,6 +140,7 @@ that provides an overview of the available modules and links to detailed user, t
     physics/shocks/overview
     physics/radiation/overview
     physics/disks/index
+    physics/profiles/profiles_user_guide
 
 
 Parallel Computing

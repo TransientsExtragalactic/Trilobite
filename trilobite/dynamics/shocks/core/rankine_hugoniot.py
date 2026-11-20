@@ -77,6 +77,14 @@ class JumpConditions(ABC):
     """
 
     def __init_subclass__(cls, **kwargs):
+        """
+        Build the named-tuple result type from the subclass's ``OUTPUT_FIELDS``.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Forwarded to ``super().__init_subclass__``.
+        """
         super().__init_subclass__(**kwargs)
         if cls.OUTPUT_FIELDS:
             cls._result_type = namedtuple(
@@ -128,6 +136,13 @@ class JumpConditions(ABC):
         Subclasses define the explicit input signature. The return type is the named tuple
         auto-generated from :attr:`OUTPUT_FIELDS`, with physical quantities as
         :class:`~astropy.units.Quantity` and dimensionless fields as bare floats.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional arguments; defined by each subclass.
+        **kwargs : dict
+            Keyword arguments; defined by each subclass.
         """
         ...
 
@@ -1720,6 +1735,11 @@ class StrongColdShockConditions(StrongShockConditions):
     Because the upstream thermal state is neglected, no upstream pressure or
     temperature needs to be provided.
 
+    See Also
+    --------
+    StrongShockConditions : Strong shocks with a finite upstream thermal state.
+    WeakShockConditions : General finite-Mach-number shock solver.
+
     Notes
     -----
     - This is the **simplest and most commonly used strong-shock model** for
@@ -1728,11 +1748,6 @@ class StrongColdShockConditions(StrongShockConditions):
       solution returns only kinematic quantities.
     - Compared to :class:`StrongShockConditions`, this class removes all
       dependence on upstream pressure and temperature.
-
-    See Also
-    --------
-    StrongShockConditions : Strong shocks with a finite upstream thermal state.
-    WeakShockConditions : General finite-Mach-number shock solver.
     """
 
     OUTPUT_FIELDS = (
@@ -2049,6 +2064,8 @@ class StrongColdShockConditions(StrongShockConditions):
         Returns
         -------
         StrongColdShockConditionsResult or StrongColdShockConditionsUpstreamResult
+            Named tuple of the post-shock quantities, or, if ``upstream`` is ``True``, of the pre-shock kinematic
+            quantities.
         """
         v_sh = ensure_in_units(shock_velocity, u.cm / u.s)
         rho = ensure_in_units(flow_density, u.g / u.cm**3)
@@ -3059,6 +3076,7 @@ class WeakShockConditions(JumpConditions):
         Returns
         -------
         float or ~numpy.ndarray
+            The compression ratio :math:`R = \rho_2/\rho_1`.
         """
         return cls._compression_ratio(np.asarray(upstream_mach_number), gamma)
 
@@ -3747,6 +3765,8 @@ class WeakShockConditions(JumpConditions):
         Returns
         -------
         WeakShockConditionsResult or WeakShockConditionsUpstreamResult
+            Named tuple of the post-shock quantities, or, if ``upstream`` is ``True``, of the pre-shock kinematic
+            quantities.
         """
         v_sh = ensure_in_units(shock_velocity, u.cm / u.s)
         rho = ensure_in_units(flow_density, u.g / u.cm**3)
@@ -4130,6 +4150,8 @@ class WeakColdShockConditions(WeakShockConditions):
         Returns
         -------
         WeakColdShockConditionsResult or WeakColdShockConditionsUpstreamResult
+            Named tuple of the post-shock quantities, or, if ``upstream`` is ``True``, of the pre-shock kinematic
+            quantities.
         """
         v_sh = ensure_in_units(shock_velocity, u.cm / u.s)
         rho = ensure_in_units(flow_density, u.g / u.cm**3)

@@ -163,7 +163,7 @@ To convert from absolute times (MJD, Unix, etc.) to relative days at load time:
 From a File
 ~~~~~~~~~~~
 
-Any format supported by :meth:`astropy.table.Table.read` works:
+Any format supported by ``astropy.table.Table.read`` works:
 
 .. code-block:: python
 

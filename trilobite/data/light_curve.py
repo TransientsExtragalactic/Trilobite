@@ -32,6 +32,13 @@ class RadioLightCurveContainer(XYDataContainer):
     The container provides a validated, unit-aware, read-only interface
     suitable for likelihood evaluation, inference, and visualization.
 
+    Parameters
+    ----------
+    table : ~astropy.table.Table
+        The radio photometry table. It must conform to the container schema.
+    frequency : float or ~astropy.units.Quantity
+        Observing frequency of the light curve. Bare floats are interpreted as GHz.
+
     Notes
     -----
     - Detection status is inferred from ``flux_upper_limit`` being NaN
@@ -87,64 +94,64 @@ class RadioLightCurveContainer(XYDataContainer):
 
     @property
     def frequency(self) -> u.Quantity:
-        """Observing frequency of the light curve."""
+        """~astropy.units.Quantity: Observing frequency of the light curve."""
         return self.__frequency__
 
     # ========================= DATA ACCESS ========================= #
     @property
     def time(self) -> u.Quantity:
-        """Observation times."""
+        """~astropy.units.Quantity: Observation times."""
         return self.table["time"].quantity
 
     @property
     def flux_density(self) -> u.Quantity:
-        """Flux density measurements."""
+        """~astropy.units.Quantity: Flux density measurements."""
         return self.table["flux_density"].quantity
 
     @property
     def flux_density_error(self) -> u.Quantity:
-        """Flux density uncertainties."""
+        """~astropy.units.Quantity: Flux density uncertainties."""
         return self.table["flux_density_error"].quantity
 
     @property
     def flux_upper_limit(self) -> u.Quantity:
-        """Flux density upper limits."""
+        """~astropy.units.Quantity: Flux density upper limits."""
         return self.table["flux_upper_limit"].quantity
 
     # ========================= DETECTION LOGIC ========================= #
     @property
     def detection_mask(self) -> np.ndarray:
-        """Boolean mask selecting detections."""
+        """~numpy.ndarray: True where the row is a detection; False for upper limits."""
         return ~self.y_lim_mask
 
     @property
     def non_detection_mask(self) -> np.ndarray:
-        """Boolean mask selecting upper limits."""
+        """~numpy.ndarray: True where the row is an upper limit; False for detections."""
         return self.y_lim_mask
 
     @property
     def n_detections(self) -> int:
-        """Return the number of detections."""
+        """int: Return the number of detections."""
         return int(self.detection_mask.sum())
 
     @property
     def n_non_detections(self) -> int:
-        """Return the number of non-detections (upper limits)."""
+        """int: Return the number of non-detections (upper limits)."""
         return int(self.non_detection_mask.sum())
 
     @property
     def detection_table(self) -> Table:
-        """Return a table containing only detections."""
+        """~astropy.table.Table: Return a table containing only detections."""
         return self.__table__[self.detection_mask].copy()
 
     @property
     def non_detection_table(self) -> Table:
-        """Return a table containing only non-detections (upper limits)."""
+        """~astropy.table.Table: Return a table containing only non-detections (upper limits)."""
         return self.__table__[self.non_detection_mask].copy()
 
     @property
     def n_obs(self) -> int:
-        """Number of observations."""
+        """int: Number of observations."""
         return len(self)
 
     # ========================= NUMERICAL BACKENDS ========================= #
@@ -191,7 +198,7 @@ class RadioLightCurveContainer(XYDataContainer):
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             The model instance. Its ``variable_names`` and ``output_names`` are
             used to determine default mappings.
         variables : dict, optional
@@ -208,7 +215,8 @@ class RadioLightCurveContainer(XYDataContainer):
 
         Returns
         -------
-        InferenceData
+        ~trilobite.data.core.InferenceData
+            The inference dataset built from the light curve.
         """
         # ------------------------------------------------------------
         # Default variable mapping
@@ -292,7 +300,23 @@ class RadioLightCurveContainer(XYDataContainer):
         frequency: Union[float, u.Quantity],
         column_map: Optional[dict] = None,
     ):
-        """Construct a RadioLightCurveContainer from an Astropy table."""
+        """
+        Construct a RadioLightCurveContainer from an Astropy table.
+
+        Parameters
+        ----------
+        table : ~astropy.table.Table
+            The radio photometry table. It must conform to the container schema.
+        frequency : float or ~astropy.units.Quantity
+            Observing frequency of the light curve. Bare floats are interpreted as GHz.
+        column_map : dict, optional
+            Mapping from existing column names to the schema's column names.
+
+        Returns
+        -------
+        ~trilobite.data.light_curve.RadioLightCurveContainer
+            The constructed light curve.
+        """
         if column_map is not None:
             table = table.copy()
             table.rename_columns(list(column_map.keys()), list(column_map.values()))
@@ -310,7 +334,23 @@ class RadioLightCurveContainer(XYDataContainer):
         frequency: Union[float, u.Quantity],
         **kwargs,
     ):
-        """Construct a RadioLightCurveContainer from a file on disk."""
+        """
+        Construct a RadioLightCurveContainer from a file on disk.
+
+        Parameters
+        ----------
+        path : str or ~pathlib.Path
+            Path to the file to read.
+        frequency : float or ~astropy.units.Quantity
+            Observing frequency of the light curve. Bare floats are interpreted as GHz.
+        **kwargs : dict
+            Additional keyword arguments passed to ``astropy.table.Table.read``.
+
+        Returns
+        -------
+        ~trilobite.data.light_curve.RadioLightCurveContainer
+            The constructed light curve.
+        """
         table = Table.read(path, **kwargs)
         return cls(
             table,
@@ -336,8 +376,8 @@ class OpticalLightCurveContainer(XYDataContainer):
     for detections and finite for non-detections. If only magnitude columns
     are present, ``mag_ab_upper_limit`` is used instead.
 
-    Schema
-    ------
+    .. rubric:: Schema
+
     Required:
 
     - ``time`` [day]
@@ -354,11 +394,18 @@ class OpticalLightCurveContainer(XYDataContainer):
     - ``obs_name`` [str]
     - ``comments`` [str]
 
+    Parameters
+    ----------
+    table : ~astropy.table.Table
+        The optical photometry table. It must conform to the container schema.
+    band : str
+        Name of the photometric band of the light curve.
+
     See Also
     --------
     RadioLightCurveContainer
         Equivalent container for single-frequency radio observations.
-    OpticalPhotometryContainer
+    :obj:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`
         Multi-band optical photometry container.
     """
 
@@ -419,7 +466,7 @@ class OpticalLightCurveContainer(XYDataContainer):
 
     @property
     def band(self) -> str:
-        """Band name for this light curve."""
+        """str: Band name for this light curve."""
         return self.__band__
 
     # ========================= HELPERS ========================= #
@@ -434,12 +481,12 @@ class OpticalLightCurveContainer(XYDataContainer):
     # ========================= DATA ACCESS ========================= #
     @property
     def time(self) -> u.Quantity:
-        """Observation times in days."""
+        """~astropy.units.Quantity: Observation times in days."""
         return self.__table__["time"].quantity
 
     @property
     def flux(self) -> u.Quantity:
-        """Flux density F_ν in erg/s/cm²/Hz (converted from mag if needed)."""
+        """~astropy.units.Quantity: Flux density F_ν in erg/s/cm²/Hz (converted from mag if needed)."""
         if self._has_flux_column:
             return self.__table__["flux_density"].quantity
         from trilobite.utils.phot_utils import ab_mag_to_flux
@@ -449,7 +496,7 @@ class OpticalLightCurveContainer(XYDataContainer):
 
     @property
     def flux_error(self) -> u.Quantity:
-        r"""1-sigma uncertainty on F_ν (propagated from mag error if needed)."""
+        r"""~astropy.units.Quantity: 1-sigma uncertainty on F_ν (propagated from mag error if needed)."""
         if self._has_flux_column and "flux_density_error" in self.__table__.colnames:
             return self.__table__["flux_density_error"].quantity
         mag_err = np.asarray(self.__table__["mag_ab_error"].data, dtype=float)
@@ -457,7 +504,7 @@ class OpticalLightCurveContainer(XYDataContainer):
 
     @property
     def flux_upper_limit(self) -> u.Quantity:
-        """Upper limit on F_ν (NaN for detections, converted from mag if needed)."""
+        """~astropy.units.Quantity: Upper limit on F_ν (NaN for detections, converted from mag if needed)."""
         if "flux_upper_limit" in self.__table__.colnames:
             return self.__table__["flux_upper_limit"].quantity
         if "mag_ab_upper_limit" in self.__table__.colnames:
@@ -469,7 +516,7 @@ class OpticalLightCurveContainer(XYDataContainer):
 
     @property
     def mag(self) -> np.ndarray:
-        """AB magnitude (dimensionless; converted from flux if needed)."""
+        """~numpy.ndarray: AB magnitude (dimensionless; converted from flux if needed)."""
         if self._has_mag_column:
             return np.asarray(self.__table__["mag_ab"].data, dtype=float)
         from trilobite.utils.phot_utils import flux_to_ab_mag
@@ -478,14 +525,14 @@ class OpticalLightCurveContainer(XYDataContainer):
 
     @property
     def mag_error(self) -> np.ndarray:
-        r"""1-sigma uncertainty on AB magnitude (propagated from flux if needed)."""
+        r"""~numpy.ndarray: 1-sigma uncertainty on AB magnitude (propagated from flux if needed)."""
         if self._has_mag_column and "mag_ab_error" in self.__table__.colnames:
             return np.asarray(self.__table__["mag_ab_error"].data, dtype=float)
         return 1.0857 * self.flux_error.value / self.flux.value
 
     @property
     def mag_upper_limit(self) -> np.ndarray:
-        """AB magnitude upper limit (NaN for detections; converted from flux if needed)."""
+        """~numpy.ndarray: AB magnitude upper limit (NaN for detections; converted from flux if needed)."""
         if "mag_ab_upper_limit" in self.__table__.colnames:
             return np.asarray(self.__table__["mag_ab_upper_limit"].data, dtype=float)
         from trilobite.utils.phot_utils import flux_to_ab_mag
@@ -495,24 +542,27 @@ class OpticalLightCurveContainer(XYDataContainer):
     # ========================= DETECTION LOGIC ========================= #
     @property
     def detection_mask(self) -> np.ndarray:
-        """Boolean mask: True for detections."""
+        """~numpy.ndarray: True where the row is a detection; False for upper limits."""
         return np.isnan(self.flux_upper_limit.value)
 
     @property
     def non_detection_mask(self) -> np.ndarray:
-        """Boolean mask: True for upper limits (non-detections)."""
+        """~numpy.ndarray: True where the row is an upper limit; False for detections."""
         return ~self.detection_mask
 
     @property
     def n_detections(self) -> int:
+        """int: Number of detections."""
         return int(self.detection_mask.sum())
 
     @property
     def n_non_detections(self) -> int:
+        """int: Number of non-detections (upper limits)."""
         return int(self.non_detection_mask.sum())
 
     @property
     def n_obs(self) -> int:
+        """int: Number of observations."""
         return len(self)
 
     # ========================= Inference Data Conversion ========================= #
@@ -528,18 +578,18 @@ class OpticalLightCurveContainer(XYDataContainer):
         r"""
         Convert this :class:`OpticalLightCurveContainer` to an :class:`~trilobite.data.core.InferenceData` object.
 
-        The container's band name is resolved to an integer ``band_idx`` via
+        The container's band name is resolved to an integer ``band_index`` via
         ``model.bundle.filter_names``. The band index is broadcast to a constant
         array (same value for every time point) and injected into ``x``.
 
         Default mapping:
 
-        - ``variables``: ``{"time": ..., "band_idx": <constant>}``
+        - ``variables``: ``{"time": ..., "band_index": <constant>}``
         - ``observables``: the single model output mapped to flux columns
 
         Parameters
         ----------
-        model : Model
+        model : ~trilobite.models.core.base.Model
             Optical model instance exposing a ``bundle`` attribute
             (:class:`~trilobite.utils.phot_utils.FilterBundle`).
         variables : dict, optional
@@ -555,7 +605,8 @@ class OpticalLightCurveContainer(XYDataContainer):
 
         Returns
         -------
-        InferenceData
+        ~trilobite.data.core.InferenceData
+            The inference dataset built from the light curve.
 
         Raises
         ------
@@ -574,7 +625,7 @@ class OpticalLightCurveContainer(XYDataContainer):
         filter_names = list(model.bundle.filter_names)
         if self.band not in filter_names:
             raise KeyError(f"Band '{self.band}' is not in the model's FilterBundle. Available bands: {filter_names}")
-        band_idx = filter_names.index(self.band)
+        band_index = filter_names.index(self.band)
 
         # Apply optional row mask
         if mask is not None:
@@ -585,7 +636,7 @@ class OpticalLightCurveContainer(XYDataContainer):
             mask_arr = np.ones(self.n_obs, dtype=bool)
 
         t_vals = self.time.to(u.day).value[mask_arr]
-        idx_vals = np.full(t_vals.shape, band_idx, dtype=int)
+        idx_vals = np.full(t_vals.shape, band_index, dtype=int)
         flux_vals = self.flux.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
         flux_err_vals = self.flux_error.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
         flux_ul_vals = self.flux_upper_limit.to(u.Unit("erg/(s cm2 Hz)")).value[mask_arr]
@@ -608,7 +659,7 @@ class OpticalLightCurveContainer(XYDataContainer):
         if variables is None:
             variables = {
                 "time": t_vals * u.day,
-                "band_idx": idx_vals,
+                "band_index": idx_vals,
             }
         if observables is None:
             if len(model.output_names) != 1:
@@ -637,7 +688,7 @@ class OpticalLightCurveContainer(XYDataContainer):
         scratch = self.__table__.copy()
         if mask is not None:
             scratch = scratch[mask_arr]
-        scratch["band_idx"] = idx_vals
+        scratch["band_index"] = idx_vals
         return InferenceData.from_table(
             model=model,
             table=scratch,
@@ -654,7 +705,23 @@ class OpticalLightCurveContainer(XYDataContainer):
         band: str,
         column_map: Optional[dict] = None,
     ):
-        """Construct an OpticalLightCurveContainer from an Astropy table."""
+        """
+        Construct an OpticalLightCurveContainer from an Astropy table.
+
+        Parameters
+        ----------
+        table : ~astropy.table.Table
+            The optical photometry table. It must conform to the container schema.
+        band : str
+            Name of the photometric band of the light curve.
+        column_map : dict, optional
+            Mapping from existing column names to the schema's column names.
+
+        Returns
+        -------
+        ~trilobite.data.light_curve.OpticalLightCurveContainer
+            The constructed light curve.
+        """
         if column_map is not None:
             table = table.copy()
             table.rename_columns(list(column_map.keys()), list(column_map.values()))
@@ -668,6 +735,22 @@ class OpticalLightCurveContainer(XYDataContainer):
         band: str,
         **kwargs,
     ):
-        """Construct an OpticalLightCurveContainer from a file on disk."""
+        """
+        Construct an OpticalLightCurveContainer from a file on disk.
+
+        Parameters
+        ----------
+        path : str or ~pathlib.Path
+            Path to the file to read.
+        band : str
+            Name of the photometric band of the light curve.
+        **kwargs : dict
+            Additional keyword arguments passed to ``astropy.table.Table.read``.
+
+        Returns
+        -------
+        ~trilobite.data.light_curve.OpticalLightCurveContainer
+            The constructed light curve.
+        """
         table = Table.read(path, **kwargs)
         return cls(table, band=band)

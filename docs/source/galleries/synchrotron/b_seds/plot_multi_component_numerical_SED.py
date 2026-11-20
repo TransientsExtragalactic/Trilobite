@@ -2,6 +2,8 @@
 Multi-Component Synchrotron SEDs with the Numerical Engine
 ===========================================================
 
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs.numerical.core
+
 The synchrotron spectra of astrophysical transients are often modelled with a simple
 power-law electron distribution, but more complete shock-acceleration models
 (e.g. :footcite:t:`2011ApJ...741...40T`) predict a **two-component** population: a
@@ -11,7 +13,7 @@ accelerated to high Lorentz factors.
 Analytic broken power-law SED approximations are not adequate for this case, because the
 transition between the two components is smooth and does not map cleanly onto a single
 spectral break. The
-:class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine` provides a
+:class:`NumericalSynchrotronEngine` provides a
 fully numerical alternative: given any sampled electron distribution, it directly
 evaluates the synchrotron emissivity integral and solves the radiative transfer equation
 along a line-of-sight depth :math:`R`, without any piecewise approximation.
@@ -19,8 +21,7 @@ along a line-of-sight depth :math:`R`, without any piecewise approximation.
 In this example we:
 
 1. Construct a mixed **thermal + power-law** electron distribution.
-2. Verify the normalisation by checking that the components integrate to their target
-   number densities.
+2. Normalise each component to its share of the thermal energy budget and verify it.
 3. Compute the resulting synchrotron SED and compare the contributions from each
    component.
 
@@ -40,7 +41,11 @@ pitch-angle distribution is isotropic.
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
+from scipy.integrate import trapezoid
 
+from trilobite.physics_utils import compute_thermal_electron_energy_fraction
+from trilobite.radiation.constants import electron_rest_energy_cgs
+from trilobite.radiation.synchrotron.electron_distributions import MaxwellJuettner, PowerLaw
 from trilobite.radiation.synchrotron.SEDs.numerical import NonRelativisticSphericalSynchrotronEngine
 from trilobite.utils.plot_utils import set_plot_style
 
@@ -51,78 +56,95 @@ engine.load_avg_first_kernel()
 # The Electron Distribution
 # --------------------------
 #
-# We split the total electron number density :math:`n_e` between two components
-# controlled by the **thermal fraction** :math:`\delta`:
+# The post-shock thermal energy density :math:`u_{\rm th}` is shared between ions, thermal electrons, non-thermal
+# electrons and the magnetic field. Trilobite describes the split with three fractions:
+#
+# - :math:`\epsilon_B`: the fraction of :math:`u_{\rm th}` in the magnetic field,
+# - :math:`\epsilon_E`: the fraction in the kinetic energy of the non-thermal electrons,
+# - :math:`\epsilon_T`: the ratio of the thermal-electron to the ion energy.
+#
+# Removing the magnetic and non-thermal energies first, the thermal electrons carry
 #
 # .. math::
 #
-#     n_e = \underbrace{\delta\, n_e}_{n_{\rm therm}}
-#           \;+\;
-#           \underbrace{(1-\delta)\, n_e}_{n_{\rm PL}}.
+#     f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}
 #
-# **Thermal component** — relativistic Maxwell-Jüttner distribution:
+# of :math:`u_{\rm th}`. Electron energies are kinetic, :math:`\int N(\gamma-1)\,m_e c^2\,d\gamma`, and each component
+# is normalized by equipartition with the magnetic field, so that it carries its fraction of
+# :math:`B^2 / (8\pi \epsilon_B)`.
+#
+# **Thermal component** -- the Maxwell-Juettner distribution,
+# :class:`~trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner`,
 #
 # .. math::
 #
 #     N_{\rm therm}(\gamma)
-#         = \frac{n_{\rm therm}}{2\theta^3}\,\gamma^2\,e^{-\gamma/\theta},
+#         = N_{0,\rm therm}\,\frac{\gamma^2\beta}{\theta K_2(1/\theta)}\,e^{-\gamma/\theta},
+#     \qquad \beta = \sqrt{1-\gamma^{-2}},
 #
-# where :math:`\theta = kT/m_e c^2` is the dimensionless temperature.  The prefactor
-# :math:`1/(2\theta^3)` follows from
-# :math:`\int_0^\infty \gamma^2 e^{-\gamma/\theta}\,d\gamma = 2\theta^3`, valid in
-# the ultra-relativistic limit :math:`\theta \gg 1`. The distribution peaks at
-# :math:`\gamma_{\rm peak} \approx 2\theta`.
+# where :math:`\theta = kT/m_e c^2` is the dimensionless electron temperature. For :math:`\theta \gg 1` this peaks near
+# :math:`\gamma \approx 2\theta`.
 #
-# **Non-thermal power-law component** — truncated power law with index :math:`p`:
+# **Non-thermal power-law component** -- a truncated power law,
+# :class:`~trilobite.radiation.synchrotron.electron_distributions.PowerLaw`,
 #
 # .. math::
 #
-#     N_{\rm PL}(\gamma)
-#         = \frac{(p-1)\,n_{\rm PL}}
-#               {\gamma_{\min}^{1-p} - \gamma_{\max}^{1-p}}
-#               \,\gamma^{-p},
-#         \qquad \gamma_{\min} \le \gamma \le \gamma_{\max}.
-#
-# The prefactor is the reciprocal of
-# :math:`\int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{-p}\,d\gamma`, ensuring that
-# :math:`\int_{\gamma_{\min}}^{\gamma_{\max}} N_{\rm PL}(\gamma)\,d\gamma = n_{\rm PL}`.
+#     N_{\rm PL}(\gamma) = N_{0,\rm PL}\,\gamma^{-p},
+#     \qquad \gamma_{\min} \le \gamma \le \gamma_{\max}.
 
-delta = 0.999  # thermal fraction of the total electron population
-n_e = 1.0 * u.cm**-3  # total electron number density
+B = 0.1 * u.G  # magnetic field
+epsilon_B, epsilon_E, epsilon_T = (
+    0.1,
+    0.005,
+    0.006,
+)  # magnetic, non-thermal electron, and thermal-electron/ion fractions
+theta = 10  # dimensionless temperature kT / m_e c^2
 p = 2.5  # non-thermal power-law index
-theta = 1  # dimensionless temperature kT / m_e c^2
-gamma_min, gamma_max = 6, 1e8  # power-law Lorentz factor bounds
+gamma_min, gamma_max = 50, 1e6  # power-law Lorentz factor bounds
 
-n_therm = delta * n_e
-n_pl = (1 - delta) * n_e
-
-_pl_norm = (p - 1) / (gamma_min ** (1 - p) - gamma_max ** (1 - p))
+N0_therm = MaxwellJuettner.normalize_from_magnetic_field(
+    B, epsilon_B, epsilon_T=epsilon_T, epsilon_E=epsilon_E, Theta=theta
+)
+N0_pl = PowerLaw.normalize_from_magnetic_field(B, epsilon_B, epsilon_E, p=p, gamma_min=gamma_min, gamma_max=gamma_max)
 
 
 def N_therm(gamma):
-    """Maxwell-Jüttner distribution, normalised to n_therm."""
-    return n_therm * gamma**2 * np.exp(-gamma / theta) / (2 * theta**3)
+    """Return the Maxwell-Juettner distribution of the thermal electrons."""
+    return MaxwellJuettner.pdf(gamma, N0_therm.value, Theta=theta) * u.cm**-3
 
 
 def N_pl(gamma):
-    """Truncated power-law distribution, normalised to n_pl."""
-    N = n_pl * _pl_norm * gamma ** (-p)
-    N[gamma < gamma_min] = 0.0 * u.cm**-3
-    return N
+    """Return the truncated power law of the non-thermal electrons."""
+    return PowerLaw.pdf(gamma, N0_pl.value, p=p, gamma_min=gamma_min, gamma_max=gamma_max) * u.cm**-3
 
 
 # %%
-# Visualising the Distribution
-# -----------------------------
-#
-# We evaluate both components on a logarithmically-spaced :math:`\gamma` grid that
-# spans from non-relativistic through ultra-relativistic energies.
+# We evaluate both components on a logarithmically-spaced :math:`\gamma` grid that spans non-relativistic through
+# ultra-relativistic energies, with a node placed at :math:`\gamma_{\min}` so the sharp edge of the power law is
+# sampled exactly. Integrating each component confirms that it carries its fraction of the thermal energy density
+# :math:`u_{\rm th} = B^2 / (8\pi \epsilon_B)`.
 
-gamma_array = np.geomspace(1, 1e6, 200)
+gamma_array = np.unique(np.append(np.geomspace(1, gamma_max, 400), gamma_min))
+u_th = B.value**2 / (8 * np.pi * epsilon_B)  # erg cm^-3
+f_th = compute_thermal_electron_energy_fraction(epsilon_T, epsilon_B, epsilon_E)
+
+
+def kinetic_energy_density(N):
+    """Kinetic energy density in erg cm^-3 of a distribution sampled on ``gamma_array``."""
+    return electron_rest_energy_cgs * trapezoid(N.to_value(u.cm**-3) * (gamma_array - 1), gamma_array)
+
 
 N_therm_array = N_therm(gamma_array)
 N_pl_array = N_pl(gamma_array)
 N_total_array = N_therm_array + N_pl_array
+
+print(f"thermal electrons: {kinetic_energy_density(N_therm_array) / u_th:.5f} of u_th (expected {f_th:.5f})")
+print(f"non-thermal electrons: {kinetic_energy_density(N_pl_array) / u_th:.5f} of u_th (expected {epsilon_E:.5f})")
+
+# %%
+# Visualising the Distribution
+# -----------------------------
 
 set_plot_style()
 fig, ax = plt.subplots(figsize=(8, 5))
@@ -162,7 +184,7 @@ plt.show()
 # ------------------
 #
 # We now pass the sampled distributions to
-# :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity`.
+# :meth:`NumericalSynchrotronEngine.compute_specific_intensity`.
 # The engine numerically integrates the synchrotron emissivity
 #
 # .. math::
@@ -180,7 +202,7 @@ nu = np.geomspace(1e-2, 1e2, 100) * u.GHz
 
 source_kwargs = dict(
     R=1e17 * u.cm,
-    B=1 * u.G,
+    B=B,
     gamma=gamma_array,
     luminosity_distance=60 * u.Mpc,
 )
@@ -221,7 +243,7 @@ ax.loglog(
     ls="--",
     label="Power-law",
 )
-ax.set_ylim([1e-3, 1e0])
+ax.set_ylim([1e-3, 1e1])
 ax.set_xlim([1e-1, 1e2])
 ax.set_xlabel(r"$\nu\ [\mathrm{GHz}]$")
 ax.set_ylabel(r"$F_\nu\ [\mathrm{mJy}]$")

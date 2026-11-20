@@ -66,11 +66,11 @@ def get_batch_slices(
 
     Parameters
     ----------
-    batch_count
+    batch_count : int
         Number of batches to divide the tasks into.
-    task_count
+    task_count : int, optional
         Total number of tasks. Mutually exclusive with `data`.
-    data
+    data : ~collections.abc.Collection, optional
         Sized iterable (e.g. list, array). If provided, its length is used as
         `task_count`.
 
@@ -134,9 +134,9 @@ def split_args_into_batches(args, batch_slices):
 
     Parameters
     ----------
-    args
+    args : tuple
         Positional arguments to split.
-    batch_slices
+    batch_slices : list of slice
         Batch slices, typically from `get_batch_slices`.
 
     Returns
@@ -166,9 +166,9 @@ def split_kwargs_into_batches(kwargs, batch_slices):
 
     Parameters
     ----------
-    kwargs
+    kwargs : dict
         Keyword arguments to split.
-    batch_slices
+    batch_slices : list of slice
         Batch slices, typically from `get_batch_slices`.
 
     Returns

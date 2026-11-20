@@ -38,7 +38,15 @@ repos:
     hooks:
       - id: typos
         name: "🔡 Spellcheck (typos)"
-
+  # 5. Documentation
+  - repo: https://github.com/numpy/numpydoc
+    rev: v1.11.0
+    hooks:
+      - id: numpydoc-validation
+        # Docs sources (gallery examples, Sphinx extensions, conf) are scripts, not API; their
+        # module docstrings are narrative pages and their helper functions are not public.
+        exclude: ^docs/
+  # 6. Commit Message Linting
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v1.17.0
     hooks:

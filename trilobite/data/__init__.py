@@ -6,8 +6,8 @@ for working with multi-wavelength observations — from radio photometry to opti
 survey data. These containers form the boundary between raw observational data
 and the modeling and inference layers of the library.
 
-Overview
---------
+.. rubric:: Overview
+
 The data layer is responsible for:
 
 - Enforcing well-defined column schemas for observational tables,

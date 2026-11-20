@@ -15,9 +15,12 @@ import numpy as np
 from astropy import units as u
 
 from trilobite.dynamics.shocks import ChevalierSelfSimilarShockEngine
+from trilobite.dynamics.shocks.core import StrongColdShockConditions
 from trilobite.models.core.base import Model
 from trilobite.models.core.parameters import ModelParameter, ModelVariable
 from trilobite.radiation.synchrotron.SEDs import SSA_SED_PowerLaw
+
+from ..core.status import ModelStatus
 
 __all__ = [
     "ChevalierShockModel",
@@ -33,8 +36,9 @@ class ChevalierShockModel(Model):
     (CSM) using the self-similar solutions presented in :footcite:t:`ChevalierXRayRadioEmission1982`.
     The model computes the shock dynamics and resulting synchrotron spectral energy distribution (SED)
     based on a set of macroscopic and microscopic parameters.
-
     """
+
+    STATUS = ModelStatus.UNVERIFIED
 
     # =============================================== #
     # Parameter and Variable Declarations             #
@@ -225,8 +229,7 @@ class ChevalierShockModel(Model):
         # Now use the shock radius and velocity to compute the
         # corresponding magnetic field strength.
         _rho_up = parameters["rho_0"] * (_shock_radius / 1e14) ** -parameters["s"]
-        _R = 4.0  # = (gamma+1)/(gamma-1) for gamma=5/3
-        _U = 1.5 * (_R - 1) / _R**2 * _rho_up * _shock_velocity**2
+        _U = StrongColdShockConditions._post_shock_thermal_energy_density(_shock_velocity, _rho_up)
         _shock_B = np.sqrt(8 * np.pi * parameters["epsilon_B"] * _U)
 
         # First use the parameters to compute the BPL parameters from the

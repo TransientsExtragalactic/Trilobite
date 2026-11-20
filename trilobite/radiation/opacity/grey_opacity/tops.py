@@ -5,8 +5,7 @@ This module provides grey opacity laws constructed from tabulated
 TOPS (Los Alamos National Laboratory Opacity Code) data, including
 both Rosseland and Planck mean opacities.
 
-Averaging conventions
----------------------
+.. rubric:: Averaging conventions
 
 TOPS tables include both:
 
@@ -15,8 +14,7 @@ TOPS tables include both:
 
 The desired mean is selected at construction time via ``mean_type``.
 
-Implementation
---------------
+.. rubric:: Implementation
 
 The primary class :class:`TOPSOpacity` wraps a tabulated dataset and
 evaluates the opacity using a Cython-backed bilinear interpolation
@@ -90,20 +88,20 @@ class TOPSOpacity(GreyOpacityLaw):
     out_of_bounds : {'raise', 'clamp', 'nan'}
         Behaviour for queries outside the tabulated domain.
 
-    Notes
-    -----
-    - Evaluation is performed using a Cython-backed bilinear interpolation kernel.
-    - All inputs are expected in log-space.
-    - Missing or invalid table entries should be encoded as ``NaN``.
-
     See Also
     --------
-    ~trilobite.radiation.opacity.opacity_io.read_tops
+    :obj:`~trilobite.radiation.opacity.opacity_io.read_tops`
         Parse a TOPS text file into a namespace.
     TOPSOpacity.from_tops
         Construct from a parsed TOPS dataset.
     TOPSOpacity.load_default
         Load the bundled solar-composition TOPS table.
+
+    Notes
+    -----
+    - Evaluation is performed using a Cython-backed bilinear interpolation kernel.
+    - All inputs are expected in log-space.
+    - Missing or invalid table entries should be encoded as ``NaN``.
     """
 
     IS_C_BACKED = True
@@ -120,6 +118,22 @@ class TOPSOpacity(GreyOpacityLaw):
         mean_type: str = "rosseland",
         out_of_bounds: str = "raise",
     ):
+        r"""
+        Initialize the opacity law from tabulated values.
+
+        Parameters
+        ----------
+        grid_T : array_like, shape (n_T,)
+            :math:`\log_{10}(T\,[\mathrm{K}])` grid (strictly increasing).
+        grid_rho : array_like, shape (n_\rho,)
+            :math:`\log_{10}(\rho\,[\mathrm{g\,cm^{-3}}])` grid (strictly increasing).
+        kappa : array_like, shape (n_T, n_\rho)
+            :math:`\log_{10}(\kappa\,[\mathrm{cm^2\,g^{-1}}])`. ``NaN`` marks invalid or out-of-domain cells.
+        mean_type : {'rosseland', 'planck'}
+            Frequency-averaging convention represented by the table.
+        out_of_bounds : {'raise', 'clamp', 'nan'}
+            Behaviour for queries outside the tabulated domain.
+        """
         if out_of_bounds not in _OOB_MODES:
             raise ValueError(f"out_of_bounds must be one of {list(_OOB_MODES)}.")
         if mean_type not in ("rosseland", "planck"):
@@ -183,7 +197,8 @@ class TOPSOpacity(GreyOpacityLaw):
 
         Returns
         -------
-        TOPSOpacity
+        ~trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity
+            The opacity law built from the bundled TOPS table.
         """
         if table_path is not None:
             from trilobite.radiation.opacity.opacity_io import read_tops
@@ -216,7 +231,8 @@ class TOPSOpacity(GreyOpacityLaw):
 
         Returns
         -------
-        TOPSOpacity
+        ~trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity
+            The opacity law built from the parsed TOPS data.
         """
         if mean_type == "rosseland":
             kappa_raw = ns.rosseland
@@ -261,4 +277,12 @@ class TOPSOpacity(GreyOpacityLaw):
         return self._c_object.dlogkappa_dlogT(log_T, log_rho)
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the opacity law.
+
+        Returns
+        -------
+        str
+            The class name with the table dimensions.
+        """
         return f"TOPSOpacity(mean_type={self.mean_type!r}, out_of_bounds={self.out_of_bounds!r})"

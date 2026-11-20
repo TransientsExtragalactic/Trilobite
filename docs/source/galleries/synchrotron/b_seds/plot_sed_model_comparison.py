@@ -5,17 +5,17 @@ Comparing Synchrotron SED Models
 Trilobite provides four one-zone phenomenological synchrotron SED classes
 that cover progressively more complex physical regimes:
 
-1. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
+1. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED`
    — optically thin, uncooled (:math:`\nu_m` break only)
-2. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
+2. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED`
    — optically thin with radiative cooling (:math:`\nu_m`, :math:`\nu_c`)
-3. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+3. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED`
    — with synchrotron self-absorption, no cooling (:math:`\nu_a`, :math:`\nu_m`)
-4. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
+4. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED`
    — full model: cooling + SSA (:math:`\nu_a`, :math:`\nu_m`, :math:`\nu_c`)
 
 All four are evaluated with the same underlying physical parameters using
-:meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params`
+:meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params`
 to derive consistent break frequencies and normalizations from :math:`B`, :math:`R`,
 and microphysical fractions.  This makes it easy to see what each successive
 physical ingredient adds to the spectral shape.
@@ -25,13 +25,6 @@ physical ingredient adds to the spectral shape.
     All four classes assume a **single homogeneous emission zone**: uniform
     :math:`B`, a single power-law electron distribution, and no spatial
     stratification.  Real sources may require multi-zone extensions.
-
-Relevant API References
------------------------
-- :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
-- :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
-- :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
-- :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
 """
 
 import matplotlib.pyplot as plt
@@ -59,7 +52,6 @@ B = 0.1 * u.G
 R = 1e16 * u.cm
 gamma_min = 200.0
 gamma_c = 2000.0
-gamma_max = np.inf
 p = 2.5
 D_L = 100.0 * u.Mpc
 epsilon_E = 0.1
@@ -68,89 +60,39 @@ epsilon_B = 0.1
 nu = np.geomspace(1e7, 1e18, 1000) * u.Hz
 
 # %%
-# Compute Break Frequencies via Forward Closure
-# ----------------------------------------------
+# Forward Closure: Physical Parameters → SED Parameters
+# ------------------------------------------------------
 #
 # Each SED class provides a :meth:`from_physics_to_params` classmethod that
-# maps physical parameters :math:`(B, R, \gamma_{\min}, \ldots)` onto the
+# maps physical inputs :math:`(B, R, \gamma_{\min}, \ldots)` onto the
 # phenomenological break frequencies and normalization flux.
-#
-# .. note::
-#
-#     :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED` and
-#     :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED` do not
-#     include radiative cooling and therefore do not require :math:`\gamma_c`.
-#     The other two classes do require it.
+# The cooling classes additionally require :math:`\gamma_c`; the two non-cooling
+# classes do not.
 
 sed_pl = PowerLaw_SynchrotronSED()
 sed_cool = PowerLaw_Cooling_SynchrotronSED()
 sed_ssa = PowerLaw_SSA_SynchrotronSED()
 sed_cool_ssa = PowerLaw_Cooling_SSA_SynchrotronSED()
 
-# Forward closures (returns CGS floats for frequencies and flux)
-params_pl = sed_pl.from_physics_to_params(
-    B=B,
-    R=R,
-    gamma_min=gamma_min,
-    p=p,
-    epsilon_E=epsilon_E,
-    epsilon_B=epsilon_B,
-    luminosity_distance=D_L,
-    gamma_max=1e18,
-)
-params_cool = sed_cool.from_physics_to_params(
-    B=B,
-    R=R,
-    gamma_min=gamma_min,
-    gamma_c=gamma_c,
-    p=p,
-    epsilon_E=epsilon_E,
-    epsilon_B=epsilon_B,
-    luminosity_distance=D_L,
-    gamma_max=1e18,
-)
-params_ssa = sed_ssa.from_physics_to_params(
-    B=B,
-    R=R,
-    gamma_min=gamma_min,
-    p=p,
-    epsilon_E=epsilon_E,
-    epsilon_B=epsilon_B,
-    luminosity_distance=D_L,
-    gamma_max=1e18,
-)
-params_cool_ssa = sed_cool_ssa.from_physics_to_params(
-    B=B,
-    R=R,
-    gamma_min=gamma_min,
-    gamma_c=gamma_c,
-    p=p,
-    epsilon_E=epsilon_E,
-    epsilon_B=epsilon_B,
-    luminosity_distance=D_L,
-    gamma_max=1e18,
-)
-print(params_cool_ssa)
-print(params_cool)
+common = dict(B=B, R=R, gamma_min=gamma_min, p=p, epsilon_E=epsilon_E, epsilon_B=epsilon_B, luminosity_distance=D_L)
 
-
-print("--- Break frequencies ---")
-print(f"PL        : nu_m = {params_pl['nu_m']:.2e} ")
-print(f"Cooling   : nu_m = {params_cool['nu_m']:.2e} ,  nu_c = {params_cool['nu_c']:.2e} ")
-print(f"SSA       : nu_m = {params_ssa['nu_m']:.2e} ,  nu_a = {params_ssa['nu_a']:.2e} ")
-print(
-    f"Cooling+SSA: nu_m = {params_cool_ssa['nu_m']:.2e} ,  nu_c = {params_cool_ssa['nu_c']:.2e} ,  nu_a = {params_cool_ssa['nu_a']:.2e}"
-)
+params_pl = sed_pl.from_physics_to_params(**common)
+params_ssa = sed_ssa.from_physics_to_params(**common)
+params_cool = sed_cool.from_physics_to_params(gamma_c=gamma_c, **common)
+params_cool_ssa = sed_cool_ssa.from_physics_to_params(gamma_c=gamma_c, **common)
 
 # %%
-# Evaluate All Four SEDs
-# ----------------------
+# SED Comparison
+# --------------
 #
-# We now evaluate each SED on the same frequency grid.  All normalizations
-# are derived from the same physical parameters, so differences in peak flux
-# reflect the different energy-loss physics of each model.
-
-# Flux unit for output
+# The upper panel shows the four SEDs on the same axes; the lower panel shows
+# the numerical log–log slope :math:`d\log F_\nu / d\log\nu`, which reveals the
+# distinct power-law segments.  Standard reference slopes are:
+#
+# - :math:`+5/2` (optically thick SSA below :math:`\nu_a`)
+# - :math:`+1/3` (optically thin low-frequency tail below :math:`\nu_m`)
+# - :math:`-(p-1)/2` (above :math:`\nu_m`, slow-cooling)
+# - :math:`-p/2` (above :math:`\nu_c`, fast-cooling steepening)
 
 flux_pl = sed_pl.sed(nu, F_norm=params_pl["F_norm"], nu_m=params_pl["nu_m"], nu_max=params_pl["nu_max"], p=p, s=-0.25)
 
@@ -160,6 +102,7 @@ flux_cool = sed_cool.sed(
     nu_c=params_cool["nu_c"],
     F_norm=params_cool["F_norm"],
     nu_max=params_cool["nu_max"],
+    p=p,
     s=-0.25,
 )
 
@@ -194,13 +137,6 @@ fluxes = {
 }
 line_styles = ["-", "--", "-.", ":"]
 
-# %%
-# Plot: All Four SEDs on the Same Axes
-# --------------------------------------
-#
-# Annotating the characteristic break frequencies helps identify which physical
-# processes determine each spectral segment.
-
 set_plot_style()
 
 fig, axes = plt.subplots(2, 1, figsize=(9, 9), sharex=True)
@@ -208,7 +144,6 @@ fig, axes = plt.subplots(2, 1, figsize=(9, 9), sharex=True)
 for (label, flux), ls in zip(fluxes.items(), line_styles):
     axes[0].loglog(nu.to_value(u.Hz), flux, ls=ls, lw=2, label=label)
 
-# Annotate breaks from the full model
 for nu_key, text, ypos in [
     ("nu_a", r"$\nu_a$", 1e-8),
     ("nu_m", r"$\nu_m$", 1e-8),
@@ -223,23 +158,10 @@ axes[0].set_title("Synchrotron SED Models: Physical Comparison")
 axes[0].legend(loc="upper right")
 axes[0].grid(True, which="both", ls="--", alpha=0.3)
 
-# %%
-# Log–Log Derivative Panel (Spectral Slopes)
-# -------------------------------------------
-#
-# The spectral slope :math:`d\log F_\nu / d\log\nu` reveals the distinct
-# power-law segments of each SED.  Standard slopes are:
-#
-# - :math:`+5/2` (optically thick SSA below :math:`\nu_a`)
-# - :math:`+1/3` (low-frequency optically thin tail below :math:`\nu_m`)
-# - :math:`-(p-1)/2` (standard power-law above :math:`\nu_m` in uncooled)
-# - :math:`-p/2` (steepened by cooling above :math:`\nu_c` in slow-cooling)
-
 log_nu = np.log(nu.to_value(u.Hz))
 
 for (label, flux), ls in zip(fluxes.items(), line_styles):
-    log_f = np.log(flux)
-    slope = np.gradient(log_f, log_nu)
+    slope = np.gradient(np.log(flux), log_nu)
     axes[1].semilogx(nu.to_value(u.Hz), slope, ls=ls, lw=2, label=label)
 
 for ref_slope, text in [

@@ -1,0 +1,118 @@
+r"""
+Recovering B and R from an SSA Peak: the De Marchi22 Inversion
+===============================================================
+
+**Objective:** test how accurately
+:func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22`,
+the SSA inversion of :footcite:t:`demarchiRadioAnalysisSN2004C2022`, recovers the magnetic field :math:`B`
+and radius :math:`R`, and compare it with
+:func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_Diggins26`.
+
+.. note::
+
+    The analytic one-zone SED classes are being phased out in favor of the numerical engines, which
+    are more accurate. Here the SED is generated with the numerical engine, the break is extracted by a
+    fit, and only then is it inverted. The inversion is therefore tested against an independent calculation,
+    not against its own forward model.
+
+The De Marchi inversion uses a **fixed pitch angle** and a single filling factor :math:`f` for the emitting
+volume, with the full projected disk :math:`\pi R^2` emitting. To compare like with like, the numerical SED
+below uses the same assumptions (a pitch angle of :math:`\pi/2`, :math:`f_A = 1`, :math:`f_V = f`), and the
+Diggins26 inversion is run with ``pitch_average=False``.
+"""
+
+import matplotlib.pyplot as plt
+import numpy as np
+from astropy import units as u
+from scipy.optimize import curve_fit
+
+from trilobite.radiation.synchrotron import invert_ssa_DeMarchi22, invert_ssa_Diggins26
+from trilobite.radiation.synchrotron.electron_distributions import PowerLaw
+from trilobite.radiation.synchrotron.SEDs.numerical import NonRelativisticSphericalSynchrotronEngine
+from trilobite.utils.plot_utils import set_plot_style
+
+set_plot_style()
+
+# %%
+# A Numerical SED at Fixed Pitch Angle
+# ------------------------------------
+#
+# We build SEDs for a series of supernova shells at 20 Mpc, all with :math:`R = 10^{16}` cm and
+# :math:`p = 3`, and with magnetic fields from 0.1 to 2 G. A stronger field moves the SSA peak to higher
+# frequency, so the series samples a range of observed peaks.
+
+engine = NonRelativisticSphericalSynchrotronEngine()
+engine.load_first_kernel()
+
+R_true, D, p, f = 1.0e16 * u.cm, 20.0 * u.Mpc, 3.0, 0.5
+micro = dict(epsilon_E=0.1, epsilon_B=0.1, gamma_min=1.0, gamma_max=1e6)
+
+nu = np.geomspace(0.1, 300.0, 60) * u.GHz
+gamma = np.geomspace(micro["gamma_min"], micro["gamma_max"], 400)
+
+
+def numerical_sed(B):
+    """Numerical flux density at a fixed pitch angle of pi/2."""
+    N0 = PowerLaw.normalize_from_magnetic_field(B, p=p, **micro)
+    N = N0.to_value(u.cm**-3) * PowerLaw.pdf(gamma, p=p, gamma_min=gamma[0], gamma_max=gamma[-1])
+    return engine.compute_flux_density(
+        nu, R=R_true, B=B, N=N, gamma=gamma, f_V=f, f_A=1.0, alpha=np.pi / 2 * u.rad, luminosity_distance=D
+    ).to(u.mJy)
+
+
+# %%
+# Extracting the Break
+# --------------------
+#
+# A smoothly broken power law with a :math:`\nu^{5/2}` thick slope and a free thin slope :math:`\beta` gives
+# the break frequency and the asymptotic flux at the break, which is the pair of numbers both inversions take.
+
+
+def sbpl(log_nu, log_F, log_nu_brk, beta, s):
+    x = (log_nu - log_nu_brk) * np.log(10)
+    return log_F + s * np.logaddexp(2.5 * x / s, beta * x / s) / np.log(10)
+
+
+def extract_break(flux):
+    """Fit the SED and return ``(nu_brk, F_brk, p)``."""
+    log_nu, log_F = np.log10(nu.to_value(u.Hz)), np.log10(flux.to_value(u.Jy))
+    guess = [log_F.max(), log_nu[np.argmax(log_F)], -1.0, -1.0]
+    fit, _ = curve_fit(sbpl, log_nu, log_F, p0=guess, bounds=([-20, 7, -4, -10], [5, 12, 0, -0.05]))
+    return 10 ** fit[1] * u.Hz, 10 ** fit[0] * u.Jy, 1 - 2 * fit[2]
+
+
+# %%
+# Round Trip
+# ----------
+#
+# For each field we extract the break and invert it with both functions, using the measured :math:`p`.
+
+B_true = np.geomspace(0.1, 2.0, 8) * u.G
+nu_pk = []
+recovered = {"De Marchi22": ([], []), "Diggins26": ([], [])}
+
+for B in B_true:
+    nu_brk, F_brk, p_meas = extract_break(numerical_sed(B))
+    nu_pk.append(nu_brk.to_value(u.GHz))
+
+    dm = invert_ssa_DeMarchi22(nu_brk, F_brk, D, p=p_meas, f=f, **micro)
+    dg = invert_ssa_Diggins26(nu_brk, F_brk, D, p=p_meas, f_A=1.0, f_V=f, pitch_average=False, **micro)
+    for label, out in [("De Marchi22", dm), ("Diggins26", dg)]:
+        recovered[label][0].append((out["B"] / B).decompose().value)
+        recovered[label][1].append((out["R"] / R_true).decompose().value)
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharex=True, sharey=True, constrained_layout=True)
+for ax, idx, name in zip(axes, [0, 1], [r"$B_{\rm rec}/B_{\rm true}$", r"$R_{\rm rec}/R_{\rm true}$"]):
+    for (label, vals), marker in zip(recovered.items(), ["o", "s"]):
+        ax.plot(nu_pk, vals[idx], marker + "-", label=label)
+    ax.axhline(1.0, color="k", lw=1)
+    ax.set(xscale="log", xlabel=r"Observed peak $\nu_{\rm brk}$ [GHz]", ylabel=name, ylim=(0.9, 1.04))
+axes[0].legend()
+plt.show()
+
+# %%
+# **Outcome:** under matching assumptions both inversions recover the radius to within about 2%. The field is
+# recovered to within 5% by Diggins26 and is 5 to 9% low with De Marchi22, with the offset growing toward higher
+# peak frequencies.
+#
+# .. footbibliography::

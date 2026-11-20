@@ -85,7 +85,7 @@ From an Astropy Table
 
     epoch = RadioPhotometryEpoch(table)
 
-A :meth:`from_table` classmethod with column renaming is also available:
+A ``from_table`` classmethod with column renaming is also available:
 
 .. code-block:: python
 
@@ -101,7 +101,7 @@ From a File
 
     epoch = RadioPhotometryEpoch.from_file("sed_epoch1.fits")
 
-Any format supported by :meth:`astropy.table.Table.read` is accepted.
+Any format supported by ``astropy.table.Table.read`` is accepted.
 
 
 Data Access

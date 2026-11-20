@@ -1,182 +1,177 @@
+.. raw:: html
+
+   <div class="page-header">
+
+.. image:: /images/logo.svg
+   :class: page-header-logo
+   :alt: Trilobite logo
+
+.. raw:: html
+
+   <div class="page-header-text">
+
 .. _gallery_examples:
 
-.. raw:: html
-
-.. raw:: html
-
-   <style>
-     .bd-article h1 {
-         font-size: 2.6rem;
-         color: #1f7a8c;
-         margin-bottom: 0.5rem;
-     }
-   </style>
-
-   <div style="
-    display: flex;
-    align-items: center;
-    gap: 2.5rem;
-    padding: 2.5rem 0 2.4rem 0;   /* increase bottom padding */
-    border-bottom: 1px solid #e5e7eb;
-    margin-bottom: 1.8rem;        /* ← THIS is key */
-    ">
-
-       <img src="_images/logo.svg" style="width: 25%; height: auto;">
-
-       <div style="max-width: 620px;">
-
-================================
+===================
 Example Gallery
-================================
+===================
 
 .. raw:: html
 
-           <p style="
-               margin: 0.4rem 0 0 0;
-               font-size: 1rem;
-               color: #666;
-           ">
-               Practical examples to get started with Trilobite.
-           </p>
-
-           <p style="
-               margin: 1rem 0 0 0;
-               font-size: 1.1rem;
-               line-height: 1.6;
-               color: #3a4a52;
-           ">
-               Explore <strong>runnable, self-contained examples</strong> —
-               from <strong>loading observational data</strong> and
-               <strong>running inference</strong> to modeling
-               <strong>synchrotron emission</strong> and
-               <strong>accretion disk dynamics</strong>.
-           </p>
-
-       </div>
+   <p class="page-header-tagline">Learn by running real workflows.</p>
+   <p class="page-header-lede">
+      Runnable, self-contained examples covering the full Trilobite workflow, from raw observations to physical parameters. Follow the path below, or search for a specific example or science case.
+   </p>
+   </div>
    </div>
 
-Working with Data
-=================
+.. raw:: html
 
-Load and inspect your observations before fitting anything.
+   <div id="gallery-search"></div>
 
-.. grid:: 2
-   :gutter: 3
+.. rst-class:: trilobite-stage
+
+1. Observe
+----------
+
+Get data into Trilobite and connect model SEDs to broadband photometry, before fitting anything.
+
+.. grid:: 1 1 2 2
+   :gutter: 2
+   :class-container: trilobite-topic-grid
 
    .. grid-item-card:: Observational Data
       :link: auto_examples/data/index
       :link-type: doc
+      :class-card: sd-shadow-sm
 
-      **Load, group, and visualize photometric observations.**
+      Radio and optical photometry and light-curve containers from :mod:`trilobite.data`, per-band
+      extraction, and conversion to :class:`~trilobite.data.core.InferenceData`.
 
-      Load radio photometry from FITS files, group observations into temporal epochs,
-      and plot light curves using the :mod:`~trilobite.data` subpackage.
+      +++
+      7 examples
 
    .. grid-item-card:: Optical Filters and Photometry
       :link: auto_examples/photometry/index
       :link-type: doc
+      :class-card: sd-shadow-sm
 
-      **Build and convolve optical filters for broadband photometry.**
+      Build filters, assemble a :class:`~trilobite.utils.phot_utils.FilterBundle` for fast convolution in MCMC
+      loops, load SVO profiles, and convert between flux density and AB/ST magnitudes.
 
-      Construct filters, assemble a :class:`~trilobite.utils.phot_utils.FilterBundle`
-      for MCMC-optimised matrix-multiply convolution, and convert between flux density
-      and AB/ST magnitudes.
+      +++
+      4 examples
 
-----
+.. rst-class:: trilobite-stage
 
-Understanding the Physics
-==========================
+2. Understand the physics
+-------------------------
 
-Learn the radiative and dynamical building blocks that every Trilobite model is built from.
+The radiative, shock, and accretion building blocks that every Trilobite model is assembled from.
 
-.. grid:: 2
-   :gutter: 3
+.. grid:: 1 1 2 3
+   :gutter: 2
+   :class-container: trilobite-topic-grid
 
    .. grid-item-card:: Synchrotron Emission
       :link: auto_examples/synchrotron/index
       :link-type: doc
+      :class-card: sd-shadow-sm
 
-      **Understand the synchrotron emission that drives radio transients.**
+      Electron distributions, SED regimes with cooling and self-absorption, numerical engines for
+      inhomogeneous and off-axis sources, and closure relations and equipartition.
 
-      Four sub-sections: kernel functions and the :math:`\nu`--:math:`\gamma`--:math:`B`
-      relation; SED spectral regimes; electron cooling (synchrotron and IC); closure
-      relations and equipartition analysis.
+      +++
+      15 examples
 
    .. grid-item-card:: Free-Free Emission
       :link: auto_examples/free_free/index
       :link-type: doc
+      :class-card: sd-shadow-sm
 
-      **Compute free-free emission and absorption in ionized gas.**
+      Gaunt factors, thermal bremsstrahlung flux, and free-free absorption of synchrotron SEDs.
 
-      Thermal bremsstrahlung emissivity, flux density, optical depth profiles for wind
-      and shell CSM geometries, and FFA attenuation of synchrotron SEDs using
-      :mod:`~trilobite.radiation.free_free`.
+      +++
+      3 examples
 
    .. grid-item-card:: Opacity Laws
       :link: auto_examples/opacity/index
       :link-type: doc
+      :class-card: sd-shadow-sm
 
-      **Evaluate grey and frequency-dependent opacity laws.**
+      Analytic grey laws and the tabulated OPAL and TOPS Rosseland means from
+      :mod:`trilobite.radiation.opacity`.
 
-      Kramers, electron scattering, and OPAL/TOPS Rosseland mean opacity from the
-      bundled tables using :mod:`~trilobite.radiation.opacity`.
+      +++
+      2 examples
 
    .. grid-item-card:: Shock Dynamics
       :link: auto_examples/dynamics/index
       :link-type: doc
+      :class-card: sd-shadow-sm
 
-      **Step through shock propagation at the integrator level.**
+      Rankine-Hugoniot jump conditions, self-similar solutions (Chevalier, Sedov-Taylor, Blandford-McKee), and
+      the numerical thin-shell and mechanical shock engines in :mod:`trilobite.dynamics`.
 
-      The numerical shock engine, blast-wave evolution in power-law density profiles,
-      and the time-stepping integrator from :mod:`~trilobite.dynamics`.
+      +++
+      15 examples
 
-----
-
-Building Forward Models
-=======================
-
-Assemble physical components into models that generate synthetic observables.
-
-.. grid:: 2
-   :gutter: 3
-
-   .. grid-item-card:: Physical Models
-      :link: auto_examples/modeling/index
-      :link-type: doc
-
-      **Generate synthetic light curves and SEDs with high-level model objects.**
-
-      Chevalier shock models, FFA fadeout, TDE afterglows, Type IIn supernovae in
-      dense CSM, and phenomenological light curves.
-
-   .. grid-item-card:: Accretion Disk Models
+   .. grid-item-card:: Accretion Disks
       :link: auto_examples/accretion/index
       :link-type: doc
+      :class-card: sd-shadow-sm
 
-      **Evolve accretion disks through their thermodynamic phases.**
+      Steady-state Shakura-Sunyaev disks and time-dependent one-zone evolution: equations of state, thermal
+      S-curves, fallback accretion, and TDE disk observables.
 
-      Thermal S-curves, limit cycles, fallback disks, and advective solutions using
-      the :mod:`~trilobite.dynamics.accretion.one_zone` Cython integrator.
+      +++
+      8 examples
 
-----
+.. rst-class:: trilobite-stage
 
-Running Inference
-=================
+3. Build a model
+----------------
 
-Fit models to data and recover physical parameters from your observations.
+Assemble components into a model that predicts observables.
 
 .. grid:: 1
-   :gutter: 3
+   :gutter: 2
+   :class-container: trilobite-topic-grid
+
+   .. grid-item-card:: Forward Modeling
+      :link: auto_examples/modeling/index
+      :link-type: doc
+      :class-card: sd-shadow-sm
+
+      Evaluate high-level :class:`~trilobite.models.core.base.Model` objects directly: Chevalier shock models,
+      free-free fadeout, TDE radio afterglows, Type IIn supernovae in dense CSM, and phenomenological light
+      curves.
+
+      +++
+      6 examples
+
+.. rst-class:: trilobite-stage
+
+4. Fit it to data
+-----------------
+
+Priors, likelihoods, MCMC, and posteriors.
+
+.. grid:: 1
+   :gutter: 2
+   :class-container: trilobite-topic-grid
 
    .. grid-item-card:: Inference and Parameter Estimation
       :link: auto_examples/inference/index
       :link-type: doc
+      :class-card: sd-shadow-sm
 
-      **Fit a physical model to data and recover posterior distributions over its parameters.**
+      End-to-end workflows built on :mod:`trilobite.inference`: single- and multi-epoch SED fitting, upper
+      limits and censored data, nuisance parameters, shock-parameter recovery, and posterior propagation
+      through closure relations.
 
-      End-to-end MCMC workflows — single- and multi-epoch SED fitting, upper-limit
-      handling, shock-parameter recovery, and posterior propagation through closure
-      relations. Built on the :mod:`~trilobite.inference` subpackage.
+      +++
+      8 examples
 
 .. toctree::
    :hidden:
@@ -187,6 +182,6 @@ Fit models to data and recover physical parameters from your observations.
    auto_examples/free_free/index
    auto_examples/opacity/index
    auto_examples/dynamics/index
-   auto_examples/modeling/index
    auto_examples/accretion/index
+   auto_examples/modeling/index
    auto_examples/inference/index

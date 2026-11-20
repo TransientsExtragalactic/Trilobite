@@ -478,8 +478,8 @@ serve different audiences.
 The **public interface** is unit-aware and designed for interactive use and
 high-level model code.  Methods at this level accept :class:`~astropy.units.Quantity`
 inputs, perform unit conversion internally, and return :class:`~astropy.units.Quantity`
-outputs.  These are the methods documented above — :meth:`opacity`,
-:meth:`dlogkappa_dlogrho`, and :meth:`dlogkappa_dlogT`.
+outputs.  These are the methods documented above — ``opacity``,
+``dlogkappa_dlogrho``, and ``dlogkappa_dlogT``.
 
 The **private log-space interface** is intended for use inside performance-critical
 code paths — for example, the inner loop of a time-stepping integrator or a Cython
@@ -513,7 +513,7 @@ not part of the stable public API and may change without notice.
 
 For Cython extension modules that need the fastest possible opacity evaluation,
 the compiled backend object can be accessed directly.  Opacity laws with
-:attr:`IS_C_BACKED = True` store a reference to their Cython companion on
+:attr:`~trilobite.radiation.opacity.base.OpacityLaw.IS_C_BACKED` store a reference to their Cython companion on
 :attr:`_c_object`.  This companion exposes two signatures for each quantity:
 a scalar entry point and a contiguous-array entry point:
 
@@ -536,7 +536,7 @@ a scalar entry point and a contiguous-array entry point:
     ln_kap_arr = opal._c_object.log_opacity_array(log_T, log_rho)
 
 Inside a ``.pyx`` file, the :attr:`_c_object` attribute can be typed as the
-appropriate :class:`C_GreyOpacityBase` subclass to avoid Python-level dispatch
+appropriate ``C_GreyOpacityBase`` subclass to avoid Python-level dispatch
 and enable direct ``cdef``-level calls:
 
 .. code-block:: cython
@@ -593,11 +593,13 @@ relevant data extracted from the table text file. This can then be passed to
 :class:`~trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity` to construct an opacity object that can be
 used in the same way as any other opacity law.
 
+.. _opacity_api:
+
 API Reference
 -------------
 
 Resolver
-~~~~~~~~
+^^^^^^^^
 
 .. currentmodule:: trilobite.radiation.opacity
 
@@ -607,7 +609,7 @@ Resolver
     get_opacity
 
 Base Classes
-~~~~~~~~~~~~
+^^^^^^^^^^^^
 
 .. autosummary::
     :toctree: ../../../../_as_gen
@@ -616,7 +618,7 @@ Base Classes
     GreyOpacityLaw
 
 Concrete Opacity Laws
-~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^
 
 .. currentmodule:: trilobite.radiation.opacity
 
@@ -633,7 +635,7 @@ Concrete Opacity Laws
     KramersESOpacity
 
 Table-based Opacity
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 .. currentmodule:: trilobite.radiation.opacity
 
@@ -642,13 +644,3 @@ Table-based Opacity
 
     OPALOpacity
     load_opal_opacity
-
-Opacity Tables
-~~~~~~~~~~~~~~
-
-.. currentmodule:: trilobite.radiation.opacity
-
-.. autosummary::
-    :toctree: ../../../../_as_gen
-
-    OPALOpacityTable

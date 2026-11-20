@@ -4,8 +4,8 @@ Equation of state (EOS) utilities for Trilobite models.
 This module provides two APIs for computing thermodynamic quantities
 (pressure, sound speed) under common astrophysical equations of state.
 
-Module-level functions
-----------------------
+.. rubric:: Module-level functions
+
 A lightweight functional API that operates without instantiating a class.
 Private ``_log_*`` functions take bare log-CGS floats and return ``ln(quantity)``;
 public wrappers accept :class:`~astropy.units.Quantity` and return
@@ -21,8 +21,8 @@ unit-bearing outputs.
 | ``_log_radiative_ideal_gas_disk_sound_speed``| :func:`radiative_ideal_gas_disk_sound_speed` |
 +----------------------------------------------+----------------------------------------------+
 
-Class hierarchy
----------------
+.. rubric:: Class hierarchy
+
 For use in model objects that need to store EOS parameters:
 
 .. code-block:: text
@@ -35,6 +35,13 @@ Each concrete class exposes ``_compute_log_*`` methods (log-CGS, no unit
 overhead) and ``compute_*`` wrappers (:class:`~astropy.units.Quantity`).
 Both delegate to the module-level private functions above.
 
+See Also
+--------
+:mod:`trilobite.physics_utils.composition` : Mean molecular weight helpers used to set ``mu``.
+:mod:`trilobite.physics_utils.constants` : CGS constants consumed internally.
+:mod:`~trilobite.dynamics.accretion.one_zone.physics._eos` : Cython EOS
+    primitives used in the hot-loop integrator.
+
 Notes
 -----
 *Isothermal vs. adiabatic*: disk vertical-structure calculations use the
@@ -45,13 +52,6 @@ matches the Cython EOS primitives in
 **effective adiabatic** sound speed derived from :math:`\gamma_{\rm eff}`,
 which is appropriate for general thermodynamic calculations where the
 density is known directly.
-
-See Also
---------
-:mod:`trilobite.physics_utils.composition` : Mean molecular weight helpers used to set ``mu``.
-:mod:`trilobite.physics_utils.constants` : CGS constants consumed internally.
-:mod:`~trilobite.dynamics.accretion.one_zone.physics._eos` : Cython EOS
-    primitives used in the hot-loop integrator.
 """
 
 from abc import ABC, abstractmethod
@@ -401,6 +401,11 @@ class EquationOfState(ABC):
         EOS-specific parameters (e.g. mean molecular weight ``mu``).
         Stored as :attr:`params`.
 
+    See Also
+    --------
+    :class:`IdealGasEOS`, :class:`RadiativeIdealGas`
+        Ideal gas equation of state, and its radiation-including counterpart :class:`RadiativeIdealGas`.
+
     Notes
     -----
     The two-level API mirrors the rest of the Trilobite codebase:
@@ -413,10 +418,6 @@ class EquationOfState(ABC):
     Both levels delegate to the module-level private functions in this
     module (e.g. :func:`_log_ideal_gas_disk_sound_speed`), so the
     standalone functional API and the class API are always consistent.
-
-    See Also
-    --------
-    :class:`IdealGasEOS`, :class:`RadiativeIdealGas`
     """
 
     def __init__(self, **params):
@@ -477,6 +478,14 @@ class EquationOfState(ABC):
     # -------------------------------------------------------------- #
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the equation of state.
+
+        Returns
+        -------
+        str
+            The class name with its parameters.
+        """
         param_str = ", ".join(f"{k}={v}" for k, v in self.params.items())
         return f"{self.__class__.__name__}({param_str})"
 
@@ -506,9 +515,17 @@ class IdealGasEOS(EquationOfState):
     Parameters
     ----------
     mu : float, optional
-        Mean molecular weight per particle (dimensionless).  For solar
-        composition use :func:`~.composition.compute_mean_molecular_weight`
-        or pass ``mu=0.62`` directly.  Default ``0.6``.
+        Mean molecular weight of the gas (dimensionless). Controls the conversion between temperature and thermal
+        energy via the ideal gas law. Default ``0.6`` is appropriate for a fully ionized plasma with primordial
+        composition.
+    **kwargs :
+        Additional keyword arguments passed to :class:`EquationOfState`.
+
+    See Also
+    --------
+    :func:`ideal_gas_sound_speed` : Standalone functional equivalent.
+    :func:`~trilobite.physics_utils.composition.compute_mean_molecular_weight` : Derive ``mu`` from
+        hydrogen/helium/metal mass fractions.
 
     Notes
     -----
@@ -521,12 +538,6 @@ class IdealGasEOS(EquationOfState):
 
     For a fully ionised hydrogen-helium plasma with mass fractions
     :math:`X = 0.70,\, Y = 0.28`, :math:`\mu \approx 0.62`.
-
-    See Also
-    --------
-    :func:`ideal_gas_sound_speed` : standalone functional equivalent.
-    :func:`~.composition.compute_mean_molecular_weight` : derive ``mu`` from
-        hydrogen/helium/metal mass fractions.
 
     Examples
     --------
@@ -715,7 +726,19 @@ class RadiativeIdealGas(EquationOfState):
     Parameters
     ----------
     mu : float, optional
-        Mean molecular weight per particle (dimensionless).  Default ``0.6``.
+        Mean molecular weight per particle (dimensionless). Controls the gas pressure contribution. Default ``0.6``.
+    **kwargs :
+        Additional keyword arguments passed to :class:`EquationOfState`.
+
+    See Also
+    --------
+    :class:`IdealGasEOS` : Gas-only limit.
+    :func:`radiative_ideal_gas_sound_speed` : Standalone functional equivalent
+        for the adiabatic sound speed.
+    :func:`radiative_ideal_gas_disk_sound_speed` : Standalone functional
+        equivalent for the disk sound speed.
+    :func:`~trilobite.physics_utils.composition.compute_mean_molecular_weight` : Derive ``mu`` from
+        composition.
 
     Notes
     -----
@@ -736,16 +759,6 @@ class RadiativeIdealGas(EquationOfState):
 
     interpolates between :math:`5/3` (gas-dominated) and :math:`4/3`
     (radiation-dominated).
-
-    See Also
-    --------
-    :class:`IdealGasEOS` : gas-only limit.
-    :func:`radiative_ideal_gas_sound_speed` : standalone functional equivalent
-        for the adiabatic sound speed.
-    :func:`radiative_ideal_gas_disk_sound_speed` : standalone functional
-        equivalent for the disk sound speed.
-    :func:`~.composition.compute_mean_molecular_weight` : derive ``mu`` from
-        composition.
 
     Examples
     --------

@@ -102,7 +102,6 @@ class ModelParameter:
 
             - A ``(min, max)`` tuple of floats in base units, or
             - A callable ``f(value) -> bool`` that returns whether the value is valid.
-
         """
         # Declare the core attributes.
         self.name: str = name
@@ -210,7 +209,20 @@ class ModelParameter:
         return bool(self._check_bounds_base(base_value))
 
     def to_base_value(self, value: Union[float, u.Quantity]) -> float:
-        """Convert a value into base units (float)."""
+        """
+        Convert a value into base units (float).
+
+        Parameters
+        ----------
+        value : float or ~astropy.units.Quantity
+            The value to convert. Quantities are converted to the parameter's base units, bare values are assumed to
+            already be in them.
+
+        Returns
+        -------
+        float
+            The value in the parameter's base units.
+        """
         # Catch the unitless case.
         if self.base_units == u.dimensionless_unscaled:
             if isinstance(value, u.Quantity):
@@ -223,7 +235,20 @@ class ModelParameter:
         return float(value)
 
     def to_quantity(self, value: Union[float, u.Quantity]) -> u.Quantity:
-        """Convert a value into an astropy Quantity with base units."""
+        """
+        Convert a value into an astropy Quantity with base units.
+
+        Parameters
+        ----------
+        value : float or ~astropy.units.Quantity
+            The value to convert. Quantities are converted to the parameter's base units, bare values are assumed to
+            already be in them.
+
+        Returns
+        -------
+        ~astropy.units.Quantity
+            The value as a quantity in the parameter's base units.
+        """
         if isinstance(value, u.Quantity):
             return value.to(self.base_units)
         return value * self.base_units
@@ -233,15 +258,52 @@ class ModelParameter:
     # ------------------------------------------------------------------
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the parameter.
+
+        Returns
+        -------
+        str
+            The parameter's name and its main attributes.
+        """
         return f"ModelParameter(name='{self.name}', default={self.default_quantity}, bounds={self.bounds})"
 
     def __str__(self) -> str:
+        """
+        Return the name of the parameter.
+
+        Returns
+        -------
+        str
+            The parameter's name.
+        """
         return self.name
 
     def __hash__(self) -> int:
+        """
+        Return a hash based on the parameter's name.
+
+        Returns
+        -------
+        int
+            The hash of the name.
+        """
         return hash(self.name)
 
     def __eq__(self, other) -> bool:
+        """
+        Compare this parameter with another object.
+
+        Parameters
+        ----------
+        other : object
+            The object to compare with.
+
+        Returns
+        -------
+        bool
+            ``True`` if ``other`` is a parameter with the same name.
+        """
         if not isinstance(other, ModelParameter):
             return False
         return self.name == other.name
@@ -252,7 +314,7 @@ class ModelParameter:
 
     @property
     def has_bounds(self) -> bool:
-        """Whether this parameter has any effective bounds defined."""
+        """bool: Whether this parameter has any effective bounds defined."""
         if callable(self.bounds):
             return True
         if self.bounds is None:
@@ -262,7 +324,7 @@ class ModelParameter:
 
     @property
     def is_dimensionless(self) -> bool:
-        """Whether this parameter is dimensionless."""
+        """bool: Whether this parameter is dimensionless."""
         return self.base_units == u.dimensionless_unscaled
 
 
@@ -310,6 +372,20 @@ class ModelVariable:
         description: str = "",
         latex: str = "",
     ):
+        """
+        Initialize the variable.
+
+        Parameters
+        ----------
+        name : str
+            Name of the variable.
+        base_units : str or ~astropy.units.Unit
+            Base units of the variable.
+        description : str, optional
+            Short description of the variable.
+        latex : str, optional
+            LaTeX representation of the variable's symbol.
+        """
         self.name: str = name
         """str: Name of the variable."""
 
@@ -390,15 +466,52 @@ class ModelVariable:
     # Dunder methods
     # ===================================================
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the variable.
+
+        Returns
+        -------
+        str
+            The variable's name and its main attributes.
+        """
         return f"ModelVariable(name='{self.name}', base_units='{self.base_units}')"
 
     def __str__(self) -> str:
+        """
+        Return the name of the variable.
+
+        Returns
+        -------
+        str
+            The variable's name.
+        """
         return self.name
 
     def __hash__(self) -> int:
+        """
+        Return a hash based on the variable's name.
+
+        Returns
+        -------
+        int
+            The hash of the name.
+        """
         return hash(self.name)
 
     def __eq__(self, other) -> bool:
+        """
+        Compare this variable with another object.
+
+        Parameters
+        ----------
+        other : object
+            The object to compare with.
+
+        Returns
+        -------
+        bool
+            ``True`` if ``other`` is a variable with the same name.
+        """
         if not isinstance(other, ModelVariable):
             return False
         return self.name == other.name
@@ -408,5 +521,5 @@ class ModelVariable:
     # ===================================================
     @property
     def is_dimensionless(self) -> bool:
-        """Whether this variable is dimensionless."""
+        """bool: Whether this variable is dimensionless."""
         return self.base_units == u.dimensionless_unscaled

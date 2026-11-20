@@ -421,7 +421,7 @@ Bilinear Interpolation
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Within each rectangular cell of the :math:`(\log_{10}T,\,\log_{10}R)` grid, the Cython kernel
-:class:`~trilobite.radiation.opacity.grey_opacity.rosseland._opal_table.C_OPALTableOpacity` applies standard
+``C_OPALTableOpacity`` applies standard
 bilinear interpolation of :math:`\log_{10}\kappa`:
 
 .. math::

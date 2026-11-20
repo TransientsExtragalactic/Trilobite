@@ -1,4 +1,5 @@
 .. _shock_engines:
+
 ===========================================
 Shock Engines
 ===========================================
@@ -407,21 +408,22 @@ tuple expected by numerical shock engines.
 Velocity Profiles
 ^^^^^^^^^^^^^^^^^
 
-Simple two-argument callables ``u(r, t)`` representing the bulk velocity field of the
-upstream gas.  All three are accepted wherever a velocity-profile callable is expected.
+Two-argument callables ``u(r, t)`` representing the bulk velocity field of the
+upstream gas.  Use :meth:`~trilobite.dynamics.profiles.velocity.VelocityProfile.as_optimized_callable`
+to build unit-free callables from the profile classes.
 
 .. list-table::
     :header-rows: 1
     :widths: 45 55
 
-    * - Function
+    * - Profile Class
       - Description
-    * - :func:`~trilobite.dynamics.shocks.utils.stationary_velocity_profile`
+    * - :class:`~trilobite.dynamics.profiles.velocity.StaticVelocityProfile`
       - Returns zero velocity for all inputs.  Suitable for a stationary CSM.
-    * - :func:`~trilobite.dynamics.shocks.utils.homologous_velocity_profile`
+    * - :class:`~trilobite.dynamics.profiles.velocity.HomologousVelocityProfile`
       - Returns :math:`u(r,t) = r/t`.  Standard model for freely expanding ejecta.
-    * - :func:`~trilobite.dynamics.shocks.utils.get_constant_velocity_profile`
-      - Factory returning :math:`u(r,t) = u_0` for a fixed bulk-flow speed.
+    * - :class:`~trilobite.dynamics.profiles.velocity.ConstantVelocityProfile`
+      - Returns :math:`u(r,t) = u_0` for a fixed bulk-flow speed.
 
 Ejecta Profiles
 ^^^^^^^^^^^^^^^
@@ -435,102 +437,61 @@ The ejecta density is modeled under the homologous approximation
 where :math:`G(v)` is a time-independent velocity-space kernel.  Two profile families are
 supported: **broken power-law** (BPL, after
 :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982`) and **exponential**, each
-available with or without an outer velocity truncation.  Each family is exposed at three
-levels of abstraction:
-
-- *Normalization helpers* — compute the scale parameters (:math:`v_t, K` or
-  :math:`v_e, K`) from :math:`E_{\rm ej}` and :math:`M_{\rm ej}` and return
-  :class:`~astropy.units.Quantity` scalars.
-- *Kernel factories* — return a CGS callable :math:`G(v)` for use in
-  :func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources` or a
-  custom ODE right-hand side.
-- *Profile factories* — return a CGS callable :math:`\rho_{\rm ej}(r,t)` that wraps the
-  kernel with the :math:`t^{-3}` prefactor.
+available with or without an outer velocity truncation.  Use
+:meth:`~trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.normalize` to compute kernel
+parameters from :math:`E_{\rm ej}` and :math:`M_{\rm ej}`, then
+:meth:`~trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.as_optimized_callable` to build a
+unit-free :math:`\rho_{\rm ej}(r,t)` callable.
 
 .. list-table::
     :header-rows: 1
     :widths: 50 22 28
 
-    * - Function
+    * - Profile Class
       - Family
-      - Output
-    * - :func:`~trilobite.dynamics.shocks.utils.normalize_bpl_ejecta`
+      - Kernel parameters
+    * - :class:`~trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile`
       - BPL
-      - :math:`v_t`,\ :math:`K` (:class:`~astropy.units.Quantity`)
-    * - :func:`~trilobite.dynamics.shocks.utils.normalize_truncated_bpl_ejecta`
-      - BPL, :math:`v_{\max}` truncated
-      - :math:`v_t`,\ :math:`K` (:class:`~astropy.units.Quantity`)
-    * - :func:`~trilobite.dynamics.shocks.utils.normalize_exponential_ejecta`
+      - :math:`K`, :math:`v_t`
+    * - :class:`~trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile`
       - Exponential
-      - :math:`v_e`,\ :math:`K` (:class:`~astropy.units.Quantity`)
-    * - :func:`~trilobite.dynamics.shocks.utils.normalize_truncated_exponential_ejecta`
-      - Exponential, truncated
-      - :math:`v_e`,\ :math:`K` (:class:`~astropy.units.Quantity`)
-    * - :func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel`
-      - BPL
-      - :math:`G(v)` callable (CGS)
-    * - :func:`~trilobite.dynamics.shocks.utils.get_truncated_bpl_ejecta_kernel`
-      - BPL, :math:`v_{\max}` truncated
-      - :math:`G(v)` callable (CGS)
-    * - :func:`~trilobite.dynamics.shocks.utils.get_exponential_ejecta_kernel`
-      - Exponential
-      - :math:`G(v)` callable (CGS)
-    * - :func:`~trilobite.dynamics.shocks.utils.get_truncated_exponential_ejecta_kernel`
-      - Exponential, truncated
-      - :math:`G(v)` callable (CGS)
-    * - :func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_profile`
-      - BPL
-      - :math:`\rho_{\rm ej}(r,t)` callable (CGS)
-    * - :func:`~trilobite.dynamics.shocks.utils.get_truncated_bpl_ejecta_profile`
-      - BPL, :math:`v_{\max}` truncated
-      - :math:`\rho_{\rm ej}(r,t)` callable (CGS)
-    * - :func:`~trilobite.dynamics.shocks.utils.get_exponential_ejecta_profile`
-      - Exponential
-      - :math:`\rho_{\rm ej}(r,t)` callable (CGS)
-    * - :func:`~trilobite.dynamics.shocks.utils.get_truncated_exponential_ejecta_profile`
-      - Exponential, truncated
-      - :math:`\rho_{\rm ej}(r,t)` callable (CGS)
+      - :math:`K`, :math:`v_e`
 
 CSM Profiles
 ^^^^^^^^^^^^
 
-Factory functions for the circumstellar medium geometries most commonly encountered in
-transient modeling.  Each factory accepts physical parameters as
-:class:`~astropy.units.Quantity` objects, converts units once at call time, and returns a
-unit-free CGS callable ``rho_csm(r, t=None)``.  The optional ``t`` argument is accepted
-for API compatibility with shock-engine source functions and is ignored for stationary
-profiles.
+Profile classes for the circumstellar medium geometries most commonly encountered in
+transient modeling.  Each class accepts physical parameters as
+:class:`~astropy.units.Quantity` objects via
+:meth:`~trilobite.dynamics.profiles.csm.CSMDensityProfile.as_optimized_callable`, which
+converts units once and returns a unit-free CGS callable ``rho_csm(r, t)``.
 
 .. list-table::
     :header-rows: 1
     :widths: 50 50
 
-    * - Function
+    * - Profile Class
       - Profile
-    * - :func:`~trilobite.dynamics.shocks.utils.compute_wind_csm_parameters`
-      - Computes the wind normalization
-        :math:`A = \dot{M}/(4\pi v_w)` in :math:`\mathrm{g\,cm^{-1}}`.
-        Returns a :class:`~astropy.units.Quantity` scalar, not a callable.
-    * - :func:`~trilobite.dynamics.shocks.utils.get_uniform_csm_density_func`
+    * - :class:`~trilobite.dynamics.profiles.csm.UniformCSMProfile`
       - :math:`\rho(r) = \rho_0` — uniform medium.
-    * - :func:`~trilobite.dynamics.shocks.utils.get_wind_csm_density_func`
+    * - :class:`~trilobite.dynamics.profiles.csm.WindCSMProfile`
       - :math:`\rho(r) = A r^{-2}` — steady spherical wind.
-    * - :func:`~trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func`
+    * - :class:`~trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile`
       - Wind profile that transitions sharply to a constant density floor outside
         :math:`r_{\max}`.
-    * - :func:`~trilobite.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func`
+    * - :class:`~trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile`
       - Wind profile with a smooth :math:`\tanh` cutoff near :math:`r_{\max}`.
-    * - :func:`~trilobite.dynamics.shocks.utils.get_wind_with_floor_csm_density_func`
+    * - :class:`~trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile`
       - :math:`\rho(r) = A r^{-2} + \rho_{\rm floor}` — wind plus a constant ambient
         density.
-    * - :func:`~trilobite.dynamics.shocks.utils.get_power_law_csm_density_func`
+    * - :class:`~trilobite.dynamics.profiles.csm.PowerLawCSMProfile`
       - :math:`\rho(r) = \rho_{\rm ref}(r/r_{\rm ref})^{-s}` — general power law.
-    * - :func:`~trilobite.dynamics.shocks.utils.get_broken_power_law_csm_density_func`
+    * - :class:`~trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile`
       - Continuous broken power law with independently specified inner and outer slopes.
-    * - :func:`~trilobite.dynamics.shocks.utils.get_shell_csm_density_func`
+    * - :class:`~trilobite.dynamics.profiles.csm.ShellCSMProfile`
       - Top-hat shell: constant density inside :math:`[r_{\rm in},r_{\rm out}]`, floor
         density outside.
-    * - :func:`~trilobite.dynamics.shocks.utils.get_gaussian_shell_csm_density_func`
+    * - :class:`~trilobite.dynamics.profiles.csm.GaussianShellCSMProfile`
       - Gaussian-shell overdensity on a background:
         :math:`\rho(r) = \rho_{\rm bg} + \rho_{\rm shell}
         \exp\!\left[-\tfrac{1}{2}\left((r-R_s)/\sigma\right)^2\right]`.
@@ -538,7 +499,7 @@ profiles.
 Source Assembly
 ^^^^^^^^^^^^^^^
 
-Once ejecta and CSM profile callables are in hand, the convenience factory
+Once ejecta and CSM density callables are in hand, the convenience factory
 :func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources` assembles
 the four two-argument source callables ``(rho_1, u_1, rho_4, u_4)`` expected by the
 numerical shock engines for the standard scenario of homologous ejecta running into a
@@ -546,19 +507,16 @@ stationary CSM:
 
 .. math::
 
-    \rho_1(r,t) = t^{-3}G_{\rm ej}(r/t),
+    \rho_1(r,t) = \rho_{\rm ej}(r,t),
     \qquad
     u_1(r,t) = \frac{r}{t},
     \qquad
-    \rho_4(r,t) = \rho_{\rm CSM}(r),
+    \rho_4(r,t) = \rho_{\rm CSM}(r,t),
     \qquad
     u_4(r,t) = 0.
 
-The factory accepts a kernel callable :math:`G_{\rm ej}(v)` — such as one returned by
-:func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel` — and a CSM density
-callable :math:`\rho_{\rm CSM}(r)` — such as one returned by
-:func:`~trilobite.dynamics.shocks.utils.get_wind_csm_density_func` — and returns the
-four-callable tuple ready to pass to
+The factory accepts ejecta and CSM density callables built from profile classes (or any
+two-argument ``(r, t)`` CGS callables) and returns the four-callable tuple ready to pass to
 :meth:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties`
 or
 :meth:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties`.

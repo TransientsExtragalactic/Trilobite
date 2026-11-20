@@ -1,8 +1,10 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
+Configuration file for the Sphinx documentation builder.
+
+This file only contains a selection of the most common options. For a full
+list see the documentation:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
 
 # -- Path setup --------------------------------------------------------------
 
@@ -15,8 +17,7 @@ import sys
 
 import matplotlib  # noqa: F401
 
-sys.path.insert(0, os.path.abspath("../../trilobite"))
-sys.path.insert(0, os.path.abspath("../../"))
+sys.path.insert(0, os.path.abspath("_ext"))
 # -- Project information -----------------------------------------------------
 
 project = "Trilobite"
@@ -44,6 +45,8 @@ extensions = [
     "sphinxcontrib.bibtex",
     "sphinx_gallery.gen_gallery",
     "sphinx_copybutton",
+    "gallery_index",
+    "model_index",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -102,6 +105,7 @@ html_favicon = "images/logo.svg"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+html_js_files = ["catalog_search.js", "gallery_search.js", "model_search.js"]
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
@@ -141,6 +145,8 @@ nitpick_ignore_regex = [
     (r"py:class", r"_ArrayLike"),
     (r"py:class", r"_OneZoneMeta"),
     (r"py:class", r"_ModelParametersInput"),
+    (r"py:class", r"_ModelVariablesInput"),
+    (r"py:class", r"_ModelVariablesInputRaw"),
     # Broken generic annotations produced by napoleon for Python 3.10+ syntax
     (r"py:class", r"dict\[.*"),
     (r"py:class", r"tuple\[.*"),
@@ -171,10 +177,18 @@ nitpick_ignore_regex = [
     (r"py:class", r"cosmo\.Cosmology"),
     (r"py:class", r"tqdm"),
     (r"py:class", r"dtype=float64"),
-    (r"py:class", r"ruamel\.yaml\.nodes\.Node"),
+    (r"py:class", r"ruamel\.yaml\..*"),
     (r"py:class", r"trilobite\.parallel\.base\.[RT]"),
     # Informal type annotations: not Python objects
     (r"py:class", r"namedtuple"),
+    (r"py:class", r"Boolean mask.*"),
+    (r"py:class", r"array_like"),
+    (r"py:class", r"ignored"),
+    (r"py:class", r"result"),
+    (r"py:class", r"SimpleNamespace"),
+    (r"py:class", r"n_theta\).*"),
+    (r"py:class", r"n_phi\).*"),
+    (r"py:class", r"n_nu.*"),
     (r"py:class", r"OUTPUTS"),
     (r"py:class", r"C-contiguous"),
     (r"py:class", r"float64"),
@@ -302,8 +316,5 @@ sphinx_gallery_conf = {
     # Galleries that depend on models not yet implemented.  These are listed
     # here so that the build treats them as known failures rather than
     # unexpected errors.  Remove each entry once the corresponding model exists.
-    "expected_failing_examples": [
-        "galleries/modeling/plot_fred_blackbody_optical_lc.py",
-        "galleries/inference/plot_optical_lc_inference.py",
-    ],
+    "expected_failing_examples": [],
 }

@@ -1,8 +1,8 @@
 .. _data_to_inference:
 
-=====================================
+==========================================
 From Data to Inference: A Complete Guide
-=====================================
+==========================================
 
 This guide walks through the full chain from raw observational data to a
 sampler-ready inference problem. It is the single document you need if you
@@ -135,7 +135,7 @@ For optical models, the model also exposes a
     print(model.bundle.filter_names)   # e.g. ['g', 'r', 'i', 'z']
 
 Band names in the container are looked up in this list at inference time. The
-integer index (position in the list) becomes the ``band_idx`` variable passed
+integer index (position in the list) becomes the ``band_index`` variable passed
 to the model.
 
 

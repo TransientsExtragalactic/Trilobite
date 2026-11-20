@@ -15,8 +15,7 @@ It governs radiative transport in optically thick media:
     F_{\rm rad} =
         -\frac{4acT^3}{3\kappa_R\rho}\,\nabla T.
 
-Analytic Opacity Laws
----------------------
+.. rubric:: Analytic Opacity Laws
 
 Closed-form power-law fits suited for diffusive, fully ionised plasmas.
 All analytic opacities are Cython-backed for performance.
@@ -46,8 +45,7 @@ All analytic opacities are Cython-backed for performance.
 | :class:`KramersESOpacity`                     | Combined Kramers opacity with electron-scattering floor.     |
 +-----------------------------------------------+--------------------------------------------------------------+
 
-Tabulated Opacity Laws
-----------------------
+.. rubric:: Tabulated Opacity Laws
 
 Numerical Rosseland mean tables for arbitrary compositions, including
 metal-line blanketing that is inaccessible to simple power laws.
@@ -62,7 +60,6 @@ metal-line blanketing that is inaccessible to simple power laws.
 |                          | :func:`~trilobite.radiation.opacity.utils.load_opal_opacity`  |
 |                          | to construct instances from the bundled tables.                 |
 +--------------------------+-----------------------------------------------------------------+
-
 """
 
 from pathlib import Path
@@ -128,7 +125,7 @@ class ElectronScatteringOpacity(GreyOpacityLaw):
 
     See Also
     --------
-    ~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity : Generic constant opacity without
+    :obj:`~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity` : Generic constant opacity without
      the electron-scattering context.
     KramersESOpacity : Adds a :math:`\rho T^{-3.5}` Kramers term on top of this floor.
     OPALOpacity : Tabulated opacity that includes Thomson scattering automatically.
@@ -161,6 +158,14 @@ class ElectronScatteringOpacity(GreyOpacityLaw):
     kappa_es: float
 
     def __init__(self, kappa_es: float = 0.34):
+        r"""
+        Initialize the opacity law.
+
+        Parameters
+        ----------
+        kappa_es : float, optional
+            Thomson opacity in :math:`\mathrm{cm^2\,g^{-1}}`. Default ``0.34`` (solar composition, :math:`X = 0.70`).
+        """
         self.kappa_es = kappa_es
         super().__init__(kappa_es=kappa_es)
 
@@ -184,7 +189,7 @@ class KramersFFOpacity(GreyOpacityLaw):
             = \kappa_{\rm ff,0}\,\rho\,T^{-3.5},
 
     where composition factors :math:`(1+X)` are absorbed into the normalisation
-    :attr:`kappa0`.  This is the dominant grey opacity source at
+    ``kappa0``.  This is the dominant grey opacity source at
     :math:`T \lesssim 10^7\,\mathrm{K}` in hot, diffuse, fully ionised
     gas where there are few bound electrons for photoionisation (e.g. hot
     ISM, stellar coronae, accretion disc corona).  Below
@@ -230,6 +235,15 @@ class KramersFFOpacity(GreyOpacityLaw):
     mean_type = "rosseland"
 
     def __init__(self, kappa0: float = KAPPA_FF_0):
+        r"""
+        Initialize the opacity law.
+
+        Parameters
+        ----------
+        kappa0 : float, optional
+            Free-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``3.68e22`` (solar composition,
+            :math:`X = 0.70`, no Gaunt-factor correction; :footcite:t:`Rybicki1986`).
+        """
         self.kappa0 = kappa0
         super().__init__(kappa0=kappa0)
 
@@ -251,7 +265,7 @@ class KramersBFOpacity(GreyOpacityLaw):
         \kappa_{\rm bf}(\rho, T)
             = \kappa_{\rm bf,0}\,\rho\,T^{-3.5},
 
-    where composition factors :math:`Z\,(1+X)` are absorbed into :attr:`kappa0`.
+    where composition factors :math:`Z\,(1+X)` are absorbed into ``kappa0``.
     For solar composition :math:`\kappa_{\rm bf,0} \approx 4.34 \times 10^{25}`, roughly
     three orders of magnitude above the free-free coefficient, so bound-free
     dominates the Kramers opacity in most stellar-envelope conditions
@@ -295,6 +309,15 @@ class KramersBFOpacity(GreyOpacityLaw):
     mean_type = "rosseland"
 
     def __init__(self, kappa0: float = KAPPA_BF_0):
+        r"""
+        Initialize the opacity law.
+
+        Parameters
+        ----------
+        kappa0 : float, optional
+            Bound-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``4.34e25`` (solar
+            composition, :math:`X = 0.70`, :math:`Z = 0.02`, no Gaunt-factor correction; :footcite:t:`Rybicki1986`).
+        """
         self.kappa0 = kappa0
         super().__init__(kappa0=kappa0)
 
@@ -362,6 +385,15 @@ class KramersOpacity(GreyOpacityLaw):
     mean_type = "rosseland"
 
     def __init__(self, kappa0: float = KAPPA_KR_0):
+        r"""
+        Initialize the opacity law.
+
+        Parameters
+        ----------
+        kappa0 : float, optional
+            Combined normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``4.38e25`` (:math:`\kappa_{\rm
+            ff,0} + \kappa_{\rm bf,0}`, solar composition; :footcite:t:`Rybicki1986`).
+        """
         self.kappa0 = kappa0
         super().__init__(kappa0=kappa0)
 
@@ -431,6 +463,18 @@ class KramersFFESOpacity(GreyOpacityLaw):
     mean_type = "rosseland"
 
     def __init__(self, kappa0: float = KAPPA_FF_0, kappa_es: float = 0.34):
+        r"""
+        Initialize the opacity law.
+
+        Parameters
+        ----------
+        kappa0 : float, optional
+            Free-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``3.68e22`` (solar composition,
+            :math:`X = 0.70`).
+        kappa_es : float, optional
+            Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`. Default ``0.34`` (solar composition, fully
+            ionised).
+        """
         self.kappa0 = kappa0
         self.kappa_es = kappa_es
         super().__init__(kappa0=kappa0, kappa_es=kappa_es)
@@ -501,6 +545,18 @@ class KramersBFESOpacity(GreyOpacityLaw):
     mean_type = "rosseland"
 
     def __init__(self, kappa0: float = KAPPA_BF_0, kappa_es: float = 0.34):
+        r"""
+        Initialize the opacity law.
+
+        Parameters
+        ----------
+        kappa0 : float, optional
+            Bound-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``4.34e25`` (solar
+            composition, :math:`X = 0.70`, :math:`Z = 0.02`).
+        kappa_es : float, optional
+            Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`. Default ``0.34`` (solar composition, fully
+            ionised).
+        """
         self.kappa0 = kappa0
         self.kappa_es = kappa_es
         super().__init__(kappa0=kappa0, kappa_es=kappa_es)
@@ -573,6 +629,18 @@ class KramersESOpacity(GreyOpacityLaw):
     mean_type = "rosseland"
 
     def __init__(self, kappa0: float = KAPPA_KR_0, kappa_es: float = 0.34):
+        r"""
+        Initialize the opacity law.
+
+        Parameters
+        ----------
+        kappa0 : float, optional
+            Combined Kramers normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`. Default ``4.38e25``
+            (:math:`\kappa_{\rm ff,0} + \kappa_{\rm bf,0}`, solar composition).
+        kappa_es : float, optional
+            Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`. Default ``0.34`` (solar composition,
+            :math:`X = 0.70`, fully ionised).
+        """
         self.kappa0 = kappa0
         self.kappa_es = kappa_es
         super().__init__(kappa0=kappa0, kappa_es=kappa_es)
@@ -619,11 +687,11 @@ class OPALOpacity(GreyOpacityLaw):
 
     Parameters
     ----------
-    grid_T : array_like, shape (n1,)
+    grid_T : ~numpy.ndarray
         :math:`\log_{10}(T\,[\mathrm{K}])` grid values (strictly increasing).
-    grid_R : array_like, shape (n2,)
+    grid_R : ~numpy.ndarray
         :math:`\log_{10}(R)` grid values (strictly increasing).
-    kappa : array_like, shape (n1, n2)
+    kappa : ~numpy.ndarray
         :math:`\log_{10}(\kappa\,[\mathrm{cm^2\,g^{-1}}])`.
         ``NaN`` marks out-of-range cells.
     out_of_bounds : {'raise', 'clamp', 'nan'}, optional
@@ -632,7 +700,7 @@ class OPALOpacity(GreyOpacityLaw):
 
     See Also
     --------
-    load_opal_opacity : Convenience loader for the bundled table.
+    :obj:`~trilobite.radiation.opacity.utils.load_opal_opacity` : Convenience loader for the bundled table.
     KramersESOpacity : Analytic alternative for rough estimates.
 
     Examples
@@ -712,7 +780,7 @@ class OPALOpacity(GreyOpacityLaw):
 
         Returns
         -------
-        SimpleNamespace
+        ~types.SimpleNamespace
             Read-only namespace with arrays:
 
             * ``grid_T``  — :math:`\log_{10}(T\,[\mathrm{K}])`, shape ``(70,)``
@@ -831,6 +899,21 @@ class OPALOpacity(GreyOpacityLaw):
         *,
         out_of_bounds: str = "raise",
     ) -> None:
+        r"""
+        Initialize the opacity law.
+
+        Parameters
+        ----------
+        grid_T : ~numpy.ndarray
+            :math:`\log_{10}(T\,[\mathrm{K}])` grid values (strictly increasing).
+        grid_R : ~numpy.ndarray
+            :math:`\log_{10}(R)` grid values (strictly increasing).
+        kappa : ~numpy.ndarray
+            :math:`\log_{10}(\kappa\,[\mathrm{cm^2\,g^{-1}}])`. ``NaN`` marks out-of-range cells.
+        out_of_bounds : {'raise', 'clamp', 'nan'}, optional
+            Behaviour when a query :math:`(T, \rho)` falls outside the table grid or lands on a NaN-flagged cell.
+            Default ``'raise'``.
+        """
         if out_of_bounds not in _OOB_MODES:
             raise ValueError(f"out_of_bounds must be one of {list(_OOB_MODES)}, got {out_of_bounds!r}.")
         self.out_of_bounds = out_of_bounds
@@ -874,7 +957,8 @@ class OPALOpacity(GreyOpacityLaw):
 
         Returns
         -------
-        OPALOpacity
+        ~trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity
+            The opacity law built from the bundled OPAL table.
 
         Notes
         -----
@@ -1058,4 +1142,12 @@ class OPALOpacity(GreyOpacityLaw):
             mgrp.create_dataset("table_id", data=np.array(tids, dtype=object), dtype=h5py.string_dtype())
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the opacity law.
+
+        Returns
+        -------
+        str
+            The class name with the table dimensions and composition.
+        """
         return f"OPALOpacity(out_of_bounds={self.out_of_bounds!r})"

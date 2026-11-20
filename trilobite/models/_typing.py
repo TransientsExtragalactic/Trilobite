@@ -1,3 +1,10 @@
+"""
+Type aliases for the inputs and outputs of the model interfaces.
+
+The ``Raw`` aliases describe the unitless dictionaries of floats and arrays handed to the low-level model backends. The
+remaining aliases additionally accept :class:`~astropy.units.Quantity` values.
+"""
+
 from typing import Union
 
 import numpy as np

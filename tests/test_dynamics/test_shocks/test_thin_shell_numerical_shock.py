@@ -1,9 +1,19 @@
-"""
-Unit tests for shock engine dynamics.
+r"""
+Unit tests for thin-shell shock engine dynamics.
 
-This module contains unit tests for the shock engine dynamics in the Trilobite project.
-It uses the pytest framework to define and run tests that verify the behavior of the shock engine
-under various conditions.
+Tests for :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+and :class:`~trilobite.dynamics.shocks.numerical.MomentumConservingShockEngine`.
+
+Two physical closures are exercised:
+
+1. **Pressure-driven thin-shell** (``PressureDrivenThinShellShockEngine``): Shell acceleration is
+   driven by the net post-shock pressure estimated from instantaneous Rankine--Hugoniot conditions.
+   Tests cover homologous vacuum expansion, the Chevalier self-similar slope for n=10, s=2, and
+   late-time Sedov-Taylor convergence (R ∝ t^{2/5}) for uniform CSM.
+
+2. **Momentum-conserving snowplow** (``MomentumConservingShockEngine``): Total shell momentum is
+   conserved; no pressure forces. After the ejecta are exhausted, the shell sweeps stationary CSM
+   at constant momentum, giving R ∝ t^{1/4} for uniform CSM (s=0).
 """
 
 import numpy as np
@@ -11,10 +21,9 @@ import pytest
 from astropy import units as u
 from numpy.testing import assert_allclose
 
-from trilobite.dynamics.shocks.numerical import (
-    PressureDrivenThinShellShockEngine,
-)
-from trilobite.dynamics.shocks import ChevalierSelfSimilarShockEngine
+from trilobite.dynamics.profiles import BrokenPowerLawEjectaProfile, UniformCSMProfile
+from trilobite.dynamics.shocks import ChevalierSelfSimilarShockEngine, make_homologous_stationary_sources
+from trilobite.dynamics.shocks.numerical import MomentumConservingShockEngine, PressureDrivenThinShellShockEngine
 
 
 # ------------------------------------------------------------------- #
@@ -301,4 +310,295 @@ class TestNumericalThinShellShockEngine:
             dlogM_dlott_computed[half_index:],
             dlogM_dlogt_expected,
             rtol=relative_tolerance,
+        )
+
+    def test_thin_shell_adiabatic_slope_uniform_csm(self, engine, diagnostic_plots, diagnostic_plots_dir):
+        r"""
+        Verify that the pressure-driven thin-shell engine converges to the
+        thin-shell adiabatic scaling :math:`R \propto t^{4/13}` for n=10, s=0
+        uniform CSM after the swept mass exceeds :math:`M_{\rm ej}`.
+
+        The exponent 4/13 is the analytic late-time limit of the pressure-driven
+        thin-shell ODE for :math:`\gamma = 5/3`, s=0.  Setting
+        :math:`M = (4\pi/3)\rho_0 R^3` and the shell deceleration to
+        :math:`dv/dt = -(9v^2)/(4R)` (from the pressure term) yields
+        :math:`R \propto t^\alpha` with :math:`13\alpha = 4`.  This differs
+        from the full Sedov-Taylor solution (R :math:`\propto t^{2/5}`), which
+        requires proper energy conservation across the blast wave; the
+        :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine`
+        recovers that limit instead.
+
+        Setup:
+
+        - Broken-power-law ejecta: :math:`E_{\rm ej} = 10^{51}` erg,
+          :math:`M_{\rm ej} = 5\,M_\odot`, n=10, δ=0.
+        - Uniform CSM: :math:`\rho_0 = 10^{-16}` g cm\ :math:`^{-3}`.
+        - Initial shell at :math:`R_0 = 10^{15}` cm, :math:`v_0 = 10^4` km/s.
+        - Time grid: 1–:math:`10^{10}` days (ten decades).
+
+        Only the last 10% of the time grid is checked to avoid the early
+        transient.
+
+        Expected result: :math:`d\log R/d\log t \to 4/13` within 5%.
+        """
+        n = 10
+        _lambda_thin = 4.0 / 13.0  # thin-shell adiabatic limit for gamma=5/3, s=0
+        rtol = 5e-2
+
+        E_ej = 1e51 * u.erg
+        M_ej = 5.0 * u.M_sun
+        rho_0_cgs = 1e-16  # g/cm^3
+
+        K, v_t = BrokenPowerLawEjectaProfile.normalize(E_ej, M_ej, n=n, delta=0)
+        rho_ej = BrokenPowerLawEjectaProfile.as_optimized_callable(K=K, v_t=v_t, n=n, delta=0)
+        rho_csm = UniformCSMProfile.as_optimized_callable(rho_0=rho_0_cgs)
+
+        rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(rho_ej, rho_csm)
+
+        time = np.geomspace(1e0, 1e10, 5000) * u.day
+        R_cd_0 = 1e15 * u.cm
+        v_cd_0 = 1e4 * u.km / u.s
+        M_cd_0 = (4 * np.pi / 3) * rho_0_cgs * R_cd_0.to_value(u.cm) ** 3 * u.g
+
+        state = engine.compute_shock_properties(
+            time,
+            rho_1=rho_1,
+            rho_4=rho_4,
+            u_1=u_1,
+            u_4=u_4,
+            R_0=R_cd_0,
+            M_0=M_cd_0,
+            v_0=v_cd_0,
+            t_0=time[0],
+        )
+
+        log_t = np.log10(time.to_value(u.s))
+        dlogR_dlogt = np.gradient(np.log10(state.radius.to_value(u.cm)), log_t)
+        dlogv_dlogt = np.gradient(np.log10(state.velocity.to_value(u.cm / u.s)), log_t)
+
+        M_ej_g = M_ej.to_value(u.g)
+        m = state.mass.to_value(u.g)
+        crossed = m >= M_ej_g
+        if not np.any(crossed):
+            pytest.skip(
+                f"Swept mass did not reach M_ej within the time grid "
+                f"(max M/M_ej = {m.max() / M_ej_g:.3g}). Extend the time grid or increase rho_0."
+            )
+        term_idx = int(np.argmax(crossed))
+
+        # Check only the last 10% of the grid to ensure the transient has fully damped.
+        check_start = max(term_idx + 50, len(time) * 9 // 10)
+
+        if diagnostic_plots:
+            import matplotlib.pyplot as plt
+
+            from trilobite.utils.plot_utils import set_plot_style
+
+            set_plot_style()
+
+            log_t_days = np.log10(time.to_value(u.day))
+
+            fig, axes = plt.subplots(2, 1, figsize=(10, 8))
+            fig.suptitle(
+                rf"Pressure-Driven Engine — Thin-Shell Adiabatic Slope (n={n}, s=0, "
+                rf"$\rho_0={rho_0_cgs:.0e}$ g cm$^{{-3}}$)"
+            )
+
+            axes[0].loglog(
+                time.to_value(u.day),
+                state.radius.to_value(u.cm),
+                label=r"$R_{\rm sh}$ (pressure-driven)",
+            )
+            axes[0].axvline(time[term_idx].to_value(u.day), ls="-.", color="gray", label=r"$M=M_{\rm ej}$")
+            axes[0].axvline(time[check_start].to_value(u.day), ls=":", color="gray", label="Check window start")
+            axes[0].set_xlabel("Time [days]")
+            axes[0].set_ylabel("Radius [cm]")
+            axes[0].legend(fontsize=8)
+
+            axes[1].semilogx(log_t_days, dlogR_dlogt, label=r"$d\log R/d\log t$")
+            axes[1].axhline(_lambda_thin, ls="--", color="C1", label=rf"Thin-shell adiabatic $\lambda=4/13$")
+            axes[1].axhline(2 / 5, ls=":", color="C2", alpha=0.6, label="Sedov-Taylor 2/5 (ref)")
+            axes[1].axvline(time[term_idx].to_value(u.day), ls="-.", color="gray")
+            axes[1].axvline(time[check_start].to_value(u.day), ls=":", color="gray")
+            axes[1].set_xlabel("Time [days]")
+            axes[1].set_ylabel(r"$d\log R/d\log t$")
+            axes[1].set_ylim([0.0, 1.1])
+            axes[1].legend(fontsize=8)
+
+            plt.tight_layout()
+            plt.savefig(
+                f"{diagnostic_plots_dir}/test_pressure_driven_thin_shell_adiabatic_slope.png",
+                dpi=150,
+            )
+            plt.close(fig)
+
+        assert check_start < len(time) - 10, (
+            f"Too few grid points remain after M_ej crossing "
+            f"({len(time) - check_start} points). Extend the time grid or increase rho_0."
+        )
+        assert_allclose(
+            dlogR_dlogt[check_start:-3],
+            _lambda_thin,
+            rtol=rtol,
+            err_msg=f"R slope did not converge to thin-shell adiabatic 4/13 = {_lambda_thin:.4f}",
+        )
+        assert_allclose(
+            dlogv_dlogt[check_start:-3],
+            _lambda_thin - 1,
+            rtol=rtol,
+            err_msg=f"v slope did not converge to -9/13 = {_lambda_thin - 1:.4f}",
+        )
+
+
+# ------------------------------------------------------------------ #
+# Momentum-Conserving Snowplow Engine Tests                          #
+# ------------------------------------------------------------------ #
+
+
+class TestMomentumConservingShockEngine:
+    r"""
+    Asymptotic slope tests for :class:`~trilobite.dynamics.shocks.numerical.MomentumConservingShockEngine`.
+
+    The momentum-conserving (snowplow) closure conserves the total shell momentum
+    :math:`\Pi = Mv`.  After the reverse shock has traversed all ejecta, no further
+    momentum is deposited (:math:`u_1 \to 0`, :math:`u_4 = 0`), so :math:`\Pi`
+    approaches a constant :math:`\Pi_\infty`.  For uniform CSM the swept mass grows as
+    :math:`M \propto R^3`, giving:
+
+    .. math::
+
+        v = \frac{\Pi_\infty}{M} \propto R^{-3}
+        \;\Rightarrow\;
+        R^3 \frac{dR}{dt} \propto 1
+        \;\Rightarrow\;
+        R \propto t^{1/4}.
+
+    This is the classic *snowplow* scaling, which contrasts with the Sedov-Taylor
+    :math:`R \propto t^{2/5}` produced by the pressure-driven closure.
+    """
+
+    @pytest.fixture(scope="class")
+    def engine(self):
+        """Momentum-conserving snowplow engine."""
+        return MomentumConservingShockEngine()
+
+    def test_snowplow_asymptotic_slope_uniform_csm(self, engine, diagnostic_plots, diagnostic_plots_dir):
+        r"""
+        Verify convergence to the snowplow (momentum-conserving) scaling
+        :math:`R \propto t^{1/4}` after the swept CSM mass exceeds
+        :math:`M_{\rm ej}` in uniform CSM.
+
+        Setup:
+
+        - Broken-power-law ejecta: :math:`E_{\rm ej} = 10^{51}` erg,
+          :math:`M_{\rm ej} = 5\,M_\odot`, n=10, δ=0.
+        - Uniform CSM: :math:`\rho_0 = 10^{-16}` g cm\ :math:`^{-3}`.
+        - Initial shell at :math:`R_0 = 10^{15}` cm, :math:`v_0 = 10^4` km/s.
+        - Time grid: 1–:math:`10^{10}` days (ten decades).
+
+        The slope :math:`d\log R/d\log t` is measured from a settling interval
+        after the swept mass crosses :math:`M_{\rm ej}` to the end of the grid.
+
+        Expected result: :math:`d\log R/d\log t \to 1/4` within 10%.
+        """
+        n = 10
+        _lambda_sp = 1.0 / 4.0
+        rtol = 1e-1
+
+        E_ej = 1e51 * u.erg
+        M_ej = 5.0 * u.M_sun
+        rho_0_cgs = 1e-16  # g/cm^3
+
+        K, v_t = BrokenPowerLawEjectaProfile.normalize(E_ej, M_ej, n=n, delta=0)
+        rho_ej = BrokenPowerLawEjectaProfile.as_optimized_callable(K=K, v_t=v_t, n=n, delta=0)
+        rho_csm = UniformCSMProfile.as_optimized_callable(rho_0=rho_0_cgs)
+
+        rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(rho_ej, rho_csm)
+
+        time = np.geomspace(1e0, 1e10, 5000) * u.day
+        R_cd_0 = 1e15 * u.cm
+        v_cd_0 = 1e4 * u.km / u.s
+        M_cd_0 = (4 * np.pi / 3) * rho_0_cgs * R_cd_0.to_value(u.cm) ** 3 * u.g
+
+        state = engine.compute_shock_properties(
+            time,
+            rho_1=rho_1,
+            rho_4=rho_4,
+            u_1=u_1,
+            u_4=u_4,
+            R_0=R_cd_0,
+            M_0=M_cd_0,
+            v_0=v_cd_0,
+            t_0=time[0],
+        )
+
+        log_t = np.log10(time.to_value(u.s))
+        dlogR_dlogt = np.gradient(np.log10(state.radius.to_value(u.cm)), log_t)
+
+        # Detect when swept shell mass exceeds M_ej (onset of pure snowplow regime).
+        M_ej_g = M_ej.to_value(u.g)
+        m = state.mass.to_value(u.g)
+        crossed = m >= M_ej_g
+        if not np.any(crossed):
+            pytest.skip(
+                f"Swept mass did not reach M_ej within the time grid "
+                f"(max M/M_ej = {m.max() / M_ej_g:.3g}). Extend the time grid or increase rho_0."
+            )
+        term_idx = int(np.argmax(crossed))
+
+        # Check only the last 10% of the grid to ensure the transient has fully damped.
+        check_start = max(term_idx + 50, len(time) * 9 // 10)
+
+        if diagnostic_plots:
+            import matplotlib.pyplot as plt
+
+            from trilobite.utils.plot_utils import set_plot_style
+
+            set_plot_style()
+
+            log_t_days = np.log10(time.to_value(u.day))
+
+            fig, axes = plt.subplots(2, 1, figsize=(10, 8))
+            fig.suptitle(
+                rf"Momentum-Conserving Engine — Snowplow Slope (n={n}, s=0, "
+                rf"$\rho_0={rho_0_cgs:.0e}$ g cm$^{{-3}}$)"
+            )
+
+            axes[0].loglog(
+                time.to_value(u.day),
+                state.radius.to_value(u.cm),
+                label=r"$R_{\rm sh}$ (momentum-conserving)",
+            )
+            axes[0].axvline(time[term_idx].to_value(u.day), ls="-.", color="gray", label=r"$M=M_{\rm ej}$")
+            axes[0].axvline(time[check_start].to_value(u.day), ls=":", color="gray", label="Check window start")
+            axes[0].set_xlabel("Time [days]")
+            axes[0].set_ylabel("Radius [cm]")
+            axes[0].legend(fontsize=8)
+
+            axes[1].semilogx(log_t_days, dlogR_dlogt, label=r"$d\log R/d\log t$")
+            axes[1].axhline(_lambda_sp, ls="--", color="C1", label=rf"Snowplow $\lambda={_lambda_sp:.2f}$")
+            axes[1].axhline(2 / 5, ls=":", color="C2", alpha=0.6, label="Sedov-Taylor 2/5")
+            axes[1].axvline(time[term_idx].to_value(u.day), ls="-.", color="gray")
+            axes[1].axvline(time[check_start].to_value(u.day), ls=":", color="gray")
+            axes[1].set_xlabel("Time [days]")
+            axes[1].set_ylabel(r"$d\log R/d\log t$")
+            axes[1].set_ylim([0.0, 1.1])
+            axes[1].legend(fontsize=8)
+
+            plt.tight_layout()
+            plt.savefig(
+                f"{diagnostic_plots_dir}/test_momentum_conserving_snowplow_slope.png",
+                dpi=150,
+            )
+            plt.close(fig)
+
+        assert check_start < len(time) - 10, (
+            f"Too few grid points remain after M_ej crossing "
+            f"({len(time) - check_start} points). Extend the time grid or increase rho_0."
+        )
+        assert_allclose(
+            dlogR_dlogt[check_start:-3],
+            _lambda_sp,
+            rtol=rtol,
+            err_msg=f"R slope did not converge to snowplow 1/4 = {_lambda_sp:.3f}",
         )

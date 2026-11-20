@@ -5,7 +5,6 @@ which serves as the main entry point for logging messages across the trilobite
 codebase. Logging behavior—such as log level, formatting, and enable/disable
 switches—is controlled by the central configuration (:attr:`~trilobite.utils.config.trilobite_config`) under
 the ``logging.main`` namespace.
-
 """
 
 import logging

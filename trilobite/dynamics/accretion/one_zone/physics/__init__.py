@@ -5,8 +5,7 @@ These Cython modules provide the low-level functions that closure
 implementations ``cimport`` and compose.  They are not intended to be called
 directly from Python.
 
-Modules
--------
+.. rubric:: Modules
 
 _eos
     Equation-of-state primitives: isothermal sound speed for a pure ideal gas

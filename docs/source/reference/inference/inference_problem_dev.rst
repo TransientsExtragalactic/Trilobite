@@ -52,7 +52,7 @@ Core Architecture
 InferenceParameter
 ^^^^^^^^^^^^^^^^^^
 
-Each model parameter is wrapped in an
+Each model parameter, and each nuisance parameter declared by the likelihood, is wrapped in an
 :class:`~trilobite.inference.problem.InferenceParameter`.
 
 This dataclass stores:
@@ -68,16 +68,19 @@ These objects are automatically constructed during
 
 .. code-block:: python
 
+    all_parameters = tuple(self.__likelihood__._model.PARAMETERS) + tuple(
+        self.__likelihood__.nuisance_parameters
+    )
+
     self.__parameters__ = {
         model_parameter.name: InferenceParameter(
             model_parameter=model_parameter,
             freeze=False,
             prior=None,
             transform=None,
-            inverse_transform=None,
             initial_value=None,
         )
-        for model_parameter in self.__likelihood__._model.PARAMETERS
+        for model_parameter in all_parameters
     }
 
 Developers should **never manually construct**
@@ -87,13 +90,18 @@ Parameter Ordering
 ^^^^^^^^^^^^^^^^^^
 
 A critical invariant of the inference system is that **parameter ordering
-is deterministic and inherited from the model definition**:
+is deterministic**. The model parameters come first, in the order the model
+defines them, followed by the likelihood's nuisance parameters in the order the
+likelihood declares them:
 
 .. code-block:: python
 
-    self.__parameter_order__ = tuple(
-        [p.name for p in self.__likelihood__._model.PARAMETERS]
-    )
+    self.__parameter_order__ = tuple([p.name for p in all_parameters])
+
+Appending the nuisance parameters leaves the model's own ordering unchanged. The
+two groups can be listed separately with
+:attr:`~trilobite.inference.problem.InferenceProblem.model_parameter_names` and
+:attr:`~trilobite.inference.problem.InferenceProblem.nuisance_parameter_names`.
 
 This ordering controls:
 

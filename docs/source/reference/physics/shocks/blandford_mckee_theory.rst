@@ -246,7 +246,7 @@ gives
 This is simply conservation of entropy along each fluid worldline.
 
 .. dropdown:: Derivation: Relativistic Conservation Equations
-   :icon: book-open
+   :icon: book
 
    The stress-energy tensor of a perfect fluid is
 
@@ -647,7 +647,7 @@ and
    2n_1\Gamma^2\chi^{-7/4}.
 
 .. dropdown:: Derivation: Self-Similar Profiles for the Uniform Medium Case
-   :icon: book-open
+   :icon: book
 
    The ansatz
 
@@ -884,7 +884,7 @@ Since :math:`R\simeq ct`, this reproduces the scaling
       \frac{17E}{8\pi\rho_1c^2R^3}.
 
 .. dropdown:: Derivation: Energy Integral
-   :icon: book-open
+   :icon: book
 
    The lab-frame energy density is
 

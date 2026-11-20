@@ -509,7 +509,7 @@ and :math:`x = \frac{\omega}{\omega_c}`.
 .. note::
 
     This is *not* a typo: :math:`\eta = \frac{\omega}{2\omega_c}` in the previous section, but here we have
-    :math::`x = \frac{\omega}{\omega_c}`.
+    :math:`x = \frac{\omega}{\omega_c}`.
 
 Summing these two contributions, the total power radiated per unit frequency is
 
@@ -784,7 +784,7 @@ Letting
 
 .. math::
 
-    c_{5,\rm ISO}(p) = c_5(p) \Gamma\left(\frac{p+5}{4}\right) \Gamma^{-1}\left(\frac{p+7}{4}\right),
+    c_{5,\rm ISO}(p) = c_5(p) \frac{\sqrt{\pi}}{2} \Gamma\left(\frac{p+5}{4}\right) \Gamma^{-1}\left(\frac{p+7}{4}\right),
 
 the angle-averaged emissivity for an isotropic distribution of pitch angles is
 
@@ -809,6 +809,226 @@ the angle-averaged emissivity for an isotropic distribution of pitch angles is
             c_{\rm 5, ISO}(p)\,N_{0,E}
             \left(B\right)^{(p+1)/2}
             \left(\frac{\nu}{2c_1}\right)^{-(p-1)/2}.
+
+Asymptotic Limits
+~~~~~~~~~~~~~~~~~~
+
+So far, we have actually ignored the presence of :math:`\gamma_{\min}` and :math:`\gamma_{\max}` in the electron
+distribution. In practice, these cutoffs can have a significant effect on the observed synchrotron spectrum,
+especially if the observing frequency is near the characteristic frequencies associated with these cutoffs.
+
+Let's consider the emissivity in the **low-frequency limit** where :math:`\nu \ll \nu_{m}`, where :math:`\nu_{m}` is
+the characteristic frequency associated with electrons at the minimum Lorentz factor :math:`\gamma_{\min}`. The resulting
+emissivity is
+
+.. math::
+
+    j_\nu = c_5^{(L)}(p) N_0 (m_e c^2)^{-1} \left(B \sin \alpha\right)^{2/3} \gamma_{\rm min}^{(1-3p)/3} \nu^{1/3},
+
+where
+
+.. math::
+
+    c_5^{(L)}(p) = \frac{e^3 c_{1,\gamma}^{-1/3}}{(p-1/3) 2^{1/3} \Gamma(1/3)}
+
+.. dropdown:: Derivation
+
+    We start from the general expression for the emissivity:
+
+    .. math::
+
+        j_{\nu}
+        =
+        \frac{\sqrt{3} e^3 B \sin \alpha}{4\pi m_e c^2}
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        N(\gamma)
+        F\!\left(\frac{\nu}{\nu_c}\right)
+        d\gamma,
+
+    where
+
+    .. math::
+
+        \nu_c
+        =
+        c_{1,\gamma} B \sin\alpha\,\gamma^2
+
+    is the characteristic synchrotron frequency for an electron with Lorentz factor
+    :math:`\gamma`. For a power-law electron distribution,
+
+    .. math::
+
+        N(\gamma) = N_0 \gamma^{-p},
+
+    so
+
+    .. math::
+
+        j_{\nu}
+        =
+        \frac{\sqrt{3} e^3 B \sin \alpha}{4\pi m_e c^2}
+        N_0
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        \gamma^{-p}
+        F\!\left(
+        \frac{\nu}
+        {c_{1,\gamma} B\sin\alpha\,\gamma^2}
+        \right)
+        d\gamma.
+
+    We now specialize to the low-frequency limit
+    :math:`\nu \ll \nu_m`, where
+
+    .. math::
+
+        \nu_m = c_{1,\gamma}B\sin\alpha\,\gamma_{\min}^2.
+
+    In this regime,
+
+    .. math::
+
+        \frac{\nu}{\nu_c(\gamma)} \ll 1
+
+    for all electrons in the distribution. We may therefore use the low-frequency
+    asymptotic form of the synchrotron kernel,
+
+    .. math::
+
+        F(x) \simeq
+        \frac{2^{5/3}\pi}{\sqrt{3}\Gamma(1/3)}
+        x^{1/3},
+        \qquad x\ll 1.
+
+    Substituting
+
+    .. math::
+
+        x =
+        \frac{\nu}
+        {c_{1,\gamma}B\sin\alpha\,\gamma^2}
+
+    gives
+
+    .. math::
+
+        F\!\left(
+        \frac{\nu}
+        {c_{1,\gamma}B\sin\alpha\,\gamma^2}
+        \right)
+        \simeq
+        \frac{2^{5/3}\pi}{\sqrt{3}\Gamma(1/3)}
+        \left(
+        \frac{\nu}
+        {c_{1,\gamma}B\sin\alpha\,\gamma^2}
+        \right)^{1/3}.
+
+    The emissivity therefore becomes
+
+    .. math::
+
+        j_{\nu}
+        \simeq
+        \frac{\sqrt{3} e^3 B \sin \alpha}{4\pi m_e c^2}
+        N_0
+        \frac{2^{5/3}\pi}{\sqrt{3}\Gamma(1/3)}
+        \left(
+        \frac{\nu}
+        {c_{1,\gamma}B\sin\alpha}
+        \right)^{1/3}
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        \gamma^{-p-2/3}
+        d\gamma.
+
+    Collecting the frequency and magnetic-field factors,
+
+    .. math::
+
+        j_{\nu}
+        \simeq
+        \frac{e^3}{m_e c^2}
+        \frac{c_{1,\gamma}^{-1/3}}
+        {2^{1/3}\Gamma(1/3)}
+        N_0
+        \left(B\sin\alpha\right)^{2/3}
+        \nu^{1/3}
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        \gamma^{-p-2/3}
+        d\gamma.
+
+    The remaining Lorentz-factor integral is
+
+    .. math::
+
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        \gamma^{-p-2/3}
+        d\gamma
+        =
+        \frac{
+        \gamma_{\min}^{1/3-p}
+        -
+        \gamma_{\max}^{1/3-p}
+        }
+        {p - 1/3}.
+
+    Thus,
+
+    .. math::
+
+        j_{\nu}
+        \simeq
+        \frac{e^3}{m_e c^2}
+        \frac{c_{1,\gamma}^{-1/3}}
+        {2^{1/3}\Gamma(1/3)}
+        \frac{
+        \gamma_{\min}^{1/3-p}
+        -
+        \gamma_{\max}^{1/3-p}
+        }
+        {p - 1/3}
+        N_0
+        \left(B\sin\alpha\right)^{2/3}
+        \nu^{1/3}.
+
+    For :math:`p>1/3` and :math:`\gamma_{\max}\gg\gamma_{\min}`, the upper-limit
+    term is negligible, leaving
+
+    .. math::
+
+        j_{\nu}
+        \simeq
+        \frac{e^3 c_{1,\gamma}^{-1/3}}
+        {(p-1/3)2^{1/3}\Gamma(1/3)}
+        N_0
+        (m_e c^2)^{-1}
+        \left(B\sin\alpha\right)^{2/3}
+        \gamma_{\min}^{1/3-p}
+        \nu^{1/3}.
+
+    Identifying the coefficient multiplying the dimensional factors gives
+
+    .. math::
+
+        c_5^{(L)}(p)
+        =
+        \frac{e^3 c_{1,\gamma}^{-1/3}}
+        {(p-1/3)2^{1/3}\Gamma(1/3)},
+
+    and therefore
+
+    .. math::
+
+        j_\nu
+        =
+        c_5^{(L)}(p)
+        N_0
+        (m_e c^2)^{-1}
+        \left(B \sin \alpha\right)^{2/3}
+        \gamma_{\min}^{(1-3p)/3}
+        \nu^{1/3}.
+
+In practice, one is most often interested in scenarios where only the :math:`\nu^{1/3}` scaling is relevant; however,
+we will see that this result arises again in the context of synchrotron self-absorption.
+
 
 Thermal Electrons
 ^^^^^^^^^^^^^^^^^
@@ -956,6 +1176,32 @@ A common choice throughout the modern literature (e.g. :footcite:t:`Margutti2019
 the parameters :math:`\epsilon_e` and :math:`\epsilon_B`, which represent the fraction of the thermal energy density
 that goes into relativistic electrons and magnetic fields, respectively.
 
+.. important::
+
+    :math:`\epsilon_e` is the fraction of the thermal (internal) energy density that goes into relativistic electrons.
+    Because a thermal energy density excludes rest mass, we define :math:`U_e = \epsilon_e U_{\rm th}` as the
+    **kinetic energy density in relativistic electrons**,
+
+    .. math::
+
+        U_e = N_0\, m_e c^2 \left\langle \gamma - 1 \right\rangle,
+
+    This is Trilobite's internal convention, used by the electron distributions, the analytic SED closures and the
+    spectral inversions. Where Trilobite provides a model or inversion that implements a specific published result, it
+    adopts that paper's convention instead, so that it reproduces the published equations; its documentation states
+    which convention applies.
+
+    Many studies (e.g. :footcite:t:`Margutti2019COW`, :footcite:t:`demarchiRadioAnalysisSN2004C2022`,
+    :footcite:t:`wuDelayedRadioEmission2025`) instead define :math:`U_e` as the **total energy density in
+    relativistic electrons**, including rest mass, which replaces :math:`\langle \gamma - 1 \rangle` by
+    :math:`\langle \gamma \rangle`. The two differ by the factor
+    :math:`\langle \gamma \rangle / \langle \gamma - 1 \rangle`, which is negligible for
+    :math:`\gamma_{\min} \gg 1` but approaches :math:`p - 1` as :math:`\gamma_{\min} \to 1`, so it must be accounted
+    for when comparing with those results. For example,
+    :func:`~trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22` and
+    :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw` implement
+    :footcite:t:`demarchiRadioAnalysisSN2004C2022` and therefore use the total-energy convention.
+
 Given a thermal energy density :math:`U_{\rm thermal}`, we can then write the energy densities in relativistic electrons
 and magnetic fields as:
 
@@ -1016,7 +1262,7 @@ Outside this range, the distribution is assumed to vanish.
         \frac{dN}{dE} = N_{E,0} E^{-p}.
 
     Trilobite adopts the **Lorentz factor** formulation as the **canonical standard**; however, both are
-    implemented in the relevant API (see :mod:`trilobite.radiation.synchrotron.microphysics`).
+    implemented in the relevant API (see :mod:`trilobite.radiation.synchrotron.electron_distributions`).
 
 .. note::
 
@@ -1029,8 +1275,8 @@ Equipartition for Power-Law Distributions
 
 .. hint::
 
-    The relevant API in Trilobite is in the :mod:`trilobite.radiation.synchrotron.microphysics` module. See
-    :ref:`synchrotron_microphysics` for details on use.
+    The relevant API in Trilobite is in the :mod:`trilobite.radiation.synchrotron.electron_distributions` module. See
+    :ref:`synchrotron_electron_distributions` for details on use.
 
 Assuming a power-law distribution of electrons, we can derive normalization of the distribution
 from our closure relationship. Here, we describe the procedure when assuming equipartition with some
@@ -1043,7 +1289,7 @@ equipartition)
 
     U_e = \epsilon_e U_{\rm thermal}.
 
-The total energy density of the electron population is
+The kinetic energy density of the electron population, which excludes rest mass, is
 
 .. tab-set::
 
@@ -1051,27 +1297,34 @@ The total energy density of the electron population is
 
         .. math::
 
-            U_e = m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma \frac{dN}{d\gamma} d\gamma
-            = N_0 m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{1 - p} d\gamma.
+            U_e = m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1) \frac{dN}{d\gamma} d\gamma
+            = N_0 m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1) \gamma^{-p} d\gamma.
 
     .. tab-item:: In Terms of Energy
 
         .. math::
 
-            U_e = \int_{E_{\min}}^{E_{\max}} E \frac{dN}{dE} dE = N_{E,0} \int_{E_{\min}}^{E_{\max}} E^{1 - p} dE.
+            U_e = \int_{E_{\min}}^{E_{\max}} (E - m_e c^2) \frac{dN}{dE} dE
+            = N_{E,0} \int_{E_{\min}}^{E_{\max}} (E - m_e c^2) E^{-p} dE.
 
 Letting
 
 .. math::
 
-    M^{(\ell)}_{\gamma} = N_0 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{\ell} \gamma^{-p} d\gamma,
+    M^{(\ell)}_{\gamma} = \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{\ell} \gamma^{-p} d\gamma
 
-be the :math:`\ell`-th moment of the Lorentz factor distribution, we can write the energy density as
+be the :math:`\ell`-th moment of the Lorentz factor shape function, and defining the **kinetic moment**
+
+.. math::
+
+    M^{(\rm kin)}_{\gamma} \equiv M^{(1)}_{\gamma} - M^{(0)}_{\gamma} = \int_{\gamma_{\min}}^{\gamma_{\max}} (\gamma - 1) \gamma^{-p} d\gamma,
+
+we can write the energy density as
 
 .. math::
 
     \boxed{
-    U_e = m_e c^2 N_0 M^{(1)}_{\gamma}.
+    U_e = m_e c^2 N_0 M^{(\rm kin)}_{\gamma}.
     }
 
 Solving for :math:`N_0`, we find
@@ -1079,19 +1332,21 @@ Solving for :math:`N_0`, we find
 .. math::
 
     \boxed{
-    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2 M^{(1)}_{\gamma}}.
+    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2 M^{(\rm kin)}_{\gamma}}.
     }
 
 In terms of the magnetic field, we also have
 
 .. math::
 
-    B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 = \frac{\epsilon_e B^2}{8 \pi \epsilon_B m_e c^2 M^{(1)}_{\gamma}}.
+    B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 = \frac{\epsilon_e B^2}{8 \pi \epsilon_B m_e c^2 M^{(\rm kin)}_{\gamma}}.
+
+For :math:`\gamma_{\min} \gg 1` the kinetic moment reduces to :math:`M^{(1)}_{\gamma}`.
 
 .. important::
 
     This is the canonical way to convert dynamics into synchrotron emission in Trilobite when assuming
-    equipartition and a power-law distribution of electrons. See :mod:`trilobite.radiation.synchrotron.microphysics`
+    equipartition and a power-law distribution of electrons. See :mod:`trilobite.radiation.synchrotron.electron_distributions`
     for the relevant API.
 
 Another useful computation which is made possible with equipartition is the **total emitted power** from synchrotron.
@@ -1114,7 +1369,7 @@ From equipartition, we know :math:`N_0` in terms of :math:`U_{\rm thermal}` and 
 
     \boxed{
     P_{\rm total} = \frac{4}{3} \sigma_T c \frac{\epsilon_e \epsilon_B u_{\rm therm}^2}{m_e c^2} \left(
-        \frac{M^{(2)}_{\gamma}}{M^{(1)}_{\gamma}}
+        \frac{M^{(2)}_{\gamma}}{M^{(\rm kin)}_{\gamma}}
     \right).
     }
 
@@ -1132,7 +1387,7 @@ Thermal Electron Distributions
 
 In the rare cases where thermal electrons contribute to the synchrotron emission, we can also derive the normalization of the
 distribution from equipartition. The procedure is similar to that described above for power-law distributions,
-but with the **Maxwell-Juttner** distribution instead.
+but with the **Maxwell-Juttner** distribution instead\ :footcite:p:`juttner1911maxwellsche`.
 
 We write the electron distribution function as
 
@@ -1149,91 +1404,182 @@ of the second kind, and :math:`N_0` is a normalization constant.
     Trilobite generally works with number densities to facilitate coupling with hydrodynamical quantities. The
     conversion between the two is just a division by the relevant volume.
 
+.. _synch_thermal_budget:
+
+The Thermal-Electron Energy Budget
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The shock jump conditions fix the post-shock thermal energy density :math:`u_{\rm th}`, which excludes rest mass, but not
+how it is shared between ions, electrons and the magnetic field. That split is microphysics. When the electrons include
+a thermal population, Trilobite divides :math:`u_{\rm th}` into disjoint parts,
+
+.. math::
+
+    u_{\rm th} = u_i + u_{e,\rm th} + u_{e,\rm nt} + u_B,
+
+set by three parameters:
+
+- :math:`\epsilon_B`: the magnetic field, :math:`u_B = \epsilon_B u_{\rm th}`.
+- :math:`\epsilon_E`: the kinetic energy of the non-thermal electrons, :math:`u_{e,\rm nt} = \epsilon_E u_{\rm th}`. This
+  is the :math:`\epsilon_e` of the power-law models above, so a pure power-law model is the case without thermal
+  electrons and keeps its meaning.
+- :math:`\epsilon_T`: the ratio of the thermal-electron energy to the ion energy, :math:`u_{e,\rm th} = \epsilon_T u_i`.
+
+Solving for the ions and the thermal electrons,
+
+.. math::
+
+    u_i = \frac{1 - \epsilon_B - \epsilon_E}{1 + \epsilon_T}\, u_{\rm th},
+    \qquad
+    u_{e,\rm th} = f_{\rm th}\, u_{\rm th},
+    \qquad
+    f_{\rm th} = \frac{\epsilon_T\,(1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}.
+
+The ions carry the remainder, so :math:`\epsilon_B + \epsilon_E < 1`. Note that :math:`\epsilon_T = 1` means equal ion and
+thermal-electron *energy*, not equal temperature.
+
+.. rubric:: Species temperatures
+
+Each thermal species follows a Maxwell-Juttner distribution at its own dimensionless temperature
+:math:`\Theta_s = k_B T_s / (m_s c^2)`, which is fixed by its kinetic energy per particle,
+
+.. math::
+
+    \langle \gamma - 1 \rangle(\Theta_s) = \xi_s = \frac{u_s}{n_s m_s c^2}.
+
+With the proper rest-mass density :math:`\rho = n_i m_i = n_e \mu_e m_p`, where :math:`\mu_e` is the mean molecular weight
+per electron,
+
+.. math::
+
+    \xi_i = \frac{u_i}{\rho c^2},
+    \qquad
+    \xi_e = \frac{u_{e,\rm th}\,\mu_e m_p}{\rho\, m_e c^2}.
+
+:func:`~trilobite.physics_utils.thermal_partition.compute_ion_electron_theta` inverts these relations exactly. Both
+species may be relativistic: the ions in a relativistic shock, the electrons already in a shock at a tenth of the
+speed of light. The mean molecular weight per ion cancels, :math:`\Theta_i = k_B T_i / (\mu_i m_p c^2)`. For a strong
+shock at :math:`0.1c` into hydrogen-dominated gas (:math:`\mu_e = 1.17`) with :math:`\epsilon_T = 1`, the ions have
+:math:`\Theta_i \approx 4 \times 10^{-3}` and the thermal electrons :math:`\Theta_e \approx 4`, although they carry equal
+energy.
+
+.. rubric:: Relation to Margalit and Quataert (2021)
+
+:footcite:t:`margalitThermalElectronsMildlyrelativistic2021` model thermal electrons in mildly relativistic shocks with a
+fraction :math:`\epsilon_T` of the *total* thermal energy in the electrons, :math:`u_e = \epsilon_T u_{\rm th}`, a
+fraction :math:`\delta` of which is non-thermal, :math:`\delta\,\epsilon_T u_{\rm th}`. Trilobite parametrizes the same
+physics differently, for one reason: each parameter should mean the same thing in every model.
+
+- The non-thermal electrons have their own budget :math:`\epsilon_E`, with the standard meaning of the power-law models,
+  instead of a share :math:`\delta` of the electron energy. A power-law fit and a thermal-plus-power-law fit therefore
+  share :math:`\epsilon_E` and :math:`\epsilon_B`.
+- The thermal-electron energy is measured against the ions, :math:`u_{e,\rm th} = \epsilon_T u_i`, so the ions, thermal
+  electrons, non-thermal electrons and magnetic field partition :math:`u_{\rm th}` exactly, with no assumption about the
+  remainder.
+- Without magnetic or non-thermal energy, :math:`u_{e,\rm th} / u_{\rm th} = \epsilon_T / (1 + \epsilon_T)`. The two
+  parametrizations then agree for :math:`\epsilon_T \ll 1`, differ by the factor :math:`1 / (1 + \epsilon_T)` in the
+  electron energy at equal parameter values, and map onto each other through
+  :math:`\epsilon_T^{\rm Trilobite} = \epsilon_T^{\rm MQ21} / (1 - \epsilon_T^{\rm MQ21})`.
+
+.. note::
+
+    Two approximations are not corrected for. The jump conditions are solved with one constant adiabatic index, whereas
+    a mixture of non-relativistic ions and partly relativistic electrons has an effective index that varies with
+    :math:`\epsilon_T` and the shock speed; the effect on :math:`u_{\rm th}` is small. And :math:`\Theta_e` is computed
+    as if all :math:`n_e = \rho / (\mu_e m_p)` electrons were thermal, so a non-thermal population must satisfy
+    :math:`n_{\rm nt} \ll n_e`. For a power law with :math:`p = 3` in a :math:`0.1c` shock, :math:`n_{\rm nt} / n_e`
+    is 0.03 for :math:`\gamma_{\min} = 2` and :math:`\epsilon_E = 0.01`, 0.27 for :math:`\epsilon_E = 0.1`, and 0.04 for
+    :math:`\gamma_{\min} = 10` and :math:`\epsilon_E = 0.1`. A value above one means the parameters are inconsistent: the
+    non-thermal electrons would outnumber the electrons available.
+
 Equipartition for Thermal Electron Distributions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. hint::
 
-    The relevant API in Trilobite is in the :mod:`trilobite.radiation.synchrotron.microphysics` module. See
-    :ref:`synchrotron_microphysics` for details on use.
+    The relevant API in Trilobite is in the :mod:`trilobite.radiation.synchrotron.electron_distributions` module. See
+    :ref:`synchrotron_electron_distributions` for details on use.
 
-Given a thermal energy density :math:`U_{\rm thermal}`, the energy density in relativistic electrons is (by
-equipartition)
-
-.. math::
-
-    U_e = \epsilon_e U_{\rm thermal}.
-
-The total energy density of the electron population is
+Given a thermal energy density :math:`U_{\rm thermal}`, the thermal electrons carry (see :ref:`synch_thermal_budget`)
 
 .. math::
 
-    U_e = m_e c^2 N_0 \int_{0}^{\infty} \frac{\gamma^3 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right), d\gamma
+    U_{e,\rm th} = f_{\rm th} U_{\rm thermal}, \qquad f_{\rm th} = \frac{\epsilon_T (1 - \epsilon_B - \epsilon_E)}{1 + \epsilon_T}.
+
+The kinetic energy density of the electron population, which excludes rest mass, is
+
+.. math::
+
+    U_{e,\rm th} = m_e c^2 N_0 \int_{1}^{\infty} (\gamma - 1) \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)}
+    \exp\!\left(-\frac{\gamma}{\Theta}\right) d\gamma.
 
 This integral is\ :footcite:p:`1998ApJ...498..313G, 2000ApJ...541..234O, chandrasekhar1957introduction`
 
 .. math::
 
-    U_e = N_0 m_e c^2 \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} -1 \right],
+    U_{e,\rm th} = N_0 m_e c^2 \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1\right],
 
-which, in turn, is well approximated by\ :footcite:p:`1998ApJ...498..313G`
+where :math:`K_1` and :math:`K_3` are the modified Bessel functions of the second kind. The bracket tends to
+:math:`3\Theta/2` for :math:`\Theta \ll 1` and to :math:`3\Theta` for :math:`\Theta \gg 1`.
+
+It is well approximated by\ :footcite:p:`1998ApJ...498..313G`
 
 .. math::
 
-    U_e \approx N_0 m_e c^2 \Theta \left(\frac{6+15\Theta}{4+5\Theta}\right)
+    U_{e,\rm th} \approx N_0 m_e c^2 \, \Theta \frac{6 + 15\Theta}{4 + 5 \Theta}.
 
 Solving for :math:`N_0`, we find
 
 .. math::
 
     \boxed{
-    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2 \Theta} \left(\frac{4+5\Theta}{6+15\Theta}\right).
+    N_0 = \frac{f_{\rm th} U_{\rm thermal}}{m_e c^2} \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1\right]^{-1}
+    \approx \frac{f_{\rm th} U_{\rm thermal}}{m_e c^2} \frac{4 + 5\Theta}{\Theta (6 + 15\Theta)}.
     }
 
-In terms of the magnetic field, we also have
+In terms of the magnetic field, :math:`U_{\rm thermal} = B^2 / (8 \pi \epsilon_B)`, so
 
 .. math::
 
-    B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 =\frac{B^2}{8 \pi m_e c^2 \Theta}\frac{\epsilon_e}{\epsilon_B}
-    \left(\frac{4+5\Theta}{6+15\Theta}\right).
+    N_0 =\frac{B^2}{8 \pi m_e c^2}\frac{f_{\rm th}}{\epsilon_B}
+     \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} - 1\right]^{-1}.
+
+The total energy density, which does include rest mass, would instead involve
+:math:`\langle \gamma \rangle = \left[3K_3(1/\Theta) + K_1(1/\Theta)\right] / \left[4K_2(1/\Theta)\right]`. For
+:math:`\Theta \ll 1` that is dominated by rest mass (:math:`\langle \gamma \rangle \to 1`), which would make
+:math:`N_0` too small by roughly :math:`2/(3\Theta)`.
 
 .. hint::
 
-    This form of the equipartition closure relies on the thermal electrons being the only contributors to the energy
-    density. One may also introduce the scenario where :math:`\epsilon_e U_{\rm thermal}` goes to **all electrons**, of
-    which, only :math:`\delta \epsilon_e U_{\rm thermal}` goes to the thermal electrons, and
-    :math:`(1-\delta) \epsilon_e U_{\rm thermal}` goes to a non-thermal population of electrons. In this case,
-    the normalization of the thermal electron distribution is modified by a factor of :math:`\delta`.
+    :math:`\Theta` and the energy budget are independent inputs here: given :math:`\Theta`, the budget fixes
+    :math:`N_0`. In a shock model the electron density :math:`n_e = \rho / (\mu_e m_p)` is known instead, and
+    :math:`\Theta_e` follows from the budget (see above). The two routes agree when :math:`\Theta_e` is computed from
+    :func:`~trilobite.physics_utils.thermal_partition.compute_ion_electron_theta`: :math:`N_0` then equals
+    :math:`n_e`.
 
 Mixed Distributions
 ~~~~~~~~~~~~~~~~~~~
 
-In some scenarios, one encounters both a thermal and non-thermal population of electrons. In this case, equipartition is
-made somewhat more subtle on the basis that the fraction of the electrons which are / are not relativistic is
-a free parameter. We therefore introduce the :math:`\delta` parameter to represent the fraction of the electron
-energy in the **thermal** population. In this case,
-
-.. math::
-
-    U_{\rm e,\;thermal} = \delta \epsilon_e U_{\rm thermal}, \;\; U_{\rm e,\;non-thermal} = (1-\delta) \epsilon_e U_{\rm thermal}.
-
-In this case, the normalization of the thermal and non-thermal electron distributions are given by
+When a non-thermal population accompanies the thermal electrons, each carries its own share of the budget (see
+:ref:`synch_thermal_budget`): :math:`f_{\rm th} U_{\rm thermal}` for the thermal electrons and
+:math:`\epsilon_E U_{\rm thermal}` for the non-thermal ones. The normalizations are
 
 .. math::
 
     \begin{aligned}
-    N_{0,\;thermal} &= \frac{\delta \epsilon_e U_{\rm thermal}}{m_e c^2 \Theta} \left(\frac{4+5\Theta}{6+15\Theta}\right), \\
-    N_{0,\;non-thermal} &= \frac{(1-\delta) \epsilon_e U_{\rm thermal}}{m_e c^2 M^{(1)}_{\gamma}}.
+    N_{0,\rm \;thermal} &= \frac{f_{\rm th} U_{\rm thermal}}{m_e c^2 K_{\rm th}}, \\
+    N_{0,\rm \;non-thermal} &= \frac{\epsilon_E U_{\rm thermal}}{m_e c^2 M^{(\rm kin)}_{\gamma}},
     \end{aligned}
 
-and, in terms of the :math:`B` field,
+where :math:`K_{\rm th}` is the bracket above, the exact mean kinetic energy of the Maxwell-Juttner distribution, and
+:math:`M^{(\rm kin)}_{\gamma}` is the kinetic moment of the non-thermal distribution. In terms of the :math:`B` field,
+:math:`U_{\rm thermal} = B^2 / (8 \pi \epsilon_B)`.
 
-.. math::
-
-    \begin{aligned}
-    N_{0,\;thermal} &= \frac{B^2}{8 \pi m_e c^2 \Theta}\frac{\delta \epsilon_e}{\epsilon_B} \left(\frac{4+5\Theta}{6+15\Theta}\right), \\
-    N_{0,\;non-thermal} &= \frac{B^2}{8 \pi m_e c^2}\frac{(1-\delta) \epsilon_e}{\epsilon_B} \left(\frac{1}{M^{(1)}_{\gamma}}\right).
-    \end{aligned}
+The mixed distribution classes
+(:class:`~trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal`) and the mixed numerical SED use
+this budget. Because the magnetic energy is removed first, the *shape* of the mixture depends on :math:`\epsilon_B`
+through :math:`f_{\rm th}`. For :math:`\epsilon_E = 0` the mixture reduces to the thermal distribution, and for
+:math:`\epsilon_T = 0` to the non-thermal one.
 
 ----
 
@@ -1689,6 +2035,15 @@ With this, the absorption coefficient for a power-law distribution of electrons 
     is said to be “dominated” by electrons satisfying :math:`\nu \sim \nu_m(\gamma)`. The statement
     refers to the *support of the absorption integral*, not to the emission spectrum of those electrons.
 
+.. hint::
+
+    As we did for the emission coefficient, the absorption can be modified to account for an isotropic distribution of
+    pitch angles by averaging over the distribution. This results in a modified :math:`c_6(p)` constant:
+
+    .. math::
+
+        c_{6,\rm ISO}(p) = c_6(p) \frac{\sqrt{\pi}}{2} \frac{\Gamma\left(\frac{p+6}{4}\right)}{\Gamma\left(\frac{p+8}{4}\right)}.
+
 Recalling that the emissivity for a power-law distribution of electrons is
 
 .. math::
@@ -1703,6 +2058,26 @@ We have the all-important source function
 
     S_\nu = \frac{j_\nu}{\alpha_\nu} =
     \frac{c_5(p)}{c_6(p)} (B\sin\alpha)^{-1/2} \left(\frac{\nu}{2 c_1}\right)^{5/2}.
+
+.. hint::
+
+    In the pitch-angle averaged case, the *effective* source function
+    entering the radiative-transfer equation is the ratio of the
+    pitch-angle averaged emissivity and absorption coefficient,
+
+    .. math::
+
+        \overline{S}_\nu
+        =
+        \frac{\left<j_\nu\right>}{\left<\alpha_\nu\right>}
+        =
+        \frac{c_{5,\rm ISO}(p)}{c_{6,\rm ISO}(p)}
+        B^{-1/2}
+        \left(\frac{\nu}{2 c_1}\right)^{5/2}.
+
+    This is not, in general, the same as the pitch-angle average of the
+    fixed-angle source function, :math:`\left<S_\nu(\alpha)\right>`.
+
 
 From our discussion in the previous section, we know that
 
@@ -1748,6 +2123,290 @@ The details of how :math:`\ell` should be determined are a matter of dynamics an
     It is worth emphasizing that the SSA frequency depends on the properties of the electron population. Thus, for
     any set of assumptions about the behavior of the underlying electrons, the corresponding SSA frequency may be quite
     different.
+
+It is also worth mentioning the case for :math:`\nu \ll nu_{\rm min}`` where
+:math:`\nu_{\rm min} = \nu_m(\gamma_{\rm min})` is the characteristic synchrotron frequency of the
+lowest-energy electrons in the distribution. In this case, it can be shown that
+
+.. math::
+
+    \alpha_\nu = c_6^{(L)}(p) N_0 (m_e^2 c^2)^{-1} (B\sin\alpha)^{2/3} \gamma_{\rm min}^{-(3p+2)/3)} \nu^{-5/3}.
+
+.. dropdown:: Derivation
+
+    We start from the general expression for the synchrotron self-absorption
+    coefficient,
+
+    .. math::
+
+        \alpha_\nu
+        =
+        -\frac{1}{8\pi m_e \nu^2}
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        P_\nu(\gamma)\,
+        \gamma^2
+        \frac{\partial}{\partial\gamma}
+        \left[
+            \frac{N(\gamma)}{\gamma^2}
+        \right]
+        d\gamma.
+
+    For a power-law electron distribution,
+
+    .. math::
+
+        N(\gamma) = N_0 \gamma^{-p},
+
+    the derivative term becomes
+
+    .. math::
+
+        \gamma^2
+        \frac{\partial}{\partial\gamma}
+        \left[
+            \frac{N_0\gamma^{-p}}{\gamma^2}
+        \right]
+        =
+        \gamma^2
+        \frac{\partial}{\partial\gamma}
+        \left[
+            N_0\gamma^{-p-2}
+        \right]
+        =
+        -(p+2)N_0\gamma^{-p-1}.
+
+    Therefore,
+
+    .. math::
+
+        \alpha_\nu
+        =
+        \frac{(p+2)N_0}{8\pi m_e\nu^2}
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        P_\nu(\gamma)\gamma^{-p-1}\,d\gamma.
+
+    We now specialize to the low-frequency limit
+    :math:`\nu \ll \nu_{\min}`, where
+
+    .. math::
+
+        \nu_{\min}
+        =
+        c_{1,\gamma}B\sin\alpha\,\gamma_{\min}^2.
+
+    In this regime, every electron in the distribution is observed on the
+    low-frequency tail of its single-electron synchrotron spectrum, so
+
+    .. math::
+
+        \frac{\nu}{\nu_c(\gamma)} \ll 1
+
+    for all :math:`\gamma \geq \gamma_{\min}`. We may therefore use the
+    asymptotic form of the synchrotron kernel,
+
+    .. math::
+
+        F(x)
+        \simeq
+        \frac{2^{5/3}\pi}{\sqrt{3}\Gamma(1/3)}
+        x^{1/3},
+        \qquad x\ll 1.
+
+    The single-electron synchrotron power is
+
+    .. math::
+
+        P_\nu(\gamma)
+        =
+        \frac{\sqrt{3}e^3B\sin\alpha}{m_ec^2}
+        F\!\left(
+            \frac{\nu}{c_{1,\gamma}B\sin\alpha\,\gamma^2}
+        \right).
+
+    Substituting the low-frequency kernel gives
+
+    .. math::
+
+        P_\nu(\gamma)
+        \simeq
+        \frac{\sqrt{3}e^3B\sin\alpha}{m_ec^2}
+        \frac{2^{5/3}\pi}{\sqrt{3}\Gamma(1/3)}
+        \left(
+            \frac{\nu}
+            {c_{1,\gamma}B\sin\alpha\,\gamma^2}
+        \right)^{1/3}.
+
+    Rearranging the frequency, magnetic-field, and Lorentz-factor dependence,
+
+    .. math::
+
+        P_\nu(\gamma)
+        \simeq
+        \frac{2^{5/3}\pi e^3}{m_ec^2\Gamma(1/3)}
+        c_{1,\gamma}^{-1/3}
+        \left(B\sin\alpha\right)^{2/3}
+        \nu^{1/3}
+        \gamma^{-2/3}.
+
+    Inserting this into the absorption coefficient yields
+
+    .. math::
+
+        \alpha_\nu
+        \simeq
+        \frac{(p+2)N_0}{8\pi m_e\nu^2}
+        \frac{2^{5/3}\pi e^3}{m_ec^2\Gamma(1/3)}
+        c_{1,\gamma}^{-1/3}
+        \left(B\sin\alpha\right)^{2/3}
+        \nu^{1/3}
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        \gamma^{-p-1}\gamma^{-2/3}\,d\gamma.
+
+    The remaining integral is
+
+    .. math::
+
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        \gamma^{-p-5/3}\,d\gamma
+        =
+        \frac{
+            \gamma_{\min}^{-(p+2/3)}
+            -
+            \gamma_{\max}^{-(p+2/3)}
+        }
+        {p+2/3}.
+
+    Equivalently,
+
+    .. math::
+
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        \gamma^{-p-5/3}\,d\gamma
+        =
+        \frac{3}{3p+2}
+        \left[
+            \gamma_{\min}^{-(3p+2)/3}
+            -
+            \gamma_{\max}^{-(3p+2)/3}
+        \right].
+
+    For :math:`p>-2/3` and :math:`\gamma_{\max}\gg\gamma_{\min}`, the
+    upper-limit term is negligible, giving
+
+    .. math::
+
+        \int_{\gamma_{\min}}^{\gamma_{\max}}
+        \gamma^{-p-5/3}\,d\gamma
+        \simeq
+        \frac{3}{3p+2}
+        \gamma_{\min}^{-(3p+2)/3}.
+
+    Thus,
+
+    .. math::
+
+        \alpha_\nu
+        \simeq
+        \frac{
+            e^3 c_{1,\gamma}^{-1/3} 3(p+2)
+        }{
+            2^{4/3}\Gamma(1/3)(3p+2)
+        }
+        N_0
+        (m_e^2c^2)^{-1}
+        \left(B\sin\alpha\right)^{2/3}
+        \gamma_{\min}^{-(3p+2)/3}
+        \nu^{-5/3}.
+
+    Identifying the coefficient multiplying the dimensional factors,
+
+    .. math::
+
+        c_6^{(L)}(p)
+        =
+        \frac{
+            e^3 c_{1,\gamma}^{-1/3} 3(p+2)
+        }{
+            2^{4/3}\Gamma(1/3)(3p+2)
+        },
+
+    we obtain
+
+    .. math::
+
+        \alpha_\nu
+        =
+        c_6^{(L)}(p)
+        N_0
+        (m_e^2 c^2)^{-1}
+        \left(B\sin\alpha\right)^{2/3}
+        \gamma_{\min}^{-(3p+2)/3}
+        \nu^{-5/3}.
+
+    Combining this with the corresponding low-frequency emissivity,
+
+    .. math::
+
+        j_\nu
+        =
+        c_5^{(L)}(p)
+        N_0
+        (m_ec^2)^{-1}
+        \left(B\sin\alpha\right)^{2/3}
+        \gamma_{\min}^{(1-3p)/3}
+        \nu^{1/3},
+
+    the source function is
+
+    .. math::
+
+        S_\nu
+        =
+        \frac{j_\nu}{\alpha_\nu}
+        =
+        \frac{c_5^{(L)}(p)}{c_6^{(L)}(p)}
+        m_e
+        \gamma_{\min}
+        \nu^2.
+
+    Evaluating the ratio of constants gives
+
+    .. math::
+
+        \frac{c_5^{(L)}(p)}{c_6^{(L)}(p)}
+        =
+        \frac{2(3p+2)}{(p+2)(3p-1)},
+
+    and therefore
+
+    .. math::
+
+        S_\nu
+        =
+        \frac{2(3p+2)}{(p+2)(3p-1)}
+        m_e
+        \gamma_{\min}
+        \nu^2.
+
+    This is the expected :math:`S_\nu\propto\nu^2` source function for
+    the optically thick spectrum below the characteristic frequency of the
+    lowest-energy electrons.
+
+The corresponding source function is
+
+.. math::
+
+    S_\nu = \frac{j_\nu}{\alpha_\nu} = \frac{c_5^{(L)}(p)}{c_6^{(L)}(p)} m_e \gamma_{\rm min} \nu^2,
+
+which (on evaluating the constants) is
+
+.. math::
+
+    S_\nu = \frac{2(3p+2)}{(p+2)(3p-1)} m_e \gamma_{\rm min} \nu^2.
+
+.. hint::
+
+    It can be shown that this is also the case for isotropic pitch-angle distributions.
 
 SSA In Thermal Electron Distributions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1810,108 +2469,59 @@ Approximate Methods
 ~~~~~~~~~~~~~~~~~~~
 
 While the above treatment of the SSA frequency is precise, it is complicated by the fact that one must specify
-the detailed electron distribution (including any stratification due to radiative cooling) in order to evaluate
-:math:`\tau_\nu = \int \alpha_\nu\,d\ell`.  A widely used alternative is therefore to determine the self-absorption
-frequency :math:`\nu_a` by matching the asymptotic optically thin and optically thick fluxes across the turnover
-(e.g. CITATIONS).
-
-The key observation is that at frequencies where the source is optically thick (:math:`\tau_\nu \gg 1`), the
-emergent intensity approaches the local synchrotron source function,
+the detailed electron distribution, including any cooling breaks or spatial stratification, in order to evaluate
 
 .. math::
 
-    I_\nu \approx S_\nu \equiv \frac{j_\nu}{\alpha_\nu},
+    \tau_\nu = \int \alpha_\nu\,d\ell.
 
-evaluated at the depth where :math:`\tau_\nu \sim 1`.  At a fixed observing frequency :math:`\nu`, synchrotron
-emission and absorption are dominated by electrons in a narrow range of Lorentz factors.  Motivated by this,
-we first consider a mono-energetic electron population with Lorentz factor :math:`\gamma_0` and number density
-:math:`n_e`, i.e.
+A common alternative is to estimate the self-absorption frequency by matching the asymptotic optically thin and
+optically thick fluxes across the turnover. This approach does not attempt to compute the full absorption
+coefficient directly. Instead, it uses an approximate source function for the optically thick side and determines
+the frequency at which that optically thick branch intersects the optically thin SED.
 
-.. math::
+In Trilobite, we implement this idea using an **effective power-law approximation**. The central assumption is that
+the electrons which dominate synchrotron absorption near :math:`\nu_a` sample a single local segment of the electron
+distribution. We therefore replace the true distribution, only for the purpose of estimating :math:`\nu_a`, by an
+effective power law with index :math:`p_{\rm eff}`.
 
-    N(\gamma) = n_e\,\delta(\gamma-\gamma_0).
-
-For an isotropic distribution, the synchrotron emissivity and absorption coefficient may be written (RL / CITATION)
-
-.. math::
-
-    j_\nu = \frac{1}{4\pi}\int d\gamma\,N(\gamma)\,P_\nu(\gamma),
+For an uncooled population, or when :math:`\nu_a` lies below the cooling break, we take
 
 .. math::
 
-    \alpha_\nu = -\frac{1}{8\pi m_e \nu^2}\int d\gamma\,P_\nu(\gamma)\,\gamma^2
-    \frac{\partial}{\partial\gamma}\left[\frac{N(\gamma)}{\gamma^2}\right],
+    p_{\rm eff} = p.
 
-where :math:`P_\nu(\gamma)` is the single-electron synchrotron power per unit frequency.  Substituting the
-mono-energetic form yields
-
-.. math::
-
-    j_\nu = \frac{n_e}{4\pi}\,P_\nu(\gamma_0),
-
-and
+When :math:`\nu_a` lies above the cooling break and the absorbing electrons are expected to sample the cooled portion
+of the distribution, we instead take
 
 .. math::
 
-    \alpha_\nu
+    p_{\rm eff} = p + 1,
+
+for standard synchrotron cooling.
+
+With this approximation, the optically thick flux is estimated from the power-law synchrotron source function,
+
+.. math::
+
+    F_\nu^{\rm thick}
     =
-    \frac{n_e}{8\pi m_e \nu^2}
-    \left[
-      \frac{\partial P_\nu}{\partial\gamma}
-      +\frac{2}{\gamma}P_\nu
-    \right]_{\gamma=\gamma_0}.
+    \Omega S_\nu(p_{\rm eff}),
 
-The corresponding source function is therefore
+where :math:`\Omega` is the effective angular emitting area. The absorption frequency is then obtained from the
+matching condition
 
 .. math::
 
-    S_\nu \equiv \frac{j_\nu}{\alpha_\nu}
+    F_{\nu}^{\rm thin}(\nu_a)
     =
-    2 m_e \nu^2\,
-    \frac{P_\nu(\gamma_0)}
-    {\left[\frac{\partial P_\nu}{\partial\gamma}+\frac{2}{\gamma}P_\nu\right]_{\gamma=\gamma_0}}.
+    \Omega S_{\nu_a}(p_{\rm eff}).
 
-For a smooth synchrotron kernel :math:`P_\nu(\gamma)`, the combination in the denominator varies on a fractional
-Lorentz-factor scale :math:`\Delta\gamma/\gamma \sim \mathcal{O}(1)`, implying
-:math:`\partial P_\nu/\partial\gamma \sim P_\nu/\gamma` up to factors of order unity.  Hence the ratio above is
-:math:`\sim \gamma_0` (again up to factors of order unity), and we may write the optically thick source function as
-
-.. math::
-
-    S_\nu(\gamma_0) \sim \frac{2C_s}{c^2} \nu^2 \gamma_0 m_e c^2,
-
-where :math:`C_S = \mathcal{O}(1)` absorbs kernel- and pitch-angle-dependent constants.  This is simply the
-Rayleigh--Jeans form with an effective (brightness) temperature :math:`kT_{\rm eff}\sim \gamma_0 m_e c^2`.
-
-If the emitting region subtends projected area :math:`A` on the sky, the optically thick flux at :math:`\nu`
-is then
-
-.. math::
-
-    F_\nu^{\rm (thick)}(\nu)
-    \approx
-    \frac{A}{D^2}\,S_\nu
-    \sim
-    \frac{2\nu^2}{c^2}\gamma_0 m_e c^2 \frac{A}{D^2},
-
-with :math:`C_{\rm thick}=\mathcal{O}(1)`.
-
-To apply this to synchrotron self-absorption, we identify :math:`\gamma_0` with the characteristic electron
-Lorentz factor dominating emission and absorption at :math:`\nu=\nu_a` (denoted :math:`\gamma_a`), so that
-:math:`F_\nu^{\rm (thick)}(\nu_a)` is determined by :math:`S_\nu(\gamma_a)`.  The self-absorption frequency
-may then be obtained by matching the optically thick and optically thin asymptotic fluxes at the turnover,
-
-.. math::
-
-    F_\nu^{\rm (thick)}(\nu_a) \approx F_\nu^{\rm (thin)}(\nu_a),
-
-where :math:`F_\nu^{\rm (thin)}` is computed from the appropriate optically thin spectral segment for the
-problem at hand.  This yields an algebraic equation for :math:`\nu_a`.
-
-.. note::
-
-    Given that this approach is only approximate, it is often customary to absorb the various order-unity
-    constants into a single fudge factor as described above. This **includes** pitch averaging effects.
+This procedure should be interpreted as an asymptotic estimate of the self-absorption break, not as an exact
+solution of the radiative-transfer problem. It is expected to be most accurate when :math:`\nu_a` lies well inside a
+single power-law segment of the electron distribution. It becomes less reliable when :math:`\nu_a` lies close to
+another spectral break, such as :math:`\nu_m` or :math:`\nu_c`, or when cooling produces strong spatial
+stratification in the absorbing material.
 
 
 References

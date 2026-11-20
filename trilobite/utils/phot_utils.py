@@ -78,21 +78,22 @@ class PhotometryFilter:
 
     Notes
     -----
-    **Photon weighting** (default for CCDs):
+    **Photon weighting** (default for CCDs), where the factor :math:`1/\lambda` combines the photon energy
+    :math:`1/(h\nu) \propto \lambda` with the Jacobian :math:`|d\nu/d\lambda| = c/\lambda^2`:
 
     .. math::
 
-        langle F_nu rangle = frac{int F_nu(lambda) , T(lambda) ,
-        frac{lambda}{hc} , dlambda}{int T(lambda) ,
-        frac{lambda}{hc} , dlambda}
+        \langle F_\nu \rangle = \frac{\int F_\nu(\lambda) \, T(\lambda) \,
+        \frac{1}{\lambda} \, d\lambda}{\int T(\lambda) \,
+        \frac{1}{\lambda} \, d\lambda}
 
     **Energy weighting** (bolometers):
 
     .. math::
 
-        langle F_nu rangle = frac{int F_nu(lambda) , T(lambda) ,
-        frac{c}{lambda^2} , dlambda}{int T(lambda) ,
-        frac{c}{lambda^2} , dlambda}
+        \langle F_\nu \rangle = \frac{\int F_\nu(\lambda) \, T(\lambda) \,
+        \frac{c}{\lambda^2} \, d\lambda}{\int T(\lambda) \,
+        \frac{c}{\lambda^2} \, d\lambda}
 
     The precomputed ``weights`` array encodes these integrals discretely via
     :func:`numpy.gradient`, so that ``np.dot(F_nu_on_filter_grid, weights)``
@@ -100,7 +101,6 @@ class PhotometryFilter:
 
     Examples
     --------
-
     .. code-block:: python
 
         import numpy as np
@@ -123,6 +123,20 @@ class PhotometryFilter:
         name: Optional[str] = None,
         weighting: str = "photon",
     ):
+        """
+        Initialize the filter from a transmission curve.
+
+        Parameters
+        ----------
+        wavelength : ~astropy.units.Quantity or ~numpy.ndarray
+            Wavelength grid of the filter. Bare arrays are interpreted as cm.
+        transmission : ~numpy.ndarray
+            Dimensionless transmission values on the wavelength grid, with the same shape as ``wavelength``.
+        name : str, optional
+            Human-readable name for the filter.
+        weighting : {'photon', 'energy'}, optional
+            Weighting scheme of the filter. Default is ``'photon'``.
+        """
         # ------------------------------------------------------------------ #
         # Validate and coerce inputs                                          #
         # ------------------------------------------------------------------ #
@@ -176,28 +190,28 @@ class PhotometryFilter:
 
     @property
     def name(self) -> str:
-        """Human-readable filter name (empty string if not set)."""
+        """str: Human-readable filter name (empty string if not set)."""
         return self._name
 
     @property
     def wavelength(self) -> np.ndarray:
-        """Wavelength grid in cm."""
+        """~numpy.ndarray: Wavelength grid in cm."""
         return self._wavelength
 
     @property
     def frequency(self) -> np.ndarray:
-        """Frequency grid in Hz (same ordering as :attr:`wavelength`)."""
+        """~numpy.ndarray: Frequency grid in Hz (same ordering as :attr:`wavelength`)."""
         return self._frequency
 
     @property
     def transmission(self) -> np.ndarray:
-        """Raw transmission values (not normalised)."""
+        """~numpy.ndarray: Raw transmission values (not normalised)."""
         return self._transmission
 
     @property
     def weights(self) -> np.ndarray:
         """
-        Precomputed, normalised integration weights (on the wavelength grid).
+        ~numpy.ndarray: Precomputed, normalised integration weights (on the wavelength grid).
 
         The weights satisfy ``np.dot(F_nu_on_filter_grid, weights) == <F_nu>``
         where ``<F_nu>`` is the band-averaged flux density.
@@ -206,31 +220,31 @@ class PhotometryFilter:
 
     @property
     def weighting(self) -> str:
-        """Weighting scheme, either ``'photon'`` or ``'energy'``."""
+        """str: Weighting scheme, either ``'photon'`` or ``'energy'``."""
         return self._weighting
 
     @property
     def wavelength_bounds(self) -> tuple:
-        """``(lambda_min, lambda_max)`` of the filter grid in cm."""
+        """Tuple of float: ``(lambda_min, lambda_max)`` of the filter grid in cm."""
         return self._wavelength_bounds
 
     @property
     def frequency_bounds(self) -> tuple:
-        """``(nu_min, nu_max)`` of the filter grid in Hz."""
+        """Tuple of float: ``(nu_min, nu_max)`` of the filter grid in Hz."""
         return self._frequency_bounds
 
     @property
     def effective_wavelength(self) -> float:
         r"""
-        Pivot (effective) wavelength of the filter in cm.
+        float: Pivot (effective) wavelength of the filter in cm.
 
         Defined as the photon-weighted pivot wavelength independent of the
         chosen weighting scheme:
 
         .. math::
 
-            lambda_{rm pivot} = sqrt{
-                frac{int T(lambda),dlambda}{int T(lambda)/lambda^2,dlambda}
+            \lambda_{\rm pivot} = \sqrt{
+                \frac{\int T(\lambda) \, d\lambda}{\int T(\lambda) / \lambda^2 \, d\lambda}
             }
         """
         numerator = _trapz(self._transmission, self._wavelength)
@@ -241,17 +255,17 @@ class PhotometryFilter:
 
     @property
     def effective_frequency(self) -> float:
-        """Pivot frequency in Hz, derived from :attr:`effective_wavelength`."""
+        """float: Pivot frequency in Hz, derived from :attr:`effective_wavelength`."""
         return const.c.cgs.value / self.effective_wavelength
 
     @property
     def filter_width_lambda(self) -> float:
-        """Equivalent width of the filter in wavelength space (cm)."""
+        """float: Equivalent width of the filter in wavelength space (cm)."""
         return float(_trapz(self._transmission, self._wavelength))
 
     @property
     def filter_width_nu(self) -> float:
-        """Equivalent width of the filter in frequency space (Hz)."""
+        """float: Equivalent width of the filter in frequency space (Hz)."""
         return float(abs(_trapz(self._transmission, self._frequency)))
 
     # ====================================================================== #
@@ -259,6 +273,14 @@ class PhotometryFilter:
     # ====================================================================== #
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the filter.
+
+        Returns
+        -------
+        str
+            The filter name, effective wavelength, weighting and number of grid points.
+        """
         name_part = f"'{self._name}'" if self._name else "unnamed"
         lam_eff_aa = self.effective_wavelength * 1e8  # cm → Å
         return (
@@ -269,13 +291,41 @@ class PhotometryFilter:
         )
 
     def __str__(self) -> str:
+        """
+        Return the same string as :meth:`__repr__`.
+
+        Returns
+        -------
+        str
+            The representation string.
+        """
         return self.__repr__()
 
     def __len__(self) -> int:
-        """Determine the number of grid points in the filter."""
+        """
+        Determine the number of grid points in the filter.
+
+        Returns
+        -------
+        int
+            The number of grid points in the filter.
+        """
         return len(self._wavelength)
 
     def __eq__(self, other: object) -> bool:
+        """
+        Compare this filter with another one.
+
+        Parameters
+        ----------
+        other : object
+            The object to compare with.
+
+        Returns
+        -------
+        bool or NotImplemented
+            Whether the grids, transmissions and weightings match, or ``NotImplemented`` if ``other`` is not a filter.
+        """
         if not isinstance(other, PhotometryFilter):
             return NotImplemented
         return (
@@ -443,8 +493,10 @@ class PhotometryFilter:
 
         Returns
         -------
-        fig : matplotlib.figure.Figure
-        axes : matplotlib.axes.Axes
+        fig : ~matplotlib.figure.Figure
+            The figure containing the plot.
+        axes : ~matplotlib.axes.Axes
+            The axes containing the plot.
         """
         from trilobite.utils.plot_utils import resolve_fig_axes, set_plot_style
 
@@ -494,7 +546,8 @@ class PhotometryFilter:
 
         Returns
         -------
-        PhotometryFilter
+        ~trilobite.utils.phot_utils.PhotometryFilter
+            The reconstructed filter.
         """
         return cls(
             wavelength=np.asarray(d["wavelength_cm"]),
@@ -527,7 +580,8 @@ class PhotometryFilter:
 
         Returns
         -------
-        PhotometryFilter
+        ~trilobite.utils.phot_utils.PhotometryFilter
+            The filter loaded from the file.
         """
         with open(path) as fh:
             d = json.load(fh)
@@ -568,7 +622,8 @@ class PhotometryFilter:
 
         Returns
         -------
-        PhotometryFilter
+        ~trilobite.utils.phot_utils.PhotometryFilter
+            The filter loaded from the file.
         """
         with h5py.File(path, "r") as fh:
             grp = fh[key]
@@ -621,7 +676,8 @@ class PhotometryFilter:
 
         Returns
         -------
-        PhotometryFilter
+        ~trilobite.utils.phot_utils.PhotometryFilter
+            The reconstructed filter.
         """
         resolved_name = name if name is not None else table.meta.get("name") or None
         resolved_weighting = weighting if weighting is not None else table.meta.get("weighting", "photon")
@@ -664,7 +720,8 @@ class PhotometryFilter:
 
         Returns
         -------
-        PhotometryFilter
+        ~trilobite.utils.phot_utils.PhotometryFilter
+            The reconstructed filter.
 
         Raises
         ------
@@ -712,42 +769,32 @@ class FilterBundle:
 
     Examples
     --------
-
     .. code-block:: python
 
-        import numpy as np, astropy.units as u
+        import numpy as np
+        import astropy.units as u
         from trilobite.utils.phot_utils import (
             PhotometryFilter,
             FilterBundle,
         )
 
-
-        def gauss_filter(
-            center_aa, width_aa, name, N=200
-        ):
+        centers = {"g": 4770, "r": 6231, "i": 7625}
+        filters = {}
+        for name, center in centers.items():
             lam = (
                 np.linspace(
-                    center_aa - 3 * width_aa,
-                    center_aa + 3 * width_aa,
-                    N,
+                    center - 1800, center + 1800, 200
                 )
                 * u.AA
             )
             T = np.exp(
-                -0.5
-                * ((lam.value - center_aa) / width_aa)
-                ** 2
+                -0.5 * ((lam.value - center) / 600) ** 2
             )
-            return PhotometryFilter(lam, T, name=name)
+            filters[name] = PhotometryFilter(
+                lam, T, name=name
+            )
 
-
-        bundle = FilterBundle(
-            {
-                "g": gauss_filter(4770, 600, "g"),
-                "r": gauss_filter(6231, 600, "r"),
-                "i": gauss_filter(7625, 600, "i"),
-            }
-        )
+        bundle = FilterBundle(filters)
         nu = bundle.frequency_grid
         F_nu = (
             np.ones_like(nu) * 3.631e-20
@@ -758,6 +805,14 @@ class FilterBundle:
     """
 
     def __init__(self, filters: dict):
+        """
+        Initialize the bundle and build the common grid and weight matrix.
+
+        Parameters
+        ----------
+        filters : dict of str to ~trilobite.utils.phot_utils.PhotometryFilter
+            Mapping from filter name to filter. It must contain at least one filter.
+        """
         if not filters:
             raise ValueError("FilterBundle requires at least one filter.")
 
@@ -815,28 +870,28 @@ class FilterBundle:
 
     @property
     def filters(self) -> dict:
-        """Dictionary mapping filter name → :class:`PhotometryFilter`."""
+        """dict: Dictionary mapping filter name → :class:`PhotometryFilter`."""
         return dict(self._filters)
 
     @property
     def filter_names(self) -> list:
-        """Ordered list of filter names."""
+        """List of str: Ordered list of filter names."""
         return list(self._filter_names)
 
     @property
     def frequency_grid(self) -> np.ndarray:
-        """Common frequency grid in Hz (ascending order)."""
+        """~numpy.ndarray: Common frequency grid in Hz (ascending order)."""
         return self._frequency_grid
 
     @property
     def wavelength_grid(self) -> np.ndarray:
-        """Common wavelength grid in cm (descending, = c/frequency_grid)."""
+        """~numpy.ndarray: Common wavelength grid in cm (descending, = c/frequency_grid)."""
         return const.c.cgs.value / self._frequency_grid
 
     @property
     def weight_matrix(self) -> np.ndarray:
         """
-        Precomputed weight matrix, shape ``(N_filters, N_common)``.
+        ~numpy.ndarray: Precomputed weight matrix, shape ``(N_filters, N_common)``.
 
         Row ``i`` contains the normalised weights for ``filter_names[i]``
         interpolated onto the common frequency grid.
@@ -845,7 +900,7 @@ class FilterBundle:
 
     @property
     def n_filters(self) -> int:
-        """Number of filters in the bundle."""
+        """int: Number of filters in the bundle."""
         return len(self._filters)
 
     # ====================================================================== #
@@ -853,22 +908,80 @@ class FilterBundle:
     # ====================================================================== #
 
     def __len__(self) -> int:
+        """
+        Return the number of filters in the bundle.
+
+        Returns
+        -------
+        int
+            The number of filters.
+        """
         return len(self._filters)
 
     def __repr__(self) -> str:
+        """
+        Return an unambiguous representation of the bundle.
+
+        Returns
+        -------
+        str
+            The filter names and the size of the common grid.
+        """
         names_str = ", ".join(f"'{n}'" for n in self._filter_names)
         return f"FilterBundle([{names_str}], N_common={len(self._frequency_grid)})"
 
     def __str__(self) -> str:
+        """
+        Return the same string as :meth:`__repr__`.
+
+        Returns
+        -------
+        str
+            The representation string.
+        """
         return self.__repr__()
 
     def __getitem__(self, key: str) -> PhotometryFilter:
+        """
+        Return a filter by name.
+
+        Parameters
+        ----------
+        key : str
+            Name of the filter.
+
+        Returns
+        -------
+        ~trilobite.utils.phot_utils.PhotometryFilter
+            The filter called ``key``.
+        """
         return self._filters[key]
 
     def __iter__(self):
+        """
+        Iterate over the filter names.
+
+        Returns
+        -------
+        iterator
+            An iterator over the filter names.
+        """
         return iter(self._filters)
 
     def __contains__(self, key: str) -> bool:
+        """
+        Check whether a filter is in the bundle.
+
+        Parameters
+        ----------
+        key : str
+            Name of the filter.
+
+        Returns
+        -------
+        bool
+            ``True`` if a filter called ``key`` is in the bundle.
+        """
         return key in self._filters
 
     def __call__(self, nu: np.ndarray, F_nu: np.ndarray) -> np.ndarray:
@@ -1070,8 +1183,10 @@ class FilterBundle:
 
         Parameters
         ----------
-        fig : matplotlib.figure.Figure, optional
-        axes : matplotlib.axes.Axes, optional
+        fig : ~matplotlib.figure.Figure, optional
+            Figure to plot on. If ``None``, a new figure is created.
+        axes : ~matplotlib.axes.Axes, optional
+            Axes to plot on. If ``None``, axes are created or taken from ``fig``.
         wavelength_unit : str, optional
             Astropy unit string for the x-axis (default ``"AA"``).
         legend : bool, optional
@@ -1082,8 +1197,10 @@ class FilterBundle:
 
         Returns
         -------
-        fig : matplotlib.figure.Figure
-        axes : matplotlib.axes.Axes
+        fig : ~matplotlib.figure.Figure
+            The figure containing the plot.
+        axes : ~matplotlib.axes.Axes
+            The axes containing the plot.
         """
         from trilobite.utils.plot_utils import get_default_cmap, resolve_fig_axes, set_plot_style
 
@@ -1139,7 +1256,8 @@ class FilterBundle:
 
         Returns
         -------
-        FilterBundle
+        ~trilobite.utils.phot_utils.FilterBundle
+            The reconstructed bundle.
         """
         return cls({name: PhotometryFilter.from_dict(fd) for name, fd in d["filters"].items()})
 
@@ -1167,7 +1285,8 @@ class FilterBundle:
 
         Returns
         -------
-        FilterBundle
+        ~trilobite.utils.phot_utils.FilterBundle
+            The bundle loaded from the file.
         """
         with open(path) as fh:
             d = json.load(fh)
@@ -1206,7 +1325,8 @@ class FilterBundle:
 
         Returns
         -------
-        FilterBundle
+        ~trilobite.utils.phot_utils.FilterBundle
+            The bundle loaded from the file.
         """
         filters: dict = {}
         with h5py.File(path, "r") as fh:
@@ -1261,7 +1381,6 @@ def flux_to_ab_mag(F_nu: np.ndarray) -> np.ndarray:
 
     Examples
     --------
-
     .. code-block:: python
 
         flux_to_ab_mag(3.631e-20)
@@ -1410,7 +1529,8 @@ def load_filter_from_file(
 
     Returns
     -------
-    PhotometryFilter
+    ~trilobite.utils.phot_utils.PhotometryFilter
+        The filter loaded from the file.
     """
     file_path = Path(file_path)
     data = np.loadtxt(file_path)
@@ -1440,7 +1560,8 @@ def load_filter_from_speclite(name: str, weighting: str = "photon") -> Photometr
 
     Returns
     -------
-    PhotometryFilter
+    ~trilobite.utils.phot_utils.PhotometryFilter
+        The filter loaded from the ``speclite`` registry.
 
     Raises
     ------
@@ -1478,7 +1599,8 @@ def load_filter_from_name(name: str, weighting: str = "photon") -> PhotometryFil
 
     Returns
     -------
-    PhotometryFilter
+    ~trilobite.utils.phot_utils.PhotometryFilter
+        The filter with the given name.
     """
     return load_filter_from_speclite(name, weighting=weighting)
 
@@ -1555,7 +1677,8 @@ def load_filter_from_svo(
 
     Returns
     -------
-    PhotometryFilter
+    ~trilobite.utils.phot_utils.PhotometryFilter
+        The filter downloaded from the SVO Filter Profile Service.
 
     Raises
     ------
